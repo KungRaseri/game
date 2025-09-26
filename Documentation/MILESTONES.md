@@ -1,172 +1,158 @@
 # Fantasy Shop Keeper - Development Milestones
 
-## Milestone 1: Core Shop Management System
-**Focus: Shop Preparation Phase**
+## Milestone 1: Core Combat & Adventurer System
+**Focus: Health-Based Auto-Combat**
 
 ### Core Features
+- **Adventurer Stats**
+  - Health system (100 HP starting, 25% retreat threshold)
+  - Damage Per Second (10 DPS starting value)
+  - Health regeneration (1 HP per second when not fighting)
+  - Visual health bar with current/max HP display
+
+- **Combat Mechanics**
+  - Auto-combat loop: adventurer vs monster until one dies
+  - Damage calculation and health reduction over time
+  - Automatic retreat when adventurer health drops below 25%
+  - Combat log showing fight results and damage dealt
+
+- **Monster System**
+  - Basic monster stats (HP, DPS) for Goblin Cave
+  - 3 monsters per dungeon run (20 HP, 5 DPS each)
+  - Sequential monster encounters (fight one, then next)
+  - Monster death triggers loot drop
+
+### Technical Requirements
+- Combat state machine (idle, fighting, retreating, regenerating)
+- Real-time health tracking and damage calculation
+- Basic UI for adventurer status and combat feedback
+- Simple monster data structure and encounter system
+
+---
+
+## Milestone 2: Material Collection & Loot System  
+**Focus: Dungeon Rewards & Inventory**
+
+### Core Features
+- **Loot Drops**
+  - Basic materials: Iron Ore, Wood, Herbs
+  - Random drop system with probability tables
+  - Material collection on monster defeat
+  - Loot notification system when adventurer returns
+
 - **Inventory Management**
-  - Grid-based inventory system with item stacking
-  - Item categorization (weapons, armor, consumables, materials, magical items)
-  - Drag-and-drop organization with visual feedback
-  - Item condition tracking (pristine, worn, damaged, broken)
-  - Magical item identification mini-game
+  - Material storage system with quantity tracking
+  - Simple list-based inventory interface
+  - Material sorting and organization
+  - Storage capacity limits (expandable later)
 
-- **Shop Layout & Customization**
-  - Modular shop layout with placeable furniture
-  - Display cases, weapon racks, armor stands, shelves
-  - Shop aesthetic affects customer attraction
-  - Security measures (locked chests, anti-theft enchantments)
-  - Expansion options (additional rooms, storage areas)
-
-- **Pricing System**
-  - Dynamic pricing based on rarity, condition, and demand
-  - Price adjustment interface with profit margin indicators
-  - Market value reference system
-  - Bulk pricing options for quantity discounts
+- **Dungeon Completion**
+  - Track adventurer progress through dungeon floors
+  - Expedition summary showing materials collected
+  - Return to town mechanics after retreat or completion
+  - Reset dungeon for next expedition
 
 ### Technical Requirements
-- Save/load system for shop state
-- Item database with properties and metadata
-- Basic UI framework for inventory management
-- Shop layout serialization system
+- Loot table system with weighted randomization
+- Inventory data structure with item stacking
+- UI for inventory display and material quantities
+- Save/load system for persistent inventory state
 
 ---
 
-## Milestone 2: Customer Interaction & Trading
-**Focus: Sell Phase**
+## Milestone 3: Manual Crafting System
+**Focus: Item Creation & Recipes**
 
 ### Core Features
-- **Customer AI & Behavior**
-  - Diverse customer types with unique preferences and budgets
-  - Personality traits affecting negotiation difficulty
-  - Shopping patterns (browsers vs decisive buyers)
-  - Emotional states that influence purchasing decisions
-  - Return customers with relationship progression
+- **Recipe System**
+  - Three basic recipes: Iron Sword, Wooden Shield, Health Potion
+  - Material requirements: Iron Ore + Wood = Iron Sword, etc.
+  - Recipe display with required materials and quantities
+  - Unlock system for discovering new recipes
 
-- **Negotiation System**
-  - Turn-based bartering with multiple offers/counteroffers
-  - Customer satisfaction meters during negotiations
-  - Reputation consequences for different negotiation styles
-  - Special dialogue options based on customer relationships
-  - Quick-sale vs extended negotiation options
+- **Crafting Interface**
+  - Recipe selection menu with available recipes
+  - Material requirement checking and validation
+  - Click-to-craft button with instant completion
+  - Crafted item creation and inventory addition
 
-- **Shop Operations**
-  - Daily shop opening/closing mechanics
-  - Rush hour events with multiple simultaneous customers
-  - Shop security (theft prevention, troublemaker handling)
-  - Staff management (hiring helpers, training, scheduling)
-  - Customer queue and service time management
+- **Item Properties**
+  - Basic item stats (damage for weapons, defense for armor)
+  - Item descriptions and flavor text
+  - Base market values for selling
+  - Item categorization (weapon, armor, consumable)
 
 ### Technical Requirements
-- NPC behavior state machines
-- Dialogue system with branching conversations
-- Real-time customer spawning and queue management
-- Economic simulation for supply/demand
+- Recipe database with material requirements
+- Crafting validation system
+- Item generation with properties and stats
+- UI for recipe browsing and crafting interaction
 
 ---
 
-## Milestone 3: Dungeon Exploration System
-**Focus: Dungeon Phase**
+## Milestone 4: Shop Management & Sales
+**Focus: Manual Stocking & Auto-Sales**
 
 ### Core Features
-- **Exploration Mechanics**
-  - Choice-based dungeon navigation (not real-time combat)
-  - Risk assessment for different paths and encounters
-  - Resource management (torches, food, equipment durability)
-  - Environmental hazards and puzzle solving
-  - Hidden areas and secret loot discovery
+- **Shop Display**
+  - 3 display slots for showing items
+  - Drag-and-drop interface for stocking items
+  - Visual representation of shop layout
+  - Empty slot indicators and occupied slot display
 
-- **Loot & Resource Gathering**
-  - Randomized loot tables based on dungeon difficulty
-  - Material harvesting from defeated monsters
-  - Ancient recipe and blueprint discoveries
-  - Treasure chest mini-games for better rewards
-  - Rare component identification and collection
+- **Customer System**
+  - Basic customer AI that visits shop automatically
+  - Purchase decisions based on available items
+  - Customer types with different preferences
+  - Automatic gold generation from sales
 
-- **Delegation System**
-  - Hire adventuring parties with different specializations
-  - Set expedition parameters (risk level, target items, duration)
-  - Party success rates based on equipment provided
-  - Share profits with hired adventurers
-  - Manage multiple expeditions simultaneously
+- **Sales Mechanics**
+  - Auto-selling of displayed items over time
+  - Base pricing system using item market values
+  - Sale notifications and transaction history
+  - Inventory removal when items are sold
 
 ### Technical Requirements
-- Procedural dungeon generation or hand-crafted encounters
-- Loot probability systems with weighted randomization
-- Party management AI and success calculation algorithms
-- Event scripting system for dungeon encounters
+- Drag-and-drop UI system for item placement
+- Customer spawning and behavior AI
+- Sales transaction system with gold rewards
+- Shop state management and item tracking
 
 ---
 
-## Milestone 4: Advanced Economic Systems
-**Focus: Loot Summary & Market Dynamics**
+## Milestone 5: Basic Progression & Polish
+**Focus: Upgrades & Game Loop Completion**
 
 ### Core Features
-- **Item Analysis & Sorting**
-  - Magical item appraisal with identification costs
-  - Batch processing tools for large loot hauls
-  - Quality assessment and damage evaluation
-  - Enchantment detection and power level measurement
-  - Market value prediction algorithms
+- **Gold Economy**
+  - Gold earning from shop sales
+  - Gold spending on adventurer upgrades
+  - Simple upgrade system (increase HP, DPS)
+  - Cost scaling for progressive upgrades
 
-- **Crafting & Enhancement**
-  - Recipe-based crafting with material requirements
-  - Item enhancement and magical enchantment
-  - Quality improvement through skilled craftsmanship
-  - Experimental crafting with risk/reward outcomes
-  - Workshop upgrades for advanced crafting options
+- **UI Polish & Integration**
+  - Main game screen with all systems visible
+  - Send adventurer button and expedition tracking
+  - Smooth transitions between combat, crafting, and selling
+  - Game state persistence and save system
 
-- **Market Economics**
-  - Dynamic pricing based on local supply and demand
-  - Seasonal fluctuations and economic events
-  - Competition with other shops in town
-  - Import/export opportunities with other regions
-  - Economic news system affecting item values
+- **Basic Balancing**
+  - Tuned combat difficulty and material drop rates
+  - Balanced crafting costs and item values
+  - Progression curve for early game experience
+  - Win condition or gameplay loop satisfaction
 
 ### Technical Requirements
-- Complex economic simulation with multiple variables
-- Crafting recipe database and validation system
-- Market trend calculation and prediction algorithms
-- Save data for long-term economic progression
-
----
-
-## Milestone 5: Advanced Features & Polish
-**Focus: Reputation, Events & Long-term Progression**
-
-### Core Features
-- **Reputation & Relationships**
-  - Multi-faceted reputation system (honest, shrewd, reliable, exotic)
-  - Customer loyalty programs and VIP treatment
-  - Faction relationships affecting available customers
-  - Word-of-mouth marketing simulation
-  - Reputation-locked content and special customers
-
-- **Seasonal Events & Festivals**
-  - Calendar system with recurring events
-  - Special customer demands during festivals
-  - Limited-time opportunities and rare visitors
-  - Seasonal decoration and shop theming
-  - Event-specific quests and challenges
-
-- **Progression Systems**
-  - Shop keeper skill trees (negotiation, crafting, appraisal)
-  - Shop expansion and facility upgrades
-  - Unlock new dungeons and trading routes
-  - Master craftsman progression and legendary recipes
-  - End-game content and prestige systems
-
-### Technical Requirements
-- Calendar and event scheduling system
-- Skill progression and unlock mechanics
-- Achievement and milestone tracking
-- Comprehensive save system for long-term play
+- Comprehensive save/load system
+- Integrated UI with all milestone features
+- Performance optimization for idle gameplay
+- Basic tutorial or onboarding flow
 
 ---
 
 ## Implementation Notes
-- Each milestone should be fully playable before moving to the next
-- Core systems from earlier milestones will be refined in later ones
-- Consider creating vertical slice prototypes for each phase
-- Plan for extensive playtesting between milestones
-- Maintain modular code architecture for easy feature addition
+- Each milestone should be fully playable as a vertical slice
+- Focus on one core system per milestone before moving forward
+- Test extensively within each milestone before proceeding
+- Keep features simple and expandable for future iterations
+- Maintain clean code architecture for easy feature addition
