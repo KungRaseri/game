@@ -14,4 +14,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="Game.Main\Game.Main.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Scripts\" />
+	</ItemGroup>
 </Project>
