@@ -1,5 +1,6 @@
 using Game.Main.Controllers;
 using Game.Main.Systems;
+using Godot;
 
 namespace Game.Main.Managers
 {
@@ -34,6 +35,7 @@ namespace Game.Main.Managers
 		public void Initialize()
 		{
 			// Reset all systems to initial state
+			GD.Print("Game initialized to starting state");
 			_combatSystem.Reset();
 		}
 
