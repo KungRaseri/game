@@ -2,13 +2,13 @@
 
 ## Project Overview
 This is an idle dungeon crawler and shop keeper game built with:
-- **C# .NET 4.8** - Core game logic and systems
+- **C# .NET 8.0** - Core game logic and systems (Godot 4.5 requirement)
 - **Godot 4.5** - Game engine and UI framework
 - **Target Platform**: PC (Windows primary)
 
 ## Development Best Practices
 
-### C# .NET 4.8 Guidelines
+### C# .NET 8.0 Guidelines (Godot 4.5 Requirement)
 - Use **PascalCase** for public members, classes, and methods
 - Use **camelCase** for private fields and local variables
 - Prefix private fields with underscore: `_privateField`
@@ -16,21 +16,30 @@ This is an idle dungeon crawler and shop keeper game built with:
 - Implement `IDisposable` for resource management
 - Use `async/await` for asynchronous operations
 - Follow SOLID principles for class design
-- Use nullable reference types where appropriate
+- Use **nullable reference types** (`#nullable enable`)
+- Use **file-scoped namespaces** (`namespace MyNamespace;`)
+- Use **record types** for immutable data structures
+- Use **pattern matching** and **switch expressions**
+- Use **init-only properties** for immutable object initialization
 - Prefer composition over inheritance
 - Keep methods small and focused (single responsibility)
 
-### Godot 4.5 Specific Practices
+### Godot 4.5 C# Specific Practices
+- Use **partial classes** for Godot nodes (`public partial class PlayerController : CharacterBody2D`)
 - Use **PascalCase** for scene names and node names
 - Use **snake_case** for signal names and custom methods called from GDScript
-- Inherit from appropriate Godot base classes (`Node`, `Control`, `Resource`)
+- Inherit from appropriate Godot base classes (`Node`, `Control`, `Resource`, `GodotObject`)
 - Use `[Export]` attribute for inspector-visible properties
+- Use `[Signal]` attribute for custom signals
 - Implement `_Ready()` and `_Process()` methods when needed
-- Use `GetNode<T>()` for type-safe node references
+- Use `GetNode<T>()` for type-safe node references with NodePath strings
 - Cache node references in `_Ready()` to avoid repeated lookups
+- Use `CallDeferred()` for operations that modify scene tree during physics/processing
+- Use `EmitSignal()` or `SignalName` enumeration for signal emissions
 - Use signals for loose coupling between systems
 - Organize scenes in logical folders (UI, Game, Systems)
-- Use AutoLoad for singleton managers
+- Use AutoLoad (singletons) for managers that persist across scenes
+- Use `GodotObject` as base class for non-node classes that need Godot integration
 
 ### Architecture Patterns
 - **MVC/MVP** - Separate game logic from UI presentation
@@ -42,20 +51,26 @@ This is an idle dungeon crawler and shop keeper game built with:
 
 ### Code Organization
 ```
-Game.Main/
+Game.Main/ (C# Class Library Project)
 ├── Systems/           # Core game systems (Combat, Crafting, Shop)
 ├── Models/           # Data classes and game state
 ├── Controllers/      # Business logic controllers
-├── UI/              # User interface components
+├── UI/              # UI component base classes
 ├── Data/            # Static data (recipes, monsters, items)
 ├── Utils/           # Helper classes and extensions
 └── Managers/        # Singleton managers (SaveManager, etc.)
 
-Scenes/
-├── Main.tscn        # Main game scene
-├── UI/              # UI scenes and components
-├── Game/            # Game object scenes
-└── Prefabs/         # Reusable scene components
+Godot Project Root/
+├── scenes/          # .tscn scene files
+│   ├── main/        # Main game scenes
+│   ├── ui/          # UI scenes and components  
+│   └── prefabs/     # Reusable scene components
+├── scripts/         # Godot C# scene scripts (.cs files attached to scenes)
+│   ├── MainGameScene.cs
+│   ├── AdventurerStatusUI.cs
+│   └── CombatLogUI.cs
+├── assets/          # Textures, audio, fonts
+└── project.godot    # Project configuration
 ```
 
 ### Performance Considerations
@@ -123,6 +138,50 @@ Scenes/
 - Separate UI logic from game logic
 
 ## Common Patterns to Follow
+
+### Godot C# Scene Class Structure
+```csharp
+// Example of proper Godot C# class structure
+public partial class AdventurerUI : Control
+{
+    [Export] public PackedScene AdventurerStatusScene { get; set; }
+    [Export] public int MaxHealthBarWidth { get; set; } = 200;
+    
+    [Signal] 
+    public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
+    
+    private ProgressBar _healthBar;
+    private Label _nameLabel;
+    
+    public override void _Ready()
+    {
+        // Cache node references using NodePath
+        _healthBar = GetNode<ProgressBar>("VBox/HealthBar");
+        _nameLabel = GetNode<Label>("VBox/NameLabel");
+        
+        // Connect to game events
+        GameManager.Instance.AdventurerHealthChanged += OnHealthChanged;
+    }
+    
+    public override void _ExitTree()
+    {
+        // Clean up event subscriptions
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AdventurerHealthChanged -= OnHealthChanged;
+        }
+    }
+    
+    private void OnHealthChanged(int current, int max)
+    {
+        if (_healthBar != null)
+        {
+            _healthBar.Value = (double)current / max * 100;
+            EmitSignal(SignalName.HealthChanged, current, max);
+        }
+    }
+}
+```
 
 ### Initialization
 ```csharp

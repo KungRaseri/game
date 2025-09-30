@@ -1,11 +1,11 @@
 using Game.Main.Models;
 
-namespace Game.Main.Data
-{
-    /// <summary>
-    /// Factory for creating combat entities from configuration
-    /// </summary>
-    public static class EntityFactory
+namespace Game.Main.Data;
+
+/// <summary>
+/// Factory for creating combat entities from configuration
+/// </summary>
+public static class EntityFactory
     {
         /// <summary>
         /// Creates a combat entity from a type configuration
@@ -55,11 +55,10 @@ namespace Game.Main.Data
                 : CreateEntity(EntityTypes.Orc);
         }
 
-        public static CombatEntityStats CreateTroll(string? name = null)
-        {
-            return name != null 
-                ? CreateNamedEntity(EntityTypes.Troll, name)
-                : CreateEntity(EntityTypes.Troll);
-        }
+    public static CombatEntityStats CreateTroll(string? name = null)
+    {
+        return name != null 
+            ? CreateNamedEntity(EntityTypes.Troll, name)
+            : CreateEntity(EntityTypes.Troll);
     }
 }

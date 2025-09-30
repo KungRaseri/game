@@ -1,70 +1,61 @@
-namespace Game.Main.Models
+namespace Game.Main.Models;
+
+/// <summary>
+/// Configuration data for different entity types
+/// Uses modern C# record type for immutable data
+/// </summary>
+public record EntityTypeConfig(
+    string Name,
+    int BaseHealth, 
+    int BaseDamage,
+    float RetreatThreshold = 0f,
+    int HealthRegenPerSecond = 0
+)
 {
-    /// <summary>
-    /// Configuration data for different entity types
-    /// </summary>
-    public class EntityTypeConfig
-    {
-        public string Name { get; set; } = string.Empty;
-        public int BaseHealth { get; set; }
-        public int BaseDamage { get; set; }
-        public float RetreatThreshold { get; set; }
-        public int HealthRegenPerSecond { get; set; } = 0;
+    public EntityTypeConfig() : this(string.Empty, 0, 0) { }
+}
 
-        public EntityTypeConfig() { }
+/// <summary>
+/// Predefined entity type configurations using modern C# features
+/// </summary>
+public static class EntityTypes
+{
+    // Adventurer Types
+    public static EntityTypeConfig NoviceAdventurer { get; } = new(
+        Name: "Novice Adventurer",
+        BaseHealth: 100,
+        BaseDamage: 10,
+        RetreatThreshold: 0.25f,
+        HealthRegenPerSecond: 1
+    );
 
-        public EntityTypeConfig(string name, int baseHealth, int baseDamage, float retreatThreshold = 0f, int healthRegenPerSecond = 0)
-        {
-            Name = name;
-            BaseHealth = baseHealth;
-            BaseDamage = baseDamage;
-            RetreatThreshold = retreatThreshold;
-            HealthRegenPerSecond = healthRegenPerSecond;
-        }
-    }
+    public static EntityTypeConfig ExperiencedAdventurer { get; } = new(
+        Name: "Experienced Adventurer", 
+        BaseHealth: 150,
+        BaseDamage: 15,
+        RetreatThreshold: 0.20f,
+        HealthRegenPerSecond: 2
+    );
 
-    /// <summary>
-    /// Predefined entity type configurations
-    /// </summary>
-    public static class EntityTypes
-    {
-        // Adventurer Types
-        public static readonly EntityTypeConfig NoviceAdventurer = new(
-            name: "Novice Adventurer",
-            baseHealth: 100,
-            baseDamage: 10,
-            retreatThreshold: 0.25f,
-            healthRegenPerSecond: 1
-        );
+    // Monster Types  
+    public static EntityTypeConfig Goblin { get; } = new(
+        Name: "Goblin",
+        BaseHealth: 20,
+        BaseDamage: 5,
+        RetreatThreshold: 0f // Monsters fight to the death
+    );
 
-        public static readonly EntityTypeConfig ExperiencedAdventurer = new(
-            name: "Experienced Adventurer", 
-            baseHealth: 150,
-            baseDamage: 15,
-            retreatThreshold: 0.20f,
-            healthRegenPerSecond: 2
-        );
+    public static EntityTypeConfig Orc { get; } = new(
+        Name: "Orc",
+        BaseHealth: 40,
+        BaseDamage: 8,
+        RetreatThreshold: 0f
+    );
 
-        // Monster Types
-        public static readonly EntityTypeConfig Goblin = new(
-            name: "Goblin",
-            baseHealth: 20,
-            baseDamage: 5,
-            retreatThreshold: 0f // Monsters fight to the death
-        );
-
-        public static readonly EntityTypeConfig Orc = new(
-            name: "Orc",
-            baseHealth: 40,
-            baseDamage: 8,
-            retreatThreshold: 0f
-        );
-
-        public static readonly EntityTypeConfig Troll = new(
-            name: "Troll",
-            baseHealth: 80,
-            baseDamage: 12,
-            retreatThreshold: 0f
-        );
-    }
+    public static EntityTypeConfig Troll { get; } = new(
+        Name: "Troll",
+        BaseHealth: 80,
+        BaseDamage: 12,
+        RetreatThreshold: 0f
+    );
 }

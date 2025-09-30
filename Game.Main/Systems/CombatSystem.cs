@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using Game.Main.Models;
 
-namespace Game.Main.Systems
-{
-    /// <summary>
-    /// Manages combat between adventurers and monsters with health-based auto-combat
-    /// </summary>
-    public class CombatSystem
+namespace Game.Main.Systems;
+
+/// <summary>
+/// Manages combat between adventurers and monsters with health-based auto-combat
+/// </summary>
+public class CombatSystem
     {
         private readonly Queue<CombatEntityStats> _monsters;
         private CombatEntityStats? _currentAdventurer;
@@ -183,15 +183,14 @@ namespace Game.Main.Systems
             }
         }
 
-        /// <summary>
-        /// Resets the combat system to idle state
-        /// </summary>
-        public void Reset()
-        {
-            _monsters.Clear();
-            _currentMonster = null;
-            _currentAdventurer = null;
-            State = AdventurerState.Idle;
-        }
+    /// <summary>
+    /// Resets the combat system to idle state
+    /// </summary>
+    public void Reset()
+    {
+        _monsters.Clear();
+        _currentMonster = null;
+        _currentAdventurer = null;
+        State = AdventurerState.Idle;
     }
 }

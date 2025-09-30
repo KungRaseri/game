@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ce3hfv7a2s1gs"]
+
+[ext_resource type="Script" uid="uid://bo4q04wj4i4bp" path="res://Scripts/MainGameScene.cs" id="1_cp132"]
+
+[node name="MainGameScene" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_cp132")

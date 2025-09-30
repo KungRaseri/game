@@ -4,12 +4,12 @@ using Game.Main.Models;
 using Game.Main.Systems;
 using Game.Main.Data;
 
-namespace Game.Main.Controllers
-{
-    /// <summary>
-    /// Controls adventurer actions and manages their state
-    /// </summary>
-    public class AdventurerController
+namespace Game.Main.Controllers;
+
+/// <summary>
+/// Controls adventurer actions and manages their state
+/// </summary>
+public class AdventurerController : IDisposable
     {
         private readonly CombatEntityStats _adventurer;
         private readonly CombatSystem _combatSystem;
@@ -121,12 +121,11 @@ namespace Game.Main.Controllers
             StatusUpdated?.Invoke(message);
         }
 
-        public void Dispose()
-        {
-            _combatSystem.StateChanged -= OnStateChanged;
-            _combatSystem.CombatLogUpdated -= OnCombatLogUpdated;
-            _combatSystem.MonsterDefeated -= OnMonsterDefeated;
-            _combatSystem.ExpeditionCompleted -= OnExpeditionCompleted;
-        }
+    public void Dispose()
+    {
+        _combatSystem.StateChanged -= OnStateChanged;
+        _combatSystem.CombatLogUpdated -= OnCombatLogUpdated;
+        _combatSystem.MonsterDefeated -= OnMonsterDefeated;
+        _combatSystem.ExpeditionCompleted -= OnExpeditionCompleted;
     }
 }

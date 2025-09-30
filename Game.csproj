@@ -4,17 +4,10 @@
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Remove="AnotherGame.Main\**" />
 		<Compile Remove="Game.Main.Tests\**" />
 		<Compile Remove="Game.Main\**" />
-		<EmbeddedResource Remove="AnotherGame.Main\**" />
-		<EmbeddedResource Remove="Game.Main.Tests\**" />
-		<EmbeddedResource Remove="Game.Main\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="Game.Main\Game.Main.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Scripts\" />
 	</ItemGroup>
 </Project>
