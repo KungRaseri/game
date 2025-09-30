@@ -41,17 +41,17 @@ This milestone implements the core combat and adventurer system with health-base
 Scenes/
 ├── MainGameScene.tscn (main game layout)
 └── UI/
-    ├── AdventurerStatus.tscn (adventurer status panel)
-    ├── CombatLog.tscn (combat event log)
-    └── ExpeditionPanel.tscn (expedition progress)
+	├── AdventurerStatus.tscn (adventurer status panel)
+	├── CombatLog.tscn (combat event log)
+	└── ExpeditionPanel.tscn (expedition progress)
 
 Scripts/
 ├── Scenes/
 │   └── MainGameScene.cs (main orchestrator)
 └── UI/
-    ├── AdventurerStatusUI.cs (adventurer interface)
-    ├── CombatLogUI.cs (combat log management)
-    └── ExpeditionPanelUI.cs (expedition tracking)
+	├── AdventurerStatusUI.cs (adventurer interface)
+	├── CombatLogUI.cs (combat log management)
+	└── ExpeditionPanelUI.cs (expedition tracking)
 ```
 
 #### **Main Game Scene** (`MainGameScene.tscn` + `MainGameScene.cs`) ✅
@@ -107,7 +107,7 @@ Scripts/
 ## 🧪 Quality Assurance Results (Verified)
 
 ### Test Coverage ✅
-- **86 Unit Tests Passing** (100% success rate verified)
+- **87 Unit Tests Passing** (100% success rate verified)
 - **All Edge Cases Covered** - Health thresholds, state transitions, event handling
 - **Integration Testing** - UI-to-logic communication verified
 - **Build Verification** - Clean compilation with zero warnings
@@ -174,7 +174,7 @@ gameManager.Initialize();
 
 // Set up event handlers for logging
 gameManager.AdventurerController.StatusUpdated += message => 
-    Console.WriteLine($"Status: {message}");
+	Console.WriteLine($"Status: {message}");
 
 // Send adventurer to dungeon (creates 3 goblins automatically)
 gameManager.AdventurerController.SendToGoblinCave();
@@ -226,10 +226,10 @@ dotnet test Game.Main.Tests --verbosity quiet
 ### Test Coverage Summary:
 - **Models** (24 tests): CombatEntityStats, AdventurerState
 - **Data** (23 tests): EntityFactory, EntityTypes  
-- **Systems** (24 tests): CombatSystem integration and workflows
+- **Systems** (25 tests): CombatSystem integration and workflows
 - **Controllers** (18 tests): AdventurerController event coordination
 - **Managers** (10 tests): GameManager system lifecycle
-- **Total**: 86 tests, 100% pass rate, <1 second execution time
+- **Total**: 87 tests, 100% pass rate, <1 second execution time
 
 ## 📁 Project Structure
 ```

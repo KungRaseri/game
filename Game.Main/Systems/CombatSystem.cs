@@ -87,6 +87,9 @@ public class CombatSystem
             case AdventurerState.Fighting:
                 ProcessCombat(fixedDeltaTime);
                 break;
+            case AdventurerState.Retreating:
+                ProcessRetreat(fixedDeltaTime);
+                break;
             case AdventurerState.Regenerating:
                 ProcessRegeneration(fixedDeltaTime);
                 break;
@@ -188,6 +191,23 @@ public class CombatSystem
                 ExpeditionCompleted?.Invoke();
             }
         }
+    }
+
+    private void ProcessRetreat(float deltaTime)
+    {
+        if (_currentAdventurer == null) return;
+
+        // Clear current monster and remaining monsters from the expedition
+        if (_currentMonster != null)
+        {
+            _currentMonster.Died -= OnMonsterDied;
+            _currentMonster = null;
+        }
+        _monsters.Clear();
+
+        // Transition to regenerating to begin healing
+        State = AdventurerState.Regenerating;
+        LogMessage("Adventurer reaches safety and begins recovering");
     }
 
     private void ProcessRegeneration(float deltaTime)
