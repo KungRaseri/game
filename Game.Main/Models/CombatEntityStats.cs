@@ -1,11 +1,11 @@
 using System;
 
-namespace Game.Main.Models
-{
-    /// <summary>
-    /// Generic combat entity stats that can represent any fighting unit (adventurer, monster, etc.)
-    /// </summary>
-    public class CombatEntityStats
+namespace Game.Main.Models;
+
+/// <summary>
+/// Generic combat entity stats that can represent any fighting unit (adventurer, monster, etc.)
+/// </summary>
+public class CombatEntityStats
     {
         private int _currentHealth;
         private int _maxHealth;
@@ -98,9 +98,8 @@ namespace Game.Main.Models
             }
         }
 
-        public override string ToString()
-        {
-            return $"{Name} (HP: {CurrentHealth}/{MaxHealth}, DPS: {DamagePerSecond})";
-        }
+    public override string ToString()
+    {
+        return $"{Name} (HP: {CurrentHealth}/{MaxHealth}, DPS: {DamagePerSecond})";
     }
 }

@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://ce3hfv7a2s1gs"]
+
+[ext_resource type="Script" uid="uid://1wcipswu6kfn" path="res://Scripts/Scenes/MainGameScene.cs" id="1_qla6v"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/AdventurerStatus.tscn" id="2_adventurer_status"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/CombatLog.tscn" id="3_combat_log"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/ExpeditionPanel.tscn" id="4_expedition_panel"]
+
+[node name="MainGameScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qla6v")
+UpdateInterval = 1.0
+
+[node name="MainContainer" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftPanel" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AdventurerStatus" parent="MainContainer/LeftPanel" instance=ExtResource("2_adventurer_status")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ExpeditionPanel" parent="MainContainer/LeftPanel" instance=ExtResource("4_expedition_panel")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CombatLog" parent="MainContainer" instance=ExtResource("3_combat_log")]
+layout_mode = 2
+size_flags_horizontal = 3

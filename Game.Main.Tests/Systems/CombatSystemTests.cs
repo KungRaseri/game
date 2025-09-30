@@ -325,5 +325,51 @@ namespace Game.Main.Tests.Systems
             Assert.Equal(AdventurerState.Idle, combatSystem.State);
             Assert.Equal(adventurer.MaxHealth, adventurer.CurrentHealth);
         }
+
+        [Fact]
+        public void ForceRetreat_TransitionsToRegeneratingThenIdle()
+        {
+            // Arrange
+            var combatSystem = new CombatSystem();
+            var adventurer = EntityFactory.CreateNoviceAdventurer();
+            var monster = EntityFactory.CreateGoblin();
+            var stateChanges = new List<AdventurerState>();
+
+            // Damage adventurer so they need healing
+            adventurer.TakeDamage(30); // Take some damage so regeneration is needed
+
+            combatSystem.StateChanged += state => stateChanges.Add(state);
+            combatSystem.StartExpedition(adventurer, new List<CombatEntityStats> { monster });
+
+            // Act - Force retreat and then process updates
+            combatSystem.ForceRetreat();
+            
+            // Verify initial retreat state
+            Assert.Equal(AdventurerState.Retreating, combatSystem.State);
+
+            // Process retreat (should transition to Regenerating)
+            combatSystem.Update();
+            Assert.Equal(AdventurerState.Regenerating, combatSystem.State);
+
+            // Process regeneration until fully healed (should transition to Idle)
+            int maxUpdates = 50; // Safety check to prevent infinite loop
+            int updateCount = 0;
+            while (combatSystem.State == AdventurerState.Regenerating && updateCount < maxUpdates)
+            {
+                combatSystem.Update();
+                updateCount++;
+            }
+
+            // Assert final state
+            Assert.Equal(AdventurerState.Idle, combatSystem.State);
+            Assert.Equal(adventurer.MaxHealth, adventurer.CurrentHealth);
+            
+            // Verify state transition sequence
+            Assert.Contains(AdventurerState.Traveling, stateChanges);
+            Assert.Contains(AdventurerState.Fighting, stateChanges);
+            Assert.Contains(AdventurerState.Retreating, stateChanges);
+            Assert.Contains(AdventurerState.Regenerating, stateChanges);
+            Assert.Contains(AdventurerState.Idle, stateChanges);
+        }
     }
 }
