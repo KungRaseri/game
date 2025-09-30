@@ -154,17 +154,21 @@ namespace Game.Main.Tests.Data
         }
 
         [Fact]
-        public void EntityTypeConfig_DefaultConstructor_InitializesCorrectly()
+        public void EntityTypeConfig_ConstructorWithRequiredParameters_InitializesCorrectly()
         {
             // Act
-            var config = new EntityTypeConfig();
+            var config = new EntityTypeConfig(
+                Name: "Test Entity",
+                BaseHealth: 50,
+                BaseDamage: 10
+            );
 
             // Assert
-            Assert.Equal(string.Empty, config.Name);
-            Assert.Equal(0, config.BaseHealth);
-            Assert.Equal(0, config.BaseDamage);
-            Assert.Equal(0f, config.RetreatThreshold);
-            Assert.Equal(0, config.HealthRegenPerSecond);
+            Assert.Equal("Test Entity", config.Name);
+            Assert.Equal(50, config.BaseHealth);
+            Assert.Equal(10, config.BaseDamage);
+            Assert.Equal(0f, config.RetreatThreshold); // Default value
+            Assert.Equal(0, config.HealthRegenPerSecond); // Default value
         }
 
         [Fact]
