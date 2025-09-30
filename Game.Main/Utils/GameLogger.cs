@@ -86,13 +86,13 @@ public static class GameLogger
     public static void Error(Exception exception, string message = "", CallerInfo? caller = null)
     {
         caller ??= new CallerInfo();
-        
-        var fullMessage = string.IsNullOrEmpty(message) 
-            ? $"Exception: {exception.Message}" 
+
+        var fullMessage = string.IsNullOrEmpty(message)
+            ? $"Exception: {exception.Message}"
             : $"{message} - Exception: {exception.Message}";
-        
+
         LogMessage(LogLevel.Error, fullMessage, caller);
-        
+
         if (_currentLogLevel <= LogLevel.Debug && !string.IsNullOrEmpty(exception.StackTrace))
         {
             LogMessage(LogLevel.Error, $"Stack trace: {exception.StackTrace}", caller);
