@@ -17,8 +17,12 @@ public class AdventurerController : IDisposable
         public CombatEntityStats Adventurer => _adventurer;
         public AdventurerState State => _combatSystem.State;
         public bool IsAvailable => State == AdventurerState.Idle;
+        public CombatEntityStats? CurrentMonster => _combatSystem.CurrentMonster;
 
         public event Action<string>? StatusUpdated;
+        public event Action<AdventurerState>? StateChanged;
+        public event Action<CombatEntityStats>? MonsterDefeated;
+        public event Action? ExpeditionCompleted;
 
         public AdventurerController(CombatSystem combatSystem)
         {
@@ -93,6 +97,7 @@ public class AdventurerController : IDisposable
         private void OnStateChanged(AdventurerState newState)
         {
             UpdateStatus($"Adventurer state changed to: {newState}");
+            StateChanged?.Invoke(newState);
         }
 
         private void OnCombatLogUpdated(string logMessage)
@@ -103,6 +108,7 @@ public class AdventurerController : IDisposable
         private void OnMonsterDefeated(CombatEntityStats monster)
         {
             UpdateStatus($"Victory! {monster.Name} has been defeated!");
+            MonsterDefeated?.Invoke(monster);
         }
 
         private void OnExpeditionCompleted()
@@ -114,6 +120,7 @@ public class AdventurerController : IDisposable
                 _ => "Expedition ended"
             };
             UpdateStatus(message);
+            ExpeditionCompleted?.Invoke();
         }
 
         private void UpdateStatus(string message)
