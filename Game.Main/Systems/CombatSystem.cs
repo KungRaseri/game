@@ -14,9 +14,30 @@ public class CombatSystem
     private CombatEntityStats? _currentMonster;
     private AdventurerState _state;
 
-    // Accumulated fractional damage to handle low DPS properly
+    /// <summary>
+    /// Accumulates fractional damage dealt by the adventurer to the monster.
+    /// <para>
+    /// Fractional accumulation is necessary to prevent rounding errors in scenarios where
+    /// the adventurer's damage per tick is less than 1. By accumulating the fractional
+    /// damage over multiple ticks, we ensure that all intended damage is eventually applied,
+    /// preventing the loss of damage that would occur if values were truncated or rounded
+    /// each tick. This is especially important in low DPS scenarios.
+    /// </para>
+    /// </summary>
     private float _accumulatedAdventurerDamage = 0f;
+
+    /// <summary>
+    /// Accumulates fractional damage dealt by the monster to the adventurer.
+    /// <para>
+    /// Fractional accumulation is necessary to prevent rounding errors in scenarios where
+    /// the monster's damage per tick is less than 1. By accumulating the fractional
+    /// damage over multiple ticks, we ensure that all intended damage is eventually applied,
+    /// preventing the loss of damage that would occur if values were truncated or rounded
+    /// each tick. This is especially important in low DPS scenarios.
+    /// </para>
+    /// </summary>
     private float _accumulatedMonsterDamage = 0f;
+
     public AdventurerState State
     {
         get => _state;

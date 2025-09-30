@@ -45,7 +45,7 @@ public partial class MainGameScene : Control
         InitializeGameSystems();
         SetupUpdateTimer();
         ConnectUIEvents();
-        
+
         GameLogger.Info("MainGameScene ready");
     }
 
@@ -53,10 +53,10 @@ public partial class MainGameScene : Control
     {
         // Clean up resources to prevent memory leaks
         _updateTimer?.QueueFree();
-        
+
         DisconnectUIEvents();
         _gameManager?.Dispose();
-        
+
         GameLogger.Info("MainGameScene disposed");
     }
 
@@ -89,10 +89,10 @@ public partial class MainGameScene : Control
         if (_gameManager?.AdventurerController == null) return;
 
         var controller = _gameManager.AdventurerController;
-        
+
         // Subscribe to health changes
         controller.Adventurer.HealthChanged += OnAdventurerHealthChanged;
-        
+
         // Subscribe to controller events
         controller.StateChanged += OnAdventurerStateChanged;
         controller.MonsterDefeated += OnMonsterDefeated;
@@ -104,10 +104,10 @@ public partial class MainGameScene : Control
         if (_gameManager?.AdventurerController == null) return;
 
         var controller = _gameManager.AdventurerController;
-        
+
         // Unsubscribe from health changes
         controller.Adventurer.HealthChanged -= OnAdventurerHealthChanged;
-        
+
         // Unsubscribe from controller events
         controller.StateChanged -= OnAdventurerStateChanged;
         controller.MonsterDefeated -= OnMonsterDefeated;
@@ -121,7 +121,7 @@ public partial class MainGameScene : Control
             WaitTime = UpdateInterval,
             Autostart = true
         };
-        
+
         _updateTimer.Timeout += OnUpdateTimer;
         AddChild(_updateTimer);
     }
@@ -138,7 +138,7 @@ public partial class MainGameScene : Control
     private void DisconnectUIEvents()
     {
         UnsubscribeFromGameEvents();
-        
+
         if (_adventurerStatusUI != null)
         {
             _adventurerStatusUI.SendExpeditionRequested -= OnSendExpeditionRequested;
@@ -153,12 +153,14 @@ public partial class MainGameScene : Control
 
     private void OnSendExpeditionRequested()
     {
-        if (_gameManager?.AdventurerController is { IsAvailable: true } controller)
+        // More explicit null and property check for readability
+        var controller = _gameManager?.AdventurerController;
+        if (controller != null && controller.IsAvailable)
         {
             controller.SendToGoblinCave();
             _expeditionPanelUI?.StartExpedition("Goblin Cave", 3);
             EmitSignal(SignalName.GameStateChanged, "expedition_started");
-            
+
             GameLogger.Info("Expedition started via UI");
         }
         else
@@ -174,7 +176,7 @@ public partial class MainGameScene : Control
         {
             _gameManager.AdventurerController.Retreat();
             EmitSignal(SignalName.GameStateChanged, "retreating");
-            
+
             GameLogger.Info("Retreat ordered via UI");
         }
     }
@@ -203,7 +205,7 @@ public partial class MainGameScene : Control
     private void OnAdventurerStateChanged(AdventurerState newState)
     {
         EmitSignal(SignalName.GameStateChanged, newState.ToString());
-        
+
         // Update expedition panel based on state
         if (newState == AdventurerState.Fighting && _gameManager?.AdventurerController?.CurrentMonster != null)
         {
