@@ -10,7 +10,7 @@ namespace Game.Main.UI;
 
 /// <summary>
 /// UI component that displays combat events and status messages.
-/// Follows Godot 4.4 C# best practices and coding conventions.
+/// Follows Godot 4.5 C# best practices and coding conventions.
 /// </summary>
 public partial class CombatLogUI : Panel
 {
