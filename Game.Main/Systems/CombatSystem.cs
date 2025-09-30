@@ -18,6 +18,7 @@ public class CombatSystem
     private float _accumulatedAdventurerDamage = 0f;
     private float _accumulatedMonsterDamage = 0f;
     public AdventurerState State
+    {
         get => _state;
         private set
         {
@@ -95,7 +96,7 @@ public class CombatSystem
                 break;
         }
     }
-    
+
     private void StartNextFight()
     {
         if (_currentAdventurer == null) return;
