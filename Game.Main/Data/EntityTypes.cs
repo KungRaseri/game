@@ -12,9 +12,7 @@ public record EntityTypeConfig(
     int HealthRegenPerSecond = 0
 )
 {
-    public EntityTypeConfig() : this(string.Empty, 0, 0) { }
 }
-
 /// <summary>
 /// Predefined entity type configurations using modern C# features
 /// </summary>
