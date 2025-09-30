@@ -148,7 +148,7 @@ public partial class MainGameScene : Control
 
     private void OnUpdateTimer()
     {
-        _gameManager?.Update();
+        _gameManager?.Update(UpdateInterval);
     }
 
     private void OnSendExpeditionRequested()

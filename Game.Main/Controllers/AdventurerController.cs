@@ -77,6 +77,14 @@ public class AdventurerController : IDisposable
         }
 
         /// <summary>
+        /// Updates the adventurer's combat state with fixed time step
+        /// </summary>
+        public void Update(float fixedDeltaTime)
+        {
+            _combatSystem.Update(fixedDeltaTime);
+        }
+
+        /// <summary>
         /// Gets current adventurer status information
         /// </summary>
         public string GetStatusInfo()

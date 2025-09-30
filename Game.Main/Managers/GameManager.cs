@@ -41,6 +41,14 @@ public class GameManager : IDisposable
 	/// </summary>
 	public void Update()
 	{
+		Update(1.0f); // Default to 1 second for backward compatibility
+	}
+
+	/// <summary>
+	/// Updates all game systems with fixed time step
+	/// </summary>
+	public void Update(float fixedDeltaTime)
+	{
 		if (_disposed)
 		{
 			GameLogger.Warning("Update called on disposed GameManager");
@@ -49,7 +57,7 @@ public class GameManager : IDisposable
 
 		try
 		{
-			_adventurerController.Update();
+			_adventurerController.Update(fixedDeltaTime);
 		}
 		catch (Exception ex)
 		{

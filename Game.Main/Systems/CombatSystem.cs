@@ -13,7 +13,6 @@ namespace Game.Main.Systems;
         private CombatEntityStats? _currentAdventurer;
         private CombatEntityStats? _currentMonster;
         private AdventurerState _state;
-        private DateTime _lastUpdateTime;
         
         // Accumulated fractional damage to handle low DPS properly
         private float _accumulatedAdventurerDamage = 0f;
@@ -41,7 +40,6 @@ namespace Game.Main.Systems;
         {
             _monsters = new Queue<CombatEntityStats>();
             State = AdventurerState.Idle;
-            _lastUpdateTime = DateTime.Now;
         }
 
         /// <summary>
@@ -76,17 +74,21 @@ namespace Game.Main.Systems;
         /// </summary>
         public void Update()
         {
-            var currentTime = DateTime.Now;
-            var deltaTime = (float)(currentTime - _lastUpdateTime).TotalSeconds;
-            _lastUpdateTime = currentTime;
+            Update(1.0f); // Default to 1 second for backward compatibility
+        }
 
+        /// <summary>
+        /// Updates combat state and processes damage over time with fixed time step
+        /// </summary>
+        public void Update(float fixedDeltaTime)
+        {
             switch (State)
             {
                 case AdventurerState.Fighting:
-                    ProcessCombat(deltaTime);
+                    ProcessCombat(fixedDeltaTime);
                     break;
                 case AdventurerState.Regenerating:
-                    ProcessRegeneration(deltaTime);
+                    ProcessRegeneration(fixedDeltaTime);
                     break;
             }
         }
