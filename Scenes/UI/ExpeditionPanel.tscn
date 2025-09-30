@@ -85,6 +85,29 @@ layout_mode = 2
 text = "None"
 size_flags_horizontal = 3
 
+[node name="EnemyHealthContainer" type="VBoxContainer" parent="VBoxContainer/InfoContainer"]
+layout_mode = 2
+
+[node name="EnemyHealthLabelContainer" type="HBoxContainer" parent="VBoxContainer/InfoContainer/EnemyHealthContainer"]
+layout_mode = 2
+
+[node name="EnemyHealthLabel" type="Label" parent="VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthLabelContainer"]
+layout_mode = 2
+text = "Enemy Health:"
+size_flags_horizontal = 0
+
+[node name="EnemyHealthText" type="Label" parent="VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthLabelContainer"]
+layout_mode = 2
+text = "-- / --"
+size_flags_horizontal = 3
+
+[node name="EnemyHealthBar" type="ProgressBar" parent="VBoxContainer/InfoContainer/EnemyHealthContainer"]
+layout_mode = 2
+min_value = 0.0
+max_value = 100.0
+value = 0.0
+show_percentage = false
+
 [node name="StatusContainer" type="HBoxContainer" parent="VBoxContainer/InfoContainer"]
 layout_mode = 2
 

@@ -18,10 +18,13 @@ public partial class ExpeditionPanelUI : Panel
     private ProgressBar? _progressBar;
     private Label? _monsterName;
     private Label? _expeditionStatus;
+    private Label? _enemyHealthText;
+    private ProgressBar? _enemyHealthBar;
 
     private AdventurerController? _adventurerController;
     private int _totalMonsters = 0;
     private int _defeatedMonsters = 0;
+    private Game.Main.Models.CombatEntityStats? _currentEnemy;
 
     public override void _Ready()
     {
@@ -95,6 +98,32 @@ public partial class ExpeditionPanelUI : Panel
     }
 
     /// <summary>
+    /// Sets the current enemy entity and subscribes to its health changes.
+    /// </summary>
+    public void SetCurrentEnemy(Game.Main.Models.CombatEntityStats? enemy)
+    {
+        // Unsubscribe from previous enemy
+        if (_currentEnemy != null)
+        {
+            _currentEnemy.HealthChanged -= OnEnemyHealthChanged;
+        }
+
+        _currentEnemy = enemy;
+
+        if (_currentEnemy != null)
+        {
+            _currentEnemy.HealthChanged += OnEnemyHealthChanged;
+            SetCurrentMonster(_currentEnemy.Name);
+            UpdateEnemyHealthDisplay();
+        }
+        else
+        {
+            SetCurrentMonster("None");
+            ClearEnemyHealthDisplay();
+        }
+    }
+
+    /// <summary>
     /// Clears expedition data when expedition ends.
     /// </summary>
     public void EndExpedition()
@@ -112,6 +141,8 @@ public partial class ExpeditionPanelUI : Panel
         _totalMonsters = 0;
         _defeatedMonsters = 0;
 
+        SetCurrentEnemy(null);
+
         CallDeferred(nameof(UpdateUI));
         GameLogger.Info("Expedition ended");
     }
@@ -123,6 +154,8 @@ public partial class ExpeditionPanelUI : Panel
         _progressBar = GetNode<ProgressBar>("VBoxContainer/InfoContainer/ProgressContainer/ProgressBar");
         _monsterName = GetNode<Label>("VBoxContainer/InfoContainer/MonsterContainer/MonsterName");
         _expeditionStatus = GetNode<Label>("VBoxContainer/InfoContainer/StatusContainer/ExpeditionStatus");
+        _enemyHealthText = GetNode<Label>("VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthLabelContainer/EnemyHealthText");
+        _enemyHealthBar = GetNode<ProgressBar>("VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthBar");
     }
 
     private void UnsubscribeFromController()
@@ -130,6 +163,11 @@ public partial class ExpeditionPanelUI : Panel
         if (_adventurerController != null)
         {
             _adventurerController.StatusUpdated -= OnStatusUpdated;
+        }
+
+        if (_currentEnemy != null)
+        {
+            _currentEnemy.HealthChanged -= OnEnemyHealthChanged;
         }
     }
 
@@ -208,5 +246,62 @@ public partial class ExpeditionPanelUI : Panel
             EndExpedition();
         }
         // Remove the defeated parsing - this should be handled by the MonsterDefeated event instead
+    }
+
+    private void UpdateEnemyHealthDisplay()
+    {
+        if (_currentEnemy == null)
+        {
+            ClearEnemyHealthDisplay();
+            return;
+        }
+
+        var currentHealth = _currentEnemy.CurrentHealth;
+        var maxHealth = _currentEnemy.MaxHealth;
+
+        if (_enemyHealthText != null)
+        {
+            _enemyHealthText.Text = $"{currentHealth} / {maxHealth}";
+        }
+
+        if (_enemyHealthBar != null)
+        {
+            _enemyHealthBar.MaxValue = maxHealth;
+            _enemyHealthBar.Value = currentHealth;
+
+            // Change color based on health percentage
+            var healthPercent = (double)currentHealth / maxHealth;
+            if (healthPercent <= 0.25)
+            {
+                _enemyHealthBar.Modulate = Colors.Red;
+            }
+            else if (healthPercent <= 0.5)
+            {
+                _enemyHealthBar.Modulate = Colors.Orange;
+            }
+            else
+            {
+                _enemyHealthBar.Modulate = Colors.Red; // Enemies are red by default
+            }
+        }
+    }
+
+    private void ClearEnemyHealthDisplay()
+    {
+        if (_enemyHealthText != null)
+        {
+            _enemyHealthText.Text = "-- / --";
+        }
+
+        if (_enemyHealthBar != null)
+        {
+            _enemyHealthBar.Value = 0;
+            _enemyHealthBar.Modulate = Colors.Gray;
+        }
+    }
+
+    private void OnEnemyHealthChanged(int currentHealth, int maxHealth)
+    {
+        CallDeferred(nameof(UpdateEnemyHealthDisplay));
     }
 }

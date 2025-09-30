@@ -7,15 +7,17 @@ namespace Game.Main.Systems;
 /// <summary>
 /// Manages combat between adventurers and monsters with health-based auto-combat
 /// </summary>
-public class CombatSystem
+    public class CombatSystem
     {
         private readonly Queue<CombatEntityStats> _monsters;
         private CombatEntityStats? _currentAdventurer;
         private CombatEntityStats? _currentMonster;
         private AdventurerState _state;
         private DateTime _lastUpdateTime;
-
-        public AdventurerState State 
+        
+        // Accumulated fractional damage to handle low DPS properly
+        private float _accumulatedAdventurerDamage = 0f;
+        private float _accumulatedMonsterDamage = 0f;        public AdventurerState State 
         { 
             get => _state;
             private set 
@@ -58,6 +60,10 @@ public class CombatSystem
                 _monsters.Enqueue(monster);
             }
 
+            // Reset accumulated damage for new expedition
+            _accumulatedAdventurerDamage = 0f;
+            _accumulatedMonsterDamage = 0f;
+
             State = AdventurerState.Traveling;
             LogMessage($"Adventurer begins expedition with {_monsters.Count} monsters to face");
             
@@ -94,6 +100,11 @@ public class CombatSystem
                 _currentMonster = _monsters.Dequeue();
                 _currentMonster.Died += OnMonsterDied;
                 State = AdventurerState.Fighting;
+                
+                // Reset accumulated damage for new fight
+                _accumulatedAdventurerDamage = 0f;
+                _accumulatedMonsterDamage = 0f;
+                
                 LogMessage($"Combat begins against {_currentMonster.Name}!");
             }
             else
@@ -107,7 +118,24 @@ public class CombatSystem
 
         private void ProcessCombat(float deltaTime)
         {
-            if (_currentAdventurer == null || _currentMonster == null) return;
+            if (_currentAdventurer == null || _currentMonster == null)
+            {
+                // If we're missing entities but still in fighting state, transition appropriately
+                if (State == AdventurerState.Fighting)
+                {
+                    if (_monsters.Count > 0)
+                    {
+                        StartNextFight();
+                    }
+                    else
+                    {
+                        State = AdventurerState.Regenerating;
+                        LogMessage("Combat ended - adventurer returns!");
+                        ExpeditionCompleted?.Invoke();
+                    }
+                }
+                return;
+            }
 
             // Check if adventurer should retreat
             if (_currentAdventurer.ShouldRetreat)
@@ -118,18 +146,40 @@ public class CombatSystem
                 return;
             }
 
-            // Apply damage over time
-            var adventurerDamage = (int)(_currentAdventurer.DamagePerSecond * deltaTime);
-            var monsterDamage = (int)(_currentMonster.DamagePerSecond * deltaTime);
-
-            _currentMonster.TakeDamage(adventurerDamage);
+            // Store local references to prevent race conditions
+            var currentAdventurer = _currentAdventurer;
+            var currentMonster = _currentMonster;
             
-            if (_currentMonster.IsAlive)
+            // Double-check that they're still valid after storing references
+            if (currentAdventurer == null || currentMonster == null)
             {
-                _currentAdventurer.TakeDamage(monsterDamage);
+                return;
+            }
+
+            // Apply damage over time with proper fractional damage accumulation
+            _accumulatedAdventurerDamage += currentAdventurer.DamagePerSecond * deltaTime;
+            _accumulatedMonsterDamage += currentMonster.DamagePerSecond * deltaTime;
+            
+            // Apply accumulated damage when it reaches at least 1 point
+            var adventurerDamage = (int)_accumulatedAdventurerDamage;
+            var monsterDamage = (int)_accumulatedMonsterDamage;
+            
+            if (adventurerDamage > 0)
+            {
+                _accumulatedAdventurerDamage -= adventurerDamage;
+                currentMonster.TakeDamage(adventurerDamage);
+            }
+
+            // Check if monster was alive before damage and apply counter-damage
+            var monsterWasAlive = currentMonster.IsAlive;
+            
+            if (monsterWasAlive && monsterDamage > 0 && currentAdventurer.IsAlive)
+            {
+                _accumulatedMonsterDamage -= monsterDamage;
+                currentAdventurer.TakeDamage(monsterDamage);
                 
                 // Check if adventurer died
-                if (!_currentAdventurer.IsAlive)
+                if (!currentAdventurer.IsAlive)
                 {
                     State = AdventurerState.Retreating;
                     LogMessage("Adventurer has fallen! Emergency retreat!");
@@ -161,6 +211,8 @@ public class CombatSystem
             {
                 _currentMonster.Died -= OnMonsterDied;
                 _currentMonster = null;
+                
+                // Immediately start next fight to avoid state inconsistencies
                 StartNextFight();
             }
         }

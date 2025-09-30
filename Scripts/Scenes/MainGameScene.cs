@@ -187,6 +187,7 @@ public partial class MainGameScene : Control
     private void OnMonsterDefeated(Game.Main.Models.CombatEntityStats monster)
     {
         _expeditionPanelUI?.OnMonsterDefeated();
+        _expeditionPanelUI?.SetCurrentEnemy(null); // Clear enemy display when defeated
         _combatLogUI?.AddLogEntry($"Defeated {monster.Name}!", "green");
         GameLogger.Info($"Monster defeated: {monster.Name}");
     }
@@ -206,11 +207,12 @@ public partial class MainGameScene : Control
         // Update expedition panel based on state
         if (newState == AdventurerState.Fighting && _gameManager?.AdventurerController?.CurrentMonster != null)
         {
-            _expeditionPanelUI?.SetCurrentMonster(_gameManager.AdventurerController.CurrentMonster.Name);
+            var currentMonster = _gameManager.AdventurerController.CurrentMonster;
+            _expeditionPanelUI?.SetCurrentEnemy(currentMonster);
         }
         else if (newState == AdventurerState.Idle)
         {
-            _expeditionPanelUI?.SetCurrentMonster("None");
+            _expeditionPanelUI?.SetCurrentEnemy(null);
         }
     }
 
