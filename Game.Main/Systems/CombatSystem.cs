@@ -16,8 +16,8 @@ public class CombatSystem
 
     // Accumulated fractional damage to handle low DPS properly
     private float _accumulatedAdventurerDamage = 0f;
-    private float _accumulatedMonsterDamage = 0f; public AdventurerState State
-    {
+    private float _accumulatedMonsterDamage = 0f;
+    public AdventurerState State
         get => _state;
         private set
         {
