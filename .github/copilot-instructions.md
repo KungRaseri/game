@@ -2,13 +2,13 @@
 
 ## Project Overview
 This is an idle dungeon crawler and shop keeper game built with:
-- **C# .NET 4.8** - Core game logic and systems
+- **C# .NET 8.0** - Core game logic and systems (Godot 4.5 requirement)
 - **Godot 4.5** - Game engine and UI framework
 - **Target Platform**: PC (Windows primary)
 
 ## Development Best Practices
 
-### C# .NET 4.8 Guidelines
+### C# .NET 8.0 Guidelines (Godot 4.5 Requirement)
 - Use **PascalCase** for public members, classes, and methods
 - Use **camelCase** for private fields and local variables
 - Prefix private fields with underscore: `_privateField`
@@ -16,21 +16,96 @@ This is an idle dungeon crawler and shop keeper game built with:
 - Implement `IDisposable` for resource management
 - Use `async/await` for asynchronous operations
 - Follow SOLID principles for class design
-- Use nullable reference types where appropriate
+- Use **nullable reference types** (`#nullable enable`)
+- Use **file-scoped namespaces** (`namespace MyNamespace;`)
+- Use **record types** for immutable data structures
+- Use **pattern matching** and **switch expressions**
+- Use **init-only properties** for immutable object initialization
 - Prefer composition over inheritance
 - Keep methods small and focused (single responsibility)
 
-### Godot 4.5 Specific Practices
-- Use **PascalCase** for scene names and node names
-- Use **snake_case** for signal names and custom methods called from GDScript
-- Inherit from appropriate Godot base classes (`Node`, `Control`, `Resource`)
-- Use `[Export]` attribute for inspector-visible properties
-- Implement `_Ready()` and `_Process()` methods when needed
-- Use `GetNode<T>()` for type-safe node references
-- Cache node references in `_Ready()` to avoid repeated lookups
-- Use signals for loose coupling between systems
-- Organize scenes in logical folders (UI, Game, Systems)
-- Use AutoLoad for singleton managers
+### Godot 4.5 C# Official Best Practices
+**Follow official guidelines from https://docs.godotengine.org/en/4.4/tutorials/scripting/c_sharp/c_sharp_basics.html**
+
+#### Formatting Standards:
+- Use **Allman Style** bracing (opening brace on new line)
+- Use **4 spaces** for indentation (not tabs)
+- Use **LF line endings** (not CRLF)
+- Keep lines under **100 characters** when possible
+- Insert blank lines after `using` statements and between methods
+- Use spaces around operators and after commas
+
+#### Naming Conventions:
+- **PascalCase**: Classes, methods, properties, public fields, namespaces
+- **camelCase**: Local variables, method parameters
+- **_camelCase**: Private fields (underscore prefix)
+- **PascalCase**: Exported properties for Godot inspector
+- **Interfaces**: Prefix with `I` (e.g., `ILoggerBackend`)
+- **Signals**: Use descriptive names ending with `EventHandler`
+
+#### Godot-Specific Patterns:
+```csharp
+public partial class PlayerController : CharacterBody2D
+{
+    [Export] public float Speed { get; set; } = 300.0f;
+    [Export] public PackedScene BulletScene { get; set; } = null!;
+    
+    [Signal]
+    public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
+    
+    private Timer? _shootTimer;
+    
+    public override void _Ready()
+    {
+        // Cache node references for performance
+        _shootTimer = GetNode<Timer>("ShootTimer");
+        _shootTimer.Timeout += OnShootTimer;
+    }
+    
+    public override void _ExitTree()
+    {
+        // Clean up event subscriptions
+        if (_shootTimer != null)
+        {
+            _shootTimer.Timeout -= OnShootTimer;
+        }
+    }
+    
+    private void OnShootTimer()
+    {
+        // Use EmitSignal with SignalName enumeration
+        EmitSignal(SignalName.HealthChanged, currentHealth, maxHealth);
+    }
+}
+```
+
+#### Key Godot C# Requirements:
+- Use **partial classes** for Godot nodes (`public partial class`)
+- Use **[Export]** attributes for inspector-visible properties
+- Use **[Signal]** attributes for custom signals with delegate declarations
+- Cache node references in `_Ready()` to avoid repeated `GetNode()` calls
+- Use `CallDeferred()` for operations that modify scene tree during physics/processing
+- Use `EmitSignal(SignalName.MySignal, args)` instead of string-based emissions
+- Use `QueueFree()` for proper node cleanup instead of direct disposal
+- Class name **must match** the `.cs` filename exactly (case-sensitive)
+
+#### Performance Best Practices:
+- Cache expensive calculations and node lookups
+- Use object pooling for frequently created/destroyed objects
+- Minimize allocations in `_Process()` and frequent update loops
+- Use `StringName` for frequently accessed string constants
+- Avoid modifying Godot struct properties directly - use full reassignment:
+```csharp
+// DON'T do this:
+Position.X = 100.0f; // CS1612 error
+
+// DO this instead:
+Position = Position with { X = 100.0f }; // C# 10+ with expression
+// OR
+var newPosition = Position;
+newPosition.X = 100.0f;
+Position = newPosition;
+```
 
 ### Architecture Patterns
 - **MVC/MVP** - Separate game logic from UI presentation
@@ -39,32 +114,39 @@ This is an idle dungeon crawler and shop keeper game built with:
 - **Command Pattern** - For user actions and undo functionality
 - **Factory Pattern** - For creating items, monsters, and recipes
 - **Repository Pattern** - For data persistence and save/load systems
+- **Dependency Injection** - For testable systems (like logging)
 
 ### Code Organization
 ```
-Game.Main/
+Game.Main/ (C# Class Library Project)
 ├── Systems/           # Core game systems (Combat, Crafting, Shop)
 ├── Models/           # Data classes and game state
 ├── Controllers/      # Business logic controllers
-├── UI/              # User interface components
+├── UI/              # UI component base classes
 ├── Data/            # Static data (recipes, monsters, items)
 ├── Utils/           # Helper classes and extensions
 └── Managers/        # Singleton managers (SaveManager, etc.)
 
-Scenes/
-├── Main.tscn        # Main game scene
-├── UI/              # UI scenes and components
-├── Game/            # Game object scenes
-└── Prefabs/         # Reusable scene components
+Godot Project Root/
+├── scenes/          # .tscn scene files
+│   ├── main/        # Main game scenes
+│   ├── ui/          # UI scenes and components  
+│   └── prefabs/     # Reusable scene components
+├── scripts/         # Godot C# scene scripts (.cs files attached to scenes)
+│   ├── MainGameScene.cs
+│   ├── AdventurerStatusUI.cs
+│   └── CombatLogUI.cs
+├── assets/          # Textures, audio, fonts
+└── project.godot    # Project configuration
 ```
 
-### Performance Considerations
-- Use object pooling for frequently created/destroyed objects
-- Cache expensive calculations and node lookups
-- Use `CallDeferred()` for operations that modify scene tree
-- Minimize allocations in `_Process()` and frequent update loops
-- Use `StringName` for frequently accessed string constants
-- Profile memory usage and GC pressure regularly
+### Error Handling
+- Use try-catch blocks for operations that can fail
+- Log errors with context information using GameLogger
+- Validate input parameters with guard clauses
+- Use custom exceptions for domain-specific errors
+- Handle null references gracefully with nullable reference types
+- Provide user-friendly error messages in UI
 
 ### Testing Guidelines
 - Write unit tests for core game logic
@@ -72,37 +154,31 @@ Scenes/
 - Test edge cases (empty inventory, zero health, etc.)
 - Use descriptive test names that explain the scenario
 - Keep tests fast and independent
+- Use dependency injection to enable testability
 
-### Naming Conventions
-- **Classes**: `AdventurerController`, `CraftingSystem`
-- **Interfaces**: `IInventoryManager`, `ICombatSystem`
-- **Events**: `HealthChanged`, `ItemCrafted`, `ExpeditionCompleted`
-- **Enums**: `ItemRarity`, `AdventurerState`, `DungeonType`
-- **Constants**: `MAX_INVENTORY_SIZE`, `DEFAULT_HEALTH`
-- **Scenes**: `MainGame.tscn`, `InventoryUI.tscn`, `CraftingPanel.tscn`
+### Logging Standards
+```csharp
+// Use the GameLogger with proper backend injection
+public override void _Ready()
+{
+    // Set Godot backend when in game runtime
+    GameLogger.SetBackend(new GodotLoggerBackend());
+    GameLogger.Info("Scene initialized");
+}
 
-### Error Handling
-- Use try-catch blocks for operations that can fail
-- Log errors with context information
-- Validate input parameters with guard clauses
-- Use custom exceptions for domain-specific errors
-- Handle null references gracefully
-- Provide user-friendly error messages in UI
-
-### Documentation Standards
-- Document public APIs with XML comments
-- Include usage examples for complex methods
-- Document design decisions in code comments
-- Keep README.md updated with setup instructions
-- Document known issues and workarounds
+// In tests, console backend is used automatically
+GameLogger.Error(exception, "Failed to process action");
+GameLogger.Warning("Resource not found, using default");
+GameLogger.Debug("Processing frame data");
+```
 
 ## Game-Specific Guidelines
 
 ### Combat System
 - Use state machines for adventurer and monster states
 - Implement combat as coroutines for smooth animation
-- Separate combat logic from UI updates
-- Use events to notify UI of health changes
+- Separate combat logic from UI updates using events
+- Use events to notify UI of health/state changes
 
 ### Inventory Management
 - Implement generic inventory system for reusability
@@ -120,35 +196,75 @@ Scenes/
 - Use Godot's Control nodes for responsive layouts
 - Implement proper focus management for keyboard navigation
 - Use themes for consistent styling
-- Separate UI logic from game logic
+- Separate UI logic from game logic using events/signals
 
 ## Common Patterns to Follow
 
-### Initialization
+### Godot C# Scene Class Structure
 ```csharp
-public override void _Ready()
-{
-    // Cache node references
-    _healthBar = GetNode<ProgressBar>("HealthBar");
-    _combatLog = GetNode<RichTextLabel>("CombatLog");
-    
-    // Subscribe to events
-    CombatSystem.AdventurerHealthChanged += OnHealthChanged;
-    
-    // Initialize state
-    InitializeUI();
-}
-```
+#nullable enable
 
-### Event Handling
-```csharp
-[Signal]
-public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
+using Godot;
+using Game.Main.Managers;
+using Game.Main.Utils;
 
-private void OnHealthChanged(int current, int max)
+/// <summary>
+/// Example Godot scene class following official best practices.
+/// Class name must match filename exactly (case-sensitive).
+/// </summary>
+public partial class AdventurerUI : Control
 {
-    _healthBar.Value = (float)current / max * 100;
-    EmitSignal(SignalName.HealthChanged, current, max);
+    [Export] public PackedScene AdventurerStatusScene { get; set; } = null!;
+    [Export] public int MaxHealthBarWidth { get; set; } = 200;
+    
+    [Signal] 
+    public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
+    
+    private ProgressBar? _healthBar;
+    private Label? _nameLabel;
+    
+    public override void _Ready()
+    {
+        // Set up Godot logging backend
+        GameLogger.SetBackend(new GodotLoggerBackend());
+        
+        // Cache node references using GetNode<T>()
+        _healthBar = GetNode<ProgressBar>("VBox/HealthBar");
+        _nameLabel = GetNode<Label>("VBox/NameLabel");
+        
+        // Connect to game events
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AdventurerHealthChanged += OnHealthChanged;
+        }
+    }
+    
+    public override void _ExitTree()
+    {
+        // Clean up event subscriptions to prevent memory leaks
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AdventurerHealthChanged -= OnHealthChanged;
+        }
+    }
+    
+    private void OnHealthChanged(int current, int max)
+    {
+        if (_healthBar != null)
+        {
+            _healthBar.Value = (double)current / max * 100;
+            EmitSignal(SignalName.HealthChanged, current, max);
+        }
+    }
+    
+    /// <summary>
+    /// Called from button press - can be connected in Godot editor.
+    /// </summary>
+    public void OnHealButtonPressed()
+    {
+        GameManager.Instance?.AdventurerController?.Heal(25);
+        GameLogger.Info("Heal button pressed");
+    }
 }
 ```
 
@@ -157,54 +273,81 @@ private void OnHealthChanged(int current, int max)
 public void Dispose()
 {
     // Unsubscribe from events
-    CombatSystem.AdventurerHealthChanged -= OnHealthChanged;
+    if (CombatSystem != null)
+    {
+        CombatSystem.AdventurerHealthChanged -= OnHealthChanged;
+    }
     
-    // Clean up resources
-    _timer?.Dispose();
+    // Clean up Godot resources
+    _timer?.QueueFree();
+    
+    // Dispose of managed resources
+    _disposableResource?.Dispose();
 }
+```
+
+### Modern C# Patterns in Godot Context
+```csharp
+// Record types for immutable data
+public record EntityConfig(string Name, int Health, int Damage);
+
+// Pattern matching with switch expressions
+public string GetStateDescription(AdventurerState state) => state switch
+{
+    AdventurerState.Idle => "Resting in town",
+    AdventurerState.Fighting => "Engaged in combat",
+    AdventurerState.Retreating => "Retreating from danger",
+    _ => "Unknown state"
+};
+
+// Null-conditional operators
+_gameManager?.Update();
+adventurer?.TakeDamage(damage);
+
+// Init-only properties for Godot exports
+[Export] public string AdventurerName { get; init; } = "Unknown";
 ```
 
 ## Development Guidelines
 
 ### NEVER DO
-- **Hardcode values** - Use constants, config files, or data classes instead
-- **Directly modify scene nodes from other systems** - Use events/signals for communication
+- **Hardcode values** - Use [Export] properties or config files
+- **Directly modify scene tree during physics processing** - Use CallDeferred()
 - **Create god objects** - Keep classes focused and single-responsibility
 - **Use magic numbers** - Define named constants for all numeric values
 - **Ignore exceptions** - Always handle or log exceptions appropriately
 - **Access Godot nodes in constructors** - Only access nodes after `_Ready()`
 - **Use `GetNode()` repeatedly** - Cache node references in `_Ready()`
-- **Create tight coupling between systems** - Use interfaces and dependency injection
 - **Skip input validation** - Always validate user input and method parameters
-- **Commit broken code** - Ensure code compiles and basic functionality works
+- **Mix snake_case and PascalCase** - Follow Godot C# conventions consistently
+- **Modify struct properties directly** - Use full reassignment patterns
 
 ### ALWAYS DO
 - **Use meaningful names** - Classes, methods, and variables should be self-documenting
 - **Write unit tests** for core game logic and business rules
-- **Dispose of resources** - Implement `IDisposable` for managed resources
+- **Cache node references** - Store results in `_Ready()` for performance
 - **Use version control** - Commit frequently with descriptive messages
-- **Cache expensive operations** - Store results of calculations and node lookups
-- **Validate method parameters** - Use guard clauses at the start of methods
+- **Handle resource cleanup** - Implement proper `_ExitTree()` and disposal
+- **Validate method parameters** - Use guard clauses and nullable types
 - **Use events for decoupling** - Prefer observer pattern over direct method calls
 - **Document public APIs** - Use XML comments for public methods and classes
-- **Follow naming conventions** - Stick to established C# and Godot patterns
-- **Handle edge cases** - Test with empty collections, null values, boundary conditions
+- **Follow Godot naming conventions** - PascalCase for C# API, proper signal naming
+- **Use SignalName enumeration** - Avoid string-based signal emissions
 
 ### DO WHEN NECESSARY
-- **Use reflection** - Only when type safety cannot be maintained otherwise
-- **Create custom exceptions** - When built-in exceptions don't provide enough context
 - **Use async/await** - For I/O operations, file loading, and network calls
 - **Implement design patterns** - When they solve a real problem, not for pattern's sake
 - **Optimize performance** - Profile first, then optimize bottlenecks
-- **Add configuration options** - When values need to be tweaked without code changes
-- **Use third-party libraries** - When they provide significant value over custom solutions
+- **Add configuration options** - Use [Export] for values that need runtime tweaking
+- **Use third-party libraries** - When they provide significant value via NuGet
 - **Create editor tools** - For repetitive tasks or complex data entry
-- **Implement debug visualizations** - For complex systems that are hard to understand
-- **Add logging** - For debugging difficult issues and monitoring system health
+- **Add debug visualizations** - For complex systems that are hard to understand
+- **Use CallDeferred()** - When modifying scene tree during processing callbacks
 
 ## Git Workflow
 - Use feature branches for new functionality
-- Write descriptive commit messages
+- Write descriptive commit messages following conventional commit format
 - Keep commits focused and atomic
 - Use conventional commit format: `feat:`, `fix:`, `docs:`, etc.
 - Review code before merging to main branch
+- Ensure builds pass and tests are green before merging
