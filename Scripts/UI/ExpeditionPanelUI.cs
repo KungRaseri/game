@@ -196,20 +196,17 @@ public partial class ExpeditionPanelUI : Panel
     {
         CallDeferred(nameof(UpdateStatusDisplay));
 
-        // Parse status messages to update monster tracking
+        // Parse status messages only for non-combat events
         var lowerMessage = message.ToLowerInvariant();
         
         if (lowerMessage.Contains("fighting") && lowerMessage.Contains("goblin"))
         {
             SetCurrentMonster("Goblin");
         }
-        else if (lowerMessage.Contains("defeated"))
-        {
-            OnMonsterDefeated();
-        }
         else if (lowerMessage.Contains("expedition completed") || lowerMessage.Contains("retreated"))
         {
             EndExpedition();
         }
+        // Remove the defeated parsing - this should be handled by the MonsterDefeated event instead
     }
 }
