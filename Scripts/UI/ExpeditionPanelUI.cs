@@ -281,7 +281,7 @@ public partial class ExpeditionPanelUI : Panel
             }
             else
             {
-                _enemyHealthBar.Modulate = Colors.Red; // Enemies are red by default
+                _enemyHealthBar.Modulate = Colors.Green; // Enemies are red by default
             }
         }
     }
