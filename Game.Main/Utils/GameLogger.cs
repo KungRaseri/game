@@ -3,8 +3,9 @@ using System;
 namespace Game.Main.Utils;
 
 /// <summary>
-/// Centralized logging utility with level filtering and caller information
-/// Uses dependency injection pattern to work in both Godot runtime and test environments
+/// Centralized logging utility with level filtering and caller information.
+/// Uses dependency injection pattern to work in both Godot runtime and test environments.
+/// Follows Godot C# best practices for static utility classes.
 /// </summary>
 public static class GameLogger
 {
@@ -20,7 +21,7 @@ public static class GameLogger
     private static ILoggerBackend _backend = new ConsoleLoggerBackend();
 
     /// <summary>
-    /// Gets or sets the minimum log level to display
+    /// Gets or sets the minimum log level to display.
     /// </summary>
     public static LogLevel CurrentLogLevel
     {
@@ -29,15 +30,16 @@ public static class GameLogger
     }
 
     /// <summary>
-    /// Sets the logging backend implementation
+    /// Sets the logging backend implementation.
     /// </summary>
-    public static void SetBackend(ILoggerBackend backend)
+    /// <param name="backend">The backend to use, or null to use console backend.</param>
+    public static void SetBackend(ILoggerBackend? backend)
     {
         _backend = backend ?? new ConsoleLoggerBackend();
     }
 
     /// <summary>
-    /// Logs a debug message
+    /// Logs a debug message.
     /// </summary>
     public static void Debug(string message, [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
         [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
@@ -47,7 +49,7 @@ public static class GameLogger
     }
 
     /// <summary>
-    /// Logs an info message
+    /// Logs an info message.
     /// </summary>
     public static void Info(string message, [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
         [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
@@ -57,7 +59,7 @@ public static class GameLogger
     }
 
     /// <summary>
-    /// Logs a warning message
+    /// Logs a warning message.
     /// </summary>
     public static void Warning(string message, [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
         [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
@@ -67,7 +69,7 @@ public static class GameLogger
     }
 
     /// <summary>
-    /// Logs an error message
+    /// Logs an error message.
     /// </summary>
     public static void Error(string message, [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
         [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
@@ -77,7 +79,7 @@ public static class GameLogger
     }
 
     /// <summary>
-    /// Logs an error message with exception details
+    /// Logs an error message with exception details.
     /// </summary>
     public static void Error(Exception exception, string message = "", [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
         [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
@@ -89,7 +91,7 @@ public static class GameLogger
         
         LogMessage(LogLevel.Error, fullMessage, callerName, callerFilePath, callerLineNumber);
         
-        if (_currentLogLevel <= LogLevel.Debug)
+        if (_currentLogLevel <= LogLevel.Debug && !string.IsNullOrEmpty(exception.StackTrace))
         {
             LogMessage(LogLevel.Error, $"Stack trace: {exception.StackTrace}", callerName, callerFilePath, callerLineNumber);
         }
@@ -109,15 +111,21 @@ public static class GameLogger
 }
 
 /// <summary>
-/// Interface for logging backend implementations
+/// Interface for logging backend implementations.
+/// Allows for dependency injection of different logging targets.
 /// </summary>
 public interface ILoggerBackend
 {
+    /// <summary>
+    /// Logs a message at the specified level.
+    /// </summary>
+    /// <param name="level">The log level.</param>
+    /// <param name="message">The formatted message to log.</param>
     void Log(GameLogger.LogLevel level, string message);
 }
 
 /// <summary>
-/// Console-based logging backend for testing and non-Godot environments
+/// Console-based logging backend for testing and non-Godot environments.
 /// </summary>
 public class ConsoleLoggerBackend : ILoggerBackend
 {
