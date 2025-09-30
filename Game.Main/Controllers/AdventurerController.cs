@@ -10,9 +10,9 @@ namespace Game.Main.Controllers;
 /// Controls adventurer actions and manages their state
 /// </summary>
 public class AdventurerController : IDisposable
-    {
-        private readonly CombatEntityStats _adventurer;
-        private readonly CombatSystem _combatSystem;
+{
+    private readonly CombatEntityStats _adventurer;
+    private readonly CombatSystem _combatSystem;
 
         public CombatEntityStats Adventurer => _adventurer;
         public AdventurerState State => _combatSystem.State;
@@ -24,49 +24,49 @@ public class AdventurerController : IDisposable
         public event Action<CombatEntityStats>? MonsterDefeated;
         public event Action? ExpeditionCompleted;
 
-        public AdventurerController(CombatSystem combatSystem)
+    public AdventurerController(CombatSystem combatSystem)
+    {
+        _combatSystem = combatSystem ?? throw new ArgumentNullException(nameof(combatSystem));
+        _adventurer = EntityFactory.CreateNoviceAdventurer();
+        
+        // Subscribe to combat system events
+        _combatSystem.StateChanged += OnStateChanged;
+        _combatSystem.CombatLogUpdated += OnCombatLogUpdated;
+        _combatSystem.MonsterDefeated += OnMonsterDefeated;
+        _combatSystem.ExpeditionCompleted += OnExpeditionCompleted;
+    }
+
+    /// <summary>
+    /// Sends the adventurer on an expedition to the Goblin Cave
+    /// </summary>
+    public void SendToGoblinCave()
+    {
+        if (!IsAvailable)
         {
-            _combatSystem = combatSystem ?? throw new ArgumentNullException(nameof(combatSystem));
-            _adventurer = EntityFactory.CreateNoviceAdventurer();
-            
-            // Subscribe to combat system events
-            _combatSystem.StateChanged += OnStateChanged;
-            _combatSystem.CombatLogUpdated += OnCombatLogUpdated;
-            _combatSystem.MonsterDefeated += OnMonsterDefeated;
-            _combatSystem.ExpeditionCompleted += OnExpeditionCompleted;
+            UpdateStatus("Adventurer is not available for expedition");
+            return;
         }
 
-        /// <summary>
-        /// Sends the adventurer on an expedition to the Goblin Cave
-        /// </summary>
-        public void SendToGoblinCave()
+        // Create 3 goblins for the dungeon
+        var monsters = new List<CombatEntityStats>
         {
-            if (!IsAvailable)
-            {
-                UpdateStatus("Adventurer is not available for expedition");
-                return;
-            }
+            EntityFactory.CreateGoblin(),
+            EntityFactory.CreateGoblin(),
+            EntityFactory.CreateGoblin()
+        };
 
-            // Create 3 goblins for the dungeon
-            var monsters = new List<CombatEntityStats>
-            {
-                EntityFactory.CreateGoblin(),
-                EntityFactory.CreateGoblin(),
-                EntityFactory.CreateGoblin()
-            };
+        _combatSystem.StartExpedition(_adventurer, monsters);
+        UpdateStatus("Adventurer departs for the Goblin Cave");
+    }
 
-            _combatSystem.StartExpedition(_adventurer, monsters);
-            UpdateStatus("Adventurer departs for the Goblin Cave");
-        }
-
-        /// <summary>
-        /// Forces the adventurer to retreat from current expedition
-        /// </summary>
-        public void Retreat()
-        {
-            _combatSystem.ForceRetreat();
-            UpdateStatus("Retreat order given to adventurer");
-        }
+    /// <summary>
+    /// Forces the adventurer to retreat from current expedition
+    /// </summary>
+    public void Retreat()
+    {
+        _combatSystem.ForceRetreat();
+        UpdateStatus("Retreat order given to adventurer");
+    }
 
         /// <summary>
         /// Updates the adventurer's combat state (should be called regularly)
@@ -84,23 +84,23 @@ public class AdventurerController : IDisposable
             _combatSystem.Update(fixedDeltaTime);
         }
 
-        /// <summary>
-        /// Gets current adventurer status information
-        /// </summary>
-        public string GetStatusInfo()
+    /// <summary>
+    /// Gets current adventurer status information
+    /// </summary>
+    public string GetStatusInfo()
+    {
+        var healthInfo = $"HP: {_adventurer.CurrentHealth}/{_adventurer.MaxHealth} ({_adventurer.HealthPercentage:P0})";
+        var stateInfo = $"State: {State}";
+        var combatInfo = "";
+
+        if (_combatSystem.CurrentMonster != null)
         {
-            var healthInfo = $"HP: {_adventurer.CurrentHealth}/{_adventurer.MaxHealth} ({_adventurer.HealthPercentage:P0})";
-            var stateInfo = $"State: {State}";
-            var combatInfo = "";
-
-            if (_combatSystem.CurrentMonster != null)
-            {
-                var monster = _combatSystem.CurrentMonster;
-                combatInfo = $" | Fighting: {monster.Name} ({monster.CurrentHealth}/{monster.MaxHealth} HP)";
-            }
-
-            return $"{healthInfo} | {stateInfo}{combatInfo}";
+            var monster = _combatSystem.CurrentMonster;
+            combatInfo = $" | Fighting: {monster.Name} ({monster.CurrentHealth}/{monster.MaxHealth} HP)";
         }
+
+        return $"{healthInfo} | {stateInfo}{combatInfo}";
+    }
 
         private void OnStateChanged(AdventurerState newState)
         {
@@ -108,10 +108,10 @@ public class AdventurerController : IDisposable
             StateChanged?.Invoke(newState);
         }
 
-        private void OnCombatLogUpdated(string logMessage)
-        {
-            UpdateStatus(logMessage);
-        }
+    private void OnCombatLogUpdated(string logMessage)
+    {
+        UpdateStatus(logMessage);
+    }
 
         private void OnMonsterDefeated(CombatEntityStats monster)
         {
@@ -131,10 +131,10 @@ public class AdventurerController : IDisposable
             ExpeditionCompleted?.Invoke();
         }
 
-        private void UpdateStatus(string message)
-        {
-            StatusUpdated?.Invoke(message);
-        }
+    private void UpdateStatus(string message)
+    {
+        StatusUpdated?.Invoke(message);
+    }
 
     public void Dispose()
     {

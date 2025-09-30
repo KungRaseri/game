@@ -1,6 +1,16 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Game.Main.Utils;
+
+/// <summary>
+/// Encapsulates caller information to improve method signature readability.
+/// </summary>
+public record CallerInfo(
+    [CallerMemberName] string MemberName = "",
+    [CallerFilePath] string FilePath = "",
+    [CallerLineNumber] int LineNumber = 0
+);
 
 /// <summary>
 /// Centralized logging utility with level filtering and caller information.
@@ -41,70 +51,62 @@ public static class GameLogger
     /// <summary>
     /// Logs a debug message.
     /// </summary>
-    public static void Debug(string message, [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
+    public static void Debug(string message, CallerInfo? caller = null)
     {
-        LogMessage(LogLevel.Debug, message, callerName, callerFilePath, callerLineNumber);
+        LogMessage(LogLevel.Debug, message, caller ?? new CallerInfo());
     }
 
     /// <summary>
     /// Logs an info message.
     /// </summary>
-    public static void Info(string message, [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
+    public static void Info(string message, CallerInfo? caller = null)
     {
-        LogMessage(LogLevel.Info, message, callerName, callerFilePath, callerLineNumber);
+        LogMessage(LogLevel.Info, message, caller ?? new CallerInfo());
     }
 
     /// <summary>
     /// Logs a warning message.
     /// </summary>
-    public static void Warning(string message, [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
+    public static void Warning(string message, CallerInfo? caller = null)
     {
-        LogMessage(LogLevel.Warning, message, callerName, callerFilePath, callerLineNumber);
+        LogMessage(LogLevel.Warning, message, caller ?? new CallerInfo());
     }
 
     /// <summary>
     /// Logs an error message.
     /// </summary>
-    public static void Error(string message, [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
+    public static void Error(string message, CallerInfo? caller = null)
     {
-        LogMessage(LogLevel.Error, message, callerName, callerFilePath, callerLineNumber);
+        LogMessage(LogLevel.Error, message, caller ?? new CallerInfo());
     }
 
     /// <summary>
     /// Logs an error message with exception details.
     /// </summary>
-    public static void Error(Exception exception, string message = "", [System.Runtime.CompilerServices.CallerMemberName] string callerName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
+    public static void Error(Exception exception, string message = "", CallerInfo? caller = null)
     {
+        caller ??= new CallerInfo();
+        
         var fullMessage = string.IsNullOrEmpty(message) 
             ? $"Exception: {exception.Message}" 
             : $"{message} - Exception: {exception.Message}";
         
-        LogMessage(LogLevel.Error, fullMessage, callerName, callerFilePath, callerLineNumber);
+        LogMessage(LogLevel.Error, fullMessage, caller);
         
         if (_currentLogLevel <= LogLevel.Debug && !string.IsNullOrEmpty(exception.StackTrace))
         {
-            LogMessage(LogLevel.Error, $"Stack trace: {exception.StackTrace}", callerName, callerFilePath, callerLineNumber);
+            LogMessage(LogLevel.Error, $"Stack trace: {exception.StackTrace}", caller);
         }
     }
 
-    private static void LogMessage(LogLevel level, string message, string callerName, string callerFilePath, int callerLineNumber)
+    private static void LogMessage(LogLevel level, string message, CallerInfo caller)
     {
         if (level < _currentLogLevel)
             return;
 
-        var fileName = System.IO.Path.GetFileNameWithoutExtension(callerFilePath);
+        var fileName = System.IO.Path.GetFileNameWithoutExtension(caller.FilePath);
         var levelStr = level.ToString().ToUpper();
-        var formattedMessage = $"[{levelStr}] {fileName}.{callerName}:{callerLineNumber} - {message}";
+        var formattedMessage = $"[{levelStr}] {fileName}.{caller.MemberName}:{caller.LineNumber} - {message}";
 
         _backend.Log(level, formattedMessage);
     }

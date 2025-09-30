@@ -26,15 +26,15 @@ namespace Game.Main.Systems;
             }
         }
 
-        public CombatEntityStats? CurrentAdventurer => _currentAdventurer;
-        public CombatEntityStats? CurrentMonster => _currentMonster;
-        public bool IsInCombat => State == AdventurerState.Fighting;
-        public bool HasMonstersRemaining => _monsters.Count > 0 || _currentMonster?.IsAlive == true;
+    public CombatEntityStats? CurrentAdventurer => _currentAdventurer;
+    public CombatEntityStats? CurrentMonster => _currentMonster;
+    public bool IsInCombat => State == AdventurerState.Fighting;
+    public bool HasMonstersRemaining => _monsters.Count > 0 || _currentMonster?.IsAlive == true;
 
-        public event Action<AdventurerState>? StateChanged;
-        public event Action<string>? CombatLogUpdated;
-        public event Action<CombatEntityStats>? MonsterDefeated;
-        public event Action? ExpeditionCompleted;
+    public event Action<AdventurerState>? StateChanged;
+    public event Action<string>? CombatLogUpdated;
+    public event Action<CombatEntityStats>? MonsterDefeated;
+    public event Action? ExpeditionCompleted;
 
         public CombatSystem()
         {
@@ -42,13 +42,13 @@ namespace Game.Main.Systems;
             State = AdventurerState.Idle;
         }
 
-        /// <summary>
-        /// Starts an expedition with the given adventurer against a list of monsters
-        /// </summary>
-        public void StartExpedition(CombatEntityStats adventurer, IEnumerable<CombatEntityStats> monsters)
-        {
-            if (State != AdventurerState.Idle)
-                throw new InvalidOperationException("Cannot start expedition while adventurer is busy");
+    /// <summary>
+    /// Starts an expedition with the given adventurer against a list of monsters
+    /// </summary>
+    public void StartExpedition(CombatEntityStats adventurer, IEnumerable<CombatEntityStats> monsters)
+    {
+        if (State != AdventurerState.Idle)
+            throw new InvalidOperationException("Cannot start expedition while adventurer is busy");
 
             _currentAdventurer = adventurer ?? throw new ArgumentNullException(nameof(adventurer));
             
@@ -62,12 +62,12 @@ namespace Game.Main.Systems;
             _accumulatedAdventurerDamage = 0f;
             _accumulatedMonsterDamage = 0f;
 
-            State = AdventurerState.Traveling;
-            LogMessage($"Adventurer begins expedition with {_monsters.Count} monsters to face");
-            
-            // Start combat with first monster
-            StartNextFight();
-        }
+        State = AdventurerState.Traveling;
+        LogMessage($"Adventurer begins expedition with {_monsters.Count} monsters to face");
+        
+        // Start combat with first monster
+        StartNextFight();
+    }
 
         /// <summary>
         /// Updates combat state and processes damage over time
@@ -93,9 +93,25 @@ namespace Game.Main.Systems;
             }
         }
 
-        private void StartNextFight()
+    /// <summary>
+    /// Updates combat state and processes damage over time with fixed time step
+    /// </summary>
+    public void Update(float fixedDeltaTime)
+    {
+        switch (State)
         {
-            if (_currentAdventurer == null) return;
+            case AdventurerState.Fighting:
+                ProcessCombat(fixedDeltaTime);
+                break;
+            case AdventurerState.Regenerating:
+                ProcessRegeneration(fixedDeltaTime);
+                break;
+        }
+    }
+
+    private void StartNextFight()
+    {
+        if (_currentAdventurer == null) return;
 
             if (_monsters.Count > 0)
             {
@@ -139,14 +155,14 @@ namespace Game.Main.Systems;
                 return;
             }
 
-            // Check if adventurer should retreat
-            if (_currentAdventurer.ShouldRetreat)
-            {
-                State = AdventurerState.Retreating;
-                LogMessage($"Adventurer retreats at {_currentAdventurer.HealthPercentage:P0} health!");
-                ExpeditionCompleted?.Invoke();
-                return;
-            }
+        // Check if adventurer should retreat
+        if (_currentAdventurer.ShouldRetreat)
+        {
+            State = AdventurerState.Retreating;
+            LogMessage($"Adventurer retreats at {_currentAdventurer.HealthPercentage:P0} health!");
+            ExpeditionCompleted?.Invoke();
+            return;
+        }
 
             // Store local references to prevent race conditions
             var currentAdventurer = _currentAdventurer;
@@ -190,19 +206,19 @@ namespace Game.Main.Systems;
             }
         }
 
-        private void ProcessRegeneration(float deltaTime)
-        {
-            if (_currentAdventurer == null) return;
+    private void ProcessRegeneration(float deltaTime)
+    {
+        if (_currentAdventurer == null) return;
 
-            _currentAdventurer.RegenerateHealth();
-            
-            // Check if fully healed or enough time has passed
-            if (_currentAdventurer.CurrentHealth == _currentAdventurer.MaxHealth)
-            {
-                State = AdventurerState.Idle;
-                LogMessage("Adventurer has fully recovered and is ready for another expedition");
-            }
+        _currentAdventurer.RegenerateHealth();
+        
+        // Check if fully healed or enough time has passed
+        if (_currentAdventurer.CurrentHealth == _currentAdventurer.MaxHealth)
+        {
+            State = AdventurerState.Idle;
+            LogMessage("Adventurer has fully recovered and is ready for another expedition");
         }
+    }
 
         private void OnMonsterDied(CombatEntityStats monster)
         {
@@ -219,23 +235,23 @@ namespace Game.Main.Systems;
             }
         }
 
-        private void LogMessage(string message)
-        {
-            CombatLogUpdated?.Invoke($"[{DateTime.Now:HH:mm:ss}] {message}");
-        }
+    private void LogMessage(string message)
+    {
+        CombatLogUpdated?.Invoke($"[{DateTime.Now:HH:mm:ss}] {message}");
+    }
 
-        /// <summary>
-        /// Forces the adventurer to retreat immediately
-        /// </summary>
-        public void ForceRetreat()
+    /// <summary>
+    /// Forces the adventurer to retreat immediately
+    /// </summary>
+    public void ForceRetreat()
+    {
+        if (State == AdventurerState.Fighting || State == AdventurerState.Traveling)
         {
-            if (State == AdventurerState.Fighting || State == AdventurerState.Traveling)
-            {
-                State = AdventurerState.Retreating;
-                LogMessage("Forced retreat initiated!");
-                ExpeditionCompleted?.Invoke();
-            }
+            State = AdventurerState.Retreating;
+            LogMessage("Forced retreat initiated!");
+            ExpeditionCompleted?.Invoke();
         }
+    }
 
     /// <summary>
     /// Resets the combat system to idle state
