@@ -9,7 +9,7 @@ using Game.Main.Data;
 /// <summary>
 /// Main game scene that orchestrates the entire game experience.
 /// This script should be attached to the root Control node of MainGame.tscn.
-/// Follows Godot 4.4 C# best practices and coding conventions.
+/// Follows Godot 4.5 C# best practices and coding conventions.
 /// </summary>
 public partial class MainGameScene : Control
 {
