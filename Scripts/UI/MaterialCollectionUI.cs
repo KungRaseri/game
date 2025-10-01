@@ -126,7 +126,7 @@ public partial class MaterialCollectionUI : Panel
         try
         {
             // Initialize inventory UI
-            var inventoryContainer = GetNode<Container>("HSplit/InventoryContainer");
+            var inventoryContainer = GetNode<Container>("VBox/HSplit/InventoryContainer");
             if (AdventurerInventoryScene != null)
             {
                 var inventoryInstance = AdventurerInventoryScene.Instantiate<AdventurerInventoryUI>();
@@ -140,7 +140,7 @@ public partial class MaterialCollectionUI : Panel
             }
 
             // Initialize stats UI
-            var statsContainer = GetNode<Container>("HSplit/StatsContainer");
+            var statsContainer = GetNode<Container>("VBox/HSplit/StatsContainer");
             if (InventoryStatsScene != null)
             {
                 var statsInstance = InventoryStatsScene.Instantiate<InventoryStatsUI>();
