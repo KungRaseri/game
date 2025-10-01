@@ -16,7 +16,7 @@ public partial class MaterialCollectionUI : Panel
 {
     [Export] public PackedScene? AdventurerInventoryScene { get; set; }
     [Export] public PackedScene? InventoryStatsScene { get; set; }
-    [Export] public bool AutoRefreshStats { get; set; } = true;
+    [Export] public bool AutoRefreshStats { get; set; } = false; // Temporarily disabled for debugging
     [Export] public double AutoRefreshInterval { get; set; } = 2.0;
     
     [Signal]
@@ -90,6 +90,17 @@ public partial class MaterialCollectionUI : Panel
             if (_inventoryUI != null)
             {
                 _inventoryUI.UpdateInventory(inventory);
+                
+                // Debug layout chain for MaterialCollectionUI
+                GameLogger.Debug($"MaterialCollectionUI: Main panel size: {Size}, visible: {Visible}");
+                if (_inventoryUI != null)
+                {
+                    GameLogger.Debug($"MaterialCollectionUI: AdventurerInventoryUI size: {_inventoryUI.Size}, visible: {_inventoryUI.Visible}");
+                }
+                
+                // Check the container hierarchy
+                var inventoryContainer = GetNode<Container>("VBox/HSplit/InventoryContainer");
+                GameLogger.Debug($"MaterialCollectionUI: InventoryContainer size: {inventoryContainer.Size}, visible: {inventoryContainer.Visible}");
             }
 
             // Update statistics display

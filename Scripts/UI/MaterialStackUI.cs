@@ -4,6 +4,7 @@ using Godot;
 using Game.Main.Systems.Inventory;
 using Game.Main.Models.Materials;
 using Game.Main.Utils;
+using System;
 
 namespace Game.Main.UI;
 
@@ -22,6 +23,8 @@ public partial class MaterialStackUI : Panel
     private MaterialStack? _materialStack;
     private ColorRect? _materialIcon;
     private Label? _quantityLabel;
+    private Label? _nameLabel;
+    private Label? _rarityLabel;
     private ColorRect? _rarityIndicator;
     private Panel? _backgroundPanel;
     private Button? _clickButton;
@@ -32,7 +35,9 @@ public partial class MaterialStackUI : Panel
     {
         CacheNodeReferences();
         SetupInteraction();
+        // Call UpdateDisplay again to ensure it runs with properly cached node references
         UpdateDisplay();
+        GameLogger.Debug($"MaterialStackUI: _Ready completed for {_materialStack?.Material?.Name ?? "no material"}");
     }
 
     public override void _ExitTree()
@@ -53,8 +58,17 @@ public partial class MaterialStackUI : Panel
     /// </summary>
     public void SetMaterialStack(MaterialStack materialStack)
     {
+        GameLogger.Debug($"MaterialStackUI: SetMaterialStack called with {materialStack?.Material?.Name ?? "null"}");
         _materialStack = materialStack;
+        
+        // Ensure node references are cached before updating display
+        if (_nameLabel == null)
+        {
+            CacheNodeReferences();
+        }
+        
         UpdateDisplay();
+        GameLogger.Debug($"MaterialStackUI: SetMaterialStack completed for {materialStack?.Material?.Name ?? "null"}");
     }
 
     /// <summary>
@@ -67,12 +81,24 @@ public partial class MaterialStackUI : Panel
 
     private void CacheNodeReferences()
     {
-        _backgroundPanel = GetNode<Panel>("BackgroundPanel");
-        _materialIcon = GetNode<ColorRect>("HBox/MaterialIcon");
-        _quantityLabel = GetNode<Label>("HBox/QuantityLabel");
-        _rarityIndicator = GetNode<ColorRect>("RarityIndicator");
-        // Note: No click button in the new layout - will handle clicks on the panel itself
-        _clickButton = null;
+        try
+        {
+            _backgroundPanel = GetNode<Panel>("BackgroundPanel");
+            _materialIcon = GetNode<ColorRect>("HBox/MaterialIcon");
+            _quantityLabel = GetNode<Label>("HBox/QuantityLabel");
+            _nameLabel = GetNode<Label>("HBox/InfoContainer/NameLabel");
+            _rarityLabel = GetNode<Label>("HBox/InfoContainer/RarityLabel");
+            _rarityIndicator = GetNode<ColorRect>("RarityIndicator");
+            
+            // Note: No click button in the new layout - will handle clicks on the panel itself
+            _clickButton = null;
+            
+            GameLogger.Debug($"MaterialStackUI node references cached successfully");
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Failed to cache MaterialStackUI node references");
+        }
     }
 
     private void SetupInteraction()
@@ -96,15 +122,29 @@ public partial class MaterialStackUI : Panel
     {
         if (_materialStack == null)
         {
+            GameLogger.Debug("MaterialStackUI: UpdateDisplay called with null material stack");
             SetEmptyDisplay();
             return;
         }
 
+        // Ensure nodes are ready before updating
+        if (_nameLabel == null || _quantityLabel == null)
+        {
+            GameLogger.Debug($"MaterialStackUI: UpdateDisplay deferred - nodes not ready yet for {_materialStack.Material.Name}");
+            return;
+        }
+
+        GameLogger.Debug($"MaterialStackUI: Updating display for {_materialStack.Material.Name} x{_materialStack.Quantity}");
+        
         UpdateMaterialIcon();
+        UpdateNameDisplay();
         UpdateQuantityDisplay();
+        UpdateRarityDisplay();
         UpdateRarityIndicator();
         UpdateBackgroundStyling();
         UpdateTooltip();
+        
+        GameLogger.Debug($"MaterialStackUI: UpdateDisplay completed for {_materialStack.Material.Name}");
     }
 
     private void SetEmptyDisplay()
@@ -114,9 +154,19 @@ public partial class MaterialStackUI : Panel
             _materialIcon.Color = Colors.Gray; // Use gray for empty slots
         }
 
+        if (_nameLabel != null)
+        {
+            _nameLabel.Text = "Empty";
+        }
+
         if (_quantityLabel != null)
         {
             _quantityLabel.Text = "";
+        }
+
+        if (_rarityLabel != null)
+        {
+            _rarityLabel.Text = "";
         }
 
         if (_rarityIndicator != null)
@@ -148,9 +198,14 @@ public partial class MaterialStackUI : Panel
 
     private void UpdateQuantityDisplay()
     {
-        if (_quantityLabel == null || _materialStack == null) return;
+        if (_quantityLabel == null || _materialStack == null) 
+        {
+            GameLogger.Debug($"MaterialStackUI: UpdateQuantityDisplay skipped - _quantityLabel={_quantityLabel}, _materialStack={_materialStack}");
+            return;
+        }
 
         _quantityLabel.Text = _materialStack.Quantity.ToString("N0");
+        GameLogger.Debug($"MaterialStackUI: Updated quantity display to '{_materialStack.Quantity}'");
 
         // Color quantity based on stack fullness
         var fillPercent = (double)_materialStack.Quantity / _materialStack.StackLimit;
@@ -166,6 +221,29 @@ public partial class MaterialStackUI : Panel
         {
             _quantityLabel.Modulate = Colors.White; // Normal
         }
+    }
+
+    private void UpdateNameDisplay()
+    {
+        if (_nameLabel == null || _materialStack == null) 
+        {
+            GameLogger.Debug($"MaterialStackUI: UpdateNameDisplay skipped - _nameLabel={_nameLabel}, _materialStack={_materialStack}");
+            return;
+        }
+
+        _nameLabel.Text = _materialStack.Material.Name;
+        GameLogger.Debug($"MaterialStackUI: Updated name display to '{_materialStack.Material.Name}'");
+    }
+
+    private void UpdateRarityDisplay()
+    {
+        if (_rarityLabel == null || _materialStack == null) return;
+
+        _rarityLabel.Text = _materialStack.Rarity.ToString();
+        
+        // Color the rarity label based on rarity
+        var rarityColor = GetMaterialColor(_materialStack.Rarity);
+        _rarityLabel.Modulate = rarityColor;
     }
 
     private void UpdateRarityIndicator()

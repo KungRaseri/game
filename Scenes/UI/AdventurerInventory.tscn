@@ -1,29 +1,29 @@
-[gd_scene load_steps=2 format=3 uid="uid://bcs7go00s7rgn"]
+[gd_scene load_steps=3 format=3 uid="uid://bcs7go00s7rgn"]
 
-[ext_resource type="Script" path="res://Scripts/UI/AdventurerInventoryUI.cs" id="1_inventory_script"]
+[ext_resource type="Script" uid="uid://g1xwt4njnqns" path="res://Scripts/UI/AdventurerInventoryUI.cs" id="1_inventory_script"]
 [ext_resource type="PackedScene" uid="uid://cm5m6c4ywh8xo" path="res://Scenes/UI/MaterialStack.tscn" id="2_material_stack"]
 
 [node name="AdventurerInventory" type="Panel"]
-layout_mode = 3
 anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
 script = ExtResource("1_inventory_script")
 MaterialStackScene = ExtResource("2_material_stack")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = -10.0
 offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2

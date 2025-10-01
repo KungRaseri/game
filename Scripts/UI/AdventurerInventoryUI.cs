@@ -124,52 +124,120 @@ public partial class AdventurerInventoryUI : Panel
 
     private void UpdateInventoryDisplay()
     {
-        if (_inventoryManager == null || _inventoryList == null) return;
+        GameLogger.Info($"AdventurerInventoryUI: UpdateInventoryDisplay called. InventoryManager={_inventoryManager}, InventoryList={_inventoryList}");
+        
+        if (_inventoryManager == null)
+        {
+            GameLogger.Warning("AdventurerInventoryUI: Cannot update display - InventoryManager is null");
+            return;
+        }
+        
+        if (_inventoryList == null)
+        {
+            GameLogger.Error("AdventurerInventoryUI: Cannot update display - InventoryList node is null");
+            return;
+        }
 
         ClearInventoryDisplay();
 
         var inventory = _inventoryManager.CurrentInventory;
         var materials = inventory.Materials.ToList();
+        var stats = inventory.GetStats();
 
-        GameLogger.Info($"AdventurerInventoryUI: Updating display with {materials.Count} material stacks");
+        GameLogger.Info($"AdventurerInventoryUI: Inventory stats - {stats.UsedSlots}/{stats.Capacity} slots, {materials.Count} stacks");
+        GameLogger.Info($"AdventurerInventoryUI: Found {materials.Count} material stacks to display");
+        GameLogger.Info($"AdventurerInventoryUI: MaterialStackScene = {MaterialStackScene}");
 
         // Create UI elements for each material stack in the list
         foreach (var materialStack in materials)
         {
+            GameLogger.Debug($"AdventurerInventoryUI: Creating UI for {materialStack.Material.Name} x{materialStack.Quantity} ({materialStack.Rarity})");
             CreateMaterialStackUI(materialStack);
         }
+        
+        GameLogger.Info($"AdventurerInventoryUI: Display update completed. InventoryList now has {_inventoryList.GetChildCount()} children");
+        
+        // Debug container sizes to check if layout is working
+        if (_scrollContainer != null)
+        {
+            GameLogger.Debug($"AdventurerInventoryUI: ScrollContainer size: {_scrollContainer.Size}, visible: {_scrollContainer.Visible}");
+        }
+        GameLogger.Debug($"AdventurerInventoryUI: InventoryList size: {_inventoryList.Size}, visible: {_inventoryList.Visible}");
+        GameLogger.Debug($"AdventurerInventoryUI: Main panel size: {Size}, visible: {Visible}");
     }
 
     private void CreateMaterialStackUI(MaterialStack materialStack)
     {
-        if (MaterialStackScene == null || _inventoryList == null) 
+        GameLogger.Debug($"AdventurerInventoryUI: CreateMaterialStackUI called for {materialStack.Material.Name}");
+        
+        if (MaterialStackScene == null)
         {
-            GameLogger.Error($"Cannot create material stack UI: MaterialStackScene={MaterialStackScene}, _inventoryList={_inventoryList}");
+            GameLogger.Error($"AdventurerInventoryUI: Cannot create material stack UI - MaterialStackScene is null");
+            return;
+        }
+        
+        if (_inventoryList == null)
+        {
+            GameLogger.Error($"AdventurerInventoryUI: Cannot create material stack UI - _inventoryList is null");
             return;
         }
 
-        var materialStackInstance = MaterialStackScene.Instantiate<MaterialStackUI>();
-        materialStackInstance.SetMaterialStack(materialStack);
-        materialStackInstance.MaterialStackClicked += () => OnMaterialStackUIClicked(materialStackInstance);
-        
-        _materialStackUIs.Add(materialStackInstance);
-        _inventoryList.AddChild(materialStackInstance);
-        
-        GameLogger.Debug($"Created MaterialStackUI for {materialStack.Material.Name} x{materialStack.Quantity}");
+        try
+        {
+            GameLogger.Debug($"AdventurerInventoryUI: Instantiating MaterialStackScene for {materialStack.Material.Name}");
+            var materialStackInstance = MaterialStackScene.Instantiate<MaterialStackUI>();
+            
+            GameLogger.Debug($"AdventurerInventoryUI: Setting material stack data for {materialStack.Material.Name}");
+            materialStackInstance.SetMaterialStack(materialStack);
+            
+            GameLogger.Debug($"AdventurerInventoryUI: Connecting click event for {materialStack.Material.Name}");
+            materialStackInstance.MaterialStackClicked += () => OnMaterialStackUIClicked(materialStackInstance);
+            
+            GameLogger.Debug($"AdventurerInventoryUI: Adding to UI list for {materialStack.Material.Name}");
+            _materialStackUIs.Add(materialStackInstance);
+            _inventoryList.AddChild(materialStackInstance);
+            
+            // Force visibility and ensure proper layout
+            materialStackInstance.Visible = true;
+            
+            // Debug layout information
+            GameLogger.Debug($"AdventurerInventoryUI: MaterialStackUI created - Visible: {materialStackInstance.Visible}, Size: {materialStackInstance.Size}, Position: {materialStackInstance.Position}");
+            GameLogger.Debug($"AdventurerInventoryUI: InventoryList size: {_inventoryList.Size}, children count: {_inventoryList.GetChildCount()}");
+            
+            GameLogger.Info($"AdventurerInventoryUI: Successfully created MaterialStackUI for {materialStack.Material.Name} x{materialStack.Quantity}");
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, $"AdventurerInventoryUI: Failed to create MaterialStackUI for {materialStack.Material.Name}");
+        }
     }
 
     private void ClearInventoryDisplay()
     {
         if (_inventoryList == null) return;
 
+        GameLogger.Debug($"AdventurerInventoryUI: ClearInventoryDisplay called. Current child count: {_inventoryList.GetChildCount()}");
+
         // Unsubscribe from material stack events and clear list
+        foreach (var materialStackUI in _materialStackUIs)
+        {
+            if (materialStackUI != null && IsInstanceValid(materialStackUI))
+            {
+                materialStackUI.GetParent()?.RemoveChild(materialStackUI);
+                materialStackUI.QueueFree();
+            }
+        }
         _materialStackUIs.Clear();
 
-        // Clear all children from list
-        foreach (Node child in _inventoryList.GetChildren())
+        // Immediately remove all children from list
+        var children = _inventoryList.GetChildren();
+        foreach (Node child in children)
         {
+            _inventoryList.RemoveChild(child);
             child.QueueFree();
         }
+        
+        GameLogger.Debug($"AdventurerInventoryUI: ClearInventoryDisplay completed. New child count: {_inventoryList.GetChildCount()}");
     }
 
     private void UpdateHeaderInfo()
