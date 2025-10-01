@@ -1,0 +1,55 @@
+[gd_scene load_steps=2 format=3 uid="uid://cm5m6c4ywh8xo"]
+
+[ext_resource type="Script" path="res://Scripts/UI/MaterialStackUI.cs" id="1_material_stack_script"]
+
+[node name="MaterialStack" type="Panel"]
+layout_mode = 3
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_material_stack_script")
+
+[node name="BackgroundPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+
+[node name="MaterialIcon" type="ColorRect" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.8, 0.8, 0.8, 1)
+
+[node name="NameLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "Material"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_contents = true
+
+[node name="QuantityLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "x1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RarityIndicator" type="ColorRect" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 3)
+color = Color(1, 1, 1, 1)
