@@ -99,7 +99,10 @@ public partial class MaterialToastUI : PanelContainer
     
     private void StartFadeOut()
     {
-        if (_animationTween == null) return;
+        // Kill existing animation and create new one for fade out
+        _animationTween?.Kill();
+        _animationTween = CreateTween();
+        _animationTween.SetParallel(true);
         
         // Fade out
         _animationTween.TweenProperty(this, "modulate:a", 0.0f, FadeOutDuration);
