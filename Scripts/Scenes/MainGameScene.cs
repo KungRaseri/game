@@ -7,6 +7,10 @@ using Game.Main.Utils;
 using Game.Main.Data;
 using Game.Main.UI;
 using Game.Main.Models;
+using Game.Main.Systems.Inventory;
+using Game.Main.Systems.Loot;
+using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Main game scene that orchestrates the entire game experience.
@@ -29,11 +33,14 @@ public partial class MainGameScene : Control
 
     private GameManager? _gameManager;
     private Timer? _updateTimer;
+    private InventoryManager? _inventoryManager;
+    private LootGenerator? _lootGenerator;
 
     // UI Component references
     private AdventurerStatusUI? _adventurerStatusUI;
     private CombatLogUI? _combatLogUI;
     private ExpeditionPanelUI? _expeditionPanelUI;
+    private MaterialCollectionUI? _materialCollectionUI;
 
     public override void _Ready()
     {
@@ -65,6 +72,7 @@ public partial class MainGameScene : Control
         _adventurerStatusUI = GetNode<AdventurerStatusUI>("MainContainer/LeftPanel/AdventurerStatus");
         _combatLogUI = GetNode<CombatLogUI>("MainContainer/CombatLog");
         _expeditionPanelUI = GetNode<ExpeditionPanelUI>("MainContainer/LeftPanel/ExpeditionPanel");
+        _materialCollectionUI = GetNode<MaterialCollectionUI>("MainContainer/LeftPanel/MaterialCollection");
     }
 
     private void InitializeGameSystems()
@@ -72,12 +80,19 @@ public partial class MainGameScene : Control
         _gameManager = new GameManager();
         _gameManager.Initialize();
 
+        // Initialize inventory and loot systems
+        _inventoryManager = new InventoryManager(20); // Start with 20 slot capacity
+        _lootGenerator = CreateLootGenerator();
+
         // Connect UI components to the game manager
         if (_gameManager.AdventurerController != null)
         {
             _adventurerStatusUI?.SetAdventurerController(_gameManager.AdventurerController);
             _combatLogUI?.SetAdventurerController(_gameManager.AdventurerController);
             _expeditionPanelUI?.SetAdventurerController(_gameManager.AdventurerController);
+
+            // Connect Material Collection UI to inventory system
+            _materialCollectionUI?.SetInventoryManager(_inventoryManager);
 
             // Subscribe to additional events from the combat system
             SubscribeToGameEvents();
@@ -191,6 +206,10 @@ public partial class MainGameScene : Control
         _expeditionPanelUI?.OnMonsterDefeated();
         _expeditionPanelUI?.SetCurrentEnemy(null); // Clear enemy display when defeated
         _combatLogUI?.AddLogEntry($"Defeated {monster.Name}!", "green");
+        
+        // Generate loot from defeated monster
+        GenerateAndCollectLoot(monster);
+        
         GameLogger.Info($"Monster defeated: {monster.Name}");
     }
 
@@ -229,5 +248,95 @@ public partial class MainGameScene : Control
         }
 
         return _gameManager.AdventurerController.GetStatusInfo();
+    }
+
+    /// <summary>
+    /// Creates a loot generator with predefined loot tables for different monster types.
+    /// </summary>
+    private LootGenerator CreateLootGenerator()
+    {
+        return LootConfiguration.CreateLootGenerator();
+    }
+
+    /// <summary>
+    /// Generates loot from a defeated monster and adds it to inventory.
+    /// Shows MaterialCollection UI if materials were obtained.
+    /// </summary>
+    private void GenerateAndCollectLoot(CombatEntityStats monster)
+    {
+        if (_lootGenerator == null || _inventoryManager == null)
+        {
+            GameLogger.Warning("Loot generation failed - systems not initialized");
+            return;
+        }
+
+        try
+        {
+            // Generate loot drops based on monster type
+            var drops = _lootGenerator.GenerateDrops(monster.Name.ToLower());
+            
+            if (drops.Count == 0)
+            {
+                GameLogger.Info($"No materials dropped from {monster.Name}");
+                return;
+            }
+
+            // Add each material drop to inventory using the batch method
+            var result = _inventoryManager.AddMaterials(drops);
+            
+            // Report results to the player
+            var materialsAdded = new List<string>();
+            foreach (var drop in result.SuccessfulAdds)
+            {
+                materialsAdded.Add($"{drop.Material.Name} x{drop.Quantity} ({drop.ActualRarity})");
+                GameLogger.Debug($"Added to inventory: {drop.Material.Name} x{drop.Quantity} ({drop.ActualRarity})");
+            }
+
+            // Report any failures
+            foreach (var drop in result.FailedAdds)
+            {
+                GameLogger.Warning($"Failed to add {drop.Material.Name} to inventory - possibly full");
+                _combatLogUI?.AddLogEntry($"Inventory full! Lost {drop.Material.Name} x{drop.Quantity}", "orange");
+            }
+
+            // Show materials collected in chat and potentially show MaterialCollection UI
+            if (materialsAdded.Count > 0)
+            {
+                var materialList = string.Join(", ", materialsAdded);
+                _combatLogUI?.AddLogEntry($"Materials collected: {materialList}", "cyan");
+                
+                // Show MaterialCollection UI briefly
+                ShowMaterialCollectionBriefly();
+                
+                GameLogger.Info($"Successfully collected {materialsAdded.Count} material types from {monster.Name}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, $"Error generating loot for {monster.Name}");
+        }
+    }
+
+    /// <summary>
+    /// Briefly shows the MaterialCollection UI to highlight new materials.
+    /// </summary>
+    private void ShowMaterialCollectionBriefly()
+    {
+        if (_materialCollectionUI == null) return;
+
+        // Make MaterialCollection visible for a few seconds
+        _materialCollectionUI.Visible = true;
+        _materialCollectionUI.RefreshAllComponents();
+
+        // Create a timer to hide it after 3 seconds
+        var showTimer = GetTree().CreateTimer(3.0);
+        showTimer.Timeout += () => {
+            if (_materialCollectionUI != null)
+            {
+                _materialCollectionUI.Visible = false;
+            }
+        };
+
+        GameLogger.Debug("MaterialCollection UI shown briefly");
     }
 }
