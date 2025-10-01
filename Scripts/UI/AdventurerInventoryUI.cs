@@ -11,13 +11,12 @@ using System.Linq;
 namespace Game.Main.UI;
 
 /// <summary>
-/// UI component that displays the adventurer's material inventory with slot-based layout.
+/// UI component that displays the adventurer's material inventory as a list.
 /// Shows material stacks, capacity information, and provides inventory interaction.
 /// Follows Godot 4.5 C# best practices and coding conventions.
 /// </summary>
 public partial class AdventurerInventoryUI : Panel
 {
-    [Export] public int SlotsPerRow { get; set; } = 5;
     [Export] public PackedScene MaterialStackScene { get; set; } = null!;
     
     [Signal]
@@ -33,7 +32,7 @@ public partial class AdventurerInventoryUI : Panel
     public delegate void RefreshRequestedEventHandler();
 
     private InventoryManager? _inventoryManager;
-    private GridContainer? _inventoryGrid;
+    private VBoxContainer? _inventoryList;
     private Label? _capacityLabel;
     private Label? _totalValueLabel;
     private Button? _expandCapacityButton;
@@ -46,7 +45,6 @@ public partial class AdventurerInventoryUI : Panel
         GameLogger.Info("AdventurerInventoryUI initializing");
 
         CacheNodeReferences();
-        SetupInventoryGrid();
         UpdateUI();
 
         GameLogger.Info("AdventurerInventoryUI ready");
@@ -77,19 +75,9 @@ public partial class AdventurerInventoryUI : Panel
 
     private void CacheNodeReferences()
     {
-        _inventoryGrid = GetNode<GridContainer>("VBoxContainer/InventoryContainer/ScrollContainer/InventoryGrid");
-        _capacityLabel = GetNode<Label>("VBoxContainer/HeaderContainer/CapacityLabel");
-        _totalValueLabel = GetNode<Label>("VBoxContainer/HeaderContainer/TotalValueLabel");
-        _expandCapacityButton = GetNode<Button>("VBoxContainer/FooterContainer/ExpandCapacityButton");
-        _scrollContainer = GetNode<ScrollContainer>("VBoxContainer/InventoryContainer/ScrollContainer");
-    }
-
-    private void SetupInventoryGrid()
-    {
-        if (_inventoryGrid != null)
-        {
-            _inventoryGrid.Columns = SlotsPerRow;
-        }
+        _inventoryList = GetNode<VBoxContainer>("VBoxContainer/ScrollContainer/InventoryList");
+        _capacityLabel = GetNode<Label>("VBoxContainer/CapacityContainer/CapacityLabel");
+        _scrollContainer = GetNode<ScrollContainer>("VBoxContainer/ScrollContainer");
     }
 
     private void UnsubscribeFromInventoryManager()
@@ -136,71 +124,41 @@ public partial class AdventurerInventoryUI : Panel
 
     private void UpdateInventoryDisplay()
     {
-        if (_inventoryManager == null || _inventoryGrid == null) return;
+        if (_inventoryManager == null || _inventoryList == null) return;
 
         ClearInventoryDisplay();
 
         var inventory = _inventoryManager.CurrentInventory;
         var materials = inventory.Materials.ToList();
-        var capacity = inventory.Capacity;
 
-        // Create UI elements for each material stack
+        // Create UI elements for each material stack in the list
         foreach (var materialStack in materials)
         {
             CreateMaterialStackUI(materialStack);
-        }
-
-        // Fill remaining slots with empty slot indicators
-        var emptySlots = capacity - materials.Count;
-        for (var i = 0; i < emptySlots; i++)
-        {
-            CreateEmptySlotUI();
         }
     }
 
     private void CreateMaterialStackUI(MaterialStack materialStack)
     {
-        if (MaterialStackScene == null || _inventoryGrid == null) return;
+        if (MaterialStackScene == null || _inventoryList == null) return;
 
         var materialStackInstance = MaterialStackScene.Instantiate<MaterialStackUI>();
         materialStackInstance.SetMaterialStack(materialStack);
         materialStackInstance.MaterialStackClicked += () => OnMaterialStackUIClicked(materialStackInstance);
         
         _materialStackUIs.Add(materialStackInstance);
-        _inventoryGrid.AddChild(materialStackInstance);
-    }
-
-    private void CreateEmptySlotUI()
-    {
-        if (_inventoryGrid == null) return;
-
-        var emptySlot = new Panel();
-        emptySlot.CustomMinimumSize = new Vector2(64, 64);
-        emptySlot.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-        emptySlot.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
-        
-        // Add visual styling for empty slots
-        var styleBox = new StyleBoxFlat();
-        styleBox.BorderColor = Colors.Gray;
-        styleBox.BorderWidthBottom = 2;
-        styleBox.BorderWidthTop = 2;
-        styleBox.BorderWidthLeft = 2;
-        styleBox.BorderWidthRight = 2;
-        styleBox.BgColor = new Color(0.2f, 0.2f, 0.2f, 0.3f);
-        emptySlot.AddThemeStyleboxOverride("panel", styleBox);
-
-        _inventoryGrid.AddChild(emptySlot);
+        _inventoryList.AddChild(materialStackInstance);
     }
 
     private void ClearInventoryDisplay()
     {
-        if (_inventoryGrid == null) return;
+        if (_inventoryList == null) return;
 
         // Unsubscribe from material stack events and clear list
         _materialStackUIs.Clear();
 
-        // Clear all children from grid
-        foreach (Node child in _inventoryGrid.GetChildren())
+        // Clear all children from list
+        foreach (Node child in _inventoryList.GetChildren())
         {
             child.QueueFree();
         }

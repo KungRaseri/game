@@ -50,11 +50,10 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="InventoryGrid" type="GridContainer" parent="VBoxContainer/ScrollContainer"]
+[node name="InventoryList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-columns = 5
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2

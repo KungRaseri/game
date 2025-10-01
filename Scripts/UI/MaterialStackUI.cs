@@ -20,9 +20,9 @@ public partial class MaterialStackUI : Panel
     public delegate void MaterialStackClickedEventHandler();
 
     private MaterialStack? _materialStack;
-    private TextureRect? _materialIcon;
+    private ColorRect? _materialIcon;
     private Label? _quantityLabel;
-    private Panel? _rarityIndicator;
+    private ColorRect? _rarityIndicator;
     private Panel? _backgroundPanel;
     private Button? _clickButton;
 
@@ -38,6 +38,14 @@ public partial class MaterialStackUI : Panel
     public override void _ExitTree()
     {
         // Clean up any resources if needed
+    }
+
+    public override void _GuiInput(InputEvent @event)
+    {
+        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
+        {
+            OnMaterialStackClicked();
+        }
     }
 
     /// <summary>
@@ -60,22 +68,23 @@ public partial class MaterialStackUI : Panel
     private void CacheNodeReferences()
     {
         _backgroundPanel = GetNode<Panel>("BackgroundPanel");
-        _materialIcon = GetNode<TextureRect>("BackgroundPanel/ContentContainer/IconContainer/MaterialIcon");
-        _quantityLabel = GetNode<Label>("BackgroundPanel/ContentContainer/QuantityContainer/QuantityLabel");
-        _rarityIndicator = GetNode<Panel>("BackgroundPanel/ContentContainer/RarityIndicator");
-        _clickButton = GetNode<Button>("BackgroundPanel/ClickButton");
+        _materialIcon = GetNode<ColorRect>("HBox/MaterialIcon");
+        _quantityLabel = GetNode<Label>("HBox/QuantityLabel");
+        _rarityIndicator = GetNode<ColorRect>("RarityIndicator");
+        // Note: No click button in the new layout - will handle clicks on the panel itself
+        _clickButton = null;
     }
 
     private void SetupInteraction()
     {
-        if (_clickButton != null)
-        {
-            _clickButton.Pressed += OnMaterialStackClicked;
-            _clickButton.MouseEntered += OnMouseEntered;
-            _clickButton.MouseExited += OnMouseExited;
-        }
-
-        // Set up tooltip
+        // Set up mouse interaction on the main panel
+        MouseEntered += OnMouseEntered;
+        MouseExited += OnMouseExited;
+        
+        // Enable input to capture clicks
+        MouseFilter = Control.MouseFilterEnum.Pass;
+        
+        // Set up tooltip on background panel if available
         if (_backgroundPanel != null)
         {
             _backgroundPanel.MouseEntered += OnMouseEntered;
@@ -102,7 +111,7 @@ public partial class MaterialStackUI : Panel
     {
         if (_materialIcon != null)
         {
-            _materialIcon.Texture = null;
+            _materialIcon.Color = Colors.Gray; // Use gray for empty slots
         }
 
         if (_quantityLabel != null)
@@ -123,13 +132,19 @@ public partial class MaterialStackUI : Panel
         if (_materialIcon == null || _materialStack == null) return;
 
         // TODO: Load material-specific icons based on material type
-        // For now, use a default icon or placeholder
-        if (DefaultMaterialIcon != null)
-        {
-            // Set default icon for now - in the future, this would load the specific material icon
-            // _materialIcon.Texture = GetMaterialTexture(_materialStack.Material.Id);
-        }
+        // For now, use color-coding based on material rarity
+        _materialIcon.Color = GetMaterialColor(_materialStack.Material.BaseRarity);
     }
+
+    private Color GetMaterialColor(MaterialRarity rarity) => rarity switch
+    {
+        MaterialRarity.Common => Colors.Gray,
+        MaterialRarity.Uncommon => Colors.Green,
+        MaterialRarity.Rare => Colors.Blue,
+        MaterialRarity.Epic => Colors.Purple,
+        MaterialRarity.Legendary => Colors.Gold,
+        _ => Colors.White
+    };
 
     private void UpdateQuantityDisplay()
     {
@@ -159,12 +174,8 @@ public partial class MaterialStackUI : Panel
 
         _rarityIndicator.Visible = true;
 
-        var rarityColor = GetRarityColor(_materialStack.Rarity);
-        var styleBox = new StyleBoxFlat();
-        styleBox.BgColor = rarityColor;
-        styleBox.CornerRadiusTopLeft = 4;
-        styleBox.CornerRadiusTopRight = 4;
-        _rarityIndicator.AddThemeStyleboxOverride("panel", styleBox);
+        var rarityColor = GetMaterialColor(_materialStack.Material.BaseRarity);
+        _rarityIndicator.Color = rarityColor;
     }
 
     private void UpdateBackgroundStyling()
@@ -185,7 +196,7 @@ public partial class MaterialStackUI : Panel
         else
         {
             styleBox.BgColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
-            styleBox.BorderColor = GetRarityColor(_materialStack.Rarity);
+            styleBox.BorderColor = GetMaterialColor(_materialStack.Material.BaseRarity);
             styleBox.BorderWidthBottom = 1;
             styleBox.BorderWidthTop = 1;
             styleBox.BorderWidthLeft = 1;
@@ -222,16 +233,6 @@ public partial class MaterialStackUI : Panel
 
         TooltipText = tooltipText;
     }
-
-    private Color GetRarityColor(MaterialRarity rarity) => rarity switch
-    {
-        MaterialRarity.Common => Colors.Gray,
-        MaterialRarity.Uncommon => Colors.Green,
-        MaterialRarity.Rare => Colors.Blue,
-        MaterialRarity.Epic => Colors.Purple,
-        MaterialRarity.Legendary => Colors.Orange,
-        _ => Colors.White
-    };
 
     private void OnMaterialStackClicked()
     {
