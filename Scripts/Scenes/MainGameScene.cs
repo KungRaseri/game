@@ -21,6 +21,7 @@ public partial class MainGameScene : Control
 {
     [Export] public float UpdateInterval { get; set; } = 0.1f;
     [Export] public int MaxCombatLogEntries { get; set; } = 50;
+    [Export] public PackedScene? MaterialToastScene { get; set; }
 
     [Signal]
     public delegate void GameStateChangedEventHandler(string newState);
@@ -40,7 +41,9 @@ public partial class MainGameScene : Control
     private AdventurerStatusUI? _adventurerStatusUI;
     private CombatLogUI? _combatLogUI;
     private ExpeditionPanelUI? _expeditionPanelUI;
-    private MaterialCollectionUI? _materialCollectionUI;
+    private MaterialCollectionUI? _inventoryPanelUI;
+    private Button? _inventoryButton;
+    private VBoxContainer? _toastContainer;
 
     public override void _Ready()
     {
@@ -72,7 +75,9 @@ public partial class MainGameScene : Control
         _adventurerStatusUI = GetNode<AdventurerStatusUI>("MainContainer/LeftPanel/AdventurerStatus");
         _combatLogUI = GetNode<CombatLogUI>("MainContainer/CombatLog");
         _expeditionPanelUI = GetNode<ExpeditionPanelUI>("MainContainer/LeftPanel/ExpeditionPanel");
-        _materialCollectionUI = GetNode<MaterialCollectionUI>("MainContainer/LeftPanel/MaterialCollection");
+        _inventoryPanelUI = GetNode<MaterialCollectionUI>("UIOverlay/InventoryPanel");
+        _inventoryButton = GetNode<Button>("MainContainer/LeftPanel/InventoryButton");
+        _toastContainer = GetNode<VBoxContainer>("UIOverlay/ToastContainer");
     }
 
     private void InitializeGameSystems()
@@ -92,7 +97,7 @@ public partial class MainGameScene : Control
             _expeditionPanelUI?.SetAdventurerController(_gameManager.AdventurerController);
 
             // Connect Material Collection UI to inventory system
-            _materialCollectionUI?.SetInventoryManager(_inventoryManager);
+            _inventoryPanelUI?.SetInventoryManager(_inventoryManager);
 
             // Subscribe to additional events from the combat system
             SubscribeToGameEvents();
@@ -148,6 +153,11 @@ public partial class MainGameScene : Control
             _adventurerStatusUI.SendExpeditionRequested += OnSendExpeditionRequested;
             _adventurerStatusUI.RetreatRequested += OnRetreatRequested;
         }
+
+        if (_inventoryButton != null)
+        {
+            _inventoryButton.Pressed += OnInventoryButtonPressed;
+        }
     }
 
     private void DisconnectUIEvents()
@@ -158,6 +168,11 @@ public partial class MainGameScene : Control
         {
             _adventurerStatusUI.SendExpeditionRequested -= OnSendExpeditionRequested;
             _adventurerStatusUI.RetreatRequested -= OnRetreatRequested;
+        }
+
+        if (_inventoryButton != null)
+        {
+            _inventoryButton.Pressed -= OnInventoryButtonPressed;
         }
     }
 
@@ -305,8 +320,8 @@ public partial class MainGameScene : Control
                 var materialList = string.Join(", ", materialsAdded);
                 _combatLogUI?.AddLogEntry($"Materials collected: {materialList}", "cyan");
                 
-                // Show MaterialCollection UI briefly
-                ShowMaterialCollectionBriefly();
+                // Show toast notification for materials collected
+                ShowMaterialToast(materialsAdded);
                 
                 GameLogger.Info($"Successfully collected {materialsAdded.Count} material types from {monster.Name}");
             }
@@ -318,25 +333,43 @@ public partial class MainGameScene : Control
     }
 
     /// <summary>
-    /// Briefly shows the MaterialCollection UI to highlight new materials.
+    /// Shows a toast notification for collected materials.
     /// </summary>
-    private void ShowMaterialCollectionBriefly()
+    private void ShowMaterialToast(List<string> materials)
     {
-        if (_materialCollectionUI == null) return;
+        if (materials.Count == 0 || _toastContainer == null) return;
 
-        // Make MaterialCollection visible for a few seconds
-        _materialCollectionUI.Visible = true;
-        _materialCollectionUI.RefreshAllComponents();
+        // Load the toast scene if available
+        if (MaterialToastScene != null)
+        {
+            var toastInstance = MaterialToastScene.Instantiate<MaterialToastUI>();
+            _toastContainer.AddChild(toastInstance);
+            toastInstance.ShowToast(materials);
+        }
+        else
+        {
+            GameLogger.Warning("MaterialToastScene not assigned - cannot show toast");
+        }
+    }
 
-        // Create a timer to hide it after 3 seconds
-        var showTimer = GetTree().CreateTimer(3.0);
-        showTimer.Timeout += () => {
-            if (_materialCollectionUI != null)
-            {
-                _materialCollectionUI.Visible = false;
-            }
-        };
+    /// <summary>
+    /// Handles inventory button press to show/hide the inventory panel.
+    /// </summary>
+    private void OnInventoryButtonPressed()
+    {
+        if (_inventoryPanelUI == null) return;
 
-        GameLogger.Debug("MaterialCollection UI shown briefly");
+        // Toggle inventory panel visibility
+        _inventoryPanelUI.Visible = !_inventoryPanelUI.Visible;
+        
+        if (_inventoryPanelUI.Visible)
+        {
+            _inventoryPanelUI.RefreshAllComponents();
+            GameLogger.Info("Inventory panel opened");
+        }
+        else
+        {
+            GameLogger.Info("Inventory panel closed");
+        }
     }
 }
