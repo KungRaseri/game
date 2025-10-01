@@ -7,6 +7,7 @@ using Game.Main.Utils;
 using Game.Main.Data;
 using Game.Main.UI;
 using Game.Main.Models;
+using Game.Main.Models.Materials;
 using Game.Main.Systems.Inventory;
 using Game.Main.Systems.Loot;
 using System;
@@ -88,6 +89,9 @@ public partial class MainGameScene : Control
         // Initialize inventory and loot systems
         _inventoryManager = new InventoryManager(20); // Start with 20 slot capacity
         _lootGenerator = CreateLootGenerator();
+
+        // Add some test materials to inventory for debugging
+        AddTestMaterials();
 
         // Connect UI components to the game manager
         if (_gameManager.AdventurerController != null)
@@ -370,6 +374,36 @@ public partial class MainGameScene : Control
         else
         {
             GameLogger.Info("Inventory panel closed");
+        }
+    }
+
+    /// <summary>
+    /// Adds some test materials to the inventory for debugging purposes.
+    /// </summary>
+    private void AddTestMaterials()
+    {
+        if (_inventoryManager == null) return;
+
+        try
+        {
+            // Create some test materials using the correct namespace
+            var ironOre = new Game.Main.Models.Materials.MaterialType("iron_ore", "Iron Ore", "Basic metal ore", MaterialCategory.Metals, MaterialRarity.Common, 999, 5);
+            var silverOre = new Game.Main.Models.Materials.MaterialType("silver_ore", "Silver Ore", "Precious metal ore", MaterialCategory.Metals, MaterialRarity.Uncommon, 500, 15);
+            var gems = new Game.Main.Models.Materials.MaterialType("gems", "Gems", "Precious stones", MaterialCategory.Gems, MaterialRarity.Rare, 100, 50);
+
+            var testDrops = new[]
+            {
+                new MaterialDrop(ironOre, MaterialRarity.Common, 15, DateTime.UtcNow),
+                new MaterialDrop(silverOre, MaterialRarity.Uncommon, 8, DateTime.UtcNow),
+                new MaterialDrop(gems, MaterialRarity.Rare, 3, DateTime.UtcNow)
+            };
+
+            _inventoryManager.AddMaterials(testDrops);
+            GameLogger.Info("Added test materials to inventory for debugging");
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Failed to add test materials");
         }
     }
 }

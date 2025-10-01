@@ -1,6 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://bcs7go00s7rgn"]
 
 [ext_resource type="Script" path="res://Scripts/UI/AdventurerInventoryUI.cs" id="1_inventory_script"]
+[ext_resource type="PackedScene" uid="uid://bhpfpv1rdg1ic" path="res://Scenes/UI/MaterialStack.tscn" id="2_material_stack"]
 
 [node name="AdventurerInventory" type="Panel"]
 layout_mode = 3
@@ -10,6 +11,7 @@ anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_inventory_script")
+MaterialStackScene = ExtResource("2_material_stack")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -65,3 +67,6 @@ text = "Refresh"
 [node name="SortButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
 layout_mode = 2
 text = "Sort"
+
+[connection signal="pressed" from="VBoxContainer/HeaderContainer/ExpandButton" to="." method="OnExpandCapacityPressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonsContainer/RefreshButton" to="." method="OnRefreshPressed"]
