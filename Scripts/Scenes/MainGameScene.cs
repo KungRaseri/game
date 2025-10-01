@@ -90,9 +90,6 @@ public partial class MainGameScene : Control
         _inventoryManager = new InventoryManager(20); // Start with 20 slot capacity
         _lootGenerator = CreateLootGenerator();
 
-        // Add some test materials to inventory for debugging
-        AddTestMaterials();
-
         // Connect UI components to the game manager
         if (_gameManager.AdventurerController != null)
         {
@@ -226,10 +223,10 @@ public partial class MainGameScene : Control
         _expeditionPanelUI?.OnMonsterDefeated();
         _expeditionPanelUI?.SetCurrentEnemy(null); // Clear enemy display when defeated
         _combatLogUI?.AddLogEntry($"Defeated {monster.Name}!", "green");
-        
+
         // Generate loot from defeated monster
         GenerateAndCollectLoot(monster);
-        
+
         GameLogger.Info($"Monster defeated: {monster.Name}");
     }
 
@@ -294,7 +291,7 @@ public partial class MainGameScene : Control
         {
             // Generate loot drops based on monster type
             var drops = _lootGenerator.GenerateDrops(monster.Name.ToLower());
-            
+
             if (drops.Count == 0)
             {
                 GameLogger.Info($"No materials dropped from {monster.Name}");
@@ -303,7 +300,7 @@ public partial class MainGameScene : Control
 
             // Add each material drop to inventory using the batch method
             var result = _inventoryManager.AddMaterials(drops);
-            
+
             // Report results to the player
             var materialsAdded = new List<string>();
             foreach (var drop in result.SuccessfulAdds)
@@ -324,10 +321,10 @@ public partial class MainGameScene : Control
             {
                 var materialList = string.Join(", ", materialsAdded);
                 _combatLogUI?.AddLogEntry($"Materials collected: {materialList}", "cyan");
-                
+
                 // Show toast notification for materials collected
                 ShowMaterialToast(materialsAdded);
-                
+
                 GameLogger.Info($"Successfully collected {materialsAdded.Count} material types from {monster.Name}");
             }
         }
@@ -366,7 +363,7 @@ public partial class MainGameScene : Control
 
         // Toggle inventory panel visibility
         _inventoryPanelUI.Visible = !_inventoryPanelUI.Visible;
-        
+
         if (_inventoryPanelUI.Visible)
         {
             _inventoryPanelUI.RefreshAllComponents();
@@ -375,36 +372,6 @@ public partial class MainGameScene : Control
         else
         {
             GameLogger.Info("Inventory panel closed");
-        }
-    }
-
-    /// <summary>
-    /// Adds some test materials to the inventory for debugging purposes.
-    /// </summary>
-    private void AddTestMaterials()
-    {
-        if (_inventoryManager == null) return;
-
-        try
-        {
-            // Create some test materials using the correct namespace
-            var ironOre = new Game.Main.Models.Materials.MaterialType("iron_ore", "Iron Ore", "Basic metal ore", MaterialCategory.Metals, MaterialRarity.Common, 999, 5);
-            var silverOre = new Game.Main.Models.Materials.MaterialType("silver_ore", "Silver Ore", "Precious metal ore", MaterialCategory.Metals, MaterialRarity.Uncommon, 500, 15);
-            var gems = new Game.Main.Models.Materials.MaterialType("gems", "Gems", "Precious stones", MaterialCategory.Gems, MaterialRarity.Rare, 100, 50);
-
-            var testDrops = new[]
-            {
-                new MaterialDrop(ironOre, MaterialRarity.Common, 15, DateTime.UtcNow),
-                new MaterialDrop(silverOre, MaterialRarity.Uncommon, 8, DateTime.UtcNow),
-                new MaterialDrop(gems, MaterialRarity.Rare, 3, DateTime.UtcNow)
-            };
-
-            _inventoryManager.AddMaterials(testDrops);
-            GameLogger.Info("Added test materials to inventory for debugging");
-        }
-        catch (Exception ex)
-        {
-            GameLogger.Error(ex, "Failed to add test materials");
         }
     }
 }
