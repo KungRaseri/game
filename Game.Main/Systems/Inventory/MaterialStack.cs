@@ -115,6 +115,13 @@ public record MaterialStack(
         }
 
         var maxCanAdd = RemainingSpace;
+        
+        // If the stack is full, return the original stack unchanged
+        if (maxCanAdd == 0)
+        {
+            return (this, quantityToAdd);
+        }
+        
         var actuallyAdded = Math.Min(quantityToAdd, maxCanAdd);
         var overflow = quantityToAdd - actuallyAdded;
 
@@ -173,6 +180,8 @@ public record MaterialStack(
     /// </summary>
     public static MaterialStack FromDrop(MaterialDrop drop)
     {
+        ArgumentNullException.ThrowIfNull(drop);
+        
         return new MaterialStack(
             drop.Material,
             drop.ActualRarity,

@@ -119,10 +119,11 @@ public class InventoryManagerTests
     {
         // Arrange
         var manager = new InventoryManager();
-        manager.AddMaterials(new[] { _woodDrop }); // Add 10 wood
-
+        
         var inventoryUpdatedEvents = new List<InventoryStats>();
         manager.InventoryUpdated += stats => inventoryUpdatedEvents.Add(stats);
+        
+        manager.AddMaterials(new[] { _woodDrop }); // Add 10 wood
 
         // Act
         var removed = manager.RemoveMaterials(_woodMaterial.Id, MaterialRarity.Common, 5);
@@ -240,8 +241,8 @@ public class InventoryManagerTests
         manager.AddMaterials(new[] { _woodDrop, _stoneDrop, _gemDrop });
 
         var criteria = new InventorySearchCriteria(
-            MinQuantity: 12, // Only stone (15) and higher
-            MinValue: 100    // Only gem (900) and higher
+            MinQuantity: 2, // Wood(10), Stone(15), Gem(3) all pass
+            MinValue: 1000  // Only gem (1500) passes
         );
 
         // Act
@@ -318,6 +319,10 @@ public class InventoryManagerTests
     {
         // Arrange
         var manager = new InventoryManager();
+        
+        var inventoryUpdatedEvents = new List<InventoryStats>();
+        manager.InventoryUpdated += stats => inventoryUpdatedEvents.Add(stats);
+        
         manager.AddMaterials(new[] { _woodDrop, _stoneDrop }); // 10 wood, 15 stone
 
         var requirements = new Dictionary<(string, MaterialRarity), int>
@@ -325,9 +330,6 @@ public class InventoryManagerTests
             { (_woodMaterial.Id, MaterialRarity.Common), 5 },
             { (_stoneMaterial.Id, MaterialRarity.Common), 10 }
         };
-
-        var inventoryUpdatedEvents = new List<InventoryStats>();
-        manager.InventoryUpdated += stats => inventoryUpdatedEvents.Add(stats);
 
         // Act
         var consumed = manager.ConsumeMaterials(requirements);
@@ -414,7 +416,7 @@ public class InventoryManagerTests
         stats.Capacity.Should().Be(20);
         stats.UsedSlots.Should().Be(3);
         stats.TotalMaterials.Should().Be(28); // 10 + 15 + 3
-        stats.TotalValue.Should().Be(995); // (10*5) + (15*3) + (3*100*3)
+        stats.TotalValue.Should().Be(1595); // (10*5*1) + (15*3*1) + (3*100*5) = 50 + 45 + 1500
     }
 
     [Fact]
@@ -422,10 +424,11 @@ public class InventoryManagerTests
     {
         // Arrange
         var manager = new InventoryManager();
-        manager.AddMaterials(new[] { _woodDrop, _stoneDrop });
-
+        
         var inventoryUpdatedEvents = new List<InventoryStats>();
         manager.InventoryUpdated += stats => inventoryUpdatedEvents.Add(stats);
+        
+        manager.AddMaterials(new[] { _woodDrop, _stoneDrop });
 
         // Act
         manager.ClearInventory();

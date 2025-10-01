@@ -189,8 +189,8 @@ public class InventoryManager
                     results = results.Where(stack => stack.TotalValue >= criteria.MinValue);
                 }
 
-                // Apply sorting
-                results = _inventory.SortMaterials(criteria.SortBy, criteria.SortAscending);
+                // Apply sorting to the filtered results
+                results = ApplySorting(results, criteria.SortBy, criteria.SortAscending);
 
                 var resultList = results.ToList();
                 
@@ -207,6 +207,35 @@ public class InventoryManager
                 return new InventorySearchResult(Array.Empty<MaterialStack>(), 0, 0, 0);
             }
         }
+    }
+
+    /// <summary>
+    /// Applies sorting to a collection of material stacks.
+    /// </summary>
+    private static IEnumerable<MaterialStack> ApplySorting(IEnumerable<MaterialStack> materials, MaterialSortBy sortBy, bool ascending)
+    {
+        return sortBy switch
+        {
+            MaterialSortBy.Name => ascending 
+                ? materials.OrderBy(s => s.Material.Name)
+                : materials.OrderByDescending(s => s.Material.Name),
+            MaterialSortBy.Quantity => ascending
+                ? materials.OrderBy(s => s.Quantity)
+                : materials.OrderByDescending(s => s.Quantity),
+            MaterialSortBy.Rarity => ascending
+                ? materials.OrderBy(s => s.Rarity)
+                : materials.OrderByDescending(s => s.Rarity),
+            MaterialSortBy.Category => ascending
+                ? materials.OrderBy(s => s.Material.Category)
+                : materials.OrderByDescending(s => s.Material.Category),
+            MaterialSortBy.Value => ascending
+                ? materials.OrderBy(s => s.TotalValue)
+                : materials.OrderByDescending(s => s.TotalValue),
+            MaterialSortBy.LastUpdated => ascending
+                ? materials.OrderBy(s => s.LastUpdated)
+                : materials.OrderByDescending(s => s.LastUpdated),
+            _ => materials // No sorting for unknown sort types
+        };
     }
 
     /// <summary>
