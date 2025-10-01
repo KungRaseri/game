@@ -52,7 +52,6 @@ public class AdventurerController : IDisposable
         {
             EntityFactory.CreateGoblin(),
             EntityFactory.CreateGoblin(),
-            EntityFactory.CreateGoblin(),
             EntityFactory.CreateGoblin()
         };
 
