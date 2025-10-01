@@ -15,14 +15,15 @@ namespace Game.Main.Systems;
 /// </summary>
 public class ShopInventoryManager : IDisposable
 {
-    private readonly InventoryManager _inventoryManager;
+    private readonly IInventoryProvider _inventoryProvider;
+    private readonly InventoryManager? _inventoryManager; // Optional for full inventory access
     private readonly ShopManager _shopManager;
     private readonly Dictionary<string, decimal> _suggestedPrices;
     
     /// <summary>
-    /// Access to the underlying inventory manager.
+    /// Access to the underlying inventory manager (if available).
     /// </summary>
-    public InventoryManager InventoryManager => _inventoryManager;
+    public InventoryManager? InventoryManager => _inventoryManager;
     
     /// <summary>
     /// Items available for stocking in the shop (from inventory, but not yet displayed).
@@ -30,10 +31,10 @@ public class ShopInventoryManager : IDisposable
     /// crafted items specifically rather than general materials.
     /// </summary>
     public IEnumerable<string> AvailableItemsForShop => 
-        _inventoryManager.CurrentInventory.Materials
+        _inventoryManager?.CurrentInventory.Materials
             .Where(stack => !_shopManager.DisplaySlots.Any(slot => 
                 slot.CurrentItem?.ItemId == stack.Material.Id))
-            .Select(stack => stack.Material.Id);
+            .Select(stack => stack.Material.Id) ?? Enumerable.Empty<string>();
     
     /// <summary>
     /// Number of items ready to be stocked in shop.
@@ -44,9 +45,13 @@ public class ShopInventoryManager : IDisposable
     public event Action<Item, decimal>? ItemAddedToShopInventory;
     public event Action<Item>? ItemRemovedFromShopInventory;
     
+    /// <summary>
+    /// Constructor for full inventory manager integration.
+    /// </summary>
     public ShopInventoryManager(InventoryManager inventoryManager, ShopManager shopManager)
     {
         _inventoryManager = inventoryManager;
+        _inventoryProvider = new InventoryManagerAdapter(inventoryManager);
         _shopManager = shopManager;
         _suggestedPrices = new Dictionary<string, decimal>();
         
@@ -54,6 +59,22 @@ public class ShopInventoryManager : IDisposable
         _shopManager.ItemSold += OnItemSold;
         
         GameLogger.Info("ShopInventoryManager initialized");
+    }
+    
+    /// <summary>
+    /// Constructor for testing with mock inventory provider.
+    /// </summary>
+    public ShopInventoryManager(IInventoryProvider inventoryProvider, ShopManager shopManager)
+    {
+        _inventoryManager = null;
+        _inventoryProvider = inventoryProvider;
+        _shopManager = shopManager;
+        _suggestedPrices = new Dictionary<string, decimal>();
+        
+        // Subscribe to shop events
+        _shopManager.ItemSold += OnItemSold;
+        
+        GameLogger.Info("ShopInventoryManager initialized with mock provider");
     }
     
     /// <summary>
