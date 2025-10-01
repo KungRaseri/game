@@ -59,6 +59,7 @@ public record LootEntry(
     {
         var rarity = GetEffectiveRarity();
         var quantityRange = MinQuantity == MaxQuantity ? $"{MinQuantity}" : $"{MinQuantity}-{MaxQuantity}";
-        return $"{Material.Name}: {DropChance:P0} chance, {quantityRange} quantity ({rarity})";
+        var percentage = (int)(DropChance * 100);
+        return $"{Material.Name}: {percentage}% chance, {quantityRange} quantity ({rarity})";
     }
 }
