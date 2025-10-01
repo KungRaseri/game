@@ -1,0 +1,72 @@
+[gd_scene load_steps=3 format=3 uid="uid://bcs7go00s7rgn"]
+
+[ext_resource type="Script" uid="uid://g1xwt4njnqns" path="res://Scripts/UI/AdventurerInventoryUI.cs" id="1_inventory_script"]
+[ext_resource type="PackedScene" uid="uid://cm5m6c4ywh8xo" path="res://Scenes/UI/MaterialStack.tscn" id="2_material_stack"]
+
+[node name="AdventurerInventory" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+script = ExtResource("1_inventory_script")
+MaterialStackScene = ExtResource("2_material_stack")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Material Inventory"
+horizontal_alignment = 1
+
+[node name="ExpandButton" type="Button" parent="VBoxContainer/HeaderContainer"]
+layout_mode = 2
+text = "Expand (+5)"
+
+[node name="CapacityContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CapacityLabel" type="Label" parent="VBoxContainer/CapacityContainer"]
+layout_mode = 2
+text = "Capacity: 0/20"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InventoryList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="RefreshButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Refresh"
+
+[node name="SortButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+text = "Sort"
+
+[connection signal="pressed" from="VBoxContainer/HeaderContainer/ExpandButton" to="." method="OnExpandCapacityPressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonsContainer/RefreshButton" to="." method="OnRefreshPressed"]

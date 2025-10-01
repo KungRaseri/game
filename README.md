@@ -31,7 +31,7 @@ Game.Main/                 # Core game logic (C#)
 ├── UI/                   # UI integration and management
 └── Utils/                # Helper classes and extensions
 
-Game.Main.Tests/          # Comprehensive unit tests (86 tests, 100% coverage)
+Game.Main.Tests/          # Comprehensive unit tests
 ├── Controllers/          # Controller unit tests
 ├── Data/                 # Data layer tests
 ├── Managers/             # Manager tests
@@ -49,28 +49,9 @@ Documentation/           # Project documentation
 └── milestone-1/         # Milestone-specific documentation
 ```
 
-## 🚀 Current Status
-
-**Branch**: `milestone-1` (Draft PR #1)  
-**Development Phase**: Milestone 1 - Core Combat & Adventurer System  
-**Test Coverage**: 100% (86 comprehensive unit tests)
-
-### ✅ Completed Features
-- **Generic Combat Entity System**: Configurable health, damage, and retreat mechanics
-- **Real-time Auto-Combat**: Health-based battles with damage over time
-- **State Machine**: Idle → Traveling → Fighting → Retreating/Regenerating
-- **Entity Factory**: Configuration-driven creation of adventurers and monsters
-- **Event-Driven Architecture**: Loose coupling with proper disposal patterns
-- **Comprehensive Testing**: Full unit test coverage with edge case validation
-
-### 🔄 In Progress
-- **Godot UI Implementation**: Creating scenes and integrating with C# systems
-- **Combat Visualization**: Real-time health bars and combat logging
-- **Expedition Management**: Dungeon selection and adventurer deployment
-
 ## 🎯 Development Milestones
 
-### Milestone 1: Core Combat & Adventurer System *(Current)*
+### Milestone 1: Core Combat & Adventurer System
 - Health-based auto-combat with complete UI
 - Adventurer status panels and combat logging
 - Expedition management and dungeon exploration
@@ -146,7 +127,7 @@ dotnet test --filter "Category=EntityFactory"
 
 ## 🧪 Testing Philosophy
 
-- **100% Code Coverage**: All production code is thoroughly tested
+- **Comprehensive Coverage**: All production code is thoroughly tested
 - **Edge Case Validation**: Boundary conditions and error scenarios covered
 - **Integration Testing**: Multi-system workflows validated
 - **Event Testing**: All C# events and state transitions verified
@@ -191,5 +172,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-*Last Updated: September 27, 2025*  
-*Current Version: Milestone 1 Development*
+*Development ongoing*

@@ -1,0 +1,84 @@
+[gd_scene load_steps=2 format=3 uid="uid://dyipxttquvd5t"]
+
+[ext_resource type="Script" path="res://Scripts/UI/InventoryStatsUI.cs" id="1_inventory_stats_script"]
+
+[node name="InventoryStats" type="Panel"]
+layout_mode = 3
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_inventory_stats_script")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+
+[node name="TitleLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "Inventory Statistics"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBox"]
+layout_mode = 2
+
+[node name="CapacityContainer" type="VBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="CapacityLabel" type="Label" parent="VBox/CapacityContainer"]
+layout_mode = 2
+text = "Capacity: 0/20"
+
+[node name="CapacityProgressBar" type="ProgressBar" parent="VBox/CapacityContainer"]
+layout_mode = 2
+max_value = 100.0
+
+[node name="TotalMaterialsLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "Total Materials: 0"
+
+[node name="TotalValueLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "Total Value: 0 gold"
+
+[node name="HSeparator2" type="HSeparator" parent="VBox"]
+layout_mode = 2
+
+[node name="CategoryBreakdown" type="VBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="CategoryTitle" type="Label" parent="VBox/CategoryBreakdown"]
+layout_mode = 2
+text = "By Category:"
+
+[node name="CategoriesContainer" type="VBoxContainer" parent="VBox/CategoryBreakdown"]
+layout_mode = 2
+
+[node name="HSeparator3" type="HSeparator" parent="VBox"]
+layout_mode = 2
+
+[node name="RarityBreakdown" type="VBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="RarityTitle" type="Label" parent="VBox/RarityBreakdown"]
+layout_mode = 2
+text = "By Rarity:"
+
+[node name="RaritiesContainer" type="VBoxContainer" parent="VBox/RarityBreakdown"]
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="VBox"]
+layout_mode = 2
+
+[node name="RefreshButton" type="Button" parent="VBox"]
+layout_mode = 2
+text = "Refresh Stats"
