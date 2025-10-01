@@ -66,6 +66,9 @@ public partial class MaterialCollectionUI : Panel
             
             // Initialize UI with current inventory state
             RefreshAllComponents();
+            
+            var stats = _inventoryManager.GetInventoryStats();
+            GameLogger.Info($"MaterialCollectionUI: Inventory set with {stats.UsedSlots}/{stats.Capacity} slots");
         }
 
         GameLogger.Info($"Inventory manager set: {_inventoryManager?.GetType().Name ?? "null"}");
@@ -131,12 +134,28 @@ public partial class MaterialCollectionUI : Panel
             {
                 var inventoryInstance = AdventurerInventoryScene.Instantiate<AdventurerInventoryUI>();
                 _inventoryUI = inventoryInstance;
+                
+                // Ensure MaterialStackScene is set (fallback if not set by scene)
+                if (_inventoryUI.MaterialStackScene == null)
+                {
+                    // Load the MaterialStack scene directly
+                    var materialStackScene = GD.Load<PackedScene>("res://Scenes/UI/MaterialStack.tscn");
+                    _inventoryUI.MaterialStackScene = materialStackScene;
+                    GameLogger.Info("MaterialStackScene set manually as fallback");
+                }
+                
                 inventoryContainer.AddChild(_inventoryUI);
                 
                 // Connect inventory UI events
                 _inventoryUI.MaterialStackSelected += OnMaterialStackSelected;
                 _inventoryUI.CapacityExpanded += OnCapacityExpanded;
                 _inventoryUI.RefreshRequested += OnInventoryRefreshRequested;
+                
+                GameLogger.Info("AdventurerInventoryUI instance created and connected");
+            }
+            else
+            {
+                GameLogger.Error("AdventurerInventoryScene is null - cannot create inventory UI");
             }
 
             // Initialize stats UI

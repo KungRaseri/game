@@ -131,6 +131,8 @@ public partial class AdventurerInventoryUI : Panel
         var inventory = _inventoryManager.CurrentInventory;
         var materials = inventory.Materials.ToList();
 
+        GameLogger.Info($"AdventurerInventoryUI: Updating display with {materials.Count} material stacks");
+
         // Create UI elements for each material stack in the list
         foreach (var materialStack in materials)
         {
@@ -140,7 +142,11 @@ public partial class AdventurerInventoryUI : Panel
 
     private void CreateMaterialStackUI(MaterialStack materialStack)
     {
-        if (MaterialStackScene == null || _inventoryList == null) return;
+        if (MaterialStackScene == null || _inventoryList == null) 
+        {
+            GameLogger.Error($"Cannot create material stack UI: MaterialStackScene={MaterialStackScene}, _inventoryList={_inventoryList}");
+            return;
+        }
 
         var materialStackInstance = MaterialStackScene.Instantiate<MaterialStackUI>();
         materialStackInstance.SetMaterialStack(materialStack);
@@ -148,6 +154,8 @@ public partial class AdventurerInventoryUI : Panel
         
         _materialStackUIs.Add(materialStackInstance);
         _inventoryList.AddChild(materialStackInstance);
+        
+        GameLogger.Debug($"Created MaterialStackUI for {materialStack.Material.Name} x{materialStack.Quantity}");
     }
 
     private void ClearInventoryDisplay()

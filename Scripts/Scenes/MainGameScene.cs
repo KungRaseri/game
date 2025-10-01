@@ -102,6 +102,7 @@ public partial class MainGameScene : Control
 
             // Connect Material Collection UI to inventory system
             _inventoryPanelUI?.SetInventoryManager(_inventoryManager);
+            GameLogger.Info($"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
 
             // Subscribe to additional events from the combat system
             SubscribeToGameEvents();

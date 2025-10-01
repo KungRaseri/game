@@ -40,8 +40,8 @@ size_flags_vertical = 3
 
 [node name="InventoryButton" type="Button" parent="MainContainer/LeftPanel"]
 layout_mode = 2
-text = "View Inventory"
 size_flags_vertical = 0
+text = "View Inventory"
 
 [node name="CombatLog" parent="MainContainer" instance=ExtResource("3_combat_log")]
 layout_mode = 2
