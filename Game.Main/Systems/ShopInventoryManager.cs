@@ -40,10 +40,9 @@ public class ShopInventoryManager : IDisposable
     /// </summary>
     public int ItemsReadyForShop => AvailableItemsForShop.Count();
     
-    // Events
-    public event Action<Item, decimal>? ItemAddedToShopInventory;
-    public event Action<Item>? ItemRemovedFromShopInventory;
-    
+    /// <summary>
+    /// Constructor for shop inventory manager.
+    /// </summary>
     public ShopInventoryManager(InventoryManager inventoryManager, ShopManager shopManager)
     {
         _inventoryManager = inventoryManager;
