@@ -268,19 +268,21 @@ public partial class ShopManagementUI : Panel
 
     private void OnStockRequested(int slotId)
     {
-        // For now, create a test item to stock
-        // In full implementation, this would open an inventory selection dialog
-        if (_shopManager == null) return;
-
-        var testItem = CreateTestItem();
-        var suggestedPrice = _shopManager.CalculateSuggestedPrice(testItem);
-
-        if (_shopManager.StockItem(testItem, slotId, suggestedPrice))
+        if (_shopManager == null || _inventoryManager == null) return;
+        
+        // Check if inventory has materials to stock
+        var materials = _inventoryManager.CurrentInventory.Materials;
+        if (materials.Count == 0)
         {
-            RefreshDisplaySlots();
-            EmitSignal(SignalName.ItemStocked, slotId, testItem.Name);
-            GameLogger.Info($"Stocked {testItem.Name} in slot {slotId} for {suggestedPrice:C}");
+            GameLogger.Warning("No materials available to stock");
+            return;
         }
+        
+        // For now, take the first available material
+        // TODO: In full implementation, show a selection dialog
+        var materialToStock = materials.First();
+        
+        StockMaterialInSlot(materialToStock.Material, materialToStock.Rarity, slotId);
     }
 
     private void OnPriceChangeRequested(int slotId, decimal newPrice)
@@ -296,14 +298,31 @@ public partial class ShopManagementUI : Panel
 
     private void OnRemoveRequested(int slotId)
     {
-        if (_shopManager == null) return;
+        if (_shopManager == null || _inventoryManager == null) return;
 
-        var item = _shopManager.RemoveItem(slotId);
-        if (item != null)
+        var shopSlot = _shopManager.DisplaySlots.FirstOrDefault(s => s.SlotId == slotId);
+        if (shopSlot == null || !shopSlot.IsOccupied || shopSlot.CurrentItem == null)
         {
+            GameLogger.Warning($"Cannot remove item from empty slot {slotId}");
+            return;
+        }
+
+        var item = shopSlot.CurrentItem;
+        
+        // Remove item from shop
+        var removedItem = _shopManager.RemoveItem(slotId);
+        if (removedItem != null)
+        {
+            // TODO: Convert item back to material and return to inventory
+            // For now, the item is just removed (consumed)
+            
             RefreshDisplaySlots();
             RefreshInventory();
-            GameLogger.Info($"Removed {item.Name} from slot {slotId}");
+            GameLogger.Info($"Removed {item.Name} from slot {slotId} (item consumed - not returned to inventory yet)");
+        }
+        else
+        {
+            GameLogger.Error($"Failed to remove item from slot {slotId}");
         }
     }
 
@@ -382,12 +401,22 @@ public partial class ShopManagementUI : Panel
         {
             var noItemsLabel = new Label
             {
-                Text = "No materials in inventory",
-                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+                Text = "No materials in inventory\nGo on expeditions to collect materials!",
+                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+                HorizontalAlignment = HorizontalAlignment.Center
             };
             _inventoryGrid.AddChild(noItemsLabel);
             return;
         }
+
+        // Add instruction label
+        var instructionLabel = new Label
+        {
+            Text = "Click materials to stock in shop:",
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+        _inventoryGrid.AddChild(instructionLabel);
 
         // Display each material type with quantity
         foreach (var materialStack in materials)
@@ -397,6 +426,10 @@ public partial class ShopManagementUI : Panel
                 Text = $"{materialStack.Material.Name} x{materialStack.Quantity} ({materialStack.Rarity})",
                 SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
             };
+            
+            // Add tooltip with value information
+            var item = CreateItemFromMaterial(materialStack.Material, materialStack.Rarity);
+            button.TooltipText = $"{materialStack.Material.Description}\nShop Value: {item.Value}g\nCategory: {materialStack.Material.Category}";
 
             // Store material data in the button for later use
             button.SetMeta("materialId", materialStack.Material.Id);
@@ -415,8 +448,61 @@ public partial class ShopManagementUI : Panel
     private void OnMaterialSelected(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity, int quantity)
     {
         GameLogger.Info($"Selected material: {materialType.Name} x{quantity} ({rarity})");
-        // TODO: Create item from material and stock it in an empty slot
-        // For now, just log the selection
+        
+        // Find an empty slot to stock this material
+        if (_shopManager != null)
+        {
+            var emptySlot = _shopManager.DisplaySlots.FirstOrDefault(slot => !slot.IsOccupied);
+            if (emptySlot != null)
+            {
+                StockMaterialInSlot(materialType, rarity, emptySlot.SlotId);
+            }
+            else
+            {
+                GameLogger.Warning("No empty slots available for stocking");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Stocks a specific material in the given slot, consuming it from inventory.
+    /// </summary>
+    private void StockMaterialInSlot(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity, int slotId)
+    {
+        if (_shopManager == null || _inventoryManager == null) return;
+        
+        // Convert material to sellable item
+        var item = CreateItemFromMaterial(materialType, rarity);
+        var suggestedPrice = _shopManager.CalculateSuggestedPrice(item);
+        
+        // Try to stock the item
+        if (_shopManager.StockItem(item, slotId, suggestedPrice))
+        {
+            // Remove one unit from inventory
+            var removedQuantity = _inventoryManager.RemoveMaterials(
+                materialType.Id, 
+                rarity, 
+                1
+            );
+            
+            if (removedQuantity > 0)
+            {
+                RefreshDisplaySlots();
+                RefreshInventory(); // Update inventory display
+                EmitSignal(SignalName.ItemStocked, slotId, item.Name);
+                GameLogger.Info($"Stocked {item.Name} in slot {slotId} for {suggestedPrice:C} (consumed 1x {materialType.Name})");
+            }
+            else
+            {
+                // Failed to remove from inventory, so remove from shop too
+                _shopManager.RemoveItem(slotId);
+                GameLogger.Error($"Failed to consume material {materialType.Name} from inventory");
+            }
+        }
+        else
+        {
+            GameLogger.Warning($"Failed to stock {item.Name} in slot {slotId}");
+        }
     }
 
     private void UpdateMetrics()
@@ -463,6 +549,58 @@ public partial class ShopManagementUI : Panel
 
         if (_closeShopButton != null)
             _closeShopButton.Disabled = !_isShopOpen;
+    }
+
+    private Item CreateItemFromMaterial(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity)
+    {
+        // Convert material type to item type based on material category
+        var itemType = materialType.Category switch
+        {
+            MaterialCategory.Metals => ItemType.Material,
+            MaterialCategory.Organic => ItemType.Material,
+            MaterialCategory.Gems => ItemType.Material,
+            MaterialCategory.Magical => ItemType.Consumable,
+            MaterialCategory.Specialty => ItemType.Material,
+            _ => ItemType.Material
+        };
+        
+        // Convert material rarity to quality tier
+        var quality = rarity switch
+        {
+            MaterialRarity.Common => QualityTier.Common,
+            MaterialRarity.Uncommon => QualityTier.Uncommon,
+            MaterialRarity.Rare => QualityTier.Rare,
+            MaterialRarity.Epic => QualityTier.Epic,
+            MaterialRarity.Legendary => QualityTier.Legendary,
+            _ => QualityTier.Common
+        };
+        
+        // Create item name based on rarity and material
+        var qualityPrefix = rarity != MaterialRarity.Common ? $"{rarity} " : "";
+        var itemName = $"{qualityPrefix}{materialType.Name}";
+        
+        // Calculate base value from material properties and rarity
+        var baseValue = materialType.BaseValue;
+        var rarityMultiplier = rarity switch
+        {
+            MaterialRarity.Common => 1.0f,
+            MaterialRarity.Uncommon => 1.5f,
+            MaterialRarity.Rare => 2.5f,
+            MaterialRarity.Epic => 4.0f,
+            MaterialRarity.Legendary => 6.0f,
+            _ => 1.0f
+        };
+        
+        var finalValue = (int)(baseValue * rarityMultiplier);
+        
+        return new Item(
+            itemId: Guid.NewGuid().ToString(),
+            name: itemName,
+            description: $"{materialType.Description} ({rarity} quality)",
+            itemType: itemType,
+            quality: quality,
+            value: finalValue
+        );
     }
 
     private Item CreateTestItem()
