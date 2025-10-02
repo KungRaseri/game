@@ -50,6 +50,7 @@ public partial class ShopManagementUI : Panel
 
     private bool _isShopOpen = false;
     private Timer? _updateTimer;
+    private CustomerInteractionDialogUI? _customerDialog;
 
     public override void _Ready()
     {
@@ -595,14 +596,63 @@ public partial class ShopManagementUI : Panel
             child.QueueFree();
         }
 
-        // Show current customers
-        foreach (var record in _trafficManager.TrafficHistory.TakeLast(5))
+        // Show current active customers with interaction buttons
+        foreach (var session in _trafficManager.ActiveSessions)
         {
-            var customerLabel = new Label
+            var customerPanel = new Panel();
+            customerPanel.CustomMinimumSize = new Vector2(0, 100);
+            
+            var customerVBox = new VBoxContainer();
+            customerPanel.AddChild(customerVBox);
+            customerVBox.AnchorLeft = 0;
+            customerVBox.AnchorTop = 0;
+            customerVBox.AnchorRight = 1;
+            customerVBox.AnchorBottom = 1;
+            customerVBox.OffsetLeft = 5;
+            customerVBox.OffsetTop = 5;
+            customerVBox.OffsetRight = -5;
+            customerVBox.OffsetBottom = -5;
+            
+            // Customer basic info
+            var nameLabel = new Label();
+            nameLabel.Text = $"👤 {session.Customer.Name}";
+            nameLabel.AddThemeStyleboxOverride("normal", new StyleBoxEmpty());
+            customerVBox.AddChild(nameLabel);
+            
+            var typeLabel = new Label();
+            typeLabel.Text = GetCustomerTypeIcon(session.Customer.Type);
+            typeLabel.AddThemeColorOverride("font_color", GetCustomerTypeColor(session.Customer.Type));
+            customerVBox.AddChild(typeLabel);
+            
+            var statusLabel = new Label();
+            statusLabel.Text = $"Status: {GetCustomerStateDisplay(session.Customer.CurrentState)}";
+            customerVBox.AddChild(statusLabel);
+            
+            // Interaction button
+            var interactButton = new Button();
+            interactButton.Text = "💬 Interact";
+            interactButton.CustomMinimumSize = new Vector2(0, 25);
+            interactButton.Pressed += () => OnCustomerInteractionRequested(session.Customer);
+            customerVBox.AddChild(interactButton);
+            
+            _customerContainer.AddChild(customerPanel);
+        }
+        
+        // Show recent customer history if no active customers
+        if (_trafficManager.ActiveSessions.Count == 0)
+        {
+            var historyLabel = new Label();
+            historyLabel.Text = "Recent Visitors:";
+            historyLabel.AddThemeStyleboxOverride("normal", new StyleBoxEmpty());
+            _customerContainer.AddChild(historyLabel);
+            
+            foreach (var record in _trafficManager.TrafficHistory.TakeLast(3))
             {
-                Text = $"Customer #{record.CustomerId[..8]} ({record.CustomerType})"
-            };
-            _customerContainer.AddChild(customerLabel);
+                var historyItem = new Label();
+                historyItem.Text = $"📝 {record.CustomerType} - {(record.MadePurchase ? $"Bought {record.PurchaseAmount:C}" : "Left without buying")}";
+                historyItem.AddThemeColorOverride("font_color", new Color(0.7f, 0.7f, 0.7f));
+                _customerContainer.AddChild(historyItem);
+            }
         }
     }
 
@@ -695,6 +745,107 @@ public partial class ShopManagementUI : Panel
             quality: quality,
             value: random.Next(10, 100)
         );
+    }
+    
+    // Customer interaction helper methods
+    private string GetCustomerTypeIcon(CustomerType type)
+    {
+        return type switch
+        {
+            CustomerType.NoviceAdventurer => "🗡️ Novice Adventurer",
+            CustomerType.VeteranAdventurer => "⚔️ Veteran Adventurer",
+            CustomerType.NoblePatron => "👑 Noble Patron",
+            CustomerType.MerchantTrader => "💰 Merchant Trader",
+            CustomerType.CasualTownsperson => "🏘️ Townsperson",
+            _ => "❓ Unknown"
+        };
+    }
+    
+    private Color GetCustomerTypeColor(CustomerType type)
+    {
+        return type switch
+        {
+            CustomerType.NoviceAdventurer => Colors.LightGreen,
+            CustomerType.VeteranAdventurer => Colors.Orange,
+            CustomerType.NoblePatron => Colors.Gold,
+            CustomerType.MerchantTrader => Colors.LightBlue,
+            CustomerType.CasualTownsperson => Colors.LightGray,
+            _ => Colors.White
+        };
+    }
+    
+    private string GetCustomerStateDisplay(CustomerState state)
+    {
+        return state switch
+        {
+            CustomerState.Browsing => "👀 Browsing",
+            CustomerState.Examining => "🤔 Examining",
+            CustomerState.Considering => "⚖️ Considering",
+            CustomerState.Negotiating => "💬 Negotiating",
+            CustomerState.ReadyToBuy => "💳 Ready to Buy",
+            CustomerState.Purchasing => "💰 Purchasing",
+            CustomerState.Leaving => "🚪 Leaving",
+            _ => "Unknown"
+        };
+    }
+    
+    private void OnCustomerInteractionRequested(Customer customer)
+    {
+        // Create customer dialog if needed
+        if (_customerDialog == null)
+        {
+            var dialogScene = GD.Load<PackedScene>("res://Scenes/UI/CustomerInteractionDialog.tscn");
+            _customerDialog = dialogScene.Instantiate<CustomerInteractionDialogUI>();
+            GetTree().CurrentScene.AddChild(_customerDialog);
+            
+            // Connect to customer action events
+            _customerDialog.CustomerActionTaken += OnCustomerActionTaken;
+        }
+        
+        // Find what item the customer is most interested in
+        Item? itemOfInterest = null;
+        if (_shopManager != null)
+        {
+            var availableItems = _shopManager.DisplaySlots
+                .Where(s => s.CurrentItem != null)
+                .Select(s => s.CurrentItem!)
+                .ToList();
+                
+            if (availableItems.Any())
+            {
+                // For now, pick a random item they might be interested in
+                var random = new Random();
+                itemOfInterest = availableItems[random.Next(availableItems.Count)];
+            }
+        }
+        
+        _customerDialog.ShowCustomerInteraction(customer, itemOfInterest, _shopManager!);
+        GameLogger.Info($"Opening customer interaction dialog for {customer.Name}");
+    }
+    
+    private void OnCustomerActionTaken(string customerId, string action, string itemId)
+    {
+        GameLogger.Info($"Customer action: {customerId} performed {action} on {itemId}");
+        
+        // Handle different customer actions
+        switch (action)
+        {
+            case "discount_offered":
+                // Could implement actual discount logic here
+                break;
+            case "negotiation_started":
+                // Could implement price negotiation logic here
+                break;
+            case "show_alternatives":
+                // Could highlight different items in the shop
+                break;
+            case "continue_browsing":
+                // Customer continues shopping
+                break;
+        }
+        
+        // Update the customer display to reflect any changes
+        UpdateCustomerDisplay();
     }
 }
 
