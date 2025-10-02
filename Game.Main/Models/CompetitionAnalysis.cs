@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Game.Main.Models;
 
 /// <summary>
@@ -51,6 +53,6 @@ public class CompetitionAnalysis
             _ => "Dominant position"
         };
         
-        return $"{pressure} competitive pressure, {marketPosition} ({MarketShare:P1} market share)";
+        return $"{pressure} competitive pressure, {marketPosition} ({MarketShare.ToString("P1", CultureInfo.InvariantCulture)} market share)";
     }
 }

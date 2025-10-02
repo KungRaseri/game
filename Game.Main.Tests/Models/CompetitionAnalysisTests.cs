@@ -29,11 +29,11 @@ public class CompetitionAnalysisTests
     }
 
     [Theory]
-    [InlineData(0.2, 0.08, "Low competitive pressure, Niche player (8.0% market share)")]
-    [InlineData(0.5, 0.15, "Moderate competitive pressure, Growing presence (15.0% market share)")]
-    [InlineData(0.7, 0.4, "High competitive pressure, Strong competitor (40.0% market share)")]
-    [InlineData(0.9, 0.6, "Intense competitive pressure, Market leader (60.0% market share)")]
-    [InlineData(0.6, 0.8, "Moderate competitive pressure, Dominant position (80.0% market share)")]
+    [InlineData(0.2, 0.08, "Low competitive pressure, Niche player (8.0 % market share)")]
+    [InlineData(0.5, 0.15, "Moderate competitive pressure, Growing presence (15.0 % market share)")]
+    [InlineData(0.7, 0.4, "High competitive pressure, Strong competitor (40.0 % market share)")]
+    [InlineData(0.9, 0.6, "Intense competitive pressure, Market leader (60.0 % market share)")]
+    [InlineData(0.6, 0.8, "Moderate competitive pressure, Dominant position (80.0 % market share)")]
     public void GetCompetitiveLandscapeDescription_ReturnsCorrectDescription(double pressure, double marketShare, string expected)
     {
         // Arrange
