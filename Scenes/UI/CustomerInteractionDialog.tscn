@@ -1,0 +1,109 @@
+[gd_scene load_steps=2 format=3 uid="uid://crd8g4k2b8n7s"]
+
+[ext_resource type="Script" path="res://Scripts/UI/CustomerInteractionDialogUI.cs" id="1_customer_interaction_script"]
+
+[node name="CustomerInteractionDialog" type="AcceptDialog"]
+title = "Customer Interaction"
+initial_position = 1
+size = Vector2i(500, 400)
+script = ExtResource("1_customer_interaction_script")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -36.0
+
+[node name="CustomerInfo" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CustomerAvatar" type="Panel" parent="VBoxContainer/CustomerInfo"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 80)
+
+[node name="AvatarLabel" type="Label" parent="VBoxContainer/CustomerInfo/CustomerAvatar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "👤"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CustomerDetails" type="VBoxContainer" parent="VBoxContainer/CustomerInfo"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CustomerName" type="Label" parent="VBoxContainer/CustomerInfo/CustomerDetails"]
+layout_mode = 2
+text = "Customer Name"
+
+[node name="CustomerType" type="Label" parent="VBoxContainer/CustomerInfo/CustomerDetails"]
+layout_mode = 2
+text = "Customer Type"
+
+[node name="Budget" type="Label" parent="VBoxContainer/CustomerInfo/CustomerDetails"]
+layout_mode = 2
+text = "Budget: 0-100g"
+
+[node name="Mood" type="Label" parent="VBoxContainer/CustomerInfo/CustomerDetails"]
+layout_mode = 2
+text = "Mood: Browsing"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="DialogContent" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CustomerThoughts" type="RichTextLabel" parent="VBoxContainer/DialogContent"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Customer is thinking..."
+fit_content = true
+
+[node name="ItemOfInterest" type="HBoxContainer" parent="VBoxContainer/DialogContent"]
+layout_mode = 2
+
+[node name="ItemLabel" type="Label" parent="VBoxContainer/DialogContent/ItemOfInterest"]
+layout_mode = 2
+text = "Looking at:"
+
+[node name="ItemName" type="Label" parent="VBoxContainer/DialogContent/ItemOfInterest"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "No item selected"
+
+[node name="ItemPrice" type="Label" parent="VBoxContainer/DialogContent/ItemOfInterest"]
+layout_mode = 2
+text = "0g"
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ActionButtons" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="OfferDiscountButton" type="Button" parent="VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Offer 10% Discount"
+
+[node name="NegotiateButton" type="Button" parent="VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Negotiate Price"
+
+[node name="ShowAlternativeButton" type="Button" parent="VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Show Alternative"
+
+[node name="CloseButton" type="Button" parent="VBoxContainer/ActionButtons"]
+layout_mode = 2
+text = "Let Browse"

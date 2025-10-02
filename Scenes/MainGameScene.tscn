@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://ce3hfv7a2s1gs"]
+[gd_scene load_steps=8 format=3 uid="uid://ce3hfv7a2s1gs"]
 
 [ext_resource type="Script" uid="uid://1wcipswu6kfn" path="res://Scripts/Scenes/MainGameScene.cs" id="1_qla6v"]
 [ext_resource type="PackedScene" uid="uid://b7x3k2qm4wan1" path="res://Scenes/UI/AdventurerStatus.tscn" id="2_adventurer_status"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c5v7n2x4q8p1m" path="res://Scenes/UI/ExpeditionPanel.tscn" id="4_expedition_panel"]
 [ext_resource type="PackedScene" uid="uid://5vuncmhosicy" path="res://Scenes/UI/MaterialCollection.tscn" id="5_material_collection"]
 [ext_resource type="PackedScene" uid="uid://bbax4m7n2q5k8" path="res://Scenes/UI/MaterialToast.tscn" id="6_material_toast"]
+[ext_resource type="PackedScene" uid="uid://bw4x5n1k8g7h2" path="res://Scenes/UI/ShopManagement.tscn" id="7_shop_management"]
 
 [node name="MainGameScene" type="Control"]
 layout_mode = 3
@@ -42,6 +43,11 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_vertical = 0
 text = "View Inventory"
+
+[node name="ShopButton" type="Button" parent="MainContainer/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Manage Shop"
 
 [node name="CombatLog" parent="MainContainer" instance=ExtResource("3_combat_log")]
 layout_mode = 2
@@ -80,5 +86,16 @@ offset_left = -400.0
 offset_top = -300.0
 offset_right = 400.0
 offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ShopManagementPanel" parent="UIOverlay" instance=ExtResource("7_shop_management")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2

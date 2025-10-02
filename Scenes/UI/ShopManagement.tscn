@@ -1,0 +1,396 @@
+[gd_scene load_steps=2 format=3 uid="uid://bw4x5n1k8g7h2"]
+
+[ext_resource type="Script" path="res://Scripts/UI/ShopManagementUI.cs" id="1_shop_management_script"]
+
+[node name="ShopManagement" type="Panel"]
+layout_mode = 3
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_shop_management_script")
+
+[node name="MainContainer" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+
+[node name="LeftPanel" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="ShopTitle" type="Label" parent="MainContainer/LeftPanel"]
+layout_mode = 2
+text = "Shop Management"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MainContainer/LeftPanel"]
+layout_mode = 2
+
+[node name="ActionBar" type="HBoxContainer" parent="MainContainer/LeftPanel"]
+layout_mode = 2
+
+[node name="OpenShopButton" type="Button" parent="MainContainer/LeftPanel/ActionBar"]
+layout_mode = 2
+text = "Open Shop"
+
+[node name="CloseShopButton" type="Button" parent="MainContainer/LeftPanel/ActionBar"]
+layout_mode = 2
+text = "Close Shop"
+
+[node name="BackButton" type="Button" parent="MainContainer/LeftPanel/ActionBar"]
+layout_mode = 2
+text = "Back to Game"
+
+[node name="ShopView" type="Panel" parent="MainContainer/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ShopBackground" type="ColorRect" parent="MainContainer/LeftPanel/ShopView"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.8, 0.8, 0.9, 1)
+
+[node name="DisplaySlotsContainer" type="Control" parent="MainContainer/LeftPanel/ShopView"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="DisplaySlot0" type="Panel" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.05
+anchor_top = 0.1
+anchor_right = 0.45
+anchor_bottom = 0.4
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="ItemDisplay" type="VBoxContainer" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+
+[node name="ItemName" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot0/ItemDisplay"]
+layout_mode = 2
+text = "Empty Slot"
+horizontal_alignment = 1
+
+[node name="ItemPrice" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot0/ItemDisplay"]
+layout_mode = 2
+text = "0g"
+horizontal_alignment = 1
+
+[node name="StockButton" type="Button" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot0/ItemDisplay"]
+layout_mode = 2
+text = "Stock Item"
+
+[node name="DisplaySlot1" type="Panel" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.55
+anchor_top = 0.1
+anchor_right = 0.95
+anchor_bottom = 0.4
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="ItemDisplay" type="VBoxContainer" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+
+[node name="ItemName" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot1/ItemDisplay"]
+layout_mode = 2
+text = "Empty Slot"
+horizontal_alignment = 1
+
+[node name="ItemPrice" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot1/ItemDisplay"]
+layout_mode = 2
+text = "0g"
+horizontal_alignment = 1
+
+[node name="StockButton" type="Button" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot1/ItemDisplay"]
+layout_mode = 2
+text = "Stock Item"
+
+[node name="DisplaySlot2" type="Panel" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.05
+anchor_top = 0.45
+anchor_right = 0.45
+anchor_bottom = 0.75
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="ItemDisplay" type="VBoxContainer" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+
+[node name="ItemName" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot2/ItemDisplay"]
+layout_mode = 2
+text = "Empty Slot"
+horizontal_alignment = 1
+
+[node name="ItemPrice" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot2/ItemDisplay"]
+layout_mode = 2
+text = "0g"
+horizontal_alignment = 1
+
+[node name="StockButton" type="Button" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot2/ItemDisplay"]
+layout_mode = 2
+text = "Stock Item"
+
+[node name="DisplaySlot3" type="Panel" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.55
+anchor_top = 0.45
+anchor_right = 0.95
+anchor_bottom = 0.75
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="ItemDisplay" type="VBoxContainer" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+
+[node name="ItemName" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot3/ItemDisplay"]
+layout_mode = 2
+text = "Empty Slot"
+horizontal_alignment = 1
+
+[node name="ItemPrice" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot3/ItemDisplay"]
+layout_mode = 2
+text = "0g"
+horizontal_alignment = 1
+
+[node name="StockButton" type="Button" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot3/ItemDisplay"]
+layout_mode = 2
+text = "Stock Item"
+
+[node name="DisplaySlot4" type="Panel" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.05
+anchor_top = 0.8
+anchor_right = 0.45
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = -10.0
+
+[node name="ItemDisplay" type="VBoxContainer" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+
+[node name="ItemName" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot4/ItemDisplay"]
+layout_mode = 2
+text = "Empty Slot"
+horizontal_alignment = 1
+
+[node name="ItemPrice" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot4/ItemDisplay"]
+layout_mode = 2
+text = "0g"
+horizontal_alignment = 1
+
+[node name="StockButton" type="Button" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot4/ItemDisplay"]
+layout_mode = 2
+text = "Stock Item"
+
+[node name="DisplaySlot5" type="Panel" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.55
+anchor_top = 0.8
+anchor_right = 0.95
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = -10.0
+
+[node name="ItemDisplay" type="VBoxContainer" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+
+[node name="ItemName" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot5/ItemDisplay"]
+layout_mode = 2
+text = "Empty Slot"
+horizontal_alignment = 1
+
+[node name="ItemPrice" type="Label" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot5/ItemDisplay"]
+layout_mode = 2
+text = "0g"
+horizontal_alignment = 1
+
+[node name="StockButton" type="Button" parent="MainContainer/LeftPanel/ShopView/DisplaySlotsContainer/DisplaySlot5/ItemDisplay"]
+layout_mode = 2
+text = "Stock Item"
+
+[node name="RightPanel" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
+
+[node name="ControlPanel" type="TabContainer" parent="MainContainer/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Inventory" type="VBoxContainer" parent="MainContainer/RightPanel/ControlPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="InventoryScroll" type="ScrollContainer" parent="MainContainer/RightPanel/ControlPanel/Inventory"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="InventoryGrid" type="VBoxContainer" parent="MainContainer/RightPanel/ControlPanel/Inventory/InventoryScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Analytics" type="ScrollContainer" parent="MainContainer/RightPanel/ControlPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MetricsContainer" type="VBoxContainer" parent="MainContainer/RightPanel/ControlPanel/Analytics"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TreasuryInfo" type="HBoxContainer" parent="MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer"]
+layout_mode = 2
+
+[node name="TreasuryLabel" type="Label" parent="MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/TreasuryInfo"]
+layout_mode = 2
+text = "Treasury: "
+
+[node name="TreasuryValue" type="Label" parent="MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/TreasuryInfo"]
+layout_mode = 2
+text = "0g"
+
+[node name="SalesInfo" type="HBoxContainer" parent="MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer"]
+layout_mode = 2
+
+[node name="SalesLabel" type="Label" parent="MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/SalesInfo"]
+layout_mode = 2
+text = "Daily Sales: "
+
+[node name="SalesValue" type="Label" parent="MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/SalesInfo"]
+layout_mode = 2
+text = "0g"
+
+[node name="ItemsInfo" type="HBoxContainer" parent="MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer"]
+layout_mode = 2
+
+[node name="ItemsLabel" type="Label" parent="MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/ItemsInfo"]
+layout_mode = 2
+text = "Items Sold: "
+
+[node name="ItemsValue" type="Label" parent="MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/ItemsInfo"]
+layout_mode = 2
+text = "0"
+
+[node name="Pricing" type="ScrollContainer" parent="MainContainer/RightPanel/ControlPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="QuickPricing" type="VBoxContainer" parent="MainContainer/RightPanel/ControlPanel/Pricing"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PriceAllButton" type="Button" parent="MainContainer/RightPanel/ControlPanel/Pricing/QuickPricing"]
+layout_mode = 2
+text = "Auto-Price All Items"
+
+[node name="ClearAllButton" type="Button" parent="MainContainer/RightPanel/ControlPanel/Pricing/QuickPricing"]
+layout_mode = 2
+text = "Clear All Items"
+
+[node name="CustomerQueue" type="VBoxContainer" parent="MainContainer/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CustomerList" type="ScrollContainer" parent="MainContainer/RightPanel/CustomerQueue"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CustomerContainer" type="VBoxContainer" parent="MainContainer/RightPanel/CustomerQueue/CustomerList"]
+layout_mode = 2
+size_flags_horizontal = 3

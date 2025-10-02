@@ -217,8 +217,8 @@ public class ShopManager
         // Base price calculation (simplified for now - will integrate with crafting costs later)
         decimal baseValue = item.ItemType switch
         {
-            ItemType.Weapon => 50m,
-            ItemType.Armor => 75m,
+            ItemType.Weapon => 60m,
+            ItemType.Armor => 50m,
             ItemType.Material => 10m,
             ItemType.Consumable => 25m,
             _ => 30m
