@@ -42,7 +42,7 @@ public partial class ShopManagementUI : Panel
     private Button? _priceAllButton;
     private Button? _clearAllButton;
     private Button? _backButton;
-    private GridContainer? _inventoryGrid;
+    private VBoxContainer? _inventoryList;
     private VBoxContainer? _customerContainer;
     private Label? _treasuryValue;
     private Label? _itemsValue;
@@ -136,7 +136,7 @@ public partial class ShopManagementUI : Panel
         _backButton = GetNode<Button>("MainContainer/LeftPanel/ActionBar/BackButton");
         _priceAllButton = GetNode<Button>("MainContainer/RightPanel/ControlPanel/Pricing/QuickPricing/PriceAllButton");
         _clearAllButton = GetNode<Button>("MainContainer/RightPanel/ControlPanel/Pricing/QuickPricing/ClearAllButton");
-        _inventoryGrid = GetNode<GridContainer>("MainContainer/RightPanel/ControlPanel/Inventory/InventoryGrid");
+        _inventoryList = GetNode<VBoxContainer>("MainContainer/RightPanel/ControlPanel/Inventory/InventoryScroll/InventoryGrid");
         _customerContainer = GetNode<VBoxContainer>("MainContainer/RightPanel/CustomerQueue/CustomerList/CustomerContainer");
         _treasuryValue = GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/TreasuryInfo/TreasuryValue");
         _salesValue = GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/SalesInfo/SalesValue");
@@ -411,16 +411,16 @@ public partial class ShopManagementUI : Panel
 
     private void RefreshInventory()
     {
-        if (_inventoryGrid == null || _inventoryManager == null) 
+        if (_inventoryList == null || _inventoryManager == null) 
         {
-            GameLogger.Warning($"RefreshInventory called but references null: inventoryGrid={_inventoryGrid != null}, inventoryManager={_inventoryManager != null}");
+            GameLogger.Warning($"RefreshInventory called but references null: inventoryList={_inventoryList != null}, inventoryManager={_inventoryManager != null}");
             return;
         }
 
         GameLogger.Debug("Refreshing inventory display...");
 
         // Clear existing inventory display
-        foreach (Node child in _inventoryGrid.GetChildren())
+        foreach (Node child in _inventoryList.GetChildren())
         {
             child.QueueFree();
         }
@@ -437,8 +437,8 @@ public partial class ShopManagementUI : Panel
                 SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
-            _inventoryGrid.AddChild(noItemsLabel);
-            GameLogger.Debug("Added 'no materials' label to inventory grid");
+            _inventoryList.AddChild(noItemsLabel);
+            GameLogger.Debug("Added 'no materials' label to inventory list");
             return;
         }
 
@@ -447,21 +447,31 @@ public partial class ShopManagementUI : Panel
         {
             Text = "Click materials to stock in shop:",
             SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
-            HorizontalAlignment = HorizontalAlignment.Center
+            HorizontalAlignment = HorizontalAlignment.Center,
+            CustomMinimumSize = new Vector2(0, 25)
         };
-        _inventoryGrid.AddChild(instructionLabel);
+        _inventoryList.AddChild(instructionLabel);
+
+        // Add separator
+        var separator = new HSeparator
+        {
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+        };
+        _inventoryList.AddChild(separator);
 
         // Add debug refresh button (temporary for testing)
         var refreshButton = new Button
         {
             Text = "🔄 Refresh Inventory",
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+            SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+            CustomMinimumSize = new Vector2(0, 30)
         };
         refreshButton.Pressed += () => {
             GameLogger.Info("Manual inventory refresh requested");
             CallDeferred(nameof(RefreshInventory));
         };
-        _inventoryGrid.AddChild(refreshButton);
+        _inventoryList.AddChild(refreshButton);
 
         // Display each material type with quantity
         foreach (var materialStack in materials)
@@ -469,7 +479,9 @@ public partial class ShopManagementUI : Panel
             var button = new Button
             {
                 Text = $"{materialStack.Material.Name} x{materialStack.Quantity} ({materialStack.Rarity})",
-                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+                SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+                CustomMinimumSize = new Vector2(0, 40) // Consistent height for list items
             };
             
             // Add tooltip with value information
@@ -484,8 +496,15 @@ public partial class ShopManagementUI : Panel
             // Connect button press to material selection
             button.Pressed += () => OnMaterialSelected(materialStack.Material, materialStack.Rarity, materialStack.Quantity);
 
-            _inventoryGrid.AddChild(button);
+            _inventoryList.AddChild(button);
         }
+
+        // Add bottom spacer for better visual separation
+        var bottomSpacer = new HSeparator
+        {
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+        };
+        _inventoryList.AddChild(bottomSpacer);
 
         GameLogger.Debug($"Refreshed inventory display with {materials.Count} material types");
     }
