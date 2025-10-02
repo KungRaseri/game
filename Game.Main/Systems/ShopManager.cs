@@ -19,6 +19,7 @@ public class ShopManager
     private readonly List<SaleTransaction> _transactionHistory;
     private readonly TreasuryManager _treasuryManager;
     private readonly PricingEngine _pricingEngine;
+    private readonly CompetitionSimulator _competitionSimulator;
     
     /// <summary>
     /// Current shop layout configuration.
@@ -75,6 +76,7 @@ public class ShopManager
         _transactionHistory = new List<SaleTransaction>();
         _treasuryManager = new TreasuryManager(100m); // Starting capital
         _pricingEngine = new PricingEngine(); // Initialize pricing engine
+        _competitionSimulator = new CompetitionSimulator(); // Initialize competition system
         
         InitializeDisplaySlots();
         GameLogger.Info($"ShopManager initialized with {_displaySlots.Count} display slots and dynamic pricing");
@@ -217,8 +219,8 @@ public class ShopManager
         // Base price calculation (simplified for now - will integrate with crafting costs later)
         decimal baseValue = item.ItemType switch
         {
-            ItemType.Weapon => 50m,
-            ItemType.Armor => 75m,
+            ItemType.Weapon => 60m,
+            ItemType.Armor => 50m,
             ItemType.Material => 10m,
             ItemType.Consumable => 25m,
             _ => 30m
@@ -461,5 +463,167 @@ public class ShopManager
                 random.Next(50, 200), 
                 "Security incident response");
         }
+    }
+    
+    /// <summary>
+    /// Get comprehensive competitive analysis for business intelligence.
+    /// </summary>
+    public CompetitionAnalysis GetCompetitiveAnalysis()
+    {
+        var metrics = GetPerformanceMetrics();
+        var marketData = _pricingEngine.GetAllMarketData();
+        
+        return _competitionSimulator.AnalyzeCompetition(metrics, marketData);
+    }
+    
+    /// <summary>
+    /// Update market dynamics including competitor behavior.
+    /// Should be called periodically (e.g., hourly or daily).
+    /// </summary>
+    public void UpdateMarketDynamics()
+    {
+        var marketData = _pricingEngine.GetAllMarketData();
+        _competitionSimulator.UpdateMarketDynamics(marketData);
+        
+        // Update our pricing engine with competitor data
+        foreach (var competitor in _competitionSimulator.Competitors)
+        {
+            foreach (var (itemKey, price) in competitor.ItemPrices)
+            {
+                var (itemType, quality) = itemKey;
+                _pricingEngine.UpdateCompetitorPrice(itemType, quality, price);
+            }
+        }
+        
+        GameLogger.Debug("Updated market dynamics and competitor pricing");
+    }
+    
+    /// <summary>
+    /// React to significant market events or competitor actions.
+    /// </summary>
+    public void ProcessMarketEvents()
+    {
+        var analysis = GetCompetitiveAnalysis();
+        
+        // Auto-adjust strategy based on competitive pressure
+        if (analysis.CompetitivePressure > 0.8)
+        {
+            // High pressure - consider more aggressive pricing
+            _pricingEngine.CustomerSensitivityFactor = 1.3;
+            GameLogger.Info("Increased pricing sensitivity due to high competitive pressure");
+        }
+        else if (analysis.CompetitivePressure < 0.3)
+        {
+            // Low pressure - can afford premium pricing
+            _pricingEngine.CustomerSensitivityFactor = 0.7;
+            GameLogger.Info("Reduced pricing sensitivity due to low competitive pressure");
+        }
+        
+        // Process competitor threats and opportunities
+        foreach (var threat in analysis.Threats.Take(2)) // Top 2 threats
+        {
+            GameLogger.Warning($"Competitive threat: {threat}");
+        }
+        
+        foreach (var opportunity in analysis.Opportunities.Take(2)) // Top 2 opportunities
+        {
+            GameLogger.Info($"Market opportunity: {opportunity}");
+        }
+    }
+    
+    /// <summary>
+    /// Override pricing to notify competitors of price changes.
+    /// </summary>
+    public decimal SetItemPriceWithCompetitorReaction(int slotId, decimal newPrice)
+    {
+        if (!_displaySlots.TryGetValue(slotId, out var slot) || slot.CurrentItem == null)
+        {
+            throw new InvalidOperationException($"No item in slot {slotId}");
+        }
+        
+        var oldPrice = slot.CurrentPrice;
+        var item = slot.CurrentItem;
+        
+        // Update our price
+        _displaySlots[slotId] = slot.WithPrice(newPrice);
+        
+        // Notify competitors of price change
+        _competitionSimulator.ReactToPlayerPricing(item.ItemType, item.Quality, newPrice, oldPrice);
+        
+        // Update pricing engine
+        _pricingEngine.RecordSale(item, newPrice, CustomerSatisfaction.Neutral);
+        
+        GameLogger.Info($"Updated {item.Name} price from {oldPrice:C} to {newPrice:C} and notified competitors");
+        
+        return newPrice;
+    }
+    
+    /// <summary>
+    /// Get competitive intelligence report for a specific item category.
+    /// </summary>
+    public CompetitiveIntelligence GetCompetitiveIntelligence(ItemType itemType, QualityTier quality)
+    {
+        var competitorPrices = new List<decimal>();
+        var competitorNames = new List<string>();
+        
+        foreach (var competitor in _competitionSimulator.Competitors)
+        {
+            var price = competitor.GetPriceFor(itemType, quality);
+            if (price.HasValue)
+            {
+                competitorPrices.Add(price.Value);
+                competitorNames.Add(competitor.Name);
+            }
+        }
+        
+        var ourPrice = GetDisplayedItem(itemType, quality)?.CurrentPrice ?? 0m;
+        
+        return new CompetitiveIntelligence
+        {
+            ItemType = itemType,
+            QualityTier = quality,
+            OurPrice = ourPrice,
+            CompetitorPrices = competitorPrices,
+            CompetitorNames = competitorNames,
+            AverageCompetitorPrice = competitorPrices.Count > 0 ? competitorPrices.Average() : 0m,
+            LowestCompetitorPrice = competitorPrices.Count > 0 ? competitorPrices.Min() : 0m,
+            HighestCompetitorPrice = competitorPrices.Count > 0 ? competitorPrices.Max() : 0m,
+            PriceAdvantage = CalculatePriceAdvantage(ourPrice, competitorPrices),
+            MarketPosition = DetermineMarketPosition(ourPrice, competitorPrices)
+        };
+    }
+    
+    private ShopDisplaySlot? GetDisplayedItem(ItemType itemType, QualityTier quality)
+    {
+        return _displaySlots.Values
+            .FirstOrDefault(slot => slot.CurrentItem != null && 
+                                   slot.CurrentItem.ItemType == itemType && 
+                                   slot.CurrentItem.Quality == quality);
+    }
+    
+    private decimal CalculatePriceAdvantage(decimal ourPrice, List<decimal> competitorPrices)
+    {
+        if (competitorPrices.Count == 0 || ourPrice == 0) return 0m;
+        
+        var avgCompetitorPrice = competitorPrices.Average();
+        return (avgCompetitorPrice - ourPrice) / avgCompetitorPrice;
+    }
+    
+    private MarketPosition DetermineMarketPosition(decimal ourPrice, List<decimal> competitorPrices)
+    {
+        if (competitorPrices.Count == 0) return MarketPosition.Monopoly;
+        
+        var sortedPrices = competitorPrices.OrderBy(p => p).ToList();
+        var position = sortedPrices.Count(p => p < ourPrice);
+        var percentile = (double)position / sortedPrices.Count;
+        
+        return percentile switch
+        {
+            <= 0.2 => MarketPosition.Premium,
+            <= 0.4 => MarketPosition.AboveAverage,
+            <= 0.6 => MarketPosition.Average,
+            <= 0.8 => MarketPosition.BelowAverage,
+            _ => MarketPosition.Discount
+        };
     }
 }

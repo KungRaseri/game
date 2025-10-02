@@ -135,6 +135,14 @@ public class PricingEngine
     /// <summary>
     /// Record a sale and update market data.
     /// </summary>
+    public void RecordSale(Item item, decimal salePrice, CustomerSatisfaction satisfaction)
+    {
+        RecordSale(item, salePrice, salePrice, satisfaction);
+    }
+    
+    /// <summary>
+    /// Record a sale and update market data.
+    /// </summary>
     public void RecordSale(Item item, decimal salePrice, decimal originalPrice, CustomerSatisfaction satisfaction)
     {
         var marketData = GetOrCreateMarketData(item.ItemType, item.Quality);
@@ -339,6 +347,43 @@ public class PricingEngine
             > 0.8 => "Competitors undercutting prices",
             _ => "Aggressive competitor pricing"
         };
+    }
+    
+    /// <summary>
+    /// Get all market data for competition analysis.
+    /// </summary>
+    public Dictionary<(ItemType, QualityTier), MarketData> GetAllMarketData()
+    {
+        return new Dictionary<(ItemType, QualityTier), MarketData>(_marketData);
+    }
+    
+    /// <summary>
+    /// Update competitor price information.
+    /// </summary>
+    public void UpdateCompetitorPrice(ItemType itemType, QualityTier quality, decimal price)
+    {
+        var marketData = GetOrCreateMarketData(itemType, quality);
+        
+        // Calculate price ratio compared to current market conditions
+        var basePrice = 100m; // Assume base price for calculations
+        
+        // Create a reference item for price calculation
+        var referenceItem = new Item(
+            itemId: "ref_" + itemType.ToString().ToLower(),
+            name: "Reference Item",
+            description: "Reference item for pricing",
+            itemType: itemType,
+            quality: quality,
+            value: (int)basePrice
+        );
+        
+        var currentOptimalPrice = CalculateOptimalPrice(referenceItem, basePrice);
+        
+        if (currentOptimalPrice > 0)
+        {
+            var competitorMultiplier = (double)(price / currentOptimalPrice);
+            marketData.CompetitorPriceMultiplier = competitorMultiplier;
+        }
     }
 }
 
