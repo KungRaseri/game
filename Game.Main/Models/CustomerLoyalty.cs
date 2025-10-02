@@ -6,7 +6,7 @@ namespace Game.Main.Models;
 
 /// <summary>
 /// Represents a customer's preferences for different item types and qualities.
-/// Used by the AI to determine interest levels for various items.
+/// Used by the AI to determine interests for various items.
 /// </summary>
 public record ItemPreferences(
     float WeaponPreference,
@@ -193,11 +193,11 @@ public record CustomerLoyalty(
     {
         var satisfactionBonus = satisfaction switch
         {
-            CustomerSatisfaction.VerySatisfied => 0.2f,
+            CustomerSatisfaction.Delighted => 0.2f,
             CustomerSatisfaction.Satisfied => 0.1f,
             CustomerSatisfaction.Neutral => 0.0f,
-            CustomerSatisfaction.Unsatisfied => -0.1f,
-            CustomerSatisfaction.VeryUnsatisfied => -0.2f,
+            CustomerSatisfaction.Disappointed => -0.1f,
+            CustomerSatisfaction.Angry => -0.2f,
             _ => 0.0f
         };
         
@@ -219,11 +219,11 @@ public record CustomerLoyalty(
     {
         var satisfactionEffect = satisfaction switch
         {
-            CustomerSatisfaction.VerySatisfied => 0.02f,   // Good browsing experience
+            CustomerSatisfaction.Delighted => 0.02f,   // Good browsing experience
             CustomerSatisfaction.Satisfied => 0.01f,
             CustomerSatisfaction.Neutral => 0.0f,
-            CustomerSatisfaction.Unsatisfied => -0.05f,    // Poor experience
-            CustomerSatisfaction.VeryUnsatisfied => -0.1f, // Very poor experience
+            CustomerSatisfaction.Disappointed => -0.05f,    // Poor experience
+            CustomerSatisfaction.Angry => -0.1f, // Very poor experience
             _ => 0.0f
         };
         

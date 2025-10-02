@@ -62,7 +62,7 @@ public record SaleTransaction(
 /// <summary>
 /// Customer satisfaction levels for transactions and shop experience.
 /// </summary>
-public enum CustomerSatisfaction
+public enum LegacyCustomerSatisfaction
 {
     /// <summary>Customer was very unhappy with the transaction.</summary>
     VeryUnsatisfied = 1,
@@ -92,11 +92,11 @@ public static class CustomerSatisfactionExtensions
     {
         return satisfaction switch
         {
-            CustomerSatisfaction.VeryUnsatisfied => "Very Disappointed",
-            CustomerSatisfaction.Unsatisfied => "Disappointed", 
+            CustomerSatisfaction.Angry => "Very Disappointed",
+            CustomerSatisfaction.Disappointed => "Disappointed", 
             CustomerSatisfaction.Neutral => "Neutral",
             CustomerSatisfaction.Satisfied => "Happy",
-            CustomerSatisfaction.VerySatisfied => "Delighted",
+            CustomerSatisfaction.Delighted => "Delighted",
             _ => "Unknown"
         };
     }

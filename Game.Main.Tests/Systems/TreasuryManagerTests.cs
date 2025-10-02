@@ -123,6 +123,7 @@ public class TreasuryManagerTests
         // Arrange
         var treasury = CreateTreasuryManager(1000m);
         var availableInvestments = treasury.AvailableInvestments;
+        var initialInvestmentCount = availableInvestments.Count;
         var affordableInvestment = availableInvestments.First(i => i.IsAffordable(treasury.CurrentGold));
         var initialGold = treasury.CurrentGold;
         
@@ -133,7 +134,7 @@ public class TreasuryManagerTests
         Assert.True(result);
         Assert.Equal(initialGold - affordableInvestment.Cost, treasury.CurrentGold);
         Assert.Single(treasury.CompletedInvestments);
-        Assert.Equal(availableInvestments.Count - 1, treasury.AvailableInvestments.Count);
+        Assert.Equal(initialInvestmentCount - 1, treasury.AvailableInvestments.Count);
         
         var completedInvestment = treasury.CompletedInvestments.First();
         Assert.Equal(affordableInvestment.InvestmentId, completedInvestment.InvestmentId);

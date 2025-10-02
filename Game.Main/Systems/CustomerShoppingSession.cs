@@ -84,7 +84,7 @@ public class CustomerShoppingSession
         {
             GameLogger.Error(ex, $"Error during shopping session for {_customer.Name}");
             await ForceExitAsync("Technical difficulties");
-            return CustomerSatisfaction.VeryUnsatisfied;
+            return CustomerSatisfaction.Angry;
         }
         finally
         {
@@ -339,7 +339,7 @@ public class CustomerShoppingSession
         {
             GameLogger.Error($"Failed to process transaction for {_customer.Name} buying {item.Name}");
             _customer.UpdateThought("There seems to be a problem...");
-            FinalSatisfaction = CustomerSatisfaction.VeryUnsatisfied;
+            FinalSatisfaction = CustomerSatisfaction.Angry;
         }
         
         ChangePhase(ShoppingPhase.Leaving);
@@ -372,7 +372,7 @@ public class CustomerShoppingSession
     private async Task ForceExitAsync(string reason)
     {
         ChangePhase(ShoppingPhase.Leaving);
-        FinalSatisfaction = CustomerSatisfaction.Unsatisfied;
+        FinalSatisfaction = CustomerSatisfaction.Disappointed;
         _customer.UpdateThought(reason);
         
         await SimulateThinkingTime(200, 500);

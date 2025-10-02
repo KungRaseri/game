@@ -63,7 +63,7 @@ public class CustomerShoppingSessionTests
         Assert.Equal(ShoppingPhase.Leaving, session.CurrentPhase);
         Assert.Null(session.CompletedTransaction);
         Assert.True(session.SessionDuration.TotalSeconds > 0);
-        Assert.True(satisfaction == CustomerSatisfaction.Neutral || satisfaction == CustomerSatisfaction.Unsatisfied);
+        Assert.True(satisfaction == CustomerSatisfaction.Neutral || satisfaction == CustomerSatisfaction.Disappointed);
     }
     
     [Fact]

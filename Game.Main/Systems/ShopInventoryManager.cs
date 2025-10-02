@@ -239,11 +239,11 @@ public class ShopInventoryManager : IDisposable
         // Adjust future pricing based on customer satisfaction
         var adjustment = transaction.CustomerSatisfaction switch
         {
-            CustomerSatisfaction.VerySatisfied => 1.05m, // Increase price 5%
+            CustomerSatisfaction.Delighted => 1.05m, // Increase price 5%
             CustomerSatisfaction.Satisfied => 1.02m,    // Increase price 2%
             CustomerSatisfaction.Neutral => 1.0m,       // Keep same price
-            CustomerSatisfaction.Unsatisfied => 0.95m,  // Decrease price 5%
-            CustomerSatisfaction.VeryUnsatisfied => 0.9m, // Decrease price 10%
+            CustomerSatisfaction.Disappointed => 0.95m,  // Decrease price 5%
+            CustomerSatisfaction.Angry => 0.9m, // Decrease price 10%
             _ => 1.0m
         };
         

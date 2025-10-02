@@ -11,18 +11,24 @@ namespace Game.Main.Systems;
 
 /// <summary>
 /// Central management system for shop operations, display slots, and item sales.
-/// Coordinates between inventory, pricing, and customer interactions.
+/// Coordinates between inventory, pricing, and customer interactions with dynamic pricing.
 /// </summary>
 public class ShopManager
 {
     private readonly Dictionary<int, ShopDisplaySlot> _displaySlots;
     private readonly List<SaleTransaction> _transactionHistory;
     private readonly TreasuryManager _treasuryManager;
+    private readonly PricingEngine _pricingEngine;
     
     /// <summary>
     /// Current shop layout configuration.
     /// </summary>
     public ShopLayout CurrentLayout { get; private set; }
+    
+    /// <summary>
+    /// Dynamic pricing engine for market-responsive pricing.
+    /// </summary>
+    public PricingEngine PricingEngine => _pricingEngine;
     
     /// <summary>
     /// Treasury management system.
@@ -68,9 +74,10 @@ public class ShopManager
         _displaySlots = new Dictionary<int, ShopDisplaySlot>();
         _transactionHistory = new List<SaleTransaction>();
         _treasuryManager = new TreasuryManager(100m); // Starting capital
+        _pricingEngine = new PricingEngine(); // Initialize pricing engine
         
         InitializeDisplaySlots();
-        GameLogger.Info($"ShopManager initialized with {_displaySlots.Count} display slots");
+        GameLogger.Info($"ShopManager initialized with {_displaySlots.Count} display slots and dynamic pricing");
     }
     
     /// <summary>
@@ -200,11 +207,11 @@ public class ShopManager
     }
     
     /// <summary>
-    /// Calculate a suggested price for an item based on its material costs and quality.
+    /// Calculate a suggested price for an item using the dynamic pricing engine.
     /// </summary>
     /// <param name="item">The item to price</param>
     /// <param name="profitMargin">Target profit margin (default 50%)</param>
-    /// <returns>Suggested retail price</returns>
+    /// <returns>Market-responsive suggested retail price</returns>
     public decimal CalculateSuggestedPrice(Item item, float profitMargin = 0.5f)
     {
         // Base price calculation (simplified for now - will integrate with crafting costs later)
@@ -217,22 +224,36 @@ public class ShopManager
             _ => 30m
         };
         
-        // Quality multiplier
-        float qualityMultiplier = item.Quality switch
-        {
-            QualityTier.Common => 1.0f,
-            QualityTier.Uncommon => 1.3f,
-            QualityTier.Rare => 1.7f,
-            QualityTier.Epic => 2.5f,
-            QualityTier.Legendary => 4.0f,
-            _ => 1.0f
-        };
+        var basePriceWithMargin = baseValue * (1 + (decimal)profitMargin);
         
-        var suggestedPrice = baseValue * (decimal)qualityMultiplier * (1 + (decimal)profitMargin);
+        // Use dynamic pricing engine for market-responsive pricing
+        var marketPrice = _pricingEngine.CalculateOptimalPrice(item, basePriceWithMargin);
         
-        GameLogger.Debug($"Calculated suggested price for {item.Name}: {suggestedPrice} gold (base: {baseValue}, quality: {item.Quality})");
+        GameLogger.Debug($"Calculated market price for {item.Name}: {marketPrice} gold (base: {baseValue}, market-adjusted from: {basePriceWithMargin})");
         
-        return Math.Round(suggestedPrice, 2);
+        return marketPrice;
+    }
+    
+    /// <summary>
+    /// Get market analysis for a specific item type and quality.
+    /// </summary>
+    /// <param name="itemType">The item type to analyze</param>
+    /// <param name="quality">The quality tier to analyze</param>
+    /// <returns>Comprehensive market analysis</returns>
+    public MarketAnalysis GetMarketAnalysis(ItemType itemType, QualityTier quality)
+    {
+        return _pricingEngine.GetMarketAnalysis(itemType, quality);
+    }
+    
+    /// <summary>
+    /// Set pricing strategy for a specific item type.
+    /// </summary>
+    /// <param name="itemType">The item type</param>
+    /// <param name="strategy">The pricing strategy to use</param>
+    public void SetPricingStrategy(ItemType itemType, PricingStrategy strategy)
+    {
+        _pricingEngine.SetPricingStrategy(itemType, strategy);
+        GameLogger.Info($"Set pricing strategy for {itemType} to {strategy}");
     }
     
     /// <summary>
@@ -268,6 +289,9 @@ public class ShopManager
             TransactionTime: DateTime.Now,
             CustomerSatisfaction: satisfaction
         );
+        
+        // Record sale with pricing engine for market analysis
+        _pricingEngine.RecordSale(item, salePrice, estimatedCost, satisfaction);
         
         // Remove item from display
         RemoveItem(slotId);
@@ -410,11 +434,14 @@ public class ShopManager
     }
     
     /// <summary>
-    /// Process recurring expenses (should be called daily/periodically).
+    /// Process recurring expenses and update market conditions (should be called daily/periodically).
     /// </summary>
     public void ProcessDailyOperations()
     {
         _treasuryManager.ProcessRecurringExpenses();
+        
+        // Update market conditions for pricing engine
+        _pricingEngine.UpdateMarketConditions(TimeSpan.FromDays(1));
         
         // Add some realistic daily expenses
         var random = new Random();

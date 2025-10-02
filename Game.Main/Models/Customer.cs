@@ -229,7 +229,7 @@ public class Customer
         CurrentThought = reason;
         
         // Leaving without purchase slightly reduces loyalty
-        var satisfaction = ViewedItems.Count > 0 ? CustomerSatisfaction.Neutral : CustomerSatisfaction.Unsatisfied;
+        var satisfaction = ViewedItems.Count > 0 ? CustomerSatisfaction.Neutral : CustomerSatisfaction.Disappointed;
         Loyalty = Loyalty.UpdateAfterVisit(satisfaction);
         
         GameLogger.Info($"Customer {Name} left without purchase: {reason}");
@@ -435,11 +435,11 @@ public class Customer
         
         return satisfaction switch
         {
-            >= 80f => CustomerSatisfaction.VerySatisfied,
+            >= 80f => CustomerSatisfaction.Delighted,
             >= 60f => CustomerSatisfaction.Satisfied,
             >= 40f => CustomerSatisfaction.Neutral,
-            >= 20f => CustomerSatisfaction.Unsatisfied,
-            _ => CustomerSatisfaction.VeryUnsatisfied
+            >= 20f => CustomerSatisfaction.Disappointed,
+            _ => CustomerSatisfaction.Angry
         };
     }
     
@@ -485,11 +485,11 @@ public class Customer
     {
         return satisfaction switch
         {
-            CustomerSatisfaction.VerySatisfied => "Excellent! Exactly what I needed!",
+            CustomerSatisfaction.Delighted => "Excellent! Exactly what I needed!",
             CustomerSatisfaction.Satisfied => "Good purchase, I'm happy with this.",
             CustomerSatisfaction.Neutral => "This will do fine.",
-            CustomerSatisfaction.Unsatisfied => "Not quite what I hoped for...",
-            CustomerSatisfaction.VeryUnsatisfied => "I think I overpaid for this...",
+            CustomerSatisfaction.Disappointed => "Not quite what I hoped for...",
+            CustomerSatisfaction.Angry => "I think I overpaid for this...",
             _ => "Thanks for the transaction."
         };
     }
