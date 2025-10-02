@@ -36,6 +36,8 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
     private Customer? _currentCustomer;
     private Item? _currentItem;
     private ShopManager? _shopManager;
+    private EnhancedCustomerAI? _customerAI;
+    private ShopInteractionContext _interactionContext = new();
     private Random _random = new();
     
     public override void _Ready()
@@ -91,13 +93,29 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         _currentItem = item;
         _shopManager = shopManager;
         
+        // Initialize Enhanced AI for this customer
+        _customerAI = new EnhancedCustomerAI(customer);
+        
+        // Initialize interaction context
+        _interactionContext = new ShopInteractionContext
+        {
+            InteractionQualityScore = 0.5f,
+            ShopReputationScore = 0.7f, // Base shop reputation
+            ShopAmbianceScore = 0.6f,
+            OtherCustomersSatisfaction = 0.5f,
+            AlternativeItemsAvailable = shopManager.DisplaySlots.Count(slot => slot != null && slot.CurrentItem != null) > 1,
+            TotalInteractions = 0,
+            DiscountOffered = false,
+            NegotiationAttempted = false
+        };
+        
         UpdateCustomerDisplay();
         UpdateItemDisplay();
         UpdateCustomerThoughts();
         UpdateActionButtons();
         
         PopupCentered();
-        GameLogger.Info($"Showing customer interaction for {customer.Name}");
+        GameLogger.Info($"Showing enhanced customer interaction for {customer.Name}");
     }
     
     private void UpdateCustomerDisplay()
@@ -139,13 +157,73 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
     
     private void UpdateCustomerThoughts()
     {
-        if (_currentCustomer == null || _customerThoughts == null) return;
+        if (_currentCustomer == null || _customerThoughts == null || _customerAI == null) return;
         
-        string thoughts = GenerateCustomerThoughts();
+        string thoughts = GenerateEnhancedCustomerThoughts();
         _customerThoughts.Text = thoughts;
     }
     
-    private string GenerateCustomerThoughts()
+    private string GenerateEnhancedCustomerThoughts()
+    {
+        if (_currentCustomer == null || _customerAI == null) return "";
+        
+        // If we have a specific item, get Enhanced AI decision
+        if (_currentItem != null)
+        {
+            var decision = _customerAI.MakeEnhancedPurchaseDecision(_currentItem, _currentItem.Value, _interactionContext);
+            
+            var thoughts = new System.Collections.Generic.List<string>
+            {
+                $"💭 \"{decision.PrimaryReason}\"",
+                $"🧠 Confidence: {decision.Confidence:P0}"
+            };
+            
+            // Add emotional response
+            var emotionIcon = decision.EmotionalResponse switch
+            {
+                CustomerEmotionalResponse.Delighted => "😍",
+                CustomerEmotionalResponse.Satisfied => "😊",
+                CustomerEmotionalResponse.Neutral => "😐",
+                CustomerEmotionalResponse.Frustrated => "😤",
+                CustomerEmotionalResponse.Upset => "😠",
+                CustomerEmotionalResponse.Conflicted => "🤔",
+                _ => "😐"
+            };
+            
+            thoughts.Add($"{emotionIcon} Feeling: {decision.EmotionalResponse}");
+            
+            // Add decision-specific thoughts
+            thoughts.AddRange(decision.Decision switch
+            {
+                PurchaseDecision.Buying => new[] { "✅ \"I'll take it!\"" },
+                PurchaseDecision.WantsToNegotiate => new[] { $"💰 \"Maybe we can discuss the price? ({decision.NegotiationWillingness:P0} willing to negotiate)\"" },
+                PurchaseDecision.Considering => new[] { "⏳ \"Let me think about this...\"" },
+                PurchaseDecision.NotBuying => new[] { "❌ \"Not interested in this item.\"" },
+                _ => new[] { "🤷 \"I'm not sure about this...\"" }
+            });
+            
+            // Add secondary factors
+            if (decision.SecondaryFactors.Any())
+            {
+                thoughts.Add($"📝 Also considering: {string.Join(", ", decision.SecondaryFactors)}");
+            }
+            
+            // Add suggested action for the player
+            if (!string.IsNullOrEmpty(decision.SuggestedAction))
+            {
+                thoughts.Add($"💡 [Player tip: {decision.SuggestedAction}]");
+            }
+            
+            return string.Join("\n\n", thoughts);
+        }
+        else
+        {
+            // General browsing thoughts
+            return GenerateBrowsingThoughts();
+        }
+    }
+    
+    private string GenerateBrowsingThoughts()
     {
         if (_currentCustomer == null) return "";
         
@@ -153,12 +231,6 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         
         // Base thoughts based on customer type
         thoughts.AddRange(GetTypeBasedThoughts(_currentCustomer.Type));
-        
-        // Item-specific thoughts
-        if (_currentItem != null)
-        {
-            thoughts.AddRange(GetItemSpecificThoughts(_currentItem));
-        }
         
         // Personality-based thoughts
         thoughts.AddRange(GetPersonalityBasedThoughts(_currentCustomer.Personality));
@@ -345,56 +417,84 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
     
     private void OnOfferDiscountPressed()
     {
-        if (_currentCustomer == null || _currentItem == null) return;
+        if (_currentCustomer == null || _currentItem == null || _customerAI == null) return;
         
         GameLogger.Info($"Offering discount to {_currentCustomer.Name} for {_currentItem.Name}");
-        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "discount_offered", _currentItem.ItemId);
         
-        // Update thoughts to show customer reaction
-        _customerThoughts!.Text = "💭 \"A discount? That's quite generous! This makes the deal much more appealing.\"";
+        // Update interaction context
+        _interactionContext.DiscountOffered = true;
+        _interactionContext.InteractionQualityScore += 0.2f; // Positive interaction
+        _interactionContext.TotalInteractions++;
         
-        // Simulate customer reaction - most customers appreciate discounts
-        var appreciationMessages = new[]
+        // Get Enhanced AI response to discount offer
+        var response = _customerAI.MakeEnhancedPurchaseDecision(_currentItem, _currentItem.Value * 0.9m, _interactionContext);
+        
+        // Generate realistic customer reaction
+        var reactionText = response.Decision switch
         {
-            "😊 \"Thank you for the discount!\"",
-            "🙏 \"That's very kind of you!\"", 
-            "👍 \"Now we're talking!\"",
-            "😄 \"I appreciate the offer!\""
+            PurchaseDecision.Buying => "� \"That's perfect! I'll take it at that price!\"",
+            PurchaseDecision.WantsToNegotiate => "🤔 \"That helps, but could we go a bit lower?\"",
+            PurchaseDecision.Considering => "� \"That's more reasonable... let me think.\"",
+            PurchaseDecision.NotBuying => "� \"I appreciate the gesture, but it's still not quite right for me.\"",
+            _ => "🙂 \"Thank you for considering a discount.\""
         };
         
-        var reaction = appreciationMessages[_random.Next(appreciationMessages.Length)];
-        _customerThoughts!.Text += $"\n\n{reaction}";
+        var fullResponse = $"💰 Discount Offered!\n\n{reactionText}\n\n💭 \"{response.PrimaryReason}\"\n\n💡 {response.SuggestedAction}";
+        _customerThoughts!.Text = fullResponse;
+        
+        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "discount_offered", _currentItem.ItemId);
+        
+        // Update action buttons based on new state
+        UpdateActionButtons();
     }
     
     private void OnNegotiatePressed()
     {
-        if (_currentCustomer == null || _currentItem == null) return;
+        if (_currentCustomer == null || _currentItem == null || _customerAI == null) return;
         
         GameLogger.Info($"Starting negotiation with {_currentCustomer.Name} for {_currentItem.Name}");
-        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "negotiation_started", _currentItem.ItemId);
         
-        // Simulate negotiation based on customer personality
-        var negotiationSuccess = _random.NextSingle() < _currentCustomer.Personality.NegotiationTendency;
+        // Update interaction context
+        _interactionContext.NegotiationAttempted = true;
+        _interactionContext.InteractionQualityScore += 0.1f; // Slight positive for engagement
+        _interactionContext.TotalInteractions++;
         
-        if (negotiationSuccess)
+        // Simulate negotiation with Enhanced AI
+        var originalPrice = _currentItem.Value;
+        var proposedPrice = _currentCustomer.AttemptNegotiation(_currentItem, originalPrice);
+        
+        if (proposedPrice.HasValue)
         {
-            var discountPercent = _random.Next(5, 20);
-            _customerThoughts!.Text = $"💭 \"How about {discountPercent}% off? That would be fair for both of us.\"";
+            // Get Enhanced AI response to negotiation
+            var response = _customerAI.MakeEnhancedPurchaseDecision(_currentItem, proposedPrice.Value, _interactionContext);
+            
+            var negotiationText = $"💰 \"How about {proposedPrice.Value}g? That seems fair.\"";
+            
+            var fullResponse = $"🤝 Negotiation Started!\n\n{negotiationText}\n\n💭 \"{response.PrimaryReason}\"\n\nConfidence: {response.Confidence:P0}\n\n💡 {response.SuggestedAction}";
+            _customerThoughts!.Text = fullResponse;
         }
         else
         {
-            _customerThoughts!.Text = "💭 \"I appreciate the offer, but I think the price is fair as is.\"";
+            _customerThoughts!.Text = "😔 \"I appreciate the conversation, but I prefer not to negotiate on prices.\"";
         }
+        
+        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "negotiation_started", _currentItem.ItemId);
+        
+        // Update action buttons
+        UpdateActionButtons();
     }
     
     private void OnShowAlternativePressed()
     {
-        if (_currentCustomer == null || _shopManager == null) return;
+        if (_currentCustomer == null || _shopManager == null || _customerAI == null) return;
         
         GameLogger.Info($"Showing alternatives to {_currentCustomer.Name}");
-        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "show_alternatives", "");
         
-        // Find an alternative item from the shop
+        // Update interaction context
+        _interactionContext.InteractionQualityScore += 0.15f; // Positive - showing helpfulness
+        _interactionContext.TotalInteractions++;
+        
+        // Find alternative items from the shop
         var availableItems = _shopManager.DisplaySlots
             .Where(s => s.CurrentItem != null && s.CurrentItem != _currentItem)
             .Select(s => s.CurrentItem!)
@@ -402,17 +502,37 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
             
         if (availableItems.Any())
         {
-            var alternative = availableItems[_random.Next(availableItems.Count)];
-            _customerThoughts!.Text = $"💭 \"Hmm, what about that {alternative.Name}? That might work for me too.\"";
+            // Use customer preferences to find the best alternative
+            var bestAlternative = availableItems
+                .OrderByDescending(item => _currentCustomer.EvaluateItem(item, item.Value))
+                .First();
+            
+            // Get Enhanced AI analysis of the alternative
+            var response = _customerAI.MakeEnhancedPurchaseDecision(bestAlternative, bestAlternative.Value, _interactionContext);
+            
+            var alternativeText = response.Decision switch
+            {
+                PurchaseDecision.Buying => $"😍 \"Oh! That {bestAlternative.Name} looks perfect!\"",
+                PurchaseDecision.WantsToNegotiate => $"🤔 \"That {bestAlternative.Name} is interesting. What's your best price?\"",
+                PurchaseDecision.Considering => $"💭 \"Hmm, that {bestAlternative.Name} might work for me...\"",
+                PurchaseDecision.NotBuying => $"😐 \"The {bestAlternative.Name} isn't quite what I need.\"",
+                _ => $"🤷 \"Let me think about that {bestAlternative.Name}...\""
+            };
+            
+            var fullResponse = $"🔄 Alternative Shown!\n\n{alternativeText}\n\n💭 \"{response.PrimaryReason}\"\n\nInterest Level: {response.Confidence:P0}\n\n💡 {response.SuggestedAction}";
+            _customerThoughts!.Text = fullResponse;
             
             // Update the item display to show the alternative
-            _currentItem = alternative;
+            _currentItem = bestAlternative;
             UpdateItemDisplay();
+            UpdateActionButtons();
         }
         else
         {
-            _customerThoughts!.Text = "💭 \"I'll stick with what I was looking at, thanks.\"";
+            _customerThoughts!.Text = "💭 \"I appreciate you trying to help, but I'll stick with what I was looking at.\"";
         }
+        
+        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "show_alternatives", _currentItem?.ItemId ?? "");
     }
     
     private void OnClosePressed()
