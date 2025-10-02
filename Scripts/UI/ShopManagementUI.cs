@@ -60,12 +60,16 @@ public partial class ShopManagementUI : Panel
         SetupUpdateTimer();
         ConnectUIEvents();
 
+        // Connect to visibility changes to refresh inventory when shown
+        VisibilityChanged += OnVisibilityChanged;
+
         UpdateUI();
         GameLogger.Info("ShopManagementUI ready");
     }
 
     public override void _ExitTree()
     {
+        VisibilityChanged -= OnVisibilityChanged;
         DisconnectEvents();
         _updateTimer?.QueueFree();
         GameLogger.Info("ShopManagementUI disposed");
@@ -102,6 +106,27 @@ public partial class ShopManagementUI : Panel
         UpdateMetrics();
 
         GameLogger.Info("ShopManagementUI initialized with shop systems and inventory");
+    }
+
+    /// <summary>
+    /// Manually refresh all UI components. Call this when the shop UI becomes visible.
+    /// </summary>
+    public void RefreshAllComponents()
+    {
+        RefreshDisplaySlots();
+        RefreshInventory();
+        UpdateMetrics();
+        GameLogger.Info("Manually refreshed all shop UI components");
+    }
+
+    private void OnVisibilityChanged()
+    {
+        // Refresh inventory when the shop UI becomes visible
+        if (Visible && _inventoryManager != null)
+        {
+            CallDeferred(nameof(RefreshAllComponents));
+            GameLogger.Debug("Shop UI became visible, refreshing displays");
+        }
     }
 
     private void CacheUIReferences()
@@ -386,7 +411,13 @@ public partial class ShopManagementUI : Panel
 
     private void RefreshInventory()
     {
-        if (_inventoryGrid == null || _inventoryManager == null) return;
+        if (_inventoryGrid == null || _inventoryManager == null) 
+        {
+            GameLogger.Warning($"RefreshInventory called but references null: inventoryGrid={_inventoryGrid != null}, inventoryManager={_inventoryManager != null}");
+            return;
+        }
+
+        GameLogger.Debug("Refreshing inventory display...");
 
         // Clear existing inventory display
         foreach (Node child in _inventoryGrid.GetChildren())
@@ -396,6 +427,7 @@ public partial class ShopManagementUI : Panel
 
         // Get the player's actual materials from inventory
         var materials = _inventoryManager.CurrentInventory.Materials;
+        GameLogger.Debug($"Found {materials.Count} material stacks in inventory");
 
         if (materials.Count == 0)
         {
@@ -406,6 +438,7 @@ public partial class ShopManagementUI : Panel
                 HorizontalAlignment = HorizontalAlignment.Center
             };
             _inventoryGrid.AddChild(noItemsLabel);
+            GameLogger.Debug("Added 'no materials' label to inventory grid");
             return;
         }
 
@@ -417,6 +450,18 @@ public partial class ShopManagementUI : Panel
             HorizontalAlignment = HorizontalAlignment.Center
         };
         _inventoryGrid.AddChild(instructionLabel);
+
+        // Add debug refresh button (temporary for testing)
+        var refreshButton = new Button
+        {
+            Text = "🔄 Refresh Inventory",
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+        };
+        refreshButton.Pressed += () => {
+            GameLogger.Info("Manual inventory refresh requested");
+            CallDeferred(nameof(RefreshInventory));
+        };
+        _inventoryGrid.AddChild(refreshButton);
 
         // Display each material type with quantity
         foreach (var materialStack in materials)

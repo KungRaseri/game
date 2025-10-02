@@ -423,7 +423,9 @@ public partial class MainGameScene : Control
 
         if (_shopManagementUI.Visible)
         {
-            GameLogger.Info("Shop management panel opened");
+            // Refresh the shop UI components when opening
+            _shopManagementUI.RefreshAllComponents();
+            GameLogger.Info("Shop management panel opened and refreshed");
         }
         else
         {
