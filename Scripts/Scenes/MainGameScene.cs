@@ -10,6 +10,7 @@ using Game.Main.Models;
 using Game.Main.Models.Materials;
 using Game.Main.Systems.Inventory;
 using Game.Main.Systems.Loot;
+using Game.Main.Systems;
 using System;
 using System.Collections.Generic;
 
@@ -37,13 +38,17 @@ public partial class MainGameScene : Control
     private Timer? _updateTimer;
     private InventoryManager? _inventoryManager;
     private LootGenerator? _lootGenerator;
+    private ShopManager? _shopManager;
+    private ShopTrafficManager? _trafficManager;
 
     // UI Component references
     private AdventurerStatusUI? _adventurerStatusUI;
     private CombatLogUI? _combatLogUI;
     private ExpeditionPanelUI? _expeditionPanelUI;
     private MaterialCollectionUI? _inventoryPanelUI;
+    private ShopManagementUI? _shopManagementUI;
     private Button? _inventoryButton;
+    private Button? _shopButton;
     private VBoxContainer? _toastContainer;
 
     public override void _Ready()
@@ -77,7 +82,9 @@ public partial class MainGameScene : Control
         _combatLogUI = GetNode<CombatLogUI>("MainContainer/CombatLog");
         _expeditionPanelUI = GetNode<ExpeditionPanelUI>("MainContainer/LeftPanel/ExpeditionPanel");
         _inventoryPanelUI = GetNode<MaterialCollectionUI>("UIOverlay/InventoryPanel");
+        _shopManagementUI = GetNode<ShopManagementUI>("UIOverlay/ShopManagementPanel");
         _inventoryButton = GetNode<Button>("MainContainer/LeftPanel/InventoryButton");
+        _shopButton = GetNode<Button>("MainContainer/LeftPanel/ShopButton");
         _toastContainer = GetNode<VBoxContainer>("UIOverlay/ToastContainer");
     }
 
@@ -90,6 +97,10 @@ public partial class MainGameScene : Control
         _inventoryManager = new InventoryManager(20); // Start with 20 slot capacity
         _lootGenerator = CreateLootGenerator();
 
+        // Initialize shop management systems
+        _shopManager = new ShopManager(); // Use default layout
+        _trafficManager = new ShopTrafficManager(_shopManager);
+
         // Connect UI components to the game manager
         if (_gameManager.AdventurerController != null)
         {
@@ -100,6 +111,10 @@ public partial class MainGameScene : Control
             // Connect Material Collection UI to inventory system
             _inventoryPanelUI?.SetInventoryManager(_inventoryManager);
             GameLogger.Info($"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
+
+            // Connect Shop Management UI to shop systems
+            _shopManagementUI?.Initialize(_shopManager, _trafficManager);
+            GameLogger.Info("Connected shop management systems");
 
             // Subscribe to additional events from the combat system
             SubscribeToGameEvents();
@@ -160,6 +175,11 @@ public partial class MainGameScene : Control
         {
             _inventoryButton.Pressed += OnInventoryButtonPressed;
         }
+
+        if (_shopButton != null)
+        {
+            _shopButton.Pressed += OnShopButtonPressed;
+        }
     }
 
     private void DisconnectUIEvents()
@@ -175,6 +195,11 @@ public partial class MainGameScene : Control
         if (_inventoryButton != null)
         {
             _inventoryButton.Pressed -= OnInventoryButtonPressed;
+        }
+
+        if (_shopButton != null)
+        {
+            _shopButton.Pressed -= OnShopButtonPressed;
         }
     }
 
@@ -372,6 +397,26 @@ public partial class MainGameScene : Control
         else
         {
             GameLogger.Info("Inventory panel closed");
+        }
+    }
+
+    /// <summary>
+    /// Handles shop button press to show/hide the shop management panel.
+    /// </summary>
+    private void OnShopButtonPressed()
+    {
+        if (_shopManagementUI == null) return;
+
+        // Toggle shop management panel visibility
+        _shopManagementUI.Visible = !_shopManagementUI.Visible;
+
+        if (_shopManagementUI.Visible)
+        {
+            GameLogger.Info("Shop management panel opened");
+        }
+        else
+        {
+            GameLogger.Info("Shop management panel closed");
         }
     }
 }
