@@ -1,19 +1,6 @@
 namespace Game.Main.Models;
 
 /// <summary>
-/// Configuration data for different entity types
-/// Uses modern C# record type for immutable data
-/// </summary>
-public record EntityTypeConfig(
-    string Name,
-    int BaseHealth, 
-    int BaseDamage,
-    float RetreatThreshold = 0f,
-    int HealthRegenPerSecond = 0
-)
-{
-}
-/// <summary>
 /// Predefined entity type configurations using modern C# features
 /// </summary>
 public static class EntityTypes
