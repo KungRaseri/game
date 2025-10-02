@@ -113,8 +113,14 @@ public partial class MainGameScene : Control
             GameLogger.Info($"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
 
             // Connect Shop Management UI to shop systems
-            _shopManagementUI?.Initialize(_shopManager, _trafficManager);
+            _shopManagementUI?.Initialize(_shopManager, _trafficManager, _inventoryManager);
             GameLogger.Info("Connected shop management systems");
+
+            // Connect shop management events
+            if (_shopManagementUI != null)
+            {
+                _shopManagementUI.BackToGameRequested += OnBackToGameRequested;
+            }
 
             // Subscribe to additional events from the combat system
             SubscribeToGameEvents();
@@ -200,6 +206,11 @@ public partial class MainGameScene : Control
         if (_shopButton != null)
         {
             _shopButton.Pressed -= OnShopButtonPressed;
+        }
+        
+        if (_shopManagementUI != null)
+        {
+            _shopManagementUI.BackToGameRequested -= OnBackToGameRequested;
         }
     }
 
@@ -417,6 +428,18 @@ public partial class MainGameScene : Control
         else
         {
             GameLogger.Info("Shop management panel closed");
+        }
+    }
+
+    /// <summary>
+    /// Handles back to game request from shop management UI.
+    /// </summary>
+    private void OnBackToGameRequested()
+    {
+        if (_shopManagementUI != null)
+        {
+            _shopManagementUI.Visible = false;
+            GameLogger.Info("Returned to main game from shop management");
         }
     }
 }

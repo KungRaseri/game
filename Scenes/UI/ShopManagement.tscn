@@ -288,6 +288,11 @@ text = "Stock Item"
 [node name="ActionBar" type="HBoxContainer" parent="MainContainer/LeftPanel"]
 layout_mode = 2
 
+[node name="BackButton" type="Button" parent="MainContainer/LeftPanel/ActionBar"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "← Back to Game"
+
 [node name="OpenShopButton" type="Button" parent="MainContainer/LeftPanel/ActionBar"]
 layout_mode = 2
 size_flags_horizontal = 3
