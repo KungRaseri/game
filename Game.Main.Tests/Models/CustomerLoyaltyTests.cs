@@ -137,11 +137,11 @@ public class CustomerLoyaltyTests
     }
     
     [Theory]
-    [InlineData(CustomerSatisfaction.VerySatisfied, 0.7f)]
+    [InlineData(CustomerSatisfaction.Delighted, 0.7f)]
     [InlineData(CustomerSatisfaction.Satisfied, 0.6f)]
     [InlineData(CustomerSatisfaction.Neutral, 0.55f)]
-    [InlineData(CustomerSatisfaction.Unsatisfied, 0.45f)]
-    [InlineData(CustomerSatisfaction.VeryUnsatisfied, 0.35f)]
+    [InlineData(CustomerSatisfaction.Disappointed, 0.45f)]
+    [InlineData(CustomerSatisfaction.Angry, 0.35f)]
     public void CustomerLoyalty_UpdateAfterPurchase_AdjustsLoyaltyScore(
         CustomerSatisfaction satisfaction, float expectedMinScore)
     {
@@ -159,11 +159,11 @@ public class CustomerLoyaltyTests
     }
     
     [Theory]
-    [InlineData(CustomerSatisfaction.VerySatisfied, 0.52f)]
+    [InlineData(CustomerSatisfaction.Delighted, 0.52f)]
     [InlineData(CustomerSatisfaction.Satisfied, 0.51f)]
     [InlineData(CustomerSatisfaction.Neutral, 0.5f)]
-    [InlineData(CustomerSatisfaction.Unsatisfied, 0.45f)]
-    [InlineData(CustomerSatisfaction.VeryUnsatisfied, 0.4f)]
+    [InlineData(CustomerSatisfaction.Disappointed, 0.45f)]
+    [InlineData(CustomerSatisfaction.Angry, 0.4f)]
     public void CustomerLoyalty_UpdateAfterVisit_AdjustsLoyaltyScore(
         CustomerSatisfaction satisfaction, float expectedScore)
     {
@@ -231,7 +231,7 @@ public class CustomerLoyaltyTests
         var updated = loyalty;
         for (int i = 0; i < 10; i++)
         {
-            updated = updated.UpdateAfterPurchase(CustomerSatisfaction.VerySatisfied);
+            updated = updated.UpdateAfterPurchase(CustomerSatisfaction.Delighted);
         }
         
         // Assert
@@ -240,7 +240,7 @@ public class CustomerLoyaltyTests
         // Act - Multiple very unsatisfied visits should not go below 0.0
         for (int i = 0; i < 20; i++)
         {
-            updated = updated.UpdateAfterVisit(CustomerSatisfaction.VeryUnsatisfied);
+            updated = updated.UpdateAfterVisit(CustomerSatisfaction.Angry);
         }
         
         // Assert

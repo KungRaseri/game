@@ -4,24 +4,36 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Main.Models;
+using Game.Main.Systems;
 using Game.Main.Utils;
 
 namespace Game.Main.Systems;
 
 /// <summary>
 /// Central management system for shop operations, display slots, and item sales.
-/// Coordinates between inventory, pricing, and customer interactions.
+/// Coordinates between inventory, pricing, and customer interactions with dynamic pricing.
 /// </summary>
 public class ShopManager
 {
     private readonly Dictionary<int, ShopDisplaySlot> _displaySlots;
     private readonly List<SaleTransaction> _transactionHistory;
-    private decimal _treasuryGold;
+    private readonly TreasuryManager _treasuryManager;
+    private readonly PricingEngine _pricingEngine;
     
     /// <summary>
     /// Current shop layout configuration.
     /// </summary>
     public ShopLayout CurrentLayout { get; private set; }
+    
+    /// <summary>
+    /// Dynamic pricing engine for market-responsive pricing.
+    /// </summary>
+    public PricingEngine PricingEngine => _pricingEngine;
+    
+    /// <summary>
+    /// Treasury management system.
+    /// </summary>
+    public TreasuryManager Treasury => _treasuryManager;
     
     /// <summary>
     /// All display slots in the shop (6 initial slots, expandable).
@@ -32,7 +44,7 @@ public class ShopManager
     /// <summary>
     /// Current amount of gold in the shop treasury.
     /// </summary>
-    public decimal TreasuryGold => _treasuryGold;
+    public decimal TreasuryGold => _treasuryManager.CurrentGold;
     
     /// <summary>
     /// Total number of items currently displayed for sale.
@@ -61,10 +73,11 @@ public class ShopManager
         CurrentLayout = initialLayout ?? ShopLayout.CreateDefault();
         _displaySlots = new Dictionary<int, ShopDisplaySlot>();
         _transactionHistory = new List<SaleTransaction>();
-        _treasuryGold = 100m; // Starting capital
+        _treasuryManager = new TreasuryManager(100m); // Starting capital
+        _pricingEngine = new PricingEngine(); // Initialize pricing engine
         
         InitializeDisplaySlots();
-        GameLogger.Info($"ShopManager initialized with {_displaySlots.Count} display slots");
+        GameLogger.Info($"ShopManager initialized with {_displaySlots.Count} display slots and dynamic pricing");
     }
     
     /// <summary>
@@ -194,11 +207,11 @@ public class ShopManager
     }
     
     /// <summary>
-    /// Calculate a suggested price for an item based on its material costs and quality.
+    /// Calculate a suggested price for an item using the dynamic pricing engine.
     /// </summary>
     /// <param name="item">The item to price</param>
     /// <param name="profitMargin">Target profit margin (default 50%)</param>
-    /// <returns>Suggested retail price</returns>
+    /// <returns>Market-responsive suggested retail price</returns>
     public decimal CalculateSuggestedPrice(Item item, float profitMargin = 0.5f)
     {
         // Base price calculation (simplified for now - will integrate with crafting costs later)
@@ -211,22 +224,36 @@ public class ShopManager
             _ => 30m
         };
         
-        // Quality multiplier
-        float qualityMultiplier = item.Quality switch
-        {
-            QualityTier.Common => 1.0f,
-            QualityTier.Uncommon => 1.3f,
-            QualityTier.Rare => 1.7f,
-            QualityTier.Epic => 2.5f,
-            QualityTier.Legendary => 4.0f,
-            _ => 1.0f
-        };
+        var basePriceWithMargin = baseValue * (1 + (decimal)profitMargin);
         
-        var suggestedPrice = baseValue * (decimal)qualityMultiplier * (1 + (decimal)profitMargin);
+        // Use dynamic pricing engine for market-responsive pricing
+        var marketPrice = _pricingEngine.CalculateOptimalPrice(item, basePriceWithMargin);
         
-        GameLogger.Debug($"Calculated suggested price for {item.Name}: {suggestedPrice} gold (base: {baseValue}, quality: {item.Quality})");
+        GameLogger.Debug($"Calculated market price for {item.Name}: {marketPrice} gold (base: {baseValue}, market-adjusted from: {basePriceWithMargin})");
         
-        return Math.Round(suggestedPrice, 2);
+        return marketPrice;
+    }
+    
+    /// <summary>
+    /// Get market analysis for a specific item type and quality.
+    /// </summary>
+    /// <param name="itemType">The item type to analyze</param>
+    /// <param name="quality">The quality tier to analyze</param>
+    /// <returns>Comprehensive market analysis</returns>
+    public MarketAnalysis GetMarketAnalysis(ItemType itemType, QualityTier quality)
+    {
+        return _pricingEngine.GetMarketAnalysis(itemType, quality);
+    }
+    
+    /// <summary>
+    /// Set pricing strategy for a specific item type.
+    /// </summary>
+    /// <param name="itemType">The item type</param>
+    /// <param name="strategy">The pricing strategy to use</param>
+    public void SetPricingStrategy(ItemType itemType, PricingStrategy strategy)
+    {
+        _pricingEngine.SetPricingStrategy(itemType, strategy);
+        GameLogger.Info($"Set pricing strategy for {itemType} to {strategy}");
     }
     
     /// <summary>
@@ -263,18 +290,21 @@ public class ShopManager
             CustomerSatisfaction: satisfaction
         );
         
+        // Record sale with pricing engine for market analysis
+        _pricingEngine.RecordSale(item, salePrice, estimatedCost, satisfaction);
+        
         // Remove item from display
         RemoveItem(slotId);
         
         // Add gold to treasury
-        _treasuryGold += salePrice;
+        _treasuryManager.AddRevenue(salePrice, $"Sale of {item.Name}");
         
         // Record transaction
         _transactionHistory.Add(transaction);
         
         // Notify listeners
         ItemSold?.Invoke(transaction);
-        TreasuryUpdated?.Invoke(_treasuryGold);
+        TreasuryUpdated?.Invoke(_treasuryManager.CurrentGold);
         
         GameLogger.Info($"Processed sale: {item.Name} sold for {salePrice} gold to customer {customerId} (profit: {profit})");
         
@@ -303,7 +333,7 @@ public class ShopManager
                 _transactionHistory.Average(t => t.ProfitMargin) : 0,
             ItemsOnDisplay = ItemsOnDisplay,
             AvailableSlots = AvailableSlots,
-            TreasuryGold = _treasuryGold
+            TreasuryGold = _treasuryManager.CurrentGold
         };
         
         MetricsUpdated?.Invoke(metrics);
@@ -337,5 +367,99 @@ public class ShopManager
     {
         CurrentLayout = newLayout;
         GameLogger.Info($"Shop layout updated to {newLayout.Name}");
+    }
+    
+    /// <summary>
+    /// Process a business expense through the treasury system.
+    /// </summary>
+    /// <param name="type">Type of expense</param>
+    /// <param name="amount">Amount in gold</param>
+    /// <param name="description">Description of the expense</param>
+    /// <param name="isRecurring">Whether this is a recurring expense</param>
+    /// <param name="recurrenceDays">Days between recurrences</param>
+    /// <returns>True if expense was successfully processed</returns>
+    public bool ProcessExpense(ExpenseType type, decimal amount, string description, bool isRecurring = false, int recurrenceDays = 0)
+    {
+        return _treasuryManager.ProcessExpense(type, amount, description, isRecurring, recurrenceDays);
+    }
+    
+    /// <summary>
+    /// Make an investment in shop improvements.
+    /// </summary>
+    /// <param name="investmentId">ID of the investment to make</param>
+    /// <returns>True if investment was successful</returns>
+    public bool MakeInvestment(string investmentId)
+    {
+        return _treasuryManager.MakeInvestment(investmentId);
+    }
+    
+    /// <summary>
+    /// Get available investment opportunities.
+    /// </summary>
+    /// <returns>List of recommended investments</returns>
+    public List<InvestmentOpportunity> GetInvestmentOpportunities()
+    {
+        return _treasuryManager.GetRecommendedInvestments();
+    }
+    
+    /// <summary>
+    /// Get comprehensive financial summary combining sales and treasury data.
+    /// </summary>
+    /// <returns>Enhanced financial summary</returns>
+    public FinancialSummary GetFinancialSummary()
+    {
+        var treasurySummary = _treasuryManager.GetFinancialSummary();
+        var salesMetrics = GetPerformanceMetrics();
+        
+        // Combine treasury and sales data
+        return new FinancialSummary
+        {
+            CurrentTreasury = treasurySummary.CurrentTreasury,
+            TotalRevenue = salesMetrics.TotalRevenue,
+            TotalExpenses = treasurySummary.TotalExpenses,
+            NetProfit = salesMetrics.TotalRevenue - treasurySummary.TotalExpenses,
+            DailyRevenue = salesMetrics.DailyRevenue,
+            DailyExpenses = treasurySummary.DailyExpenses,
+            DailyNetProfit = salesMetrics.DailyRevenue - treasurySummary.DailyExpenses,
+            MonthlyProjectedRevenue = salesMetrics.DailyRevenue * 30, // Simplified projection
+            MonthlyProjectedExpenses = treasurySummary.MonthlyProjectedExpenses,
+            MonthlyProjectedProfit = (salesMetrics.DailyRevenue * 30) - treasurySummary.MonthlyProjectedExpenses,
+            TotalTransactions = salesMetrics.TotalTransactions,
+            AverageTransactionValue = salesMetrics.AverageTransactionValue,
+            CashFlow = salesMetrics.DailyRevenue - treasurySummary.DailyExpenses,
+            ExpenseBreakdown = treasurySummary.ExpenseBreakdown,
+            FinancialAlerts = treasurySummary.FinancialAlerts,
+            FinancialHealth = treasurySummary.FinancialHealth
+        };
+    }
+    
+    /// <summary>
+    /// Process recurring expenses and update market conditions (should be called daily/periodically).
+    /// </summary>
+    public void ProcessDailyOperations()
+    {
+        _treasuryManager.ProcessRecurringExpenses();
+        
+        // Update market conditions for pricing engine
+        _pricingEngine.UpdateMarketConditions(TimeSpan.FromDays(1));
+        
+        // Add some realistic daily expenses
+        var random = new Random();
+        
+        // Random daily maintenance costs (small amounts)
+        if (random.NextDouble() < 0.1) // 10% chance
+        {
+            ProcessExpense(ExpenseType.Maintenance, 
+                random.Next(5, 20), 
+                "Minor shop maintenance");
+        }
+        
+        // Random security incidents (very rare but expensive)
+        if (random.NextDouble() < 0.01) // 1% chance
+        {
+            ProcessExpense(ExpenseType.Security, 
+                random.Next(50, 200), 
+                "Security incident response");
+        }
     }
 }
