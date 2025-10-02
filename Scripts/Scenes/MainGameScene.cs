@@ -35,7 +35,7 @@ public partial class MainGameScene : Control
     public delegate void ExpeditionCompletedEventHandler(bool success);
 
     private GameManager? _gameManager;
-    private Timer? _updateTimer;
+    private Godot.Timer? _updateTimer;
     private InventoryManager? _inventoryManager;
     private LootGenerator? _lootGenerator;
     private ShopManager? _shopManager;
@@ -159,7 +159,7 @@ public partial class MainGameScene : Control
 
     private void SetupUpdateTimer()
     {
-        _updateTimer = new Timer
+        _updateTimer = new Godot.Timer
         {
             WaitTime = UpdateInterval,
             Autostart = true

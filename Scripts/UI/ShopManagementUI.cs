@@ -49,7 +49,7 @@ public partial class ShopManagementUI : Panel
     private Label? _salesValue;
 
     private bool _isShopOpen = false;
-    private Timer? _updateTimer;
+    private Godot.Timer? _updateTimer;
     private CustomerInteractionDialogUI? _customerDialog;
 
     public override void _Ready()
@@ -159,7 +159,7 @@ public partial class ShopManagementUI : Panel
 
     private void SetupUpdateTimer()
     {
-        _updateTimer = new Timer
+        _updateTimer = new Godot.Timer
         {
             WaitTime = 1.0f, // Update every second
             Autostart = true
