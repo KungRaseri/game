@@ -1,16 +1,6 @@
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Game.Main.Utils;
-
-/// <summary>
-/// Encapsulates caller information to improve method signature readability.
-/// </summary>
-public record CallerInfo(
-    [CallerMemberName] string MemberName = "",
-    [CallerFilePath] string FilePath = "",
-    [CallerLineNumber] int LineNumber = 0
-);
 
 /// <summary>
 /// Centralized logging utility with level filtering and caller information.
@@ -109,37 +99,5 @@ public static class GameLogger
         var formattedMessage = $"[{levelStr}] {fileName}.{caller.MemberName}:{caller.LineNumber} - {message}";
 
         _backend.Log(level, formattedMessage);
-    }
-}
-
-/// <summary>
-/// Interface for logging backend implementations.
-/// Allows for dependency injection of different logging targets.
-/// </summary>
-public interface ILoggerBackend
-{
-    /// <summary>
-    /// Logs a message at the specified level.
-    /// </summary>
-    /// <param name="level">The log level.</param>
-    /// <param name="message">The formatted message to log.</param>
-    void Log(GameLogger.LogLevel level, string message);
-}
-
-/// <summary>
-/// Console-based logging backend for testing and non-Godot environments.
-/// </summary>
-public class ConsoleLoggerBackend : ILoggerBackend
-{
-    public void Log(GameLogger.LogLevel level, string message)
-    {
-        if (level >= GameLogger.LogLevel.Error)
-        {
-            Console.Error.WriteLine(message);
-        }
-        else
-        {
-            Console.WriteLine(message);
-        }
     }
 }
