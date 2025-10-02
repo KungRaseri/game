@@ -237,6 +237,14 @@ public class Customer
         return satisfaction;
     }
     
+    /// <summary>
+    /// Updates the customer's current thought (for external systems like shopping sessions).
+    /// </summary>
+    public void UpdateThought(string thought)
+    {
+        CurrentThought = thought;
+    }
+    
     private CustomerInterest CalculateInterest(Item item, decimal price)
     {
         var baseInterest = 0f;
