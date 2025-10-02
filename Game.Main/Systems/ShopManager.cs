@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Main.Models;
+using Game.Main.Systems;
 using Game.Main.Utils;
 
 namespace Game.Main.Systems;
@@ -16,12 +17,17 @@ public class ShopManager
 {
     private readonly Dictionary<int, ShopDisplaySlot> _displaySlots;
     private readonly List<SaleTransaction> _transactionHistory;
-    private decimal _treasuryGold;
+    private readonly TreasuryManager _treasuryManager;
     
     /// <summary>
     /// Current shop layout configuration.
     /// </summary>
     public ShopLayout CurrentLayout { get; private set; }
+    
+    /// <summary>
+    /// Treasury management system.
+    /// </summary>
+    public TreasuryManager Treasury => _treasuryManager;
     
     /// <summary>
     /// All display slots in the shop (6 initial slots, expandable).
@@ -32,7 +38,7 @@ public class ShopManager
     /// <summary>
     /// Current amount of gold in the shop treasury.
     /// </summary>
-    public decimal TreasuryGold => _treasuryGold;
+    public decimal TreasuryGold => _treasuryManager.CurrentGold;
     
     /// <summary>
     /// Total number of items currently displayed for sale.
@@ -61,7 +67,7 @@ public class ShopManager
         CurrentLayout = initialLayout ?? ShopLayout.CreateDefault();
         _displaySlots = new Dictionary<int, ShopDisplaySlot>();
         _transactionHistory = new List<SaleTransaction>();
-        _treasuryGold = 100m; // Starting capital
+        _treasuryManager = new TreasuryManager(100m); // Starting capital
         
         InitializeDisplaySlots();
         GameLogger.Info($"ShopManager initialized with {_displaySlots.Count} display slots");
@@ -267,14 +273,14 @@ public class ShopManager
         RemoveItem(slotId);
         
         // Add gold to treasury
-        _treasuryGold += salePrice;
+        _treasuryManager.AddRevenue(salePrice, $"Sale of {item.Name}");
         
         // Record transaction
         _transactionHistory.Add(transaction);
         
         // Notify listeners
         ItemSold?.Invoke(transaction);
-        TreasuryUpdated?.Invoke(_treasuryGold);
+        TreasuryUpdated?.Invoke(_treasuryManager.CurrentGold);
         
         GameLogger.Info($"Processed sale: {item.Name} sold for {salePrice} gold to customer {customerId} (profit: {profit})");
         
@@ -303,7 +309,7 @@ public class ShopManager
                 _transactionHistory.Average(t => t.ProfitMargin) : 0,
             ItemsOnDisplay = ItemsOnDisplay,
             AvailableSlots = AvailableSlots,
-            TreasuryGold = _treasuryGold
+            TreasuryGold = _treasuryManager.CurrentGold
         };
         
         MetricsUpdated?.Invoke(metrics);
@@ -337,5 +343,96 @@ public class ShopManager
     {
         CurrentLayout = newLayout;
         GameLogger.Info($"Shop layout updated to {newLayout.Name}");
+    }
+    
+    /// <summary>
+    /// Process a business expense through the treasury system.
+    /// </summary>
+    /// <param name="type">Type of expense</param>
+    /// <param name="amount">Amount in gold</param>
+    /// <param name="description">Description of the expense</param>
+    /// <param name="isRecurring">Whether this is a recurring expense</param>
+    /// <param name="recurrenceDays">Days between recurrences</param>
+    /// <returns>True if expense was successfully processed</returns>
+    public bool ProcessExpense(ExpenseType type, decimal amount, string description, bool isRecurring = false, int recurrenceDays = 0)
+    {
+        return _treasuryManager.ProcessExpense(type, amount, description, isRecurring, recurrenceDays);
+    }
+    
+    /// <summary>
+    /// Make an investment in shop improvements.
+    /// </summary>
+    /// <param name="investmentId">ID of the investment to make</param>
+    /// <returns>True if investment was successful</returns>
+    public bool MakeInvestment(string investmentId)
+    {
+        return _treasuryManager.MakeInvestment(investmentId);
+    }
+    
+    /// <summary>
+    /// Get available investment opportunities.
+    /// </summary>
+    /// <returns>List of recommended investments</returns>
+    public List<InvestmentOpportunity> GetInvestmentOpportunities()
+    {
+        return _treasuryManager.GetRecommendedInvestments();
+    }
+    
+    /// <summary>
+    /// Get comprehensive financial summary combining sales and treasury data.
+    /// </summary>
+    /// <returns>Enhanced financial summary</returns>
+    public FinancialSummary GetFinancialSummary()
+    {
+        var treasurySummary = _treasuryManager.GetFinancialSummary();
+        var salesMetrics = GetPerformanceMetrics();
+        
+        // Combine treasury and sales data
+        return new FinancialSummary
+        {
+            CurrentTreasury = treasurySummary.CurrentTreasury,
+            TotalRevenue = salesMetrics.TotalRevenue,
+            TotalExpenses = treasurySummary.TotalExpenses,
+            NetProfit = salesMetrics.TotalRevenue - treasurySummary.TotalExpenses,
+            DailyRevenue = salesMetrics.DailyRevenue,
+            DailyExpenses = treasurySummary.DailyExpenses,
+            DailyNetProfit = salesMetrics.DailyRevenue - treasurySummary.DailyExpenses,
+            MonthlyProjectedRevenue = salesMetrics.DailyRevenue * 30, // Simplified projection
+            MonthlyProjectedExpenses = treasurySummary.MonthlyProjectedExpenses,
+            MonthlyProjectedProfit = (salesMetrics.DailyRevenue * 30) - treasurySummary.MonthlyProjectedExpenses,
+            TotalTransactions = salesMetrics.TotalTransactions,
+            AverageTransactionValue = salesMetrics.AverageTransactionValue,
+            CashFlow = salesMetrics.DailyRevenue - treasurySummary.DailyExpenses,
+            ExpenseBreakdown = treasurySummary.ExpenseBreakdown,
+            FinancialAlerts = treasurySummary.FinancialAlerts,
+            FinancialHealth = treasurySummary.FinancialHealth
+        };
+    }
+    
+    /// <summary>
+    /// Process recurring expenses (should be called daily/periodically).
+    /// </summary>
+    public void ProcessDailyOperations()
+    {
+        _treasuryManager.ProcessRecurringExpenses();
+        
+        // Add some realistic daily expenses
+        var random = new Random();
+        
+        // Random daily maintenance costs (small amounts)
+        if (random.NextDouble() < 0.1) // 10% chance
+        {
+            ProcessExpense(ExpenseType.Maintenance, 
+                random.Next(5, 20), 
+                "Minor shop maintenance");
+        }
+        
+        // Random security incidents (very rare but expensive)
+        if (random.NextDouble() < 0.01) // 1% chance
+        {
+            ProcessExpense(ExpenseType.Security, 
+                random.Next(50, 200), 
+                "Security incident response");
+        }
     }
 }
