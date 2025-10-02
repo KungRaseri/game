@@ -107,7 +107,35 @@ dotnet test Game.Main.Tests/ --collect:"XPlat Code Coverage"
 # Run specific test category
 dotnet test --filter "Category=Combat"
 dotnet test --filter "Category=EntityFactory"
+
+# Generate local coverage report
+dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults/
+# Then use ReportGenerator to create HTML reports
 ```
+
+## 🧪 Test Reporting & CI/CD
+
+### GitHub Actions Integration
+This project includes a sophisticated test reporting system that provides:
+
+- **📊 Code Coverage Reports**: Comprehensive coverage analysis with visual indicators
+- **✅ Test Result Summaries**: Detailed pass/fail reporting with failure details
+- **📈 Pull Request Comments**: Automatic coverage and test summaries on PRs
+- **📁 Downloadable Artifacts**: Test results and coverage reports stored for 30 days
+- **🎯 Quality Gates**: Configurable coverage thresholds (currently 60% warning, 80% good)
+
+### Features
+- **Beautiful PR Comments**: Coverage percentages, test counts, and pass/fail status
+- **Detailed Failure Reports**: When tests fail, see exactly which tests and why
+- **Coverage Trends**: Track coverage changes over time
+- **Multi-Project Support**: Combines coverage from all test projects
+- **Retention**: Test artifacts kept for 30 days for historical analysis
+
+### Viewing Reports
+1. **Pull Requests**: Coverage and test summaries appear automatically as comments
+2. **Actions Tab**: Click on any workflow run to see detailed test results
+3. **Artifacts**: Download full coverage reports and test files from completed runs
+4. **Failure Analysis**: Failed tests show assertion details and stack traces
 
 ## 🏛️ Architecture Overview
 

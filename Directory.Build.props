@@ -1,0 +1,26 @@
+<Project>
+  <PropertyGroup>
+    <!-- Common properties for all projects -->
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <!-- Coverage settings for test projects -->
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <CoverletOutput>./TestResults/coverage.cobertura.xml</CoverletOutput>
+    <ExcludeByFile>**/bin/**/*;**/obj/**/*</ExcludeByFile>
+    <Include>[Game.Main]*</Include>
+    <Exclude>[Game.Main.Tests]*,[*]*.Program,[*]*Tests*</Exclude>
+  </PropertyGroup>
+
+  <!-- Global package references for all projects -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+</Project>

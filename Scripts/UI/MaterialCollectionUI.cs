@@ -28,7 +28,7 @@ public partial class MaterialCollectionUI : Panel
     private AdventurerInventoryUI? _inventoryUI;
     private InventoryStatsUI? _statsUI;
     private InventoryManager? _inventoryManager;
-    private Timer? _autoRefreshTimer;
+    private Godot.Timer? _refreshTimer;
     
     public override void _Ready()
     {
@@ -41,10 +41,9 @@ public partial class MaterialCollectionUI : Panel
     public override void _ExitTree()
     {
         CleanupEventSubscriptions();
-        _autoRefreshTimer?.QueueFree();
-    }
-
-    /// <summary>
+        _refreshTimer?.QueueFree();
+        GameLogger.Info("MaterialCollectionUI disposed");
+    }    /// <summary>
     /// Sets the inventory manager to be displayed and managed by this UI.
     /// </summary>
     public void SetInventoryManager(InventoryManager inventoryManager)
@@ -193,11 +192,12 @@ public partial class MaterialCollectionUI : Panel
     {
         if (!AutoRefreshStats) return;
 
-        _autoRefreshTimer = new Timer();
-        _autoRefreshTimer.WaitTime = AutoRefreshInterval;
-        _autoRefreshTimer.Autostart = true;
-        _autoRefreshTimer.Timeout += OnAutoRefreshTimeout;
-        AddChild(_autoRefreshTimer);
+                // Auto-refresh timer
+        _refreshTimer = new Godot.Timer();
+        _refreshTimer.WaitTime = AutoRefreshInterval;
+        _refreshTimer.Autostart = true;
+        _refreshTimer.Timeout += OnAutoRefreshTimeout;
+        AddChild(_refreshTimer);
 
         GameLogger.Debug($"Auto-refresh enabled with {AutoRefreshInterval}s interval");
     }
