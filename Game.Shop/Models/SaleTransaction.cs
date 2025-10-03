@@ -29,7 +29,7 @@ public record SaleTransaction(
     DateTime TransactionTime,
     
     /// <summary>Customer satisfaction level with this transaction.</summary>
-    Shop.CustomerSatisfaction CustomerSatisfaction
+    CustomerSatisfaction CustomerSatisfaction
 )
 {
     /// <summary>

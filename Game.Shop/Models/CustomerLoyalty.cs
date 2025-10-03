@@ -9,7 +9,7 @@ public record CustomerLoyalty(
     int VisitCount,
     int PurchaseCount,
     decimal TotalSpent,
-    Shop.CustomerSatisfaction LastVisitSatisfaction,
+    CustomerSatisfaction LastVisitSatisfaction,
     DateTime FirstVisit,
     DateTime LastVisit,
     float LoyaltyScore)
@@ -52,7 +52,7 @@ public record CustomerLoyalty(
             VisitCount: 1,
             PurchaseCount: 0,
             TotalSpent: 0m,
-            LastVisitSatisfaction: Shop.CustomerSatisfaction.Neutral,
+            LastVisitSatisfaction: CustomerSatisfaction.Neutral,
             FirstVisit: now,
             LastVisit: now,
             LoyaltyScore: 0.5f
@@ -62,15 +62,15 @@ public record CustomerLoyalty(
     /// <summary>
     /// Updates loyalty after a successful purchase.
     /// </summary>
-    public CustomerLoyalty UpdateAfterPurchase(Shop.CustomerSatisfaction satisfaction)
+    public CustomerLoyalty UpdateAfterPurchase(CustomerSatisfaction satisfaction)
     {
         var satisfactionBonus = satisfaction switch
         {
-            Shop.CustomerSatisfaction.Delighted => 0.2f,
-            Shop.CustomerSatisfaction.Satisfied => 0.1f,
-            Shop.CustomerSatisfaction.Neutral => 0.0f,
-            Shop.CustomerSatisfaction.Disappointed => -0.1f,
-            Shop.CustomerSatisfaction.Angry => -0.2f,
+            CustomerSatisfaction.Delighted => 0.2f,
+            CustomerSatisfaction.Satisfied => 0.1f,
+            CustomerSatisfaction.Neutral => 0.0f,
+            CustomerSatisfaction.Disappointed => -0.1f,
+            CustomerSatisfaction.Angry => -0.2f,
             _ => 0.0f
         };
         
@@ -88,15 +88,15 @@ public record CustomerLoyalty(
     /// <summary>
     /// Updates loyalty after a visit without purchase.
     /// </summary>
-    public CustomerLoyalty UpdateAfterVisit(Shop.CustomerSatisfaction satisfaction)
+    public CustomerLoyalty UpdateAfterVisit(CustomerSatisfaction satisfaction)
     {
         var satisfactionEffect = satisfaction switch
         {
-            Shop.CustomerSatisfaction.Delighted => 0.02f,   // Good browsing experience
-            Shop.CustomerSatisfaction.Satisfied => 0.01f,
-            Shop.CustomerSatisfaction.Neutral => 0.0f,
-            Shop.CustomerSatisfaction.Disappointed => -0.05f,    // Poor experience
-            Shop.CustomerSatisfaction.Angry => -0.1f, // Very poor experience
+            CustomerSatisfaction.Delighted => 0.02f,   // Good browsing experience
+            CustomerSatisfaction.Satisfied => 0.01f,
+            CustomerSatisfaction.Neutral => 0.0f,
+            CustomerSatisfaction.Disappointed => -0.05f,    // Poor experience
+            CustomerSatisfaction.Angry => -0.1f, // Very poor experience
             _ => 0.0f
         };
         

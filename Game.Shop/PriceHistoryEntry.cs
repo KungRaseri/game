@@ -1,3 +1,5 @@
+using Game.Shop.Models;
+
 namespace Game.Shop;
 
 /// <summary>

@@ -8,15 +8,15 @@ public static class CustomerSatisfactionExtensions
     /// <summary>
     /// Get a descriptive string for the satisfaction level.
     /// </summary>
-    public static string GetDescription(this Shop.CustomerSatisfaction satisfaction)
+    public static string GetDescription(this CustomerSatisfaction satisfaction)
     {
         return satisfaction switch
         {
-            Shop.CustomerSatisfaction.Angry => "Very Disappointed",
-            Shop.CustomerSatisfaction.Disappointed => "Disappointed", 
-            Shop.CustomerSatisfaction.Neutral => "Neutral",
-            Shop.CustomerSatisfaction.Satisfied => "Happy",
-            Shop.CustomerSatisfaction.Delighted => "Delighted",
+            CustomerSatisfaction.Angry => "Very Disappointed",
+            CustomerSatisfaction.Disappointed => "Disappointed", 
+            CustomerSatisfaction.Neutral => "Neutral",
+            CustomerSatisfaction.Satisfied => "Happy",
+            CustomerSatisfaction.Delighted => "Delighted",
             _ => "Unknown"
         };
     }
@@ -24,7 +24,7 @@ public static class CustomerSatisfactionExtensions
     /// <summary>
     /// Get a numeric score for analytics (1-5 scale).
     /// </summary>
-    public static int GetScore(this Shop.CustomerSatisfaction satisfaction)
+    public static int GetScore(this CustomerSatisfaction satisfaction)
     {
         return (int)satisfaction;
     }
@@ -32,8 +32,8 @@ public static class CustomerSatisfactionExtensions
     /// <summary>
     /// Determine if this represents a positive experience.
     /// </summary>
-    public static bool IsPositive(this Shop.CustomerSatisfaction satisfaction)
+    public static bool IsPositive(this CustomerSatisfaction satisfaction)
     {
-        return satisfaction >= Shop.CustomerSatisfaction.Satisfied;
+        return satisfaction >= CustomerSatisfaction.Satisfied;
     }
 }
