@@ -2,9 +2,9 @@
   <!-- Test result configuration for test projects -->
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
     <!-- Set test results directory to root TestResults folder with project name subfolder -->
-    <VSTestResultsDirectory>$(MSBuildThisFileDirectory)TestResults\$(MSBuildProjectName)</VSTestResultsDirectory>
-    <!-- Configure test logger and result file naming -->
-    <VSTestLogger>trx;logfilename=$(MSBuildProjectName).trx</VSTestLogger>
+    <VSTestResultsDirectory>$(MSBuildThisFileDirectory)TestResults\$(MSBuildProjectName)\</VSTestResultsDirectory>
+    <!-- Configure test logger (TRX format) -->
+    <VSTestLogger>trx</VSTestLogger>
     <!-- Enable code coverage collection -->
     <VSTestCollect>XPlat Code Coverage</VSTestCollect>
   </PropertyGroup>
