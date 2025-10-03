@@ -663,7 +663,7 @@ public partial class ShopManagementUI : Panel
             _closeShopButton.Disabled = !_isShopOpen;
     }
 
-    private Item CreateItemFromMaterial(Type materialType, Rarity rarity)
+    private Item.Models.Item CreateItemFromMaterial(Type materialType, Rarity rarity)
     {
         // Convert material type to item type based on material category
         var itemType = materialType.Category switch
@@ -705,7 +705,7 @@ public partial class ShopManagementUI : Panel
 
         var finalValue = (int)(baseValue * rarityMultiplier);
 
-        return new Item(
+        return new Item.Models.Item(
             itemId: Guid.NewGuid().ToString(),
             name: itemName,
             description: $"{materialType.Description} ({rarity} quality)",
@@ -715,7 +715,7 @@ public partial class ShopManagementUI : Panel
         );
     }
 
-    private Item CreateTestItem()
+    private Item.Models.Item CreateTestItem()
     {
         var random = new Random();
         var itemTypes = new[] { ItemType.Weapon, ItemType.Armor, ItemType.Consumable, ItemType.Material };
@@ -735,7 +735,7 @@ public partial class ShopManagementUI : Panel
 
         var itemName = itemNames[random.Next(itemNames.Length)];
 
-        return new Item(
+        return new Item.Models.Item(
             itemId: Guid.NewGuid().ToString(),
             name: $"{quality} {itemName}",
             description: $"A {quality.ToString().ToLower()} quality {itemType.ToString().ToLower()}",
@@ -801,7 +801,7 @@ public partial class ShopManagementUI : Panel
         }
 
         // Find what item the customer is most interested in
-        Item? itemOfInterest = null;
+        Item.Models.Item? itemOfInterest = null;
         if (_shopManager != null)
         {
             var availableItems = _shopManager.DisplaySlots

@@ -1,6 +1,7 @@
+using Game.Game.Item.Models;
 using Game.Game.Item.Utils;
 
-namespace Game.Game.Item.Models;
+namespace Game.Item.Models;
 
 /// <summary>
 /// Base class for all items in the game.

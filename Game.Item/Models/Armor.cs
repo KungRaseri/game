@@ -3,7 +3,7 @@ namespace Game.Game.Item.Models;
 /// <summary>
 /// Represents armor that can be equipped to reduce damage taken.
 /// </summary>
-public class Armor : Item
+public class Armor : global::Game.Item.Models.Item
 {
     private int _damageReduction;
 

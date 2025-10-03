@@ -3,7 +3,7 @@ namespace Game.Game.Item.Models.Materials;
 /// <summary>
 /// Represents a crafting material used to create items.
 /// </summary>
-public class Material : Item
+public class Material : global::Game.Item.Models.Item
 {
     private int _maxStackSize;
 
