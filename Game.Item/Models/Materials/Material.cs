@@ -1,4 +1,4 @@
-namespace Game.Item.Models;
+namespace Game.Game.Item.Models.Materials;
 
 /// <summary>
 /// Represents a crafting material used to create items.
@@ -10,7 +10,7 @@ public class Material : Item
     /// <summary>
     /// The specific type of material (Metal, Wood, Leather, etc.).
     /// </summary>
-    public MaterialType MaterialType { get; }
+    public Category Category { get; }
 
     /// <summary>
     /// Whether this material can be stacked in inventory.
@@ -32,18 +32,18 @@ public class Material : Item
         string description,
         QualityTier quality,
         int value,
-        MaterialType materialType,
+        Category category,
         bool stackable = true,
         int maxStackSize = 99)
         : base(itemId, name, description, ItemType.Material, quality, value)
     {
-        MaterialType = materialType;
+        Category = category;
         Stackable = stackable;
         _maxStackSize = Math.Max(1, maxStackSize);
     }
 
     public override string ToString()
     {
-        return $"{Name} ({Quality} {MaterialType}) - {Value}g [Stack: {MaxStackSize}]";
+        return $"{Name} ({Quality} {Category}) - {Value}g [Stack: {MaxStackSize}]";
     }
 }

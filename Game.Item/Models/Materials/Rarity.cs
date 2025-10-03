@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Game.Core.Models.Materials;
+namespace Game.Game.Item.Models.Materials;
 
 /// <summary>
 /// Defines the rarity levels for materials, affecting drop rates and value.

@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Game.Core.Models.Materials;
+namespace Game.Game.Item.Models.Materials;
 
 /// <summary>
 /// Defines a type of material that can be collected from monsters.

@@ -1,8 +1,6 @@
 #nullable enable
 
-using Game.Item.Models;
-
-namespace Game.Core.Models.Materials;
+namespace Game.Game.Item.Models.Materials;
 
 /// <summary>
 /// Represents an actual material drop that occurred from a monster defeat.

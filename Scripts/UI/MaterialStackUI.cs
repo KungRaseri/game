@@ -1,6 +1,6 @@
 #nullable enable
 
-using Game.Core.Models.Materials;
+using Game.Game.Item.Models.Materials;
 using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
 using Godot;

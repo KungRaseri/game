@@ -30,6 +30,8 @@
 		<EmbeddedResource Remove="Game.Inventory\**" />
 		<EmbeddedResource Remove="Game.Shop.Tests\**" />
 		<EmbeddedResource Remove="Game.Shop\**" />
+		<Compile Remove="Game.Item\**" />
+		<EmbeddedResource Remove="Game.Item\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="Game.Core\Game.Core.csproj" />

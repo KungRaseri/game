@@ -1,4 +1,4 @@
-namespace Game.Item.Models;
+namespace Game.Game.Item.Models;
 
 /// <summary>
 /// Represents a weapon that can be equipped to increase damage output.

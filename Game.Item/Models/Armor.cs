@@ -1,4 +1,4 @@
-namespace Game.Item.Models;
+namespace Game.Game.Item.Models;
 
 /// <summary>
 /// Represents armor that can be equipped to reduce damage taken.

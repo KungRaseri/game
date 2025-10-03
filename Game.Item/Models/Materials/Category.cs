@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Game.Core.Models.Materials;
+namespace Game.Game.Item.Models.Materials;
 
 /// <summary>
 /// Defines the different categories of materials that can be collected.

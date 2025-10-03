@@ -1,7 +1,6 @@
 using Game.Adventure.Models;
 using Game.Adventure.Systems;
-using Game.Core.Models.Materials;
-using MaterialType = Game.Core.Models.MaterialType;
+using Game.Game.Item.Models.Materials;
 
 namespace Game.Adventure.Data;
 
@@ -14,12 +13,12 @@ public static class LootConfiguration
     /// <summary>
     /// Gets all predefined material types available in the game.
     /// </summary>
-    public static Dictionary<string, MaterialType> GetMaterialTypes()
+    public static Dictionary<string, Category> GetCategorys()
     {
-        var materials = new Dictionary<string, MaterialType>();
+        var materials = new Dictionary<string, Category>();
 
         // Metal materials
-        materials["iron_ore"] = new MaterialType(
+        materials["iron_ore"] = new Category(
             "iron_ore",
             "Iron Ore",
             "Common metal ore used in basic weapon and armor crafting.",
@@ -29,7 +28,7 @@ public static class LootConfiguration
             BaseValue: 2
         );
 
-        materials["silver_ore"] = new MaterialType(
+        materials["silver_ore"] = new Category(
             "silver_ore",
             "Silver Ore",
             "Refined metal ore with enhanced properties for quality equipment.",
@@ -39,7 +38,7 @@ public static class LootConfiguration
             BaseValue: 8
         );
 
-        materials["gold_ore"] = new MaterialType(
+        materials["gold_ore"] = new Category(
             "gold_ore",
             "Gold Ore",
             "Precious metal ore used for high-value items and decorative enhancements.",
@@ -50,7 +49,7 @@ public static class LootConfiguration
         );
 
         // Organic materials
-        materials["crude_leather"] = new MaterialType(
+        materials["crude_leather"] = new Category(
             "crude_leather",
             "Crude Leather",
             "Basic leather material from common creatures, suitable for simple armor.",
@@ -60,7 +59,7 @@ public static class LootConfiguration
             BaseValue: 1
         );
 
-        materials["thick_leather"] = new MaterialType(
+        materials["thick_leather"] = new Category(
             "thick_leather",
             "Thick Leather",
             "Durable leather from larger creatures, provides better protection.",
@@ -70,7 +69,7 @@ public static class LootConfiguration
             BaseValue: 4
         );
 
-        materials["herbs"] = new MaterialType(
+        materials["herbs"] = new Category(
             "herbs",
             "Medicinal Herbs",
             "Common plants with healing properties, used in potion making.",
@@ -80,7 +79,7 @@ public static class LootConfiguration
             BaseValue: 1
         );
 
-        materials["coal"] = new MaterialType(
+        materials["coal"] = new Category(
             "coal",
             "Coal",
             "Fuel material used in forging and smelting operations.",
@@ -91,7 +90,7 @@ public static class LootConfiguration
         );
 
         // Gems
-        materials["gem_shard"] = new MaterialType(
+        materials["gem_shard"] = new Category(
             "gem_shard",
             "Gem Shard",
             "Small fragments of precious gems, can be combined for greater value.",
@@ -102,7 +101,7 @@ public static class LootConfiguration
         );
 
         // Magical materials
-        materials["enchanted_stone"] = new MaterialType(
+        materials["enchanted_stone"] = new Category(
             "enchanted_stone",
             "Enchanted Stone",
             "Magically infused stone that enhances weapon and armor properties.",
@@ -112,7 +111,7 @@ public static class LootConfiguration
             BaseValue: 50
         );
 
-        materials["mana_crystal"] = new MaterialType(
+        materials["mana_crystal"] = new Category(
             "mana_crystal",
             "Mana Crystal",
             "Crystallized magical energy, extremely rare and powerful.",
@@ -130,7 +129,7 @@ public static class LootConfiguration
     /// </summary>
     public static Dictionary<string, LootTable> GetLootTables()
     {
-        var materials = GetMaterialTypes();
+        var materials = GetCategorys();
         var lootTables = new Dictionary<string, LootTable>();
 
         // Goblin loot table

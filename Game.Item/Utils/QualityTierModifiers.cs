@@ -1,6 +1,6 @@
-using Game.Item.Models;
+using Game.Game.Item.Models;
 
-namespace Game.Core.Utils;
+namespace Game.Game.Item.Utils;
 
 /// <summary>
 /// Provides stat modifiers and bonuses based on item quality tiers.
