@@ -2,6 +2,7 @@
 
 using Godot;
 using Game.Inventory.Models;
+//using Game.Inventory.Systems;  // TODO: Implement InventoryManager in new architecture
 using Game.Adventure.Models;
 using Game.Core.Utils;
 using System;
@@ -31,7 +32,9 @@ public partial class AdventurerInventoryUI : Panel
     [Signal]
     public delegate void RefreshRequestedEventHandler();
 
-    private InventoryManager? _inventoryManager;
+    // TODO: Implement InventoryManager in new architecture
+    // private InventoryManager? _inventoryManager;
+    private object? _inventoryManager; // Temporary placeholder
     private VBoxContainer? _inventoryList;
     private Label? _capacityLabel;
     private Label? _totalValueLabel;
@@ -58,19 +61,14 @@ public partial class AdventurerInventoryUI : Panel
 
     /// <summary>
     /// Sets the inventory manager and subscribes to its events.
+    /// TODO: Implement with new architecture InventoryManager
     /// </summary>
-    public void SetInventoryManager(InventoryManager inventoryManager)
+    public void SetInventoryManager(object inventoryManager)
     {
-        UnsubscribeFromInventoryManager();
-
+        // UnsubscribeFromInventoryManager();
         _inventoryManager = inventoryManager;
-
-        if (_inventoryManager != null)
-        {
-            _inventoryManager.InventoryUpdated += OnInventoryUpdated;
-            _inventoryManager.OperationFailed += OnOperationFailed;
-            UpdateUI();
-        }
+        // TODO: Implement event subscription for new architecture
+        UpdateUI();
     }
 
     private void CacheNodeReferences()
@@ -82,11 +80,14 @@ public partial class AdventurerInventoryUI : Panel
 
     private void UnsubscribeFromInventoryManager()
     {
+        // TODO: Implement unsubscription for new architecture
+        /*
         if (_inventoryManager != null)
         {
             _inventoryManager.InventoryUpdated -= OnInventoryUpdated;
             _inventoryManager.OperationFailed -= OnOperationFailed;
         }
+        */
     }
 
     private void UpdateUI()
@@ -126,6 +127,7 @@ public partial class AdventurerInventoryUI : Panel
     {
         GameLogger.Info($"AdventurerInventoryUI: UpdateInventoryDisplay called. InventoryManager={_inventoryManager}, InventoryList={_inventoryList}");
         
+        // TODO: Implement with new architecture
         if (_inventoryManager == null)
         {
             GameLogger.Warning("AdventurerInventoryUI: Cannot update display - InventoryManager is null");
@@ -140,6 +142,8 @@ public partial class AdventurerInventoryUI : Panel
 
         ClearInventoryDisplay();
 
+        // TODO: Replace with actual inventory access from new architecture
+        /*
         var inventory = _inventoryManager.CurrentInventory;
         var materials = inventory.Materials.ToList();
         var stats = inventory.GetStats();
@@ -154,6 +158,7 @@ public partial class AdventurerInventoryUI : Panel
             GameLogger.Debug($"AdventurerInventoryUI: Creating UI for {materialStack.Material.Name} x{materialStack.Quantity} ({materialStack.Rarity})");
             CreateMaterialStackUI(materialStack);
         }
+        */
         
         GameLogger.Info($"AdventurerInventoryUI: Display update completed. InventoryList now has {_inventoryList.GetChildCount()} children");
         
@@ -187,8 +192,9 @@ public partial class AdventurerInventoryUI : Panel
             GameLogger.Debug($"AdventurerInventoryUI: Instantiating MaterialStackScene for {materialStack.Material.Name}");
             var materialStackInstance = MaterialStackScene.Instantiate<MaterialStackUI>();
             
+            // TODO: Fix MaterialStack type conversion for new architecture
             GameLogger.Debug($"AdventurerInventoryUI: Setting material stack data for {materialStack.Material.Name}");
-            materialStackInstance.SetMaterialStack(materialStack);
+            // materialStackInstance.SetMaterialStack(materialStack); // Temporarily commented due to type mismatch
             
             GameLogger.Debug($"AdventurerInventoryUI: Connecting click event for {materialStack.Material.Name}");
             materialStackInstance.MaterialStackClicked += () => OnMaterialStackUIClicked(materialStackInstance);
@@ -242,6 +248,8 @@ public partial class AdventurerInventoryUI : Panel
 
     private void UpdateHeaderInfo()
     {
+        // TODO: Implement with new architecture
+        /*
         if (_inventoryManager == null) return;
 
         var stats = _inventoryManager.GetInventoryStats();
@@ -254,6 +262,17 @@ public partial class AdventurerInventoryUI : Panel
         if (_totalValueLabel != null)
         {
             _totalValueLabel.Text = $"Total Value: {stats.TotalValue:N0}";
+        }
+        */
+        
+        if (_capacityLabel != null)
+        {
+            _capacityLabel.Text = "Capacity: -- / --";
+        }
+
+        if (_totalValueLabel != null)
+        {
+            _totalValueLabel.Text = "Total Value: --";
         }
     }
 
@@ -268,7 +287,8 @@ public partial class AdventurerInventoryUI : Panel
     private void OnInventoryUpdated(InventoryStats stats)
     {
         CallDeferred(nameof(UpdateUI));
-        GameLogger.Debug($"Inventory updated - {stats.UsedSlots}/{stats.Capacity} slots, {stats.TotalValue} value");
+        // TODO: Fix property access for new architecture
+        GameLogger.Debug($"Inventory updated - {stats.UsedSlots}/{stats.TotalSlots} slots, {stats.TotalValue} value");
     }
 
     private void OnOperationFailed(string message)
@@ -306,10 +326,12 @@ public partial class AdventurerInventoryUI : Panel
 
     /// <summary>
     /// Gets the current inventory statistics for external access.
+    /// TODO: Implement with new architecture
     /// </summary>
     public InventoryStats? GetInventoryStats()
     {
-        return _inventoryManager?.GetInventoryStats();
+        // return _inventoryManager?.GetInventoryStats();
+        return null; // TODO: Implement with new architecture
     }
 
     /// <summary>
@@ -322,9 +344,12 @@ public partial class AdventurerInventoryUI : Panel
 
     /// <summary>
     /// Updates the inventory display with the provided inventory.
+    /// TODO: Implement with new architecture
     /// </summary>
-    public void UpdateInventory(Inventory inventory)
+    public void UpdateInventory(object inventory) // Changed from Inventory to object to avoid namespace conflict
     {
+        // TODO: Implement with new architecture
+        /*
         // Create a temporary inventory manager wrapper if needed
         if (_inventoryManager == null || _inventoryManager.CurrentInventory != inventory)
         {
@@ -335,6 +360,7 @@ public partial class AdventurerInventoryUI : Panel
             tempManager.AddMaterials(drops);
             SetInventoryManager(tempManager);
         }
+        */
         UpdateUI();
     }
 
