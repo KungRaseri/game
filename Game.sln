@@ -39,8 +39,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Milestone-1", "Milestone-1", "{6106A59B-2CAF-4EB6-B517-1B9B0B619E77}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Items", "Game.Items\Game.Items.csproj", "{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}"
 EndProject
 Global
@@ -149,9 +147,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{6106A59B-2CAF-4EB6-B517-1B9B0B619E77} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F2C12CE0-8544-4C27-98BB-FFCE96D0748F}
