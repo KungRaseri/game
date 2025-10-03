@@ -2,7 +2,7 @@ using Game.Adventure.Controllers;
 using Game.Adventure.Models;
 using Game.Adventure.Systems;
 
-namespace Game.Main.Tests.Controllers
+namespace Game.Adventure.Tests
 {
     public class AdventurerControllerTests
     {
@@ -36,7 +36,7 @@ namespace Game.Main.Tests.Controllers
             var combatSystem = new CombatSystem();
             var controller = new AdventurerController(combatSystem);
             var statusMessages = new List<string>();
-            
+
             controller.StatusUpdated += message => statusMessages.Add(message);
 
             // Act
@@ -55,9 +55,9 @@ namespace Game.Main.Tests.Controllers
             var combatSystem = new CombatSystem();
             var controller = new AdventurerController(combatSystem);
             var statusMessages = new List<string>();
-            
+
             controller.StatusUpdated += message => statusMessages.Add(message);
-            
+
             // Send once to make unavailable
             controller.SendToGoblinCave();
             statusMessages.Clear();
@@ -76,7 +76,7 @@ namespace Game.Main.Tests.Controllers
             var combatSystem = new CombatSystem();
             var controller = new AdventurerController(combatSystem);
             var statusMessages = new List<string>();
-            
+
             controller.StatusUpdated += message => statusMessages.Add(message);
             controller.SendToGoblinCave();
             statusMessages.Clear();
@@ -126,7 +126,7 @@ namespace Game.Main.Tests.Controllers
             // Arrange
             var combatSystem = new CombatSystem();
             var controller = new AdventurerController(combatSystem);
-            
+
             controller.SendToGoblinCave();
 
             // Act
@@ -144,7 +144,7 @@ namespace Game.Main.Tests.Controllers
             var combatSystem = new CombatSystem();
             var controller = new AdventurerController(combatSystem);
             var statusMessages = new List<string>();
-            
+
             controller.StatusUpdated += message => statusMessages.Add(message);
 
             // Act
@@ -162,7 +162,7 @@ namespace Game.Main.Tests.Controllers
             var combatSystem = new CombatSystem();
             var controller = new AdventurerController(combatSystem);
             var statusMessages = new List<string>();
-            
+
             controller.StatusUpdated += message => statusMessages.Add(message);
             controller.SendToGoblinCave();
             statusMessages.Clear();
@@ -182,7 +182,7 @@ namespace Game.Main.Tests.Controllers
             var combatSystem = new CombatSystem();
             var controller = new AdventurerController(combatSystem);
             var statusMessages = new List<string>();
-            
+
             controller.StatusUpdated += message => statusMessages.Add(message);
             controller.SendToGoblinCave();
             statusMessages.Clear();
@@ -201,7 +201,7 @@ namespace Game.Main.Tests.Controllers
             var combatSystem = new CombatSystem();
             var controller = new AdventurerController(combatSystem);
             var statusMessages = new List<string>();
-            
+
             controller.StatusUpdated += message => statusMessages.Add(message);
 
             // Act
@@ -218,14 +218,14 @@ namespace Game.Main.Tests.Controllers
             var combatSystem = new CombatSystem();
             var controller = new AdventurerController(combatSystem);
             var statusMessages = new List<string>();
-            
+
             controller.StatusUpdated += message => statusMessages.Add(message);
             controller.SendToGoblinCave();
-            
+
             // Act
             controller.Dispose();
             statusMessages.Clear();
-            
+
             // Try to trigger combat system events directly after disposal
             combatSystem.ForceRetreat(); // This should not trigger controller status updates
 
@@ -260,11 +260,11 @@ namespace Game.Main.Tests.Controllers
 
             // Act & Assert - Initially available
             Assert.True(controller.IsAvailable);
-            
+
             // Send to dungeon - should not be available
             controller.SendToGoblinCave();
             Assert.False(controller.IsAvailable);
-            
+
             // Force retreat - still not available (regenerating)
             controller.Retreat();
             Assert.False(controller.IsAvailable);

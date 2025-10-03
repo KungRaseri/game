@@ -14,6 +14,7 @@
 		<Compile Remove="Game.Economy\**" />
 		<Compile Remove="Game.Inventory.Tests\**" />
 		<Compile Remove="Game.Inventory\**" />
+		<Compile Remove="Game.Items.Tests\**" />
 		<Compile Remove="Game.Items\**" />
 		<Compile Remove="Game.Main.Tests\**" />
 		<Compile Remove="Game.Main\**" />
@@ -29,6 +30,7 @@
 		<EmbeddedResource Remove="Game.Economy\**" />
 		<EmbeddedResource Remove="Game.Inventory.Tests\**" />
 		<EmbeddedResource Remove="Game.Inventory\**" />
+		<EmbeddedResource Remove="Game.Items.Tests\**" />
 		<EmbeddedResource Remove="Game.Items\**" />
 		<EmbeddedResource Remove="Game.Shop.Tests\**" />
 		<EmbeddedResource Remove="Game.Shop\**" />
@@ -42,9 +44,5 @@
 	  <ProjectReference Include="Game.Economy\Game.Economy.csproj" />
 	  <ProjectReference Include="Game.Inventory\Game.Inventory.csproj" />
 	  <ProjectReference Include="Game.Crafting\Game.Crafting.csproj" />
-	  <ProjectReference Include="Game.Main\Game.Main.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Include="Managers\GameManager.cs.uid" />
 	</ItemGroup>
 </Project>
