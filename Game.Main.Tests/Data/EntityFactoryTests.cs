@@ -1,4 +1,4 @@
-using Game.Main.Data;
+using Game.Adventure.Data;
 
 namespace Game.Main.Tests.Data
 {

@@ -1,7 +1,8 @@
 #nullable enable
 
+using Game.Adventure.Data;
+using Game.Item.Data;
 using Game.Main.Systems;
-using Game.Main.Data;
 
 namespace Game.Main.Tests.Systems;
 

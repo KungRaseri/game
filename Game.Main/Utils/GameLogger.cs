@@ -92,7 +92,7 @@ public static class GameLogger
         if (level < _currentLogLevel)
             return;
 
-        var fileName = System.IO.Path.GetFileNameWithoutExtension(caller.FilePath);
+        var fileName = Path.GetFileNameWithoutExtension(caller.FilePath);
         var levelStr = level.ToString().ToUpper();
         var formattedMessage = $"[{levelStr}] {fileName}.{caller.MemberName}:{caller.LineNumber} - {message}";
 

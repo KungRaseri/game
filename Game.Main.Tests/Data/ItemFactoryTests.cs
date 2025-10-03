@@ -1,4 +1,5 @@
-using Game.Main.Data;
+using Game.Adventure.Data;
+using Game.Item.Data;
 
 namespace Game.Main.Tests.Data;
 
@@ -123,7 +124,7 @@ public class ItemFactoryTests
             Name: "Test Ore",
             Description: "Test material",
             BaseValue: 10,
-            MaterialType: MaterialType.Metal,
+            Category: MaterialType.Metal,
             Stackable: true,
             MaxStackSize: 99
         );

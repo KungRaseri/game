@@ -1,6 +1,6 @@
 using Game.Adventure.Models;
 
-namespace Game.Main.Data;
+namespace Game.Adventure.Data;
 
 /// <summary>
 /// Factory for creating combat entities from configuration

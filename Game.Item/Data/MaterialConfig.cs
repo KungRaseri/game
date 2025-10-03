@@ -1,4 +1,6 @@
-namespace Game.Main.Data;
+using Game.Item.Models.Materials;
+
+namespace Game.Item.Data;
 
 /// <summary>
 /// Configuration record for creating materials.
@@ -8,7 +10,7 @@ public record MaterialConfig(
     string Name,
     string Description,
     int BaseValue,
-    MaterialType MaterialType,
+    Category Category,
     bool Stackable = true,
     int MaxStackSize = 99
 );

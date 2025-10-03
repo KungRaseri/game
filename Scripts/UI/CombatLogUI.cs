@@ -1,6 +1,6 @@
 #nullable enable
 
-using Game.Main.Controllers;
+using Game.Adventure.Controllers;
 using Game.Main.Utils;
 using Godot;
 

@@ -36,14 +36,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		.github\copilot-instructions.md = .github\copilot-instructions.md
-		Documentation\IDEAS.md = Documentation\IDEAS.md
-		Documentation\MILESTONES.md = Documentation\MILESTONES.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Milestone-1", "Milestone-1", "{6106A59B-2CAF-4EB6-B517-1B9B0B619E77}"
-	ProjectSection(SolutionItems) = preProject
-		Documentation\milestone-1\README.md = Documentation\milestone-1\README.md
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Item", "Game.Item\Game.Item.csproj", "{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}"
 EndProject

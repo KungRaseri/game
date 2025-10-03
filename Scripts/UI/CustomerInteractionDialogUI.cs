@@ -170,7 +170,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         {
             var decision = _customerAI.MakeEnhancedPurchaseDecision(_currentItem, _currentItem.Value, _interactionContext);
             
-            var thoughts = new System.Collections.Generic.List<string>
+            var thoughts = new List<string>
             {
                 $"💭 \"{decision.PrimaryReason}\"",
                 $"🧠 Confidence: {decision.Confidence:P0}"
@@ -225,7 +225,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
     {
         if (_currentCustomer == null) return "";
         
-        var thoughts = new System.Collections.Generic.List<string>();
+        var thoughts = new List<string>();
         
         // Base thoughts based on customer type
         thoughts.AddRange(GetTypeBasedThoughts(_currentCustomer.Type));
@@ -234,7 +234,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         thoughts.AddRange(GetPersonalityBasedThoughts(_currentCustomer.Personality));
         
         // Select 2-3 random thoughts
-        var selectedThoughts = new System.Collections.Generic.List<string>();
+        var selectedThoughts = new List<string>();
         for (int i = 0; i < Math.Min(3, thoughts.Count); i++)
         {
             var randomThought = thoughts[_random.Next(thoughts.Count)];
@@ -247,7 +247,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         return string.Join("\n\n", selectedThoughts);
     }
     
-    private System.Collections.Generic.List<string> GetTypeBasedThoughts(CustomerType type)
+    private List<string> GetTypeBasedThoughts(CustomerType type)
     {
         return type switch
         {
@@ -285,9 +285,9 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         };
     }
     
-    private System.Collections.Generic.List<string> GetItemSpecificThoughts(Item.Models.Item item)
+    private List<string> GetItemSpecificThoughts(Item.Models.Item item)
     {
-        var thoughts = new System.Collections.Generic.List<string>();
+        var thoughts = new List<string>();
         
         // Quality-based thoughts
         switch (item.Quality)
@@ -334,9 +334,9 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         return thoughts;
     }
     
-    private System.Collections.Generic.List<string> GetPersonalityBasedThoughts(CustomerPersonality personality)
+    private List<string> GetPersonalityBasedThoughts(CustomerPersonality personality)
     {
-        var thoughts = new System.Collections.Generic.List<string>();
+        var thoughts = new List<string>();
         
         if (personality.PriceSensitivity > 0.7f)
         {

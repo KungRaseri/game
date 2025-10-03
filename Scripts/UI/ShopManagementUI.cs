@@ -432,7 +432,7 @@ public partial class ShopManagementUI : Panel
             var noItemsLabel = new Label
             {
                 Text = "No materials in inventory\nGo on expeditions to collect materials!",
-                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+                SizeFlagsHorizontal = SizeFlags.ExpandFill,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
             _inventoryList.AddChild(noItemsLabel);
@@ -444,7 +444,7 @@ public partial class ShopManagementUI : Panel
         var instructionLabel = new Label
         {
             Text = "Click materials to stock in shop:",
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
             HorizontalAlignment = HorizontalAlignment.Center,
             CustomMinimumSize = new Vector2(0, 25)
         };
@@ -453,7 +453,7 @@ public partial class ShopManagementUI : Panel
         // Add separator
         var separator = new HSeparator
         {
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+            SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
         _inventoryList.AddChild(separator);
 
@@ -461,8 +461,8 @@ public partial class ShopManagementUI : Panel
         var refreshButton = new Button
         {
             Text = "🔄 Refresh Inventory",
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
-            SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ShrinkCenter,
             CustomMinimumSize = new Vector2(0, 30)
         };
         refreshButton.Pressed += () =>
@@ -478,8 +478,8 @@ public partial class ShopManagementUI : Panel
             var button = new Button
             {
                 Text = $"{materialStack.Material.Name} x{materialStack.Quantity} ({materialStack.Rarity})",
-                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
-                SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+                SizeFlagsHorizontal = SizeFlags.ExpandFill,
+                SizeFlagsVertical = SizeFlags.ShrinkCenter,
                 CustomMinimumSize = new Vector2(0, 40) // Consistent height for list items
             };
 
@@ -501,7 +501,7 @@ public partial class ShopManagementUI : Panel
         // Add bottom spacer for better visual separation
         var bottomSpacer = new HSeparator
         {
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+            SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
         _inventoryList.AddChild(bottomSpacer);
 

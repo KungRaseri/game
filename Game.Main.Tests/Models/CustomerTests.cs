@@ -1,6 +1,7 @@
 #nullable enable
 
-using Game.Main.Data;
+using Game.Adventure.Data;
+using Game.Item.Data;
 
 namespace Game.Main.Tests.Models;
 

@@ -18,7 +18,7 @@ public class EnhancedShopManagerTests
     private Item CreateTestItem(string name = "Test Sword", ItemType type = ItemType.Weapon, QualityTier quality = QualityTier.Common)
     {
         return new Item(
-            itemId: System.Guid.NewGuid().ToString(),
+            itemId: Guid.NewGuid().ToString(),
             name: name,
             description: $"A test {name.ToLower()}",
             itemType: type,

@@ -1,7 +1,8 @@
-using Game.Main.Utils;
-using Godot;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
+using Game.Item.Utils;
 
-namespace Game.Main.Data;
+namespace Game.Item.Data;
 
 /// <summary>
 /// Factory for creating items from configuration.
@@ -58,7 +59,7 @@ public static class ItemFactory
             description: config.Description,
             quality: quality,
             value: value,
-            materialType: config.MaterialType,
+            category: config.Category,
             stackable: config.Stackable,
             maxStackSize: config.MaxStackSize
         );

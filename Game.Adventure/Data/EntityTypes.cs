@@ -1,4 +1,4 @@
-namespace Game.Main.Data;
+namespace Game.Adventure.Data;
 
 /// <summary>
 /// Predefined entity type configurations using modern C# features

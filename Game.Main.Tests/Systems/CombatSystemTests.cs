@@ -1,4 +1,4 @@
-using Game.Main.Data;
+using Game.Adventure.Data;
 
 namespace Game.Main.Tests.Systems
 {
@@ -111,7 +111,7 @@ namespace Game.Main.Tests.Systems
             for (int i = 0; i < 20; i++)
             {
                 combatSystem.Update();
-                System.Threading.Thread.Sleep(100); // Longer delay to ensure damage is applied
+                Thread.Sleep(100); // Longer delay to ensure damage is applied
                 
                 // Break early if either entity takes damage or dies
                 if (adventurer.CurrentHealth < initialAdventurerHealth || 

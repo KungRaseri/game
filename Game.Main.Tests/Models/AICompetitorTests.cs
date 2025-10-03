@@ -92,7 +92,7 @@ public class AICompetitorTests
         var originalLastUpdated = competitor.LastUpdated;
 
         // Wait a small amount to ensure time difference
-        System.Threading.Thread.Sleep(1);
+        Thread.Sleep(1);
 
         // Act
         competitor.UpdateStrategy(CompetitorStrategy.Premium);
@@ -146,7 +146,7 @@ public class AICompetitorTests
         };
 
         // Wait a small amount to ensure time difference
-        System.Threading.Thread.Sleep(1);
+        Thread.Sleep(1);
 
         // Act
         competitor.RecordAction(action);

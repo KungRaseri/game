@@ -1,4 +1,4 @@
-using Game.Main.Controllers;
+using Game.Adventure.Controllers;
 
 namespace Game.Main.Tests.Controllers
 {

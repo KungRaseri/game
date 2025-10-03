@@ -270,7 +270,7 @@ public class CustomerShoppingSessionTests
         var startTime = DateTime.Now;
         
         // Act - Simulate some time passing
-        System.Threading.Thread.Sleep(100);
+        Thread.Sleep(100);
         var duration = session.SessionDuration;
         
         // Assert

@@ -106,7 +106,7 @@ public partial class MaterialStackUI : Panel
         MouseExited += OnMouseExited;
         
         // Enable input to capture clicks
-        MouseFilter = Control.MouseFilterEnum.Pass;
+        MouseFilter = MouseFilterEnum.Pass;
         
         // Set up tooltip on background panel if available
         if (_backgroundPanel != null)

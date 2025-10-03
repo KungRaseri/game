@@ -78,7 +78,7 @@ public partial class InventoryStatsUI : Panel
             
             GameLogger.Debug("InventoryStatsUI node references cached successfully");
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             GameLogger.Error(ex, "Failed to cache node references in InventoryStatsUI");
         }

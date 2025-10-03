@@ -3,7 +3,7 @@ namespace Game.Item.Models;
 /// <summary>
 /// Represents a weapon that can be equipped to increase damage output.
 /// </summary>
-public class Weapon : global::Game.Item.Models.Item
+public class Weapon : Item
 {
     private int _damageBonus;
 

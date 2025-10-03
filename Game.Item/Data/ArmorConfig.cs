@@ -1,4 +1,4 @@
-namespace Game.Main.Data;
+namespace Game.Item.Data;
 
 /// <summary>
 /// Configuration record for creating armor.

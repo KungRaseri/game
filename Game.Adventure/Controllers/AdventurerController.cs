@@ -1,7 +1,8 @@
+using Game.Adventure.Data;
 using Game.Adventure.Models;
 using Game.Adventure.Systems;
 
-namespace Game.Main.Controllers;
+namespace Game.Adventure.Controllers;
 
 /// <summary>
 /// Controls adventurer actions and manages their state

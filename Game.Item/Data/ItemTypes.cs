@@ -1,4 +1,6 @@
-namespace Game.Main.Data;
+using Game.Item.Models.Materials;
+
+namespace Game.Item.Data;
 
 /// <summary>
 /// Predefined item configurations for common items in the game.
@@ -61,7 +63,7 @@ public static class ItemTypes
         Name: "Iron Ore",
         Description: "Raw iron ore, can be smelted into ingots.",
         BaseValue: 5,
-        MaterialType: new MaterialType{ BaseRarity = MaterialRarity.Common, BaseValue = 100, Category = MaterialCategory.Metal},
+        Category: Category.Metal,
         Stackable: true,
         MaxStackSize: 99
     );
@@ -71,7 +73,7 @@ public static class ItemTypes
         Name: "Steel Ingot",
         Description: "Refined steel ingot, ready for crafting.",
         BaseValue: 15,
-        MaterialType: MaterialType.Metal,
+        Category: Category.Metal,
         Stackable: true,
         MaxStackSize: 99
     );
@@ -82,7 +84,7 @@ public static class ItemTypes
         Name: "Monster Hide",
         Description: "Tough hide from a defeated monster.",
         BaseValue: 8,
-        MaterialType: MaterialType.Leather,
+        Category: Category.Leather,
         Stackable: true,
         MaxStackSize: 50
     );
@@ -92,7 +94,7 @@ public static class ItemTypes
         Name: "Tanned Leather",
         Description: "Processed leather suitable for armor crafting.",
         BaseValue: 12,
-        MaterialType: MaterialType.Leather,
+        Category: Category.Leather,
         Stackable: true,
         MaxStackSize: 50
     );
@@ -103,7 +105,7 @@ public static class ItemTypes
         Name: "Oak Wood",
         Description: "Strong oak wood for weapon handles and shields.",
         BaseValue: 3,
-        MaterialType: MaterialType.Wood,
+        Category: Category.Wood,
         Stackable: true,
         MaxStackSize: 99
     );
@@ -114,7 +116,7 @@ public static class ItemTypes
         Name: "Ruby",
         Description: "A precious red gemstone that radiates power.",
         BaseValue: 100,
-        MaterialType: MaterialType.Gem,
+        Category: Category.Gem,
         Stackable: true,
         MaxStackSize: 20
     );
