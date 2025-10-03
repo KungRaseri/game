@@ -1,6 +1,6 @@
 using Game.Adventure.Models;
 using Game.Adventure.Systems;
-using Game.Game.Item.Models.Materials;
+using Game.Item.Models.Materials;
 
 namespace Game.Adventure.Data;
 

@@ -1,12 +1,12 @@
 #nullable enable
 
-using Game.Game.Item.Models;
-using Game.Game.Item.Models.Materials;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
 using Game.Main.Systems;
 using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
 using Godot;
-using Type = Game.Game.Item.Models.Materials.Type;
+using Type = Game.Item.Models.Materials.Type;
 
 namespace Game.Scripts.UI;
 

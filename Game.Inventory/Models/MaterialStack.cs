@@ -1,6 +1,6 @@
-using Game.Game.Item.Models;
-using Game.Game.Item.Models.Materials;
-using Game.Game.Item.Utils;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
+using Game.Item.Utils;
 
 namespace Game.Inventory.Models;
 
