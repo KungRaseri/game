@@ -1,7 +1,7 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Items.Models;
+using Game.Item.Models;
 using Game.Shop.Models;
 
 namespace Game.Shop.Systems;
@@ -113,7 +113,7 @@ public class ShopManager
     /// <param name="slotId">The display slot to use (0-5)</param>
     /// <param name="price">The sale price for the item</param>
     /// <returns>True if successfully stocked, false if slot is occupied or invalid</returns>
-    public bool StockItem(Item item, int slotId, decimal price)
+    public bool StockItem(Item.Models.Item item, int slotId, decimal price)
     {
         if (!_displaySlots.TryGetValue(slotId, out var slot))
         {
@@ -147,7 +147,7 @@ public class ShopManager
     /// </summary>
     /// <param name="slotId">The display slot to clear</param>
     /// <returns>The item that was removed, or null if slot was empty</returns>
-    public Item? RemoveItem(int slotId)
+    public Item.Models.Item? RemoveItem(int slotId)
     {
         if (!_displaySlots.TryGetValue(slotId, out var slot))
         {
@@ -211,7 +211,7 @@ public class ShopManager
     /// <param name="item">The item to price</param>
     /// <param name="profitMargin">Target profit margin (default 50%)</param>
     /// <returns>Market-responsive suggested retail price</returns>
-    public decimal CalculateSuggestedPrice(Item item, float profitMargin = 0.5f)
+    public decimal CalculateSuggestedPrice(Item.Models.Item item, float profitMargin = 0.5f)
     {
         // Base price calculation (simplified for now - will integrate with crafting costs later)
         decimal baseValue = item.ItemType switch

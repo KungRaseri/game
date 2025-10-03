@@ -1,6 +1,6 @@
 #nullable enable
 
-using Game.Items.Models;
+using Game.Item.Models;
 using Game.Shop.Models;
 
 namespace Game.Shop.Systems;
@@ -30,7 +30,7 @@ public class PricingEngine
     /// <summary>
     /// Calculate the optimal price for an item based on market conditions.
     /// </summary>
-    public decimal CalculateOptimalPrice(Item item, decimal basePrice)
+    public decimal CalculateOptimalPrice(Item.Models.Item item, decimal basePrice)
     {
         var marketData = GetOrCreateMarketData(item.ItemType, item.Quality);
         var strategy = GetPricingStrategy(item.ItemType);
@@ -102,7 +102,7 @@ public class PricingEngine
     /// <summary>
     /// Predict customer satisfaction based on pricing.
     /// </summary>
-    public CustomerSatisfaction PredictCustomerSatisfaction(Item item, decimal proposedPrice, decimal basePrice)
+    public CustomerSatisfaction PredictCustomerSatisfaction(Item.Models.Item item, decimal proposedPrice, decimal basePrice)
     {
         var marketData = GetOrCreateMarketData(item.ItemType, item.Quality);
         var priceRatio = proposedPrice / basePrice;
@@ -133,7 +133,7 @@ public class PricingEngine
     /// <summary>
     /// Record a sale and update market data.
     /// </summary>
-    public void RecordSale(Item item, decimal salePrice, CustomerSatisfaction satisfaction)
+    public void RecordSale(Item.Models.Item item, decimal salePrice, CustomerSatisfaction satisfaction)
     {
         RecordSale(item, salePrice, salePrice, satisfaction);
     }
@@ -141,7 +141,7 @@ public class PricingEngine
     /// <summary>
     /// Record a sale and update market data.
     /// </summary>
-    public void RecordSale(Item item, decimal salePrice, decimal originalPrice, CustomerSatisfaction satisfaction)
+    public void RecordSale(Item.Models.Item item, decimal salePrice, decimal originalPrice, CustomerSatisfaction satisfaction)
     {
         var marketData = GetOrCreateMarketData(item.ItemType, item.Quality);
         marketData.RecordSale(salePrice, originalPrice, satisfaction);
@@ -366,7 +366,7 @@ public class PricingEngine
         var basePrice = 100m; // Assume base price for calculations
         
         // Create a reference item for price calculation
-        var referenceItem = new Item(
+        var referenceItem = new Item.Models.Item(
             itemId: "ref_" + itemType.ToString().ToLower(),
             name: "Reference Item",
             description: "Reference item for pricing",

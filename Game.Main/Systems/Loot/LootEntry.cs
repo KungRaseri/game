@@ -1,5 +1,8 @@
 #nullable enable
 
+using Game.Item.Models;
+using Game.Item.Models.Materials;
+
 namespace Game.Main.Systems.Loot;
 
 /// <summary>
@@ -10,13 +13,13 @@ namespace Game.Main.Systems.Loot;
 /// <param name="DropChance">Probability of this material dropping (0.0 to 1.0)</param>
 /// <param name="MinQuantity">Minimum number of materials that can drop</param>
 /// <param name="MaxQuantity">Maximum number of materials that can drop</param>
-/// <param name="ForceRarity">Optional: Override the material's base rarity for this drop</param>
+/// <param name="Quality">Optional: Override the material's base rarity for this drop</param>
 public record LootEntry(
-    MaterialType Material,
+    Material Material,
     float DropChance,
     int MinQuantity,
     int MaxQuantity,
-    MaterialRarity? ForceRarity = null
+    QualityTier? Quality = null
 )
 {
     /// <summary>
@@ -44,9 +47,9 @@ public record LootEntry(
     /// Gets the rarity that will be used for drops from this entry.
     /// Uses ForceRarity if specified, otherwise uses the material's base rarity.
     /// </summary>
-    public MaterialRarity GetEffectiveRarity()
+    public QualityTier GetEffectiveRarity()
     {
-        return ForceRarity ?? Material.BaseRarity;
+        return Quality ?? Material.Quality;
     }
 
     /// <summary>

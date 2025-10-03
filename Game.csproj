@@ -42,4 +42,7 @@
 	  <ProjectReference Include="Game.Crafting\Game.Crafting.csproj" />
 	  <ProjectReference Include="Game.Main\Game.Main.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Include="Managers\GameManager.cs.uid" />
+	</ItemGroup>
 </Project>

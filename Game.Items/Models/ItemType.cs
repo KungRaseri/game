@@ -1,4 +1,4 @@
-namespace Game.Items.Models;
+namespace Game.Item.Models;
 
 /// <summary>
 /// Defines the different types of items in the game.

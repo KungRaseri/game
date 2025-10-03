@@ -1,5 +1,3 @@
-using Game.Items.Models;
-
 namespace Game.Shop.Models;
 
 /// <summary>
@@ -11,7 +9,7 @@ public record SaleTransaction(
     string TransactionId,
     
     /// <summary>The item that was sold.</summary>
-    Item ItemSold,
+    Item.Models.Item ItemSold,
     
     /// <summary>The actual sale price paid by the customer.</summary>
     decimal SalePrice,

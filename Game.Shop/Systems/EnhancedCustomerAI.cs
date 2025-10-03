@@ -1,7 +1,6 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Items.Models;
 using Game.Shop.Models;
 
 namespace Game.Shop.Systems;
@@ -35,7 +34,7 @@ public class EnhancedCustomerAI
     /// <summary>
     /// Makes an enhanced purchase decision considering all factors including recent interactions.
     /// </summary>
-    public EnhancedPurchaseDecision MakeEnhancedPurchaseDecision(Item item, decimal price, ShopInteractionContext context)
+    public EnhancedPurchaseDecision MakeEnhancedPurchaseDecision(Item.Models.Item item, decimal price, ShopInteractionContext context)
     {
         var baseDecision = _customer.MakePurchaseDecision(item, price);
         
@@ -67,7 +66,7 @@ public class EnhancedCustomerAI
     /// <summary>
     /// Analyzes multiple decision factors to create a comprehensive decision profile.
     /// </summary>
-    private DecisionFactors AnalyzeDecisionFactors(Item item, decimal price, ShopInteractionContext context)
+    private DecisionFactors AnalyzeDecisionFactors(Item.Models.Item item, decimal price, ShopInteractionContext context)
     {
         var factors = new DecisionFactors();
         
@@ -140,7 +139,7 @@ public class EnhancedCustomerAI
     /// <summary>
     /// Generates detailed reasoning for the purchase decision.
     /// </summary>
-    private DecisionReasoning GenerateDecisionReasoning(Item item, decimal price, DecisionFactors factors, Models.PurchaseDecision decision)
+    private DecisionReasoning GenerateDecisionReasoning(Item.Models.Item item, decimal price, DecisionFactors factors, Models.PurchaseDecision decision)
     {
         var reasons = new List<string>();
         
@@ -227,24 +226,24 @@ public class EnhancedCustomerAI
     }
     
     // Helper methods for calculating specific factors
-    private float AnalyzePriceAcceptability(Item item, decimal price) =>
+    private float AnalyzePriceAcceptability(Item.Models.Item item, decimal price) =>
         _customer.BudgetRange.CanAfford(price) ? 
             Math.Max(0f, 1f - (float)price / _customer.BudgetRange.MaxSpendingPower) : 0f;
     
     private float CalculateAffordabilityScore(decimal price) =>
         Math.Min(1f, (float)_customer.BudgetRange.MaxSpendingPower / (float)price);
     
-    private float AnalyzeQualityPreference(Item item) =>
+    private float AnalyzeQualityPreference(Item.Models.Item item) =>
         _customer.Preferences.GetQualityPreference(item.Quality);
     
-    private float CalculatePerceivedValue(Item item, decimal price)
+    private float CalculatePerceivedValue(Item.Models.Item item, decimal price)
     {
         var expectedValue = _customer.BudgetRange.TypicalPurchaseRange * 
                            (1f + _customer.Preferences.GetQualityPreference(item.Quality));
         return Math.Min(1f, expectedValue / (float)price);
     }
     
-    private float CalculateImpulsePurchaseScore(Item item) =>
+    private float CalculateImpulsePurchaseScore(Item.Models.Item item) =>
         _customer.Personality.ImpulsePurchasing * (_random.NextSingle() * 0.5f + 0.5f);
     
     private float CalculatePatientShoppingScore() =>
@@ -262,7 +261,7 @@ public class EnhancedCustomerAI
     private float CalculatePeerInfluence(ShopInteractionContext context) =>
         context.OtherCustomersSatisfaction * 0.3f; // Mild social influence
     
-    private float CalculateNegotiationLikelihood(Item item, decimal price) =>
+    private float CalculateNegotiationLikelihood(Item.Models.Item item, decimal price) =>
         _customer.Personality.NegotiationTendency * 
         (1f - CalculateAffordabilityScore(price)) * 0.5f + 
         _customer.Personality.NegotiationTendency * 0.5f;
@@ -280,7 +279,7 @@ public class EnhancedCustomerAI
          factors.ValueScore * PersonalityWeight +
          factors.LoyaltyInfluence * ShopReputationWeight);
     
-    private void TrackItemInteraction(Item item)
+    private void TrackItemInteraction(Item.Models.Item item)
     {
         _itemViewCounts[item.ItemId] = _itemViewCounts.GetValueOrDefault(item.ItemId, 0) + 1;
         _lastViewTimes[item.ItemId] = DateTime.Now;

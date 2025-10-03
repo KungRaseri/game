@@ -1,6 +1,5 @@
 #nullable enable
 
-using Game.Items.Models;
 using Godot;
 
 namespace Game.Shop;
@@ -24,7 +23,7 @@ public record ShopDisplaySlot
     /// <summary>
     /// The item currently displayed in this slot, null if empty.
     /// </summary>
-    public Item? CurrentItem { get; init; }
+    public Item.Models.Item? CurrentItem { get; init; }
     
     /// <summary>
     /// The price set for the item in this slot.
@@ -54,7 +53,7 @@ public record ShopDisplaySlot
     /// <summary>
     /// Creates a new display slot with an item and price.
     /// </summary>
-    public ShopDisplaySlot WithItem(Item item, decimal price)
+    public ShopDisplaySlot WithItem(Item.Models.Item item, decimal price)
     {
         return this with 
         { 

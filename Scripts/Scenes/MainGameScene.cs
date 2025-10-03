@@ -1,11 +1,10 @@
 #nullable enable
 
 using Game.Adventure.Models;
+using Game.Adventure.Systems;
+using Game.Core.Utils;
 using Game.Inventory.Systems;
-using Game.Main.Managers;
-using Game.Main.Systems;
-using Game.Main.Systems.Loot;
-using Game.Main.Utils;
+using Game.Managers;
 using Game.Scripts.UI;
 using Game.Shop.Systems;
 using Godot;
@@ -339,8 +338,8 @@ public partial class MainGameScene : Control
             var materialsAdded = new List<string>();
             foreach (var drop in result.SuccessfulAdds)
             {
-                materialsAdded.Add($"{drop.Material.Name} x{drop.Quantity} ({drop.ActualRarity})");
-                GameLogger.Debug($"Added to inventory: {drop.Material.Name} x{drop.Quantity} ({drop.ActualRarity})");
+                materialsAdded.Add($"{drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
+                GameLogger.Debug($"Added to inventory: {drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
             }
 
             // Report any failures

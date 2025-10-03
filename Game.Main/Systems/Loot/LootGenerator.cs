@@ -1,6 +1,8 @@
 #nullable enable
 
 using Game.Adventure.Models;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
 using Game.Main.Utils;
 
 namespace Game.Main.Systems.Loot;
@@ -36,15 +38,15 @@ public class LootGenerator
     /// </summary>
     /// <param name="monsterTypeId">The type of monster that was defeated</param>
     /// <returns>List of material drops generated</returns>
-    public List<MaterialDrop> GenerateDrops(string monsterTypeId)
+    public List<Drop> GenerateDrops(string monsterTypeId)
     {
         if (!_lootTables.TryGetValue(monsterTypeId, out var lootTable))
         {
             GameLogger.Warning($"No loot table found for monster type: {monsterTypeId}");
-            return new List<MaterialDrop>();
+            return new List<Drop>();
         }
 
-        var drops = new List<MaterialDrop>();
+        var drops = new List<Drop>();
         var currentTime = DateTime.UtcNow;
 
         // Process each possible drop based on probability
@@ -55,9 +57,8 @@ public class LootGenerator
                 var quantity = _random.Next(entry.MinQuantity, entry.MaxQuantity + 1);
                 var rarity = DetermineActualRarity(entry);
 
-                var drop = new MaterialDrop(
+                var drop = new Drop(
                     entry.Material,
-                    rarity,
                     quantity,
                     currentTime
                 );
@@ -94,7 +95,7 @@ public class LootGenerator
     /// <summary>
     /// Determines the actual rarity of a drop, potentially upgrading from base rarity.
     /// </summary>
-    private MaterialRarity DetermineActualRarity(LootEntry entry)
+    private QualityTier DetermineActualRarity(LootEntry entry)
     {
         var baseRarity = entry.GetEffectiveRarity();
 
@@ -103,10 +104,10 @@ public class LootGenerator
         
         return baseRarity switch
         {
-            MaterialRarity.Common when upgradeRoll < 0.05f => MaterialRarity.Uncommon,
-            MaterialRarity.Uncommon when upgradeRoll < 0.05f => MaterialRarity.Rare,
-            MaterialRarity.Rare when upgradeRoll < 0.05f => MaterialRarity.Epic,
-            MaterialRarity.Epic when upgradeRoll < 0.05f => MaterialRarity.Legendary,
+            QualityTier.Common when upgradeRoll < 0.05f => QualityTier.Uncommon,
+            QualityTier.Uncommon when upgradeRoll < 0.05f => QualityTier.Rare,
+            QualityTier.Rare when upgradeRoll < 0.05f => QualityTier.Epic,
+            QualityTier.Epic when upgradeRoll < 0.05f => QualityTier.Legendary,
             _ => baseRarity
         };
     }

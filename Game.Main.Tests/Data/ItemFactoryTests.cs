@@ -1,6 +1,6 @@
 using Game.Adventure.Data;
-using Game.Items.Data;
-using Game.Items.Models;
+using Game.Item.Data;
+using Game.Item.Models;
 
 namespace Game.Main.Tests.Data;
 
