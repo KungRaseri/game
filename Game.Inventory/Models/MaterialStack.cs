@@ -1,3 +1,4 @@
+using Game.Game.Item.Models;
 using Game.Game.Item.Models.Materials;
 using Game.Game.Item.Utils;
 
@@ -13,7 +14,6 @@ namespace Game.Inventory.Models;
 /// <param name="LastUpdated">When this stack was last modified</param>
 public record MaterialStack(
     Material Material,
-    Rarity Rarity,
     int Quantity,
     DateTime LastUpdated
 )
@@ -22,7 +22,7 @@ public record MaterialStack(
     /// Gets the unique key for this material stack.
     /// Materials of the same type and rarity stack together.
     /// </summary>
-    public string StackKey => $"{Material.ItemId}_{Rarity}";
+    public string StackKey => $"{Material.ItemId}_{Material.Quality}";
 
     /// <summary>
     /// Gets the maximum number of materials that can be stored in this stack.
@@ -46,13 +46,13 @@ public record MaterialStack(
     {
         get
         {
-            var rarityMultiplier = Rarity switch
+            var rarityMultiplier = Material.Quality switch
             {
-                Rarity.Common => 1.0f,
-                Rarity.Uncommon => 2.0f,
-                Rarity.Rare => 5.0f,
-                Rarity.Epic => 15.0f,
-                Rarity.Legendary => 50.0f,
+                QualityTier.Common => 1.0f,
+                QualityTier.Uncommon => 2.0f,
+                QualityTier.Rare => 5.0f,
+                QualityTier.Epic => 15.0f,
+                QualityTier.Legendary => 50.0f,
                 _ => 1.0f
             };
 
@@ -162,7 +162,6 @@ public record MaterialStack(
         
         return new MaterialStack(
             drop.Material,
-            drop.ActualRarity,
             drop.Quantity,
             drop.AcquiredAt
         );
@@ -171,13 +170,13 @@ public record MaterialStack(
     /// <summary>
     /// Gets the display color for this stack's rarity.
     /// </summary>
-    public string GetRarityColor() => Rarity switch
+    public string GetRarityColor() => Material.Quality switch
     {
-        Rarity.Common => "#808080",     // Gray
-        Rarity.Uncommon => "#00FF00",   // Green
-        Rarity.Rare => "#0080FF",       // Blue
-        Rarity.Epic => "#8000FF",       // Purple
-        Rarity.Legendary => "#FFD700",  // Gold
+        QualityTier.Common => "#808080",     // Gray
+        QualityTier.Uncommon => "#00FF00",   // Green
+        QualityTier.Rare => "#0080FF",       // Blue
+        QualityTier.Epic => "#8000FF",       // Purple
+        QualityTier.Legendary => "#FFD700",  // Gold
         _ => "#FFFFFF"                          // White fallback
     };
 
@@ -187,6 +186,6 @@ public record MaterialStack(
     /// </summary>
     public override string ToString()
     {
-        return $"{Material.Name} ({Rarity}) x{Quantity}";
+        return $"{Material.Name} ({Material.Quality}) x{Quantity}";
     }
 }

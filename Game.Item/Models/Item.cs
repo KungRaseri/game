@@ -1,3 +1,5 @@
+using Game.Game.Item.Utils;
+
 namespace Game.Game.Item.Models;
 
 /// <summary>
@@ -47,14 +49,12 @@ public class Item
     /// </summary>
     public QualityTier Quality { get; set; }
 
+    public int BaseValue => _value;
+
     /// <summary>
     /// Gold value of this item.
     /// </summary>
-    public int Value
-    {
-        get => _value;
-        set => _value = Math.Max(0, value);
-    }
+    public int Value => QualityTierModifiers.CalculateItemValue(_value, Quality);
 
     public Item(string itemId, string name, string description, ItemType itemType, QualityTier quality, int value)
     {

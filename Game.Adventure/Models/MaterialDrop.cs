@@ -1,3 +1,4 @@
+using Game.Game.Item.Models;
 using Game.Game.Item.Models.Materials;
 
 namespace Game.Adventure.Models;
@@ -12,7 +13,6 @@ namespace Game.Adventure.Models;
 /// <param name="AcquiredAt">When this material was obtained</param>
 public record MaterialDrop(
     Material Material,
-    Rarity ActualRarity,
     int Quantity,
     DateTime AcquiredAt
 )
@@ -38,29 +38,29 @@ public record MaterialDrop(
     /// </summary>
     public int GetTotalValue()
     {
-        var rarityMultiplier = ActualRarity switch
+        var rarityMultiplier = Material.Quality switch
         {
-            MaterialRarity.Common => 1.0f,
-            MaterialRarity.Uncommon => 2.0f,
-            MaterialRarity.Rare => 5.0f,
-            MaterialRarity.Epic => 15.0f,
-            MaterialRarity.Legendary => 50.0f,
+            QualityTier.Common => 1.0f,
+            QualityTier.Uncommon => 2.0f,
+            QualityTier.Rare => 5.0f,
+            QualityTier.Epic => 15.0f,
+            QualityTier.Legendary => 50.0f,
             _ => 1.0f
         };
 
-        return (int)(Material.BaseValue * Quantity * rarityMultiplier);
+        return (int)(Material.Value * Quantity * rarityMultiplier);
     }
 
     /// <summary>
     /// Gets the display color for this specific drop's rarity.
     /// </summary>
-    public string GetRarityColor() => ActualRarity switch
+    public string GetRarityColor() => Material.Quality switch
     {
-        MaterialRarity.Common => "#808080",     // Gray
-        MaterialRarity.Uncommon => "#00FF00",   // Green
-        MaterialRarity.Rare => "#0080FF",       // Blue
-        MaterialRarity.Epic => "#8000FF",       // Purple
-        MaterialRarity.Legendary => "#FFD700",  // Gold
+        QualityTier.Common => "#808080",     // Gray
+        QualityTier.Uncommon => "#00FF00",   // Green
+        QualityTier.Rare => "#0080FF",       // Blue
+        QualityTier.Epic => "#8000FF",       // Purple
+        QualityTier.Legendary => "#FFD700",  // Gold
         _ => "#FFFFFF"                          // White fallback
     };
 
@@ -70,6 +70,6 @@ public record MaterialDrop(
     /// </summary>
     public override string ToString()
     {
-        return $"{Material.Name} ({ActualRarity}) x{Quantity}";
+        return $"{Material.Name} ({Material.Quality}) x{Quantity}";
     }
 }
