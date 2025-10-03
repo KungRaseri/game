@@ -856,7 +856,9 @@ public partial class ShopManagementUI : Panel
 public class DisplaySlotUI
 {
     public event Action<int>? StockRequested;
+#pragma warning disable CS0067 // The event is never used - reserved for future price change functionality
     public event Action<int, decimal>? PriceChangeRequested;
+#pragma warning restore CS0067
     public event Action<int>? RemoveRequested;
 
     private readonly int _slotId;
