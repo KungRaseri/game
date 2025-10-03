@@ -61,23 +61,6 @@ public record ShopLighting
 }
 
 /// <summary>
-/// Represents a decorative element placed in the shop.
-/// </summary>
-public record DecorationPlacement(
-    /// <summary>Type of decoration (plant, artwork, furniture, etc.).</summary>
-    string DecorationType,
-    
-    /// <summary>Position in the shop space.</summary>
-    Vector2 Position,
-    
-    /// <summary>Size/scale of the decoration.</summary>
-    float Scale,
-    
-    /// <summary>Customer appeal bonus from this decoration.</summary>
-    float AppealBonus
-);
-
-/// <summary>
 /// Represents the overall layout and design configuration of the shop.
 /// Includes spatial arrangement, aesthetic settings, and functional features.
 /// </summary>

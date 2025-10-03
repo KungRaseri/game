@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Shop.Models;
 using Godot;
 
 namespace Game.Shop;
@@ -14,52 +15,52 @@ public class ShopLayout
     /// Name of this layout configuration.
     /// </summary>
     public string Name { get; init; } = "Default Layout";
-    
+
     /// <summary>
     /// Description of this layout style.
     /// </summary>
     public string Description { get; init; } = "Basic shop layout";
-    
+
     /// <summary>
     /// Overall size of the shop space.
     /// </summary>
     public Vector2 ShopSize { get; init; } = new(800, 600);
-    
+
     /// <summary>
     /// Color scheme for the shop interior.
     /// </summary>
     public ShopColorScheme ColorScheme { get; init; } = ShopColorScheme.CreateDefault();
-    
+
     /// <summary>
     /// Lighting configuration for the shop.
     /// </summary>
     public ShopLighting Lighting { get; init; } = ShopLighting.CreateDefault();
-    
+
     /// <summary>
     /// Decorative elements and their positions.
     /// </summary>
     public List<DecorationPlacement> Decorations { get; init; } = new();
-    
+
     /// <summary>
     /// Shop expansion level (affects available features).
     /// </summary>
     public int ExpansionLevel { get; init; } = 1;
-    
+
     /// <summary>
     /// Maximum number of display slots available in this layout.
     /// </summary>
     public int MaxDisplaySlots => 6 + (ExpansionLevel - 1) * 3; // 6, 9, 12, 15...
-    
+
     /// <summary>
     /// Customer traffic appeal rating for this layout.
     /// </summary>
     public float CustomerAppeal { get; init; } = 1.0f;
-    
+
     /// <summary>
     /// Cost to upgrade to this layout.
     /// </summary>
     public decimal UpgradeCost { get; init; } = 0m;
-    
+
     /// <summary>
     /// Creates the default basic shop layout.
     /// </summary>
@@ -75,7 +76,7 @@ public class ShopLayout
             ExpansionLevel = 1
         };
     }
-    
+
     /// <summary>
     /// Creates an upgraded cozy shop layout.
     /// </summary>
@@ -102,7 +103,7 @@ public class ShopLayout
             UpgradeCost = 500m
         };
     }
-    
+
     /// <summary>
     /// Creates a luxury shop layout for high-end customers.
     /// </summary>
