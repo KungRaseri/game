@@ -1,8 +1,9 @@
 #nullable enable
 
-using Game.Main.Utils;
+using Game.Core.Utils;
+using Game.Shop.Models;
 
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Manages shop traffic flow, customer generation, and concurrent shopping sessions.
@@ -87,7 +88,7 @@ public class ShopTrafficManager
         
         // Wait for all active sessions to complete
         var activeSessions = _activeSessions.Values.ToList();
-        await Task.WhenAll(activeSessions.Select(session => session.RunShoppingSessionAsync()));
+        await Task.WhenAll((IEnumerable<Task>)activeSessions.Select(session => session.RunShoppingSessionAsync()));
         
         GameLogger.Info("Shop traffic stopped");
     }

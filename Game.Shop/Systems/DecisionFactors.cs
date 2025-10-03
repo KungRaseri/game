@@ -1,4 +1,4 @@
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Comprehensive analysis of factors influencing a purchase decision.

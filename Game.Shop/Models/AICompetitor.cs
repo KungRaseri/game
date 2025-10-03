@@ -2,7 +2,7 @@
 
 using Game.Items.Models;
 
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Represents an AI competitor shop with its own pricing strategy and market behavior.

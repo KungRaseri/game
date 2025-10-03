@@ -1,4 +1,4 @@
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Types of reactions competitors can have to market changes.

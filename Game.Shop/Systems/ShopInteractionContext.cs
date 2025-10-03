@@ -1,4 +1,4 @@
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Context information about the current shop interaction.

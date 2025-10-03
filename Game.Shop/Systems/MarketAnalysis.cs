@@ -1,6 +1,6 @@
 using Game.Items.Models;
 
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Market analysis results for a specific item type and quality.

@@ -2,6 +2,7 @@
 
 using Game.Items.Models;
 using Game.Main.Systems;
+using Game.Shop.Systems;
 
 namespace Game.Main.Tests.Systems;
 

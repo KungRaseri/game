@@ -1,9 +1,10 @@
 #nullable enable
 
+using Game.Core.Utils;
 using Game.Items.Models;
-using Game.Main.Utils;
+using Game.Shop.Models;
 
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Central management system for shop operations, display slots, and item sales.
@@ -112,7 +113,7 @@ public class ShopManager
     /// <param name="slotId">The display slot to use (0-5)</param>
     /// <param name="price">The sale price for the item</param>
     /// <returns>True if successfully stocked, false if slot is occupied or invalid</returns>
-    public bool StockItem(Items item, int slotId, decimal price)
+    public bool StockItem(Item item, int slotId, decimal price)
     {
         if (!_displaySlots.TryGetValue(slotId, out var slot))
         {
@@ -146,7 +147,7 @@ public class ShopManager
     /// </summary>
     /// <param name="slotId">The display slot to clear</param>
     /// <returns>The item that was removed, or null if slot was empty</returns>
-    public Items? RemoveItem(int slotId)
+    public Item? RemoveItem(int slotId)
     {
         if (!_displaySlots.TryGetValue(slotId, out var slot))
         {
@@ -210,7 +211,7 @@ public class ShopManager
     /// <param name="item">The item to price</param>
     /// <param name="profitMargin">Target profit margin (default 50%)</param>
     /// <returns>Market-responsive suggested retail price</returns>
-    public decimal CalculateSuggestedPrice(Items item, float profitMargin = 0.5f)
+    public decimal CalculateSuggestedPrice(Item item, float profitMargin = 0.5f)
     {
         // Base price calculation (simplified for now - will integrate with crafting costs later)
         decimal baseValue = item.ItemType switch
@@ -232,6 +233,7 @@ public class ShopManager
         return marketPrice;
     }
     
+    /*
     /// <summary>
     /// Get market analysis for a specific item type and quality.
     /// </summary>
@@ -243,6 +245,7 @@ public class ShopManager
         return _pricingEngine.GetMarketAnalysis(itemType, quality);
     }
     
+    */
     /// <summary>
     /// Set pricing strategy for a specific item type.
     /// </summary>

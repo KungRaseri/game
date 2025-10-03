@@ -5,6 +5,8 @@ using Game.Items.Models;
 using Game.Items.Models.Materials;
 using Game.Main.Systems;
 using Game.Main.Utils;
+using Game.Shop.Models;
+using Game.Shop.Systems;
 using Godot;
 using Type = Game.Items.Models.Materials.Type;
 

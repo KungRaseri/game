@@ -1,4 +1,4 @@
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Phases of a customer shopping session.

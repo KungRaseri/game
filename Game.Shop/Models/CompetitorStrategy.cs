@@ -1,4 +1,4 @@
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Business strategies that AI competitors can employ.

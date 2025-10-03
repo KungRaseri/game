@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Game.Adventure\Game.Adventure.csproj" />
+    <ProjectReference Include="..\Game.Shop\Game.Shop.csproj" />
   </ItemGroup>
 
 </Project>

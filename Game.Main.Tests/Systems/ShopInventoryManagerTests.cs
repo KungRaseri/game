@@ -5,6 +5,7 @@ using Game.Items.Models;
 using Game.Main.Systems;
 using Game.Main.Utils;
 using Game.Main.Tests.Utils;
+using Game.Shop.Systems;
 
 namespace Game.Main.Tests.Systems;
 

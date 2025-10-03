@@ -1,8 +1,8 @@
 #nullable enable
 
-using Game.Main.Utils;
+using Game.Core.Utils;
 
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Advanced treasury management system for comprehensive financial operations.

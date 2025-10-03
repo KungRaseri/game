@@ -1,4 +1,4 @@
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Customer's emotional response to the shopping experience.

@@ -2,7 +2,7 @@
 
 using Game.Items.Models;
 
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Provides competitive intelligence data for a specific item category.

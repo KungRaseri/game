@@ -1,8 +1,10 @@
 #nullable enable
 
-using Game.Main.Utils;
+using Game.Core.Utils;
+using Game.Items.Models;
+using Game.Shop.Models;
 
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Enhanced AI system for customer decision-making with improved intelligence and interaction capabilities.
@@ -33,7 +35,7 @@ public class EnhancedCustomerAI
     /// <summary>
     /// Makes an enhanced purchase decision considering all factors including recent interactions.
     /// </summary>
-    public EnhancedPurchaseDecision MakeEnhancedPurchaseDecision(Items item, decimal price, ShopInteractionContext context)
+    public EnhancedPurchaseDecision MakeEnhancedPurchaseDecision(Item item, decimal price, ShopInteractionContext context)
     {
         var baseDecision = _customer.MakePurchaseDecision(item, price);
         
@@ -65,7 +67,7 @@ public class EnhancedCustomerAI
     /// <summary>
     /// Analyzes multiple decision factors to create a comprehensive decision profile.
     /// </summary>
-    private DecisionFactors AnalyzeDecisionFactors(Items item, decimal price, ShopInteractionContext context)
+    private DecisionFactors AnalyzeDecisionFactors(Item item, decimal price, ShopInteractionContext context)
     {
         var factors = new DecisionFactors();
         
@@ -101,34 +103,34 @@ public class EnhancedCustomerAI
     /// <summary>
     /// Applies enhanced logic to refine the base purchase decision.
     /// </summary>
-    private PurchaseDecision ApplyEnhancedLogic(PurchaseDecision baseDecision, DecisionFactors factors)
+    private Models.PurchaseDecision ApplyEnhancedLogic(Models.PurchaseDecision baseDecision, DecisionFactors factors)
     {
         // If base decision is strong (Buying), check if we should still negotiate
-        if (baseDecision == PurchaseDecision.Buying && factors.NegotiationLikelihood > 0.6f)
+        if (baseDecision == Models.PurchaseDecision.Buying && factors.NegotiationLikelihood > 0.6f)
         {
-            return PurchaseDecision.WantsToNegotiate;
+            return Models.PurchaseDecision.WantsToNegotiate;
         }
         
         // If base decision is weak (NotBuying), check if positive interactions changed mind
-        if (baseDecision == PurchaseDecision.NotBuying && factors.InteractionSatisfaction > 0.8f)
+        if (baseDecision == Models.PurchaseDecision.NotBuying && factors.InteractionSatisfaction > 0.8f)
         {
             // Good interaction might make customer reconsider
             if (factors.AffordabilityScore > 0.7f)
             {
-                return PurchaseDecision.Considering;
+                return Models.PurchaseDecision.Considering;
             }
         }
         
         // If considering, check confidence to make final decision
-        if (baseDecision == PurchaseDecision.Considering)
+        if (baseDecision == Models.PurchaseDecision.Considering)
         {
             if (factors.OverallConfidence > 0.75f)
             {
-                return factors.NegotiationLikelihood > 0.5f ? PurchaseDecision.WantsToNegotiate : PurchaseDecision.Buying;
+                return factors.NegotiationLikelihood > 0.5f ? Models.PurchaseDecision.WantsToNegotiate : Models.PurchaseDecision.Buying;
             }
             else if (factors.OverallConfidence < 0.3f)
             {
-                return PurchaseDecision.NotBuying;
+                return Models.PurchaseDecision.NotBuying;
             }
         }
         
@@ -138,7 +140,7 @@ public class EnhancedCustomerAI
     /// <summary>
     /// Generates detailed reasoning for the purchase decision.
     /// </summary>
-    private DecisionReasoning GenerateDecisionReasoning(Items item, decimal price, DecisionFactors factors, PurchaseDecision decision)
+    private DecisionReasoning GenerateDecisionReasoning(Item item, decimal price, DecisionFactors factors, Models.PurchaseDecision decision)
     {
         var reasons = new List<string>();
         
@@ -208,41 +210,41 @@ public class EnhancedCustomerAI
     /// <summary>
     /// Suggests the best action for the player to take based on customer state.
     /// </summary>
-    private string DetermineSuggestedPlayerAction(PurchaseDecision decision, DecisionFactors factors)
+    private string DetermineSuggestedPlayerAction(Models.PurchaseDecision decision, DecisionFactors factors)
     {
         return decision switch
         {
-            PurchaseDecision.Buying when factors.OverallConfidence > 0.9f => "Complete the sale - customer is ready to buy!",
-            PurchaseDecision.Buying => "Finalize the sale, but be prepared for last-minute questions",
-            PurchaseDecision.WantsToNegotiate => $"Customer wants to negotiate - they might accept {factors.NegotiationLikelihood * 100:F0}% of asking price",
-            PurchaseDecision.Considering when factors.InteractionSatisfaction < 0.5f => "Try engaging the customer with helpful information",
-            PurchaseDecision.Considering when factors.QualityScore < 0.5f => "Show the customer higher quality alternatives",
-            PurchaseDecision.Considering when factors.PriceScore < 0.5f => "Consider offering a discount or showing cheaper alternatives",
-            PurchaseDecision.NotBuying when factors.AlternativeInterest > 0.6f => "Show different items that might interest them",
-            PurchaseDecision.NotBuying when factors.InteractionSatisfaction > 0.6f => "Customer likes you but not the item - try alternatives",
+            Models.PurchaseDecision.Buying when factors.OverallConfidence > 0.9f => "Complete the sale - customer is ready to buy!",
+            Models.PurchaseDecision.Buying => "Finalize the sale, but be prepared for last-minute questions",
+            Models.PurchaseDecision.WantsToNegotiate => $"Customer wants to negotiate - they might accept {factors.NegotiationLikelihood * 100:F0}% of asking price",
+            Models.PurchaseDecision.Considering when factors.InteractionSatisfaction < 0.5f => "Try engaging the customer with helpful information",
+            Models.PurchaseDecision.Considering when factors.QualityScore < 0.5f => "Show the customer higher quality alternatives",
+            Models.PurchaseDecision.Considering when factors.PriceScore < 0.5f => "Consider offering a discount or showing cheaper alternatives",
+            Models.PurchaseDecision.NotBuying when factors.AlternativeInterest > 0.6f => "Show different items that might interest them",
+            Models.PurchaseDecision.NotBuying when factors.InteractionSatisfaction > 0.6f => "Customer likes you but not the item - try alternatives",
             _ => "Let the customer browse - they need more time to decide"
         };
     }
     
     // Helper methods for calculating specific factors
-    private float AnalyzePriceAcceptability(Items item, decimal price) =>
+    private float AnalyzePriceAcceptability(Item item, decimal price) =>
         _customer.BudgetRange.CanAfford(price) ? 
             Math.Max(0f, 1f - (float)price / _customer.BudgetRange.MaxSpendingPower) : 0f;
     
     private float CalculateAffordabilityScore(decimal price) =>
         Math.Min(1f, (float)_customer.BudgetRange.MaxSpendingPower / (float)price);
     
-    private float AnalyzeQualityPreference(Items item) =>
+    private float AnalyzeQualityPreference(Item item) =>
         _customer.Preferences.GetQualityPreference(item.Quality);
     
-    private float CalculatePerceivedValue(Items item, decimal price)
+    private float CalculatePerceivedValue(Item item, decimal price)
     {
         var expectedValue = _customer.BudgetRange.TypicalPurchaseRange * 
                            (1f + _customer.Preferences.GetQualityPreference(item.Quality));
         return Math.Min(1f, expectedValue / (float)price);
     }
     
-    private float CalculateImpulsePurchaseScore(Items item) =>
+    private float CalculateImpulsePurchaseScore(Item item) =>
         _customer.Personality.ImpulsePurchasing * (_random.NextSingle() * 0.5f + 0.5f);
     
     private float CalculatePatientShoppingScore() =>
@@ -260,7 +262,7 @@ public class EnhancedCustomerAI
     private float CalculatePeerInfluence(ShopInteractionContext context) =>
         context.OtherCustomersSatisfaction * 0.3f; // Mild social influence
     
-    private float CalculateNegotiationLikelihood(Items item, decimal price) =>
+    private float CalculateNegotiationLikelihood(Item item, decimal price) =>
         _customer.Personality.NegotiationTendency * 
         (1f - CalculateAffordabilityScore(price)) * 0.5f + 
         _customer.Personality.NegotiationTendency * 0.5f;
@@ -278,7 +280,7 @@ public class EnhancedCustomerAI
          factors.ValueScore * PersonalityWeight +
          factors.LoyaltyInfluence * ShopReputationWeight);
     
-    private void TrackItemInteraction(Items item)
+    private void TrackItemInteraction(Item item)
     {
         _itemViewCounts[item.ItemId] = _itemViewCounts.GetValueOrDefault(item.ItemId, 0) + 1;
         _lastViewTimes[item.ItemId] = DateTime.Now;

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Comprehensive analysis of the competitive market landscape.

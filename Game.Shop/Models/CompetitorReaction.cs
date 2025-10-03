@@ -1,6 +1,6 @@
 using Game.Items.Models;
 
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Represents a competitor's reaction to player actions or market changes.

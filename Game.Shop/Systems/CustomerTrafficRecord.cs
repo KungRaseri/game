@@ -1,4 +1,6 @@
-namespace Game.Main.Systems;
+using Game.Shop.Models;
+
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Historical record of a customer visit for traffic analysis.

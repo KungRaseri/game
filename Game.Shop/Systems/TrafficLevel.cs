@@ -1,4 +1,4 @@
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Shop traffic levels affecting customer generation rates.

@@ -1,4 +1,4 @@
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Types of actions AI competitors can take.

@@ -7,6 +7,7 @@ using Game.Main.Systems;
 using Game.Main.Systems.Loot;
 using Game.Main.Utils;
 using Game.Scripts.UI;
+using Game.Shop.Systems;
 using Godot;
 
 namespace Game.Scripts.Scenes;

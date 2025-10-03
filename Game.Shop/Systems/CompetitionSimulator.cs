@@ -1,9 +1,10 @@
 #nullable enable
 
+using Game.Core.Utils;
 using Game.Items.Models;
-using Game.Main.Utils;
+using Game.Shop.Models;
 
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Simulates AI competitors in the market, adjusting their prices and inventory 

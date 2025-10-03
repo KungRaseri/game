@@ -1,8 +1,10 @@
 #nullable enable
 
-using Game.Main.Utils;
+using Game.Core.Utils;
+using Game.Items.Models;
+using Game.Shop.Models;
 
-namespace Game.Main.Systems;
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Orchestrates a complete customer shopping experience from entry to exit.
@@ -28,8 +30,8 @@ public class CustomerShoppingSession
     public TimeSpan SessionDuration => DateTime.Now - _customer.EntryTime;
     
     /// <summary>Items the customer has examined during this session.</summary>
-    public IReadOnlyList<(Core.Models.Item Item, CustomerInterest Interest)> ExaminedItems { get; private set; } = 
-        new List<(Core.Models.Item, CustomerInterest)>();
+    public IReadOnlyList<(Item Item, CustomerInterest Interest)> ExaminedItems { get; private set; } = 
+        new List<(Item, CustomerInterest)>();
     
     /// <summary>The transaction result if purchase was completed.</summary>
     public SaleTransaction? CompletedTransaction { get; private set; }
@@ -39,8 +41,8 @@ public class CustomerShoppingSession
     
     // Events for UI and analytics
     public event Action<Customer, ShoppingPhase>? PhaseChanged;
-    public event Action<Customer, Core.Models.Item, CustomerInterest>? ItemExamined;
-    public event Action<Customer, Core.Models.Item, decimal>? NegotiationStarted;
+    public event Action<Customer, Item, CustomerInterest>? ItemExamined;
+    public event Action<Customer, Item, decimal>? NegotiationStarted;
     public event Action<Customer, decimal, bool>? NegotiationResult;
     public event Action<Customer, SaleTransaction>? PurchaseCompleted;
     public event Action<Customer, CustomerSatisfaction, string>? SessionEnded;
@@ -118,7 +120,7 @@ public class CustomerShoppingSession
             return;
         }
         
-        var examinedItems = new List<(Core.Models.Item, CustomerInterest)>();
+        var examinedItems = new List<(Item, CustomerInterest)>();
         
         // Customer examines items based on their personality and preferences
         var itemsToExamine = DetermineItemsToExamine(displayedItems);
@@ -196,7 +198,7 @@ public class CustomerShoppingSession
     /// <summary>
     /// Customer attempts to purchase a specific item, including potential negotiation.
     /// </summary>
-    private async Task AttemptPurchaseAsync(Core.Models.Item item, decimal askingPrice, int slotId)
+    private async Task AttemptPurchaseAsync(Item item, decimal askingPrice, int slotId)
     {
         ChangePhase(ShoppingPhase.Considering);
         
@@ -231,7 +233,7 @@ public class CustomerShoppingSession
     /// <summary>
     /// Handles customer negotiation attempts.
     /// </summary>
-    private async Task HandleNegotiationAsync(Core.Models.Item item, decimal askingPrice, int slotId)
+    private async Task HandleNegotiationAsync(Item item, decimal askingPrice, int slotId)
     {
         ChangePhase(ShoppingPhase.Negotiating);
         
@@ -285,7 +287,7 @@ public class CustomerShoppingSession
     /// <summary>
     /// Handles customer taking time to consider a purchase.
     /// </summary>
-    private async Task HandleConsiderationAsync(Core.Models.Item item, decimal askingPrice, int slotId)
+    private async Task HandleConsiderationAsync(Item item, decimal askingPrice, int slotId)
     {
         _customer.UpdateThought($"Let me think about this {item.Name}...");
         
@@ -310,7 +312,7 @@ public class CustomerShoppingSession
     /// <summary>
     /// Completes the purchase transaction.
     /// </summary>
-    private async Task CompletePurchaseAsync(Core.Models.Item item, decimal finalPrice, int slotId)
+    private async Task CompletePurchaseAsync(Item item, decimal finalPrice, int slotId)
     {
         ChangePhase(ShoppingPhase.Purchasing);
         
@@ -385,11 +387,11 @@ public class CustomerShoppingSession
         }
     }
     
-    private List<(Core.Models.Item Item, decimal Price, int SlotId)> DetermineItemsToExamine(
-        List<(Core.Models.Item Item, decimal Price, int SlotId)> availableItems)
+    private List<(Item Item, decimal Price, int SlotId)> DetermineItemsToExamine(
+        List<(Item Item, decimal Price, int SlotId)> availableItems)
     {
         // Customer examines items based on their preferences and personality
-        var itemsToExamine = new List<(Items, decimal, int)>();
+        var itemsToExamine = new List<(Item, decimal, int)>();
         
         // Sort items by customer preference
         var sortedItems = availableItems

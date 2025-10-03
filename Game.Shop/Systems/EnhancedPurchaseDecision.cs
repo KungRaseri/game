@@ -1,4 +1,6 @@
-namespace Game.Main.Systems;
+using Game.Shop.Models;
+
+namespace Game.Shop.Systems;
 
 /// <summary>
 /// Enhanced purchase decision with detailed analysis and reasoning.

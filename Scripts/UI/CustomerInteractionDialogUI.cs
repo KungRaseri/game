@@ -1,8 +1,7 @@
 #nullable enable
 
 using Game.Items.Models;
-using Game.Main.Systems;
-using Game.Main.Utils;
+using Game.Shop.Models;
 using Godot;
 
 namespace Game.Scripts.UI;
@@ -32,7 +31,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
     
     // State
     private Customer? _currentCustomer;
-    private Items.Models.Item? _currentItem;
+    private Item? _currentItem;
     private ShopManager? _shopManager;
     private EnhancedCustomerAI? _customerAI;
     private ShopInteractionContext _interactionContext = new();
@@ -423,7 +422,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         _interactionContext.DiscountOffered = true;
         _interactionContext.InteractionQualityScore += 0.2f; // Positive interaction
         _interactionContext.TotalInteractions++;
-        
+
         // Get Enhanced AI response to discount offer
         var response = _customerAI.MakeEnhancedPurchaseDecision(_currentItem, _currentItem.Value * 0.9m, _interactionContext);
         
