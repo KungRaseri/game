@@ -1,6 +1,6 @@
 #nullable enable
 
-using Game.Main.Systems.Inventory;
+using Game.Inventory.Systems;
 using Game.Main.Utils;
 using Godot;
 

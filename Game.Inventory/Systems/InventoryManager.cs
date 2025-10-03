@@ -1,9 +1,10 @@
 #nullable enable
 
-using Game.Adventure.Models;
-using Game.Main.Utils;
+using Game.Core.Utils;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
 
-namespace Game.Main.Systems.Inventory;
+namespace Game.Inventory.Systems;
 
 /// <summary>
 /// High-level manager for inventory operations, including persistence, validation, and integration.
@@ -56,7 +57,7 @@ public class InventoryManager
     /// </summary>
     /// <param name="drops">Collection of material drops to add</param>
     /// <returns>Summary of the add operation</returns>
-    public InventoryAddResult AddMaterials(IEnumerable<MaterialDrop> drops)
+    public InventoryAddResult AddMaterials(IEnumerable<Drop> drops)
     {
         lock (_lockObject)
         {
@@ -105,10 +106,10 @@ public class InventoryManager
     /// Removes materials from inventory with validation.
     /// </summary>
     /// <param name="materialId">ID of the material to remove</param>
-    /// <param name="rarity">Rarity of the material</param>
+    /// <param name="quality">Rarity of the material</param>
     /// <param name="quantity">Quantity to remove</param>
     /// <returns>Number of materials actually removed</returns>
-    public int RemoveMaterials(string materialId, MaterialRarity rarity, int quantity)
+    public int RemoveMaterials(string materialId, QualityTier quality, int quantity)
     {
         lock (_lockObject)
         {
@@ -124,7 +125,7 @@ public class InventoryManager
                     throw new ArgumentException("Quantity must be greater than zero", nameof(quantity));
                 }
 
-                var removed = _inventory.RemoveMaterial(materialId, rarity, quantity);
+                var removed = _inventory.RemoveMaterial(materialId, quality, quantity);
                 
                 if (removed > 0)
                 {
@@ -132,7 +133,7 @@ public class InventoryManager
                 }
                 else
                 {
-                    OperationFailed?.Invoke($"Could not remove {materialId} ({rarity}) - insufficient quantity");
+                    OperationFailed?.Invoke($"Could not remove {materialId} ({quality}) - insufficient quantity");
                 }
 
                 return removed;
@@ -174,7 +175,7 @@ public class InventoryManager
                 // Apply rarity filter
                 if (criteria.RarityFilter.HasValue)
                 {
-                    results = results.Where(stack => stack.Rarity == criteria.RarityFilter.Value);
+                    results = results.Where(stack => stack.Material.Quality == criteria.RarityFilter.Value);
                 }
 
                 // Apply minimum quantity filter
@@ -223,8 +224,8 @@ public class InventoryManager
                 ? materials.OrderBy(s => s.Quantity)
                 : materials.OrderByDescending(s => s.Quantity),
             MaterialSortBy.Rarity => ascending
-                ? materials.OrderBy(s => s.Rarity)
-                : materials.OrderByDescending(s => s.Rarity),
+                ? materials.OrderBy(s => s.Material.Quality)
+                : materials.OrderByDescending(s => s.Material.Quality),
             MaterialSortBy.Category => ascending
                 ? materials.OrderBy(s => s.Material.Category)
                 : materials.OrderByDescending(s => s.Material.Category),
@@ -243,7 +244,7 @@ public class InventoryManager
     /// </summary>
     /// <param name="requirements">Required materials with quantities</param>
     /// <returns>True if all requirements can be met</returns>
-    public bool CanConsumeMaterials(Dictionary<(string MaterialId, MaterialRarity Rarity), int> requirements)
+    public bool CanConsumeMaterials(Dictionary<(string MaterialId, QualityTier quality), int> requirements)
     {
         lock (_lockObject)
         {
@@ -276,7 +277,7 @@ public class InventoryManager
     /// </summary>
     /// <param name="requirements">Required materials with quantities</param>
     /// <returns>True if all materials were successfully consumed</returns>
-    public bool ConsumeMaterials(Dictionary<(string MaterialId, MaterialRarity Rarity), int> requirements)
+    public bool ConsumeMaterials(Dictionary<(string MaterialId, QualityTier quality), int> requirements)
     {
         lock (_lockObject)
         {
@@ -290,7 +291,7 @@ public class InventoryManager
                 }
 
                 // Track what we've removed for potential rollback
-                var removedMaterials = new List<(string MaterialId, MaterialRarity Rarity, int Quantity)>();
+                var removedMaterials = new List<(string MaterialId, QualityTier quality, int Quantity)>();
                 var success = true;
 
                 foreach (var requirement in requirements)
@@ -475,14 +476,14 @@ public class InventoryManager
     }
 
     // Event handlers
-    private void OnMaterialAdded(MaterialDrop drop)
+    private void OnMaterialAdded(Drop drop)
     {
-        GameLogger.Debug($"Material added: {drop.Material.Name} x{drop.Quantity} ({drop.ActualRarity})");
+        GameLogger.Debug($"Material added: {drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
     }
 
-    private void OnMaterialRemoved(string materialId, MaterialRarity rarity, int quantity)
+    private void OnMaterialRemoved(string materialId, QualityTier quality, int quantity)
     {
-        GameLogger.Debug($"Material removed: {materialId} x{quantity} ({rarity})");
+        GameLogger.Debug($"Material removed: {materialId} x{quantity} ({quality})");
     }
 
     private void OnInventoryChanged()

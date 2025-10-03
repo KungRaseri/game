@@ -1,9 +1,9 @@
 #nullable enable
 
+using Game.Inventory.Systems;
 using Game.Item.Models;
 using Game.Item.Models.Materials;
 using Game.Main.Systems;
-using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
 using Godot;
 using Type = Game.Item.Models.Materials.Type;

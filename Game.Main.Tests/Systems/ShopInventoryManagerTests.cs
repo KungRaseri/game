@@ -2,7 +2,6 @@
 
 using FluentAssertions;
 using Game.Main.Systems;
-using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
 using Game.Main.Tests.Utils;
 

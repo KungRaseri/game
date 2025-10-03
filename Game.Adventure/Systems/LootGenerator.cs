@@ -1,5 +1,6 @@
 using Game.Adventure.Models;
 using Game.Core.Utils;
+using Game.Item.Models;
 using MaterialDrop = Game.Adventure.Models.MaterialDrop;
 
 namespace Game.Adventure.Systems;
@@ -53,10 +54,10 @@ public class LootGenerator
             {
                 var quantity = _random.Next(entry.MinQuantity, entry.MaxQuantity + 1);
                 var rarity = DetermineActualRarity(entry);
+                entry.Material.Quality = rarity;
 
                 var drop = new MaterialDrop(
                     entry.Material,
-                    rarity,
                     quantity,
                     currentTime
                 );
@@ -93,7 +94,7 @@ public class LootGenerator
     /// <summary>
     /// Determines the actual rarity of a drop, potentially upgrading from base rarity.
     /// </summary>
-    private MaterialRarity DetermineActualRarity(LootEntry entry)
+    private QualityTier DetermineActualRarity(LootEntry entry)
     {
         var baseRarity = entry.GetEffectiveRarity();
 
@@ -102,10 +103,10 @@ public class LootGenerator
         
         return baseRarity switch
         {
-            MaterialRarity.Common when upgradeRoll < 0.05f => MaterialRarity.Uncommon,
-            MaterialRarity.Uncommon when upgradeRoll < 0.05f => MaterialRarity.Rare,
-            MaterialRarity.Rare when upgradeRoll < 0.05f => MaterialRarity.Epic,
-            MaterialRarity.Epic when upgradeRoll < 0.05f => MaterialRarity.Legendary,
+            QualityTier.Common when upgradeRoll < 0.05f => QualityTier.Uncommon,
+            QualityTier.Uncommon when upgradeRoll < 0.05f => QualityTier.Rare,
+            QualityTier.Rare when upgradeRoll < 0.05f => QualityTier.Epic,
+            QualityTier.Epic when upgradeRoll < 0.05f => QualityTier.Legendary,
             _ => baseRarity
         };
     }
@@ -129,7 +130,6 @@ public class LootGenerator
 
             var drop = new MaterialDrop(
                 entry.Material,
-                rarity,
                 quantity,
                 currentTime
             );

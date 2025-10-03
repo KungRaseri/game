@@ -1,4 +1,4 @@
-using Game.Adventure.Models;
+using Game.Item.Models.Materials;
 
 namespace Game.Inventory.Models;
 
@@ -7,9 +7,9 @@ namespace Game.Inventory.Models;
 /// </summary>
 public class InventoryAddResult
 {
-    public List<MaterialDrop> SuccessfulAdds { get; } = new();
-    public List<MaterialDrop> PartialAdds { get; } = new();
-    public List<MaterialDrop> FailedAdds { get; } = new();
+    public List<Drop> SuccessfulAdds { get; } = new();
+    public List<Drop> PartialAdds { get; } = new();
+    public List<Drop> FailedAdds { get; } = new();
 
     public bool HasAnyChanges => SuccessfulAdds.Count > 0 || PartialAdds.Count > 0;
     public bool AllSuccessful => FailedAdds.Count == 0 && PartialAdds.Count == 0;

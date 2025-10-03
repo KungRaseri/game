@@ -1,4 +1,4 @@
-namespace Game.Main.Systems.Inventory;
+namespace Game.Inventory.Systems;
 
 /// <summary>
 /// Result of inventory validation.

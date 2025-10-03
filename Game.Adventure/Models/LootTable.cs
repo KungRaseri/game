@@ -1,3 +1,6 @@
+using Game.Item.Models;
+using Game.Item.Models.Materials;
+
 namespace Game.Adventure.Models;
 
 /// <summary>
@@ -78,7 +81,7 @@ public class LootTable
     /// <summary>
     /// Gets all loot entries for a specific material category.
     /// </summary>
-    public List<LootEntry> GetDropsByCategory(MaterialCategory category)
+    public List<LootEntry> GetDropsByCategory(Category category)
     {
         return PossibleDrops
             .Where(entry => entry.Material.Category == category)
@@ -88,10 +91,10 @@ public class LootTable
     /// <summary>
     /// Gets all loot entries for a specific rarity level.
     /// </summary>
-    public List<LootEntry> GetDropsByRarity(MaterialRarity rarity)
+    public List<LootEntry> GetDropsByRarity(QualityTier quality)
     {
         return PossibleDrops
-            .Where(entry => entry.GetEffectiveRarity() == rarity)
+            .Where(entry => entry.GetEffectiveRarity() == quality)
             .ToList();
     }
 

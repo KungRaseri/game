@@ -1,4 +1,7 @@
-namespace Game.Main.Systems.Inventory;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
+
+namespace Game.Inventory.Systems;
 
 /// <summary>
 /// Statistics about inventory contents and usage.
@@ -14,6 +17,6 @@ public record InventoryStats(
     int UsedSlots,
     int TotalMaterials,
     int TotalValue,
-    Dictionary<MaterialCategory, int> CategoryCounts,
-    Dictionary<MaterialRarity, int> RarityCounts
+    Dictionary<Category, int> CategoryCounts,
+    Dictionary<QualityTier, int> RarityCounts
 );

@@ -1,8 +1,9 @@
 #nullable enable
 
-using Game.Adventure.Models;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
 
-namespace Game.Main.Systems.Inventory;
+namespace Game.Inventory.Systems;
 
 /// <summary>
 /// Represents a stack of materials of the same type and rarity in inventory.
@@ -13,8 +14,7 @@ namespace Game.Main.Systems.Inventory;
 /// <param name="Quantity">The number of materials currently in this stack</param>
 /// <param name="LastUpdated">When this stack was last modified</param>
 public record MaterialStack(
-    MaterialType Material,
-    MaterialRarity Rarity,
+    Material Material,
     int Quantity,
     DateTime LastUpdated
 )
@@ -23,12 +23,12 @@ public record MaterialStack(
     /// Gets the unique key for this material stack.
     /// Materials of the same type and rarity stack together.
     /// </summary>
-    public string StackKey => $"{Material.Id}_{Rarity}";
+    public string StackKey => $"{Material.ItemId}_{Material.Quality}";
 
     /// <summary>
     /// Gets the maximum number of materials that can be stored in this stack.
     /// </summary>
-    public int StackLimit => Material.StackLimit;
+    public int StackLimit => Material.MaxStackSize;
 
     /// <summary>
     /// Gets whether this stack is at its maximum capacity.
@@ -47,13 +47,13 @@ public record MaterialStack(
     {
         get
         {
-            var rarityMultiplier = Rarity switch
+            var rarityMultiplier = Material.Quality switch
             {
-                MaterialRarity.Common => 1.0f,
-                MaterialRarity.Uncommon => 2.0f,
-                MaterialRarity.Rare => 5.0f,
-                MaterialRarity.Epic => 15.0f,
-                MaterialRarity.Legendary => 50.0f,
+                QualityTier.Common => 1.0f,
+                QualityTier.Uncommon => 2.0f,
+                QualityTier.Rare => 5.0f,
+                QualityTier.Epic => 15.0f,
+                QualityTier.Legendary => 50.0f,
                 _ => 1.0f
             };
 
@@ -156,13 +156,13 @@ public record MaterialStack(
     /// <summary>
     /// Gets the display color for this stack's rarity.
     /// </summary>
-    public string GetRarityColor() => Rarity switch
+    public string GetRarityColor() => Material.Quality switch
     {
-        MaterialRarity.Common => "#808080",     // Gray
-        MaterialRarity.Uncommon => "#00FF00",   // Green
-        MaterialRarity.Rare => "#0080FF",       // Blue
-        MaterialRarity.Epic => "#8000FF",       // Purple
-        MaterialRarity.Legendary => "#FFD700",  // Gold
+        QualityTier.Common => "#808080",     // Gray
+        QualityTier.Uncommon => "#00FF00",   // Green
+        QualityTier.Rare => "#0080FF",       // Blue
+        QualityTier.Epic => "#8000FF",       // Purple
+        QualityTier.Legendary => "#FFD700",  // Gold
         _ => "#FFFFFF"                          // White fallback
     };
 
@@ -172,19 +172,18 @@ public record MaterialStack(
     /// </summary>
     public override string ToString()
     {
-        return $"{Material.Name} ({Rarity}) x{Quantity}";
+        return $"{Material.Name} ({Material.Quality}) x{Quantity}";
     }
 
     /// <summary>
     /// Creates a MaterialStack from a MaterialDrop.
     /// </summary>
-    public static MaterialStack FromDrop(MaterialDrop drop)
+    public static MaterialStack FromDrop(Drop drop)
     {
         ArgumentNullException.ThrowIfNull(drop);
         
         return new MaterialStack(
             drop.Material,
-            drop.ActualRarity,
             drop.Quantity,
             drop.AcquiredAt
         );

@@ -1,9 +1,10 @@
 #nullable enable
 
-using Game.Adventure.Models;
-using Game.Main.Utils;
+using Game.Core.Utils;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
 
-namespace Game.Main.Systems.Inventory;
+namespace Game.Inventory.Systems;
 
 /// <summary>
 /// Manages material storage with capacity limits, automatic stacking, and organization.
@@ -62,12 +63,12 @@ public class Inventory
     /// <summary>
     /// Event fired when a material is added to the inventory.
     /// </summary>
-    public event Action<MaterialDrop>? MaterialAdded;
+    public event Action<Drop>? MaterialAdded;
 
     /// <summary>
     /// Event fired when a material is removed from the inventory.
     /// </summary>
-    public event Action<string, MaterialRarity, int>? MaterialRemoved;
+    public event Action<string, QualityTier, int>? MaterialRemoved;
 
     /// <summary>
     /// Event fired when the inventory contents change.
@@ -84,11 +85,11 @@ public class Inventory
     /// </summary>
     /// <param name="drop">The material drop to check</param>
     /// <returns>True if the drop can be fully accommodated</returns>
-    public bool CanAddMaterial(MaterialDrop drop)
+    public bool CanAddMaterial(Drop drop)
     {
         drop.Validate();
 
-        var stackKey = GetStackKey(drop.Material.Id, drop.ActualRarity);
+        var stackKey = GetStackKey(drop.Material.ItemId, drop.Material.Quality);
 
         // If we already have this material, check if it can fit in the existing stack
         if (_materials.TryGetValue(stackKey, out var existingStack))
@@ -105,11 +106,11 @@ public class Inventory
     /// </summary>
     /// <param name="drop">The material drop to add</param>
     /// <returns>True if the drop was fully added, false if only partially added or not added</returns>
-    public bool AddMaterial(MaterialDrop drop)
+    public bool AddMaterial(Drop drop)
     {
         drop.Validate();
 
-        var stackKey = GetStackKey(drop.Material.Id, drop.ActualRarity);
+        var stackKey = GetStackKey(drop.Material.ItemId, drop.Material.Quality);
         var quantityToAdd = drop.Quantity;
         var fullyAdded = true;
 
@@ -142,7 +143,7 @@ public class Inventory
         MaterialAdded?.Invoke(drop);
         InventoryChanged?.Invoke();
 
-        GameLogger.Info($"Added {drop.Quantity} {drop.Material.Name} ({drop.ActualRarity}) to inventory");
+        GameLogger.Info($"Added {drop.Quantity} {drop.Material.Name} ({drop.Material.Quality}) to inventory");
         return fullyAdded;
     }
 
@@ -150,21 +151,21 @@ public class Inventory
     /// Removes materials from the inventory.
     /// </summary>
     /// <param name="materialId">ID of the material to remove</param>
-    /// <param name="rarity">Rarity of the material to remove</param>
+    /// <param name="quality">Rarity of the material to remove</param>
     /// <param name="quantity">Number of materials to remove</param>
     /// <returns>The actual number of materials removed</returns>
-    public int RemoveMaterial(string materialId, MaterialRarity rarity, int quantity)
+    public int RemoveMaterial(string materialId, QualityTier quality, int quantity)
     {
         if (quantity <= 0)
         {
             return 0;
         }
 
-        var stackKey = GetStackKey(materialId, rarity);
+        var stackKey = GetStackKey(materialId, quality);
 
         if (!_materials.TryGetValue(stackKey, out var existingStack))
         {
-            GameLogger.Warning($"Cannot remove {materialId} ({rarity}) - not found in inventory");
+            GameLogger.Warning($"Cannot remove {materialId} ({quality}) - not found in inventory");
             return 0;
         }
 
@@ -182,10 +183,10 @@ public class Inventory
         }
 
         // Fire events
-        MaterialRemoved?.Invoke(materialId, rarity, actuallyRemoved);
+        MaterialRemoved?.Invoke(materialId, quality, actuallyRemoved);
         InventoryChanged?.Invoke();
 
-        GameLogger.Info($"Removed {actuallyRemoved} {existingStack.Material.Name} ({rarity}) from inventory");
+        GameLogger.Info($"Removed {actuallyRemoved} {existingStack.Material.Name} ({quality}) from inventory");
         return actuallyRemoved;
     }
 
@@ -193,11 +194,11 @@ public class Inventory
     /// Gets the quantity of a specific material and rarity in the inventory.
     /// </summary>
     /// <param name="materialId">ID of the material</param>
-    /// <param name="rarity">Rarity of the material</param>
+    /// <param name="quality">Rarity of the material</param>
     /// <returns>The quantity available, or 0 if not found</returns>
-    public int GetMaterialQuantity(string materialId, MaterialRarity rarity)
+    public int GetMaterialQuantity(string materialId, QualityTier quality)
     {
-        var stackKey = GetStackKey(materialId, rarity);
+        var stackKey = GetStackKey(materialId, quality);
         return _materials.TryGetValue(stackKey, out var stack) ? stack.Quantity : 0;
     }
 
@@ -208,7 +209,7 @@ public class Inventory
     /// <returns>Collection of stacks for this material</returns>
     public IEnumerable<MaterialStack> GetMaterialStacks(string materialId)
     {
-        return _materials.Values.Where(stack => stack.Material.Id == materialId);
+        return _materials.Values.Where(stack => stack.Material.ItemId == materialId);
     }
 
     /// <summary>
@@ -216,7 +217,7 @@ public class Inventory
     /// </summary>
     /// <param name="category">The material category to filter by</param>
     /// <returns>Collection of stacks in this category</returns>
-    public IEnumerable<MaterialStack> GetMaterialsByCategory(MaterialCategory category)
+    public IEnumerable<MaterialStack> GetMaterialsByCategory(Category category)
     {
         return _materials.Values.Where(stack => stack.Material.Category == category);
     }
@@ -224,11 +225,11 @@ public class Inventory
     /// <summary>
     /// Gets all materials of a specific rarity.
     /// </summary>
-    /// <param name="rarity">The rarity to filter by</param>
+    /// <param name="quality">The rarity to filter by</param>
     /// <returns>Collection of stacks with this rarity</returns>
-    public IEnumerable<MaterialStack> GetMaterialsByRarity(MaterialRarity rarity)
+    public IEnumerable<MaterialStack> GetMaterialsByQualityTier(QualityTier quality)
     {
-        return _materials.Values.Where(stack => stack.Rarity == rarity);
+        return _materials.Values.Where(stack => stack.Material.Quality == quality);
     }
 
     /// <summary>
@@ -269,8 +270,8 @@ public class Inventory
                 ? query.OrderBy(s => s.Quantity)
                 : query.OrderByDescending(s => s.Quantity),
             MaterialSortBy.Rarity => ascending
-                ? query.OrderBy(s => s.Rarity)
-                : query.OrderByDescending(s => s.Rarity),
+                ? query.OrderBy(s => s.Material.Quality)
+                : query.OrderByDescending(s => s.Material.Quality),
             MaterialSortBy.Category => ascending
                 ? query.OrderBy(s => s.Material.Category)
                 : query.OrderByDescending(s => s.Material.Category),
@@ -324,7 +325,7 @@ public class Inventory
             .GroupBy(stack => stack.Material.Category)
             .ToDictionary(g => g.Key, g => g.Sum(stack => stack.Quantity));
         var rarityCounts = _materials.Values
-            .GroupBy(stack => stack.Rarity)
+            .GroupBy(stack => stack.Material.Quality)
             .ToDictionary(g => g.Key, g => g.Sum(stack => stack.Quantity));
 
         return new InventoryStats(
@@ -350,7 +351,7 @@ public class Inventory
     /// <summary>
     /// Creates a unique stack key for materials.
     /// </summary>
-    private static string GetStackKey(string materialId, MaterialRarity rarity)
+    private static string GetStackKey(string materialId, QualityTier rarity)
     {
         return $"{materialId}_{rarity}";
     }

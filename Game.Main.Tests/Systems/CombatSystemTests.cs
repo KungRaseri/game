@@ -1,4 +1,3 @@
-using Game.Main.Systems;
 using Game.Main.Data;
 
 namespace Game.Main.Tests.Systems

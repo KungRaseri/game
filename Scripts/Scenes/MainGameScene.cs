@@ -1,8 +1,8 @@
 #nullable enable
 
+using Game.Inventory.Systems;
 using Game.Main.Managers;
 using Game.Main.Systems;
-using Game.Main.Systems.Inventory;
 using Game.Main.Systems.Loot;
 using Game.Main.Utils;
 using Game.Scripts.UI;

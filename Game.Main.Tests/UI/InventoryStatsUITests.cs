@@ -1,6 +1,5 @@
 #nullable enable
 
-using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
 
 namespace Game.Main.Tests.UI;

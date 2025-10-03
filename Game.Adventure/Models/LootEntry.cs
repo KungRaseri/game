@@ -11,13 +11,13 @@ namespace Game.Adventure.Models;
 /// <param name="DropChance">Probability of this material dropping (0.0 to 1.0)</param>
 /// <param name="MinQuantity">Minimum number of materials that can drop</param>
 /// <param name="MaxQuantity">Maximum number of materials that can drop</param>
-/// <param name="ForceRarity">Optional: Override the material's base rarity for this drop</param>
+/// <param name="ForceQuality">Optional: Override the material's base rarity for this drop</param>
 public record LootEntry(
     Material Material,
     float DropChance,
     int MinQuantity,
     int MaxQuantity,
-    QualityTier? ForceRarity = null
+    QualityTier? ForceQuality = null
 )
 {
     /// <summary>
@@ -47,7 +47,7 @@ public record LootEntry(
     /// </summary>
     public QualityTier GetEffectiveRarity()
     {
-        return ForceRarity ?? Material.Quality;
+        return ForceQuality ?? Material.Quality;
     }
 
     /// <summary>

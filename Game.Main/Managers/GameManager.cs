@@ -1,5 +1,5 @@
+using Game.Adventure.Systems;
 using Game.Main.Controllers;
-using Game.Main.Systems;
 using Game.Main.Utils;
 
 namespace Game.Main.Managers;

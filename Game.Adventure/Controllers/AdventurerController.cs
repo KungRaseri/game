@@ -1,6 +1,5 @@
 using Game.Adventure.Models;
-using Game.Main.Systems;
-using Game.Main.Data;
+using Game.Adventure.Systems;
 
 namespace Game.Main.Controllers;
 

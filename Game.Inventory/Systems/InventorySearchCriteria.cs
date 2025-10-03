@@ -1,12 +1,15 @@
-namespace Game.Main.Systems.Inventory;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
+
+namespace Game.Inventory.Systems;
 
 /// <summary>
 /// Criteria for searching and filtering inventory.
 /// </summary>
 public record InventorySearchCriteria(
     string? SearchTerm = null,
-    MaterialCategory? CategoryFilter = null,
-    MaterialRarity? RarityFilter = null,
+    Category? CategoryFilter = null,
+    QualityTier? RarityFilter = null,
     int MinQuantity = 0,
     int MinValue = 0,
     MaterialSortBy SortBy = MaterialSortBy.Name,
