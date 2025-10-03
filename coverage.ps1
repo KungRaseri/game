@@ -1,0 +1,1 @@
+reportgenerator -reports:"Game.Main.Tests/TestResults/*/coverage.cobertura.xml" -targetdir:"./TestResults/CoverageReport" -reporttypes:Html

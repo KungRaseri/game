@@ -229,7 +229,7 @@ public class CustomerShoppingSessionTests
         if (equipmentInterest.Any())
         {
             // If they examined equipment, they should show reasonable interest
-            Assert.True(equipmentInterest.Any(e => e.Interest >= CustomerInterest.SlightlyInterested));
+            Assert.Contains(equipmentInterest, e => e.Interest >= CustomerInterest.SlightlyInterested);
         }
     }
     
