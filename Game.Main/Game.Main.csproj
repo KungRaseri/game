@@ -12,7 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Game.Core\Game.Core.csproj" />
+    <Folder Include="Core\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Game.Adventure\Game.Adventure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,7 @@
 #nullable enable
 
+using Game.Item.Models;
+
 namespace Game.Core.Models.Materials;
 
 /// <summary>
@@ -10,9 +12,9 @@ namespace Game.Core.Models.Materials;
 /// <param name="ActualRarity">The rarity level of this specific drop (may differ from base rarity)</param>
 /// <param name="Quantity">The number of materials in this drop</param>
 /// <param name="AcquiredAt">When this material was obtained</param>
-public record MaterialDrop(
-    MaterialType Material,
-    MaterialRarity ActualRarity,
+public record Drop(
+    Material Material,
+    Rarity ActualRarity,
     int Quantity,
     DateTime AcquiredAt
 )
@@ -40,15 +42,15 @@ public record MaterialDrop(
     {
         var rarityMultiplier = ActualRarity switch
         {
-            MaterialRarity.Common => 1.0f,
-            MaterialRarity.Uncommon => 2.0f,
-            MaterialRarity.Rare => 5.0f,
-            MaterialRarity.Epic => 15.0f,
-            MaterialRarity.Legendary => 50.0f,
+            Rarity.Common => 1.0f,
+            Rarity.Uncommon => 2.0f,
+            Rarity.Rare => 5.0f,
+            Rarity.Epic => 15.0f,
+            Rarity.Legendary => 50.0f,
             _ => 1.0f
         };
 
-        return (int)(Material.BaseValue * Quantity * rarityMultiplier);
+        return (int)(Material.Value * Quantity * rarityMultiplier);
     }
 
     /// <summary>
@@ -56,11 +58,11 @@ public record MaterialDrop(
     /// </summary>
     public string GetRarityColor() => ActualRarity switch
     {
-        MaterialRarity.Common => "#808080",     // Gray
-        MaterialRarity.Uncommon => "#00FF00",   // Green
-        MaterialRarity.Rare => "#0080FF",       // Blue
-        MaterialRarity.Epic => "#8000FF",       // Purple
-        MaterialRarity.Legendary => "#FFD700",  // Gold
+        Rarity.Common => "#808080",     // Gray
+        Rarity.Uncommon => "#00FF00",   // Green
+        Rarity.Rare => "#0080FF",       // Blue
+        Rarity.Epic => "#8000FF",       // Purple
+        Rarity.Legendary => "#FFD700",  // Gold
         _ => "#FFFFFF"                          // White fallback
     };
 

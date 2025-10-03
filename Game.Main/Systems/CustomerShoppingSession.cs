@@ -5,7 +5,6 @@ using Game.Main.Utils;
 using Customer = Game.Core.Models.Customer;
 using CustomerInterest = Game.Core.Models.CustomerInterest;
 using CustomerSatisfaction = Game.Core.Models.CustomerSatisfaction;
-using PurchaseDecision = Game.Core.Models.PurchaseDecision;
 using SaleTransaction = Game.Core.Models.SaleTransaction;
 
 namespace Game.Main.Systems;

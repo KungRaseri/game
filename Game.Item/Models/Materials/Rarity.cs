@@ -6,7 +6,7 @@ namespace Game.Core.Models.Materials;
 /// Defines the rarity levels for materials, affecting drop rates and value.
 /// Each rarity level has associated drop rate ranges and visual styling.
 /// </summary>
-public enum MaterialRarity
+public enum Rarity
 {
     /// <summary>
     /// Common materials (Gray) - 60-80% drop rates.

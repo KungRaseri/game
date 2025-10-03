@@ -1,4 +1,4 @@
-using Game.Core.Models;
+using Game.Item.Models;
 
 namespace Game.Core.Utils;
 

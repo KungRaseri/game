@@ -1,9 +1,9 @@
-namespace Game.Core.Models;
+namespace Game.Item.Models;
 
 /// <summary>
 /// Represents a weapon that can be equipped to increase damage output.
 /// </summary>
-public class Weapon : Equipment
+public class Weapon : Item
 {
     private int _damageBonus;
 
@@ -23,7 +23,7 @@ public class Weapon : Equipment
         QualityTier quality,
         int value,
         int damageBonus)
-        : base(itemId, name, description, ItemType.Weapon, quality, value, EquipmentSlot.Weapon)
+        : base(itemId, name, description, ItemType.Weapon, quality, value)
     {
         _damageBonus = Math.Max(0, damageBonus);
     }

@@ -2,7 +2,6 @@
 
 using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
-using Game.Core.Models.Materials;
 
 namespace Game.Main.Tests.UI;
 

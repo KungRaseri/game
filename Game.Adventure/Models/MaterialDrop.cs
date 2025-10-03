@@ -1,5 +1,4 @@
 using Game.Core.Models.Materials;
-using MaterialType = Game.Core.Models.MaterialType;
 
 namespace Game.Adventure.Models;
 

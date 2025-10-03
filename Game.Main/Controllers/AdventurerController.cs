@@ -1,4 +1,4 @@
-using Game.Core.Models;
+using Game.Adventure.Models;
 using Game.Main.Systems;
 using Game.Main.Data;
 

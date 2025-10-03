@@ -237,15 +237,15 @@ public partial class InventoryStatsUI : Panel
         }
     }
 
-    private Color GetRarityColor(MaterialRarity rarity)
+    private Color GetRarityColor(Rarity rarity)
     {
         return rarity switch
         {
-            MaterialRarity.Common => Colors.White,
-            MaterialRarity.Uncommon => Colors.Green,
-            MaterialRarity.Rare => Colors.Blue,
-            MaterialRarity.Epic => Colors.Purple,
-            MaterialRarity.Legendary => Colors.Orange,
+            Rarity.Common => Colors.White,
+            Rarity.Uncommon => Colors.Green,
+            Rarity.Rare => Colors.Blue,
+            Rarity.Epic => Colors.Purple,
+            Rarity.Legendary => Colors.Orange,
             _ => Colors.Gray
         };
     }

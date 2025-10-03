@@ -2,11 +2,13 @@
 
 using Game.Core.Models;
 using Game.Core.Models.Materials;
+using Game.Game.Item.Models;
+using Game.Item.Models;
 using Game.Main.Systems;
 using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
 using Godot;
-using MaterialType = Game.Core.Models.Materials.MaterialType;
+using Type = Game.Core.Models.Materials.Type;
 
 namespace Game.Scripts.UI;
 
@@ -508,7 +510,7 @@ public partial class ShopManagementUI : Panel
         GameLogger.Debug($"Refreshed inventory display with {materials.Count} material types");
     }
 
-    private void OnMaterialSelected(MaterialType materialType, MaterialRarity rarity, int quantity)
+    private void OnMaterialSelected(Type materialType, Rarity rarity, int quantity)
     {
         GameLogger.Info($"Selected material: {materialType.Name} x{quantity} ({rarity})");
 
@@ -530,7 +532,7 @@ public partial class ShopManagementUI : Panel
     /// <summary>
     /// Stocks a specific material in the given slot, consuming it from inventory.
     /// </summary>
-    private void StockMaterialInSlot(MaterialType materialType, MaterialRarity rarity, int slotId)
+    private void StockMaterialInSlot(Type materialType, Rarity rarity, int slotId)
     {
         if (_shopManager == null || _inventoryManager == null) return;
 
@@ -663,43 +665,43 @@ public partial class ShopManagementUI : Panel
             _closeShopButton.Disabled = !_isShopOpen;
     }
 
-    private Item CreateItemFromMaterial(MaterialType materialType, MaterialRarity rarity)
+    private Item CreateItemFromMaterial(Type materialType, Rarity rarity)
     {
         // Convert material type to item type based on material category
         var itemType = materialType.Category switch
         {
-            MaterialCategory.Metals => ItemType.Material,
-            MaterialCategory.Organic => ItemType.Material,
-            MaterialCategory.Gems => ItemType.Material,
-            MaterialCategory.Magical => ItemType.Consumable,
-            MaterialCategory.Specialty => ItemType.Material,
+            Category.Metals => ItemType.Material,
+            Category.Organic => ItemType.Material,
+            Category.Gems => ItemType.Material,
+            Category.Magical => ItemType.Consumable,
+            Category.Specialty => ItemType.Material,
             _ => ItemType.Material
         };
 
         // Convert material rarity to quality tier
         var quality = rarity switch
         {
-            MaterialRarity.Common => QualityTier.Common,
-            MaterialRarity.Uncommon => QualityTier.Uncommon,
-            MaterialRarity.Rare => QualityTier.Rare,
-            MaterialRarity.Epic => QualityTier.Epic,
-            MaterialRarity.Legendary => QualityTier.Legendary,
+            Rarity.Common => QualityTier.Common,
+            Rarity.Uncommon => QualityTier.Uncommon,
+            Rarity.Rare => QualityTier.Rare,
+            Rarity.Epic => QualityTier.Epic,
+            Rarity.Legendary => QualityTier.Legendary,
             _ => QualityTier.Common
         };
 
         // Create item name based on rarity and material
-        var qualityPrefix = rarity != MaterialRarity.Common ? $"{rarity} " : "";
+        var qualityPrefix = rarity != Rarity.Common ? $"{rarity} " : "";
         var itemName = $"{qualityPrefix}{materialType.Name}";
 
         // Calculate base value from material properties and rarity
         var baseValue = materialType.BaseValue;
         var rarityMultiplier = rarity switch
         {
-            MaterialRarity.Common => 1.0f,
-            MaterialRarity.Uncommon => 1.5f,
-            MaterialRarity.Rare => 2.5f,
-            MaterialRarity.Epic => 4.0f,
-            MaterialRarity.Legendary => 6.0f,
+            Rarity.Common => 1.0f,
+            Rarity.Uncommon => 1.5f,
+            Rarity.Rare => 2.5f,
+            Rarity.Epic => 4.0f,
+            Rarity.Legendary => 6.0f,
             _ => 1.0f
         };
 

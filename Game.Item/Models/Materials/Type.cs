@@ -13,14 +13,12 @@ namespace Game.Core.Models.Materials;
 /// <param name="BaseRarity">The most common rarity level for this material</param>
 /// <param name="StackLimit">Maximum number that can be stacked in a single inventory slot</param>
 /// <param name="BaseValue">Base gold value per unit for trading calculations</param>
-public record MaterialType(
+public record Type(
     string Id,
     string Name,
     string Description,
-    MaterialCategory Category,
-    MaterialRarity BaseRarity,
-    int StackLimit = 999,
-    int BaseValue = 1
+    Category Category,
+    Rarity BaseRarity
 )
 {
     /// <summary>
@@ -37,16 +35,6 @@ public record MaterialType(
         {
             throw new ArgumentException("Material Name cannot be null or empty", nameof(Name));
         }
-
-        if (StackLimit <= 0)
-        {
-            throw new ArgumentException("Stack limit must be greater than zero", nameof(StackLimit));
-        }
-
-        if (BaseValue < 0)
-        {
-            throw new ArgumentException("Base value cannot be negative", nameof(BaseValue));
-        }
     }
 
     /// <summary>
@@ -54,11 +42,11 @@ public record MaterialType(
     /// </summary>
     public string GetRarityColor() => BaseRarity switch
     {
-        MaterialRarity.Common => "#808080",     // Gray
-        MaterialRarity.Uncommon => "#00FF00",   // Green
-        MaterialRarity.Rare => "#0080FF",       // Blue
-        MaterialRarity.Epic => "#8000FF",       // Purple
-        MaterialRarity.Legendary => "#FFD700",  // Gold
+        Rarity.Common => "#808080",     // Gray
+        Rarity.Uncommon => "#00FF00",   // Green
+        Rarity.Rare => "#0080FF",       // Blue
+        Rarity.Epic => "#8000FF",       // Purple
+        Rarity.Legendary => "#FFD700",  // Gold
         _ => "#FFFFFF"                          // White fallback
     };
 }

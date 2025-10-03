@@ -1,7 +1,5 @@
 #nullable enable
 
-using Game.Core.Models.Materials;
-
 namespace Game.Main.Tests.Models.Materials;
 
 public class MaterialTypeTests

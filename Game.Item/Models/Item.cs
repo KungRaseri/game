@@ -1,4 +1,4 @@
-namespace Game.Core.Models;
+namespace Game.Item.Models;
 
 /// <summary>
 /// Base class for all items in the game.

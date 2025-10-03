@@ -1,9 +1,9 @@
-namespace Game.Core.Models;
+namespace Game.Item.Models;
 
 /// <summary>
 /// Represents armor that can be equipped to reduce damage taken.
 /// </summary>
-public class Armor : Equipment
+public class Armor : Item
 {
     private int _damageReduction;
 
@@ -23,7 +23,7 @@ public class Armor : Equipment
         QualityTier quality,
         int value,
         int damageReduction)
-        : base(itemId, name, description, ItemType.Armor, quality, value, EquipmentSlot.Armor)
+        : base(itemId, name, description, ItemType.Armor, quality, value)
     {
         _damageReduction = Math.Max(0, damageReduction);
     }

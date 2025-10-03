@@ -1,4 +1,4 @@
-namespace Game.Core.Models;
+namespace Game.Item.Models;
 
 /// <summary>
 /// Defines the different types of items in the game.
@@ -7,6 +7,8 @@ public enum ItemType
 {
     Weapon,
     Armor,
+    Accessory,
+    Ring,
     Material,
     Consumable
 }

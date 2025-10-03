@@ -1,4 +1,3 @@
-using Game.Core.Models;
 using Game.Main.Managers;
 
 namespace Game.Main.Tests.Managers

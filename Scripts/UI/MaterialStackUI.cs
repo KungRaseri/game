@@ -185,13 +185,13 @@ public partial class MaterialStackUI : Panel
         _materialIcon.Color = GetMaterialColor(_materialStack.Material.BaseRarity);
     }
 
-    private Color GetMaterialColor(MaterialRarity rarity) => rarity switch
+    private Color GetMaterialColor(Rarity rarity) => rarity switch
     {
-        MaterialRarity.Common => Colors.Gray,
-        MaterialRarity.Uncommon => Colors.Green,
-        MaterialRarity.Rare => Colors.Blue,
-        MaterialRarity.Epic => Colors.Purple,
-        MaterialRarity.Legendary => Colors.Gold,
+        Rarity.Common => Colors.Gray,
+        Rarity.Uncommon => Colors.Green,
+        Rarity.Rare => Colors.Blue,
+        Rarity.Epic => Colors.Purple,
+        Rarity.Legendary => Colors.Gold,
         _ => Colors.White
     };
 

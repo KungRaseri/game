@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Milestone-1", "Milestone-1"
 		Documentation\milestone-1\README.md = Documentation\milestone-1\README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Item", "Game.Item\Game.Item.csproj", "{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -142,6 +144,12 @@ Global
 		{E1B6B2C4-1234-4567-8901-234567890134}.ExportDebug|Any CPU.Build.0 = Release|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890134}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890134}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

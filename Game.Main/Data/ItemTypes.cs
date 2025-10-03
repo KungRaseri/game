@@ -1,5 +1,3 @@
-using Game.Core.Models;
-
 namespace Game.Main.Data;
 
 /// <summary>
@@ -63,7 +61,7 @@ public static class ItemTypes
         Name: "Iron Ore",
         Description: "Raw iron ore, can be smelted into ingots.",
         BaseValue: 5,
-        MaterialType: MaterialType.Metal,
+        MaterialType: new MaterialType{ BaseRarity = MaterialRarity.Common, BaseValue = 100, Category = MaterialCategory.Metal},
         Stackable: true,
         MaxStackSize: 99
     );

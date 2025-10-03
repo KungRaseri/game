@@ -1,5 +1,3 @@
-using Game.Core.Models.Materials;
-
 namespace Game.Main.Systems.Inventory;
 
 /// <summary>
