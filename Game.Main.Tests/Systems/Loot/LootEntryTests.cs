@@ -26,7 +26,7 @@ public class LootEntryTests
         Assert.Equal(0.8f, entry.DropChance);
         Assert.Equal(1, entry.MinQuantity);
         Assert.Equal(3, entry.MaxQuantity);
-        Assert.Equal(MaterialRarity.Uncommon, entry.ForceRarity);
+        Assert.Equal(MaterialRarity.Uncommon, entry.Quality);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class LootEntryTests
         var entry = new LootEntry(_testMaterial, 0.5f, 1, 2);
 
         // Assert
-        Assert.Null(entry.ForceRarity);
+        Assert.Null(entry.Quality);
     }
 
     [Fact]

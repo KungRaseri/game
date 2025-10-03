@@ -1,8 +1,8 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Items.Models;
-using Game.Items.Models.Materials;
+using Game.Item.Models;
+using Game.Item.Models.Materials;
 
 namespace Game.Inventory.Systems;
 

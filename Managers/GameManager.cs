@@ -2,7 +2,7 @@ using Game.Adventure.Controllers;
 using Game.Adventure.Systems;
 using Game.Main.Utils;
 
-namespace Game.Main.Managers;
+namespace Game.Managers;
 
 /// <summary>
 /// Main game manager that coordinates all systems for Milestone 1

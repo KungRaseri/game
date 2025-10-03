@@ -1,6 +1,6 @@
 using Game.Adventure.Models;
 using Game.Core.Utils;
-using Game.Items.Models;
+using Game.Item.Models;
 using MaterialDrop = Game.Adventure.Models.MaterialDrop;
 
 namespace Game.Adventure.Systems;

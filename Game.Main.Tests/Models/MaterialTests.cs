@@ -1,4 +1,4 @@
-using Game.Items.Models;
+using Game.Item.Models;
 using Godot;
 
 namespace Game.Main.Tests.Models;

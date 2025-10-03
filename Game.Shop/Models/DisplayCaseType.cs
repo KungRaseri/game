@@ -1,4 +1,4 @@
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Types of display cases available for shop slots.

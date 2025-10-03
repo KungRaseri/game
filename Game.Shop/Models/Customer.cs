@@ -1,7 +1,7 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Items.Models;
+using Game.Item.Models;
 
 namespace Game.Shop.Models;
 
@@ -46,7 +46,7 @@ public class Customer
     public CustomerState CurrentState { get; private set; } = CustomerState.Browsing;
 
     /// <summary>Item currently being considered for purchase.</summary>
-    public Items.Models.Item? ItemBeingConsidered { get; private set; }
+    public Item.Models.Item? ItemBeingConsidered { get; private set; }
 
     /// <summary>Current thoughts or reactions (for UI display).</summary>
     public string CurrentThought { get; private set; } = "";
@@ -74,7 +74,7 @@ public class Customer
     /// <summary>
     /// Evaluates the customer's interest in a specific item.
     /// </summary>
-    public CustomerInterest EvaluateItem(Item item, decimal price)
+    public CustomerInterest EvaluateItem(Item.Models.Item item, decimal price)
     {
         // Check if already evaluated
         if (_itemInterests.TryGetValue(item.ItemId, out var cachedInterest))
@@ -101,7 +101,7 @@ public class Customer
     /// <summary>
     /// Makes a purchase decision for a specific item after evaluation.
     /// </summary>
-    public PurchaseDecision MakePurchaseDecision(Item item, decimal price)
+    public PurchaseDecision MakePurchaseDecision(Item.Models.Item item, decimal price)
     {
         var interest = EvaluateItem(item, price);
 
@@ -121,7 +121,7 @@ public class Customer
     /// <summary>
     /// Generates a negotiation offer if the customer wants to haggle.
     /// </summary>
-    public decimal? AttemptNegotiation(Item item, decimal askingPrice)
+    public decimal? AttemptNegotiation(Item.Models.Item item, decimal askingPrice)
     {
         if (Personality.NegotiationTendency < 0.3f)
         {
@@ -192,7 +192,7 @@ public class Customer
     /// <summary>
     /// Completes a purchase and updates customer satisfaction.
     /// </summary>
-    public CustomerSatisfaction CompletePurchase(Item item, decimal finalPrice)
+    public CustomerSatisfaction CompletePurchase(Item.Models.Item item, decimal finalPrice)
     {
         if (ItemBeingConsidered?.ItemId != item.ItemId)
         {
@@ -242,7 +242,7 @@ public class Customer
         CurrentThought = thought;
     }
 
-    private CustomerInterest CalculateInterest(Item item, decimal price)
+    private CustomerInterest CalculateInterest(Item.Models.Item item, decimal price)
     {
         var baseInterest = 0f;
 
@@ -272,7 +272,7 @@ public class Customer
         };
     }
 
-    private float EvaluatePrice(Item item, decimal price)
+    private float EvaluatePrice(Item.Models.Item item, decimal price)
     {
         // Check affordability
         if (!BudgetRange.CanAfford(price))
@@ -298,7 +298,7 @@ public class Customer
         };
     }
 
-    private float CalculateExpectedValue(Item item)
+    private float CalculateExpectedValue(Item.Models.Item item)
     {
         // Base values by type (what customer expects to pay)
         var baseValue = item.ItemType switch
@@ -335,7 +335,7 @@ public class Customer
         return baseValue * qualityMultiplier * customerMultiplier;
     }
 
-    private PurchaseDecision DeterminePurchaseDecision(Item item, decimal price, CustomerInterest interest)
+    private PurchaseDecision DeterminePurchaseDecision(Item.Models.Item item, decimal price, CustomerInterest interest)
     {
         // Not interested = no purchase
         if (interest == CustomerInterest.NotInterested)
@@ -403,7 +403,7 @@ public class Customer
         return PurchaseDecision.NotBuying;
     }
 
-    private CustomerSatisfaction CalculateSatisfaction(Item item, decimal finalPrice)
+    private CustomerSatisfaction CalculateSatisfaction(Item.Models.Item item, decimal finalPrice)
     {
         var satisfaction = 50f; // Base satisfaction
 
@@ -440,7 +440,7 @@ public class Customer
         };
     }
 
-    private void UpdateThoughtBasedOnItem(Item item, decimal price, CustomerInterest interest)
+    private void UpdateThoughtBasedOnItem(Item.Models.Item item, decimal price, CustomerInterest interest)
     {
         CurrentThought = interest switch
         {
@@ -452,7 +452,7 @@ public class Customer
         };
     }
 
-    private void UpdateThoughtBasedOnDecision(Item item, decimal price, PurchaseDecision decision)
+    private void UpdateThoughtBasedOnDecision(Item.Models.Item item, decimal price, PurchaseDecision decision)
     {
         CurrentThought = decision switch
         {

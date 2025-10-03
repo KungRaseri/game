@@ -1,7 +1,7 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Items.Models;
+using Game.Item.Models;
 using Game.Shop.Models;
 
 namespace Game.Shop.Systems;

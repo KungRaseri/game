@@ -1,6 +1,6 @@
 #nullable enable
 
-using Game.Items.Models;
+using Game.Item.Models;
 
 namespace Game.Main.Tests.Models;
 
