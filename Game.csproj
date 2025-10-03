@@ -32,6 +32,12 @@
 		<EmbeddedResource Remove="Game.Shop\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="Game.Core\Game.Core.csproj" />
+	  <ProjectReference Include="Game.Adventure\Game.Adventure.csproj" />
+	  <ProjectReference Include="Game.Shop\Game.Shop.csproj" />
+	  <ProjectReference Include="Game.Economy\Game.Economy.csproj" />
+	  <ProjectReference Include="Game.Inventory\Game.Inventory.csproj" />
+	  <ProjectReference Include="Game.Crafting\Game.Crafting.csproj" />
 	  <ProjectReference Include="Game.Main\Game.Main.csproj" />
 	</ItemGroup>
 </Project>
