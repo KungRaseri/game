@@ -1,7 +1,6 @@
 using Game.Main.Controllers;
 using Game.Main.Systems;
 using Game.Main.Utils;
-using System;
 
 namespace Game.Main.Managers;
 

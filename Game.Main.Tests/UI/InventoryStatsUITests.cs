@@ -1,10 +1,8 @@
 #nullable enable
 
-using Game.Main.Models.Materials;
 using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
-using System.Collections.Generic;
-using Xunit;
+using Game.Core.Models.Materials;
 
 namespace Game.Main.Tests.UI;
 

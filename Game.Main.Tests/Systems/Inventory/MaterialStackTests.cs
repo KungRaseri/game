@@ -1,9 +1,8 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.Main.Models.Materials;
+using Game.Core.Models.Materials;
 using Game.Main.Systems.Inventory;
-using Xunit;
 
 namespace Game.Main.Tests.Systems.Inventory;
 

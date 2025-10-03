@@ -1,4 +1,4 @@
-using Game.Core.Models;
+using Game.Core.Models.Materials;
 
 namespace Game.Adventure.Models;
 

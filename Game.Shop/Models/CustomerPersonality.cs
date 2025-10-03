@@ -1,11 +1,5 @@
 #nullable enable
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Game.Shop.Models;
-using Game.Core.Utils;
-
 namespace Game.Shop.Models;
 
 /// <summary>

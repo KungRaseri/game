@@ -1,6 +1,7 @@
 using Game.Adventure.Models;
 using Game.Adventure.Systems;
-using Game.Core.Models;
+using Game.Core.Models.Materials;
+using MaterialType = Game.Core.Models.MaterialType;
 
 namespace Game.Adventure.Data;
 

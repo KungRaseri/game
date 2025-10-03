@@ -1,8 +1,7 @@
 #nullable enable
 
-using System;
 using FluentAssertions;
-using Xunit;
+using Game.Core.Models;
 
 namespace Game.Main.Tests.Models;
 

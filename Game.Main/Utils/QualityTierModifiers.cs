@@ -1,4 +1,4 @@
-using System;
+using Game.Core.Models;
 
 namespace Game.Main.Utils;
 

@@ -1,7 +1,6 @@
 #nullable enable
 
-using System;
-using Xunit;
+using Game.Core.Models;
 using Game.Main.Systems;
 using Game.Main.Systems.Inventory;
 

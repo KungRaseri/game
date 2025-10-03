@@ -1,8 +1,7 @@
 #nullable enable
 
-using Game.Main.Models.Materials;
+using Game.Core.Models.Materials;
 using Game.Main.Systems.Loot;
-using Xunit;
 
 namespace Game.Main.Tests.Systems.Loot;
 

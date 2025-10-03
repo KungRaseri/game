@@ -41,7 +41,7 @@ public record SaleTransaction(
     DateTime TransactionTime,
     
     /// <summary>Customer satisfaction level with this transaction.</summary>
-    CustomerSatisfaction CustomerSatisfaction
+    Core.Models.CustomerSatisfaction CustomerSatisfaction
 )
 {
     /// <summary>

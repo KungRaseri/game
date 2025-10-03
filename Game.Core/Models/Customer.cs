@@ -1,5 +1,7 @@
 #nullable enable
 
+using Game.Core.Utils;
+
 namespace Game.Core.Models;
 
 /// <summary>

@@ -1,9 +1,5 @@
 #nullable enable
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Game.Shop.Models;
 using Game.Core.Utils;
 using Game.Core.Models;
 
@@ -196,7 +192,7 @@ public class Customer
     /// <summary>
     /// Completes a purchase and updates customer satisfaction.
     /// </summary>
-    public CustomerSatisfaction CompletePurchase(Item item, decimal finalPrice)
+    public Core.Models.CustomerSatisfaction CompletePurchase(Item item, decimal finalPrice)
     {
         if (ItemBeingConsidered?.ItemId != item.ItemId)
         {
@@ -224,13 +220,13 @@ public class Customer
     /// <summary>
     /// Customer leaves without purchasing anything.
     /// </summary>
-    public CustomerSatisfaction LeaveWithoutPurchase(string reason = "Nothing caught my interest")
+    public Core.Models.CustomerSatisfaction LeaveWithoutPurchase(string reason = "Nothing caught my interest")
     {
         CurrentState = CustomerState.Leaving;
         CurrentThought = reason;
 
         // Leaving without purchase slightly reduces loyalty
-        var satisfaction = ViewedItems.Count > 0 ? CustomerSatisfaction.Neutral : CustomerSatisfaction.Disappointed;
+        var satisfaction = ViewedItems.Count > 0 ? Core.Models.CustomerSatisfaction.Neutral : Core.Models.CustomerSatisfaction.Disappointed;
         Loyalty = Loyalty.UpdateAfterVisit(satisfaction);
 
         GameLogger.Info($"Customer {Name} left without purchase: {reason}");
@@ -407,7 +403,7 @@ public class Customer
         return PurchaseDecision.NotBuying;
     }
 
-    private CustomerSatisfaction CalculateSatisfaction(Item item, decimal finalPrice)
+    private Core.Models.CustomerSatisfaction CalculateSatisfaction(Item item, decimal finalPrice)
     {
         var satisfaction = 50f; // Base satisfaction
 
@@ -436,11 +432,11 @@ public class Customer
 
         return satisfaction switch
         {
-            >= 80f => CustomerSatisfaction.Delighted,
-            >= 60f => CustomerSatisfaction.Satisfied,
-            >= 40f => CustomerSatisfaction.Neutral,
-            >= 20f => CustomerSatisfaction.Disappointed,
-            _ => CustomerSatisfaction.Angry
+            >= 80f => Core.Models.CustomerSatisfaction.Delighted,
+            >= 60f => Core.Models.CustomerSatisfaction.Satisfied,
+            >= 40f => Core.Models.CustomerSatisfaction.Neutral,
+            >= 20f => Core.Models.CustomerSatisfaction.Disappointed,
+            _ => Core.Models.CustomerSatisfaction.Angry
         };
     }
 
@@ -482,15 +478,15 @@ public class Customer
         return thoughts[_random.Next(thoughts.Length)];
     }
 
-    private string GeneratePurchaseThought(CustomerSatisfaction satisfaction)
+    private string GeneratePurchaseThought(Core.Models.CustomerSatisfaction satisfaction)
     {
         return satisfaction switch
         {
-            CustomerSatisfaction.Delighted => "Excellent! Exactly what I needed!",
-            CustomerSatisfaction.Satisfied => "Good purchase, I'm happy with this.",
-            CustomerSatisfaction.Neutral => "This will do fine.",
-            CustomerSatisfaction.Disappointed => "Not quite what I hoped for...",
-            CustomerSatisfaction.Angry => "I think I overpaid for this...",
+            Core.Models.CustomerSatisfaction.Delighted => "Excellent! Exactly what I needed!",
+            Core.Models.CustomerSatisfaction.Satisfied => "Good purchase, I'm happy with this.",
+            Core.Models.CustomerSatisfaction.Neutral => "This will do fine.",
+            Core.Models.CustomerSatisfaction.Disappointed => "Not quite what I hoped for...",
+            Core.Models.CustomerSatisfaction.Angry => "I think I overpaid for this...",
             _ => "Thanks for the transaction."
         };
     }

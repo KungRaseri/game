@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using Xunit;
+using Game.Core.Models;
 using Game.Main.Controllers;
 using Game.Main.Systems;
-using Game.Main.Data;
 
 namespace Game.Main.Tests.Controllers
 {

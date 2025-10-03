@@ -1,4 +1,3 @@
-using Xunit;
 using Game.Main.Data;
 
 namespace Game.Main.Tests.Data

@@ -1,7 +1,5 @@
 #nullable enable
 
-using System;
-
 namespace Game.Economy.Models;
 
 /// <summary>

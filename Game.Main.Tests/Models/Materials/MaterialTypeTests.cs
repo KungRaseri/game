@@ -1,7 +1,6 @@
 #nullable enable
 
-using Game.Main.Models.Materials;
-using Xunit;
+using Game.Core.Models.Materials;
 
 namespace Game.Main.Tests.Models.Materials;
 

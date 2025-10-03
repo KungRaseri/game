@@ -1,8 +1,8 @@
 #nullable enable
 
 using FluentAssertions;
+using Game.Core.Models;
 using Godot;
-using Xunit;
 
 namespace Game.Main.Tests.Models;
 

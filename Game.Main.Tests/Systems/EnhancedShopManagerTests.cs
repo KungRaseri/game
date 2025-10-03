@@ -1,8 +1,7 @@
 #nullable enable
 
-using System.Linq;
+using Game.Core.Models;
 using Game.Main.Systems;
-using Xunit;
 
 namespace Game.Main.Tests.Systems;
 

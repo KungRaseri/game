@@ -1,5 +1,6 @@
-using Game.Adventure.Models;
-using Game.Core.Models;
+using Game.Core.Models.Materials;
+using MaterialDrop = Game.Adventure.Models.MaterialDrop;
+using MaterialType = Game.Core.Models.MaterialType;
 
 namespace Game.Inventory.Models;
 

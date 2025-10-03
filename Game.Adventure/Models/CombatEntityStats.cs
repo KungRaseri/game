@@ -1,5 +1,3 @@
-using System;
-
 namespace Game.Adventure.Models;
 
 /// <summary>

@@ -1,8 +1,5 @@
 #nullable enable
 
-using System;
-using System.Collections.Generic;
-
 namespace Game.Shop.Models;
 
 /// <summary>

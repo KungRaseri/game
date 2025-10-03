@@ -1,4 +1,4 @@
-using Xunit;
+using Game.Core.Models;
 using Game.Main.Data;
 
 namespace Game.Main.Tests.Data;

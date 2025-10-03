@@ -1,6 +1,6 @@
 #nullable enable
 
-using Game.Main.Models.Materials;
+using Game.Core.Models.Materials;
 using Game.Main.Utils;
 
 namespace Game.Main.Systems.Loot;

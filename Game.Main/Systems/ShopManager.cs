@@ -1,9 +1,6 @@
 #nullable enable
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Game.Main.Systems;
+using Game.Core.Models;
 using Game.Main.Utils;
 
 namespace Game.Main.Systems;

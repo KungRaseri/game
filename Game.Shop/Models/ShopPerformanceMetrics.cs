@@ -1,6 +1,6 @@
 #nullable enable
 
-using System;
+using Game.Core.Models;
 
 namespace Game.Shop.Models;
 
