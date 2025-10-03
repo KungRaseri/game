@@ -1,6 +1,5 @@
 #nullable enable
 
-using Game.Core.Models;
 using Game.Main.Utils;
 using Customer = Game.Core.Models.Customer;
 using CustomerInterest = Game.Core.Models.CustomerInterest;

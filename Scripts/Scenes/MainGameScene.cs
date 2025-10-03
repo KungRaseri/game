@@ -1,6 +1,5 @@
 #nullable enable
 
-using Game.Core.Models;
 using Game.Main.Managers;
 using Game.Main.Systems;
 using Game.Main.Systems.Inventory;

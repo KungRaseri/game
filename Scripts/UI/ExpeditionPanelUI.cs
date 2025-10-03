@@ -1,6 +1,5 @@
 #nullable enable
 
-using Game.Core.Models;
 using Game.Main.Controllers;
 using Game.Main.Utils;
 using Godot;

@@ -1,6 +1,5 @@
-using Game.Core.Models.Materials;
+using Game.Game.Item.Models;
 using Game.Game.Item.Models.Materials;
-using MaterialType = Game.Core.Models.MaterialType;
 
 namespace Game.Adventure.Models;
 
@@ -18,7 +17,7 @@ public record LootEntry(
     float DropChance,
     int MinQuantity,
     int MaxQuantity,
-    Rarity? ForceRarity = null
+    QualityTier? ForceRarity = null
 )
 {
     /// <summary>
@@ -46,9 +45,9 @@ public record LootEntry(
     /// Gets the rarity that will be used for drops from this entry.
     /// Uses ForceRarity if specified, otherwise uses the material's base rarity.
     /// </summary>
-    public Rarity GetEffectiveRarity()
+    public QualityTier GetEffectiveRarity()
     {
-        return ForceRarity ?? Material.;
+        return ForceRarity ?? Material.Quality;
     }
 
     /// <summary>

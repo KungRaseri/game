@@ -1,7 +1,5 @@
 #nullable enable
 
-using FluentAssertions;
-using Game.Core.Models;
 using Godot;
 
 namespace Game.Main.Tests.Models;

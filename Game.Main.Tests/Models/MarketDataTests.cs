@@ -1,8 +1,5 @@
 #nullable enable
 
-using FluentAssertions;
-using Game.Core.Models;
-
 namespace Game.Main.Tests.Models;
 
 public class MarketDataTests
