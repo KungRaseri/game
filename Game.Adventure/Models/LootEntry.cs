@@ -1,4 +1,5 @@
 using Game.Core.Models.Materials;
+using Game.Game.Item.Models.Materials;
 using MaterialType = Game.Core.Models.MaterialType;
 
 namespace Game.Adventure.Models;
@@ -13,11 +14,11 @@ namespace Game.Adventure.Models;
 /// <param name="MaxQuantity">Maximum number of materials that can drop</param>
 /// <param name="ForceRarity">Optional: Override the material's base rarity for this drop</param>
 public record LootEntry(
-    MaterialType Material,
+    Material Material,
     float DropChance,
     int MinQuantity,
     int MaxQuantity,
-    MaterialRarity? ForceRarity = null
+    Rarity? ForceRarity = null
 )
 {
     /// <summary>
@@ -45,9 +46,9 @@ public record LootEntry(
     /// Gets the rarity that will be used for drops from this entry.
     /// Uses ForceRarity if specified, otherwise uses the material's base rarity.
     /// </summary>
-    public MaterialRarity GetEffectiveRarity()
+    public Rarity GetEffectiveRarity()
     {
-        return ForceRarity ?? Material.BaseRarity;
+        return ForceRarity ?? Material.;
     }
 
     /// <summary>

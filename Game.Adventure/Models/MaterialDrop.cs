@@ -1,4 +1,4 @@
-using Game.Core.Models.Materials;
+using Game.Game.Item.Models.Materials;
 
 namespace Game.Adventure.Models;
 
@@ -11,8 +11,8 @@ namespace Game.Adventure.Models;
 /// <param name="Quantity">The number of materials in this drop</param>
 /// <param name="AcquiredAt">When this material was obtained</param>
 public record MaterialDrop(
-    MaterialType Material,
-    MaterialRarity ActualRarity,
+    Material Material,
+    Rarity ActualRarity,
     int Quantity,
     DateTime AcquiredAt
 )

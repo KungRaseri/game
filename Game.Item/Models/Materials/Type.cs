@@ -10,7 +10,7 @@ namespace Game.Game.Item.Models.Materials;
 /// <param name="Name">Display name of the material</param>
 /// <param name="Description">Detailed description of the material and its uses</param>
 /// <param name="Category">The category this material belongs to</param>
-/// <param name="BaseRarity">The most common rarity level for this material</param>
+/// <param name="Quality">The most common rarity level for this material</param>
 /// <param name="StackLimit">Maximum number that can be stacked in a single inventory slot</param>
 /// <param name="BaseValue">Base gold value per unit for trading calculations</param>
 public record Type(
@@ -18,7 +18,7 @@ public record Type(
     string Name,
     string Description,
     Category Category,
-    Rarity BaseRarity
+    QualityTier Quality
 )
 {
     /// <summary>
@@ -40,13 +40,13 @@ public record Type(
     /// <summary>
     /// Gets the display color associated with the base rarity.
     /// </summary>
-    public string GetRarityColor() => BaseRarity switch
+    public string GetRarityColor() => Quality switch
     {
-        Rarity.Common => "#808080",     // Gray
-        Rarity.Uncommon => "#00FF00",   // Green
-        Rarity.Rare => "#0080FF",       // Blue
-        Rarity.Epic => "#8000FF",       // Purple
-        Rarity.Legendary => "#FFD700",  // Gold
+        QualityTier.Common => "#808080",     // Gray
+        QualityTier.Uncommon => "#00FF00",   // Green
+        QualityTier.Rare => "#0080FF",       // Blue
+        QualityTier.Epic => "#8000FF",       // Purple
+        QualityTier.Legendary => "#FFD700",  // Gold
         _ => "#FFFFFF"                          // White fallback
     };
 }
