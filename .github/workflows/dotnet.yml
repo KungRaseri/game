@@ -32,7 +32,7 @@ jobs:
       run: dotnet build --no-restore --configuration Debug
       
     - name: Run Tests with Coverage
-      run: dotnet test --configuration Debug --verbosity normal --logger trx --collect:"XPlat Code Coverage" --results-directory ./TestResults/
+      run: dotnet test --configuration Debug --verbosity normal --settings coverlet.runsettings
       
     - name: Combine Coverage Reports
       uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4

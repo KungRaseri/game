@@ -295,7 +295,7 @@ public partial class ShopManagementUI : Panel
     private void OnStockRequested(int slotId)
     {
         if (_shopManager == null || _inventoryManager == null) return;
-        
+
         // Check if inventory has materials to stock
         var materials = _inventoryManager.CurrentInventory.Materials;
         if (materials.Count == 0)
@@ -303,11 +303,11 @@ public partial class ShopManagementUI : Panel
             GameLogger.Warning("No materials available to stock");
             return;
         }
-        
+
         // For now, take the first available material
         // TODO: In full implementation, show a selection dialog
         var materialToStock = materials.First();
-        
+
         StockMaterialInSlot(materialToStock.Material, materialToStock.Rarity, slotId);
     }
 
@@ -334,14 +334,14 @@ public partial class ShopManagementUI : Panel
         }
 
         var item = shopSlot.CurrentItem;
-        
+
         // Remove item from shop
         var removedItem = _shopManager.RemoveItem(slotId);
         if (removedItem != null)
         {
             // TODO: Convert item back to material and return to inventory
             // For now, the item is just removed (consumed)
-            
+
             RefreshDisplaySlots();
             RefreshInventory();
             GameLogger.Info($"Removed {item.Name} from slot {slotId} (item consumed - not returned to inventory yet)");
@@ -412,7 +412,7 @@ public partial class ShopManagementUI : Panel
 
     private void RefreshInventory()
     {
-        if (_inventoryList == null || _inventoryManager == null) 
+        if (_inventoryList == null || _inventoryManager == null)
         {
             GameLogger.Warning($"RefreshInventory called but references null: inventoryList={_inventoryList != null}, inventoryManager={_inventoryManager != null}");
             return;
@@ -468,7 +468,8 @@ public partial class ShopManagementUI : Panel
             SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
             CustomMinimumSize = new Vector2(0, 30)
         };
-        refreshButton.Pressed += () => {
+        refreshButton.Pressed += () =>
+        {
             GameLogger.Info("Manual inventory refresh requested");
             CallDeferred(nameof(RefreshInventory));
         };
@@ -484,7 +485,7 @@ public partial class ShopManagementUI : Panel
                 SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
                 CustomMinimumSize = new Vector2(0, 40) // Consistent height for list items
             };
-            
+
             // Add tooltip with value information
             var item = CreateItemFromMaterial(materialStack.Material, materialStack.Rarity);
             button.TooltipText = $"{materialStack.Material.Description}\nShop Value: {item.Value}g\nCategory: {materialStack.Material.Category}";
@@ -513,7 +514,7 @@ public partial class ShopManagementUI : Panel
     private void OnMaterialSelected(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity, int quantity)
     {
         GameLogger.Info($"Selected material: {materialType.Name} x{quantity} ({rarity})");
-        
+
         // Find an empty slot to stock this material
         if (_shopManager != null)
         {
@@ -528,28 +529,28 @@ public partial class ShopManagementUI : Panel
             }
         }
     }
-    
+
     /// <summary>
     /// Stocks a specific material in the given slot, consuming it from inventory.
     /// </summary>
     private void StockMaterialInSlot(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity, int slotId)
     {
         if (_shopManager == null || _inventoryManager == null) return;
-        
+
         // Convert material to sellable item
         var item = CreateItemFromMaterial(materialType, rarity);
         var suggestedPrice = _shopManager.CalculateSuggestedPrice(item);
-        
+
         // Try to stock the item
         if (_shopManager.StockItem(item, slotId, suggestedPrice))
         {
             // Remove one unit from inventory
             var removedQuantity = _inventoryManager.RemoveMaterials(
-                materialType.Id, 
-                rarity, 
+                materialType.Id,
+                rarity,
                 1
             );
-            
+
             if (removedQuantity > 0)
             {
                 RefreshDisplaySlots();
@@ -601,7 +602,7 @@ public partial class ShopManagementUI : Panel
         {
             var customerPanel = new Panel();
             customerPanel.CustomMinimumSize = new Vector2(0, 100);
-            
+
             var customerVBox = new VBoxContainer();
             customerPanel.AddChild(customerVBox);
             customerVBox.AnchorLeft = 0;
@@ -612,32 +613,32 @@ public partial class ShopManagementUI : Panel
             customerVBox.OffsetTop = 5;
             customerVBox.OffsetRight = -5;
             customerVBox.OffsetBottom = -5;
-            
+
             // Customer basic info
             var nameLabel = new Label();
             nameLabel.Text = $"👤 {session.Customer.Name}";
             nameLabel.AddThemeStyleboxOverride("normal", new StyleBoxEmpty());
             customerVBox.AddChild(nameLabel);
-            
+
             var typeLabel = new Label();
             typeLabel.Text = GetCustomerTypeIcon(session.Customer.Type);
             typeLabel.AddThemeColorOverride("font_color", GetCustomerTypeColor(session.Customer.Type));
             customerVBox.AddChild(typeLabel);
-            
+
             var statusLabel = new Label();
             statusLabel.Text = $"Status: {GetCustomerStateDisplay(session.Customer.CurrentState)}";
             customerVBox.AddChild(statusLabel);
-            
+
             // Interaction button
             var interactButton = new Button();
             interactButton.Text = "💬 Interact";
             interactButton.CustomMinimumSize = new Vector2(0, 25);
             interactButton.Pressed += () => OnCustomerInteractionRequested(session.Customer);
             customerVBox.AddChild(interactButton);
-            
+
             _customerContainer.AddChild(customerPanel);
         }
-        
+
         // Show recent customer history if no active customers
         if (_trafficManager.ActiveSessions.Count == 0)
         {
@@ -645,7 +646,7 @@ public partial class ShopManagementUI : Panel
             historyLabel.Text = "Recent Visitors:";
             historyLabel.AddThemeStyleboxOverride("normal", new StyleBoxEmpty());
             _customerContainer.AddChild(historyLabel);
-            
+
             foreach (var record in _trafficManager.TrafficHistory.TakeLast(3))
             {
                 var historyItem = new Label();
@@ -677,7 +678,7 @@ public partial class ShopManagementUI : Panel
             MaterialCategory.Specialty => ItemType.Material,
             _ => ItemType.Material
         };
-        
+
         // Convert material rarity to quality tier
         var quality = rarity switch
         {
@@ -688,11 +689,11 @@ public partial class ShopManagementUI : Panel
             MaterialRarity.Legendary => QualityTier.Legendary,
             _ => QualityTier.Common
         };
-        
+
         // Create item name based on rarity and material
         var qualityPrefix = rarity != MaterialRarity.Common ? $"{rarity} " : "";
         var itemName = $"{qualityPrefix}{materialType.Name}";
-        
+
         // Calculate base value from material properties and rarity
         var baseValue = materialType.BaseValue;
         var rarityMultiplier = rarity switch
@@ -704,9 +705,9 @@ public partial class ShopManagementUI : Panel
             MaterialRarity.Legendary => 6.0f,
             _ => 1.0f
         };
-        
+
         var finalValue = (int)(baseValue * rarityMultiplier);
-        
+
         return new Item(
             itemId: Guid.NewGuid().ToString(),
             name: itemName,
@@ -746,7 +747,7 @@ public partial class ShopManagementUI : Panel
             value: random.Next(10, 100)
         );
     }
-    
+
     // Customer interaction helper methods
     private string GetCustomerTypeIcon(CustomerType type)
     {
@@ -760,7 +761,7 @@ public partial class ShopManagementUI : Panel
             _ => "❓ Unknown"
         };
     }
-    
+
     private Color GetCustomerTypeColor(CustomerType type)
     {
         return type switch
@@ -773,7 +774,7 @@ public partial class ShopManagementUI : Panel
             _ => Colors.White
         };
     }
-    
+
     private string GetCustomerStateDisplay(CustomerState state)
     {
         return state switch
@@ -788,7 +789,7 @@ public partial class ShopManagementUI : Panel
             _ => "Unknown"
         };
     }
-    
+
     private void OnCustomerInteractionRequested(Customer customer)
     {
         // Create customer dialog if needed
@@ -797,11 +798,11 @@ public partial class ShopManagementUI : Panel
             var dialogScene = GD.Load<PackedScene>("res://Scenes/UI/CustomerInteractionDialog.tscn");
             _customerDialog = dialogScene.Instantiate<CustomerInteractionDialogUI>();
             GetTree().CurrentScene.AddChild(_customerDialog);
-            
+
             // Connect to customer action events
             _customerDialog.CustomerActionTaken += OnCustomerActionTaken;
         }
-        
+
         // Find what item the customer is most interested in
         Item? itemOfInterest = null;
         if (_shopManager != null)
@@ -810,7 +811,7 @@ public partial class ShopManagementUI : Panel
                 .Where(s => s.CurrentItem != null)
                 .Select(s => s.CurrentItem!)
                 .ToList();
-                
+
             if (availableItems.Any())
             {
                 // For now, pick a random item they might be interested in
@@ -818,15 +819,15 @@ public partial class ShopManagementUI : Panel
                 itemOfInterest = availableItems[random.Next(availableItems.Count)];
             }
         }
-        
+
         _customerDialog.ShowCustomerInteraction(customer, itemOfInterest, _shopManager!);
         GameLogger.Info($"Opening customer interaction dialog for {customer.Name}");
     }
-    
+
     private void OnCustomerActionTaken(string customerId, string action, string itemId)
     {
         GameLogger.Info($"Customer action: {customerId} performed {action} on {itemId}");
-        
+
         // Handle different customer actions
         switch (action)
         {
@@ -843,7 +844,7 @@ public partial class ShopManagementUI : Panel
                 // Customer continues shopping
                 break;
         }
-        
+
         // Update the customer display to reflect any changes
         UpdateCustomerDisplay();
     }
@@ -855,7 +856,9 @@ public partial class ShopManagementUI : Panel
 public class DisplaySlotUI
 {
     public event Action<int>? StockRequested;
+#pragma warning disable CS0067 // The event is never used - reserved for future price change functionality
     public event Action<int, decimal>? PriceChangeRequested;
+#pragma warning restore CS0067
     public event Action<int>? RemoveRequested;
 
     private readonly int _slotId;

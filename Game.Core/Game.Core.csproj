@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- Additional packages specific to Game.Core if needed -->
+  </ItemGroup>
+
+</Project>

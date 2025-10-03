@@ -4,8 +4,32 @@
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 	</PropertyGroup>
 	<ItemGroup>
+		<Compile Remove="Game.Adventure.Tests\**" />
+		<Compile Remove="Game.Adventure\**" />
+		<Compile Remove="Game.Core.Tests\**" />
+		<Compile Remove="Game.Core\**" />
+		<Compile Remove="Game.Crafting.Tests\**" />
+		<Compile Remove="Game.Crafting\**" />
+		<Compile Remove="Game.Economy.Tests\**" />
+		<Compile Remove="Game.Economy\**" />
+		<Compile Remove="Game.Inventory.Tests\**" />
+		<Compile Remove="Game.Inventory\**" />
 		<Compile Remove="Game.Main.Tests\**" />
 		<Compile Remove="Game.Main\**" />
+		<Compile Remove="Game.Shop.Tests\**" />
+		<Compile Remove="Game.Shop\**" />
+		<EmbeddedResource Remove="Game.Adventure.Tests\**" />
+		<EmbeddedResource Remove="Game.Adventure\**" />
+		<EmbeddedResource Remove="Game.Core.Tests\**" />
+		<EmbeddedResource Remove="Game.Core\**" />
+		<EmbeddedResource Remove="Game.Crafting.Tests\**" />
+		<EmbeddedResource Remove="Game.Crafting\**" />
+		<EmbeddedResource Remove="Game.Economy.Tests\**" />
+		<EmbeddedResource Remove="Game.Economy\**" />
+		<EmbeddedResource Remove="Game.Inventory.Tests\**" />
+		<EmbeddedResource Remove="Game.Inventory\**" />
+		<EmbeddedResource Remove="Game.Shop.Tests\**" />
+		<EmbeddedResource Remove="Game.Shop\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="Game.Main\Game.Main.csproj" />

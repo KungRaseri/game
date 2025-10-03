@@ -498,7 +498,7 @@ public class InventoryManagerTests
     }
 
     [Fact]
-    public void ThreadSafety_WithConcurrentOperations_HandlesCorrectly()
+    public async Task ThreadSafety_WithConcurrentOperations_HandlesCorrectly()
     {
         // Arrange
         var manager = new InventoryManager(100);
@@ -523,7 +523,7 @@ public class InventoryManagerTests
             }));
         }
 
-        Task.WaitAll(tasks.ToArray());
+        await Task.WhenAll(tasks.ToArray());
 
         // Assert
         results.Should().AllBeEquivalentTo(true);
