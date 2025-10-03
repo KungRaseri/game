@@ -37,9 +37,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 	ProjectSection(SolutionItems) = preProject
 		.github\copilot-instructions.md = .github\copilot-instructions.md
 		README.md = README.md
+		CLAUDE.md = CLAUDE.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Items", "Game.Items\Game.Items.csproj", "{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{09899EF8-BA43-4473-80A4-6419D113E8F8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.gitmodules = .gitmodules
+		coverlet.runsettings = coverlet.runsettings
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Items.Tests", "Game.Items.Tests\Game.Items.Tests.csproj", "{18600DDC-526C-4D17-BE94-0F6F1D501F06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -144,6 +158,12 @@ Global
 		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
 		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
