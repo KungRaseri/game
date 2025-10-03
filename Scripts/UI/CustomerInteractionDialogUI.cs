@@ -1,13 +1,11 @@
 #nullable enable
 
-using Godot;
-using Game.Main.Models;
+using Game.Core.Models;
 using Game.Main.Systems;
 using Game.Main.Utils;
-using System;
-using System.Linq;
+using Godot;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI for detailed customer interactions including negotiation, preferences, and purchase decisions.
@@ -442,7 +440,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         var fullResponse = $"💰 Discount Offered!\n\n{reactionText}\n\n💭 \"{response.PrimaryReason}\"\n\n💡 {response.SuggestedAction}";
         _customerThoughts!.Text = fullResponse;
         
-        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "discount_offered", _currentItem.ItemId);
+        EmitSignal(Main.UI.CustomerInteractionDialogUI.SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "discount_offered", _currentItem.ItemId);
         
         // Update action buttons based on new state
         UpdateActionButtons();
@@ -478,7 +476,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
             _customerThoughts!.Text = "😔 \"I appreciate the conversation, but I prefer not to negotiate on prices.\"";
         }
         
-        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "negotiation_started", _currentItem.ItemId);
+        EmitSignal(Main.UI.CustomerInteractionDialogUI.SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "negotiation_started", _currentItem.ItemId);
         
         // Update action buttons
         UpdateActionButtons();
@@ -532,7 +530,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
             _customerThoughts!.Text = "💭 \"I appreciate you trying to help, but I'll stick with what I was looking at.\"";
         }
         
-        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "show_alternatives", _currentItem?.ItemId ?? "");
+        EmitSignal(Main.UI.CustomerInteractionDialogUI.SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "show_alternatives", _currentItem?.ItemId ?? "");
     }
     
     private void OnClosePressed()
@@ -540,7 +538,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         if (_currentCustomer != null)
         {
             GameLogger.Info($"Letting {_currentCustomer.Name} continue browsing");
-            EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "continue_browsing", "");
+            EmitSignal(Main.UI.CustomerInteractionDialogUI.SignalName.CustomerActionTaken, _currentCustomer.CustomerId, "continue_browsing", "");
         }
         
         Hide();

@@ -2,7 +2,6 @@
 
 using System;
 using Xunit;
-using Game.Main.Models;
 
 namespace Game.Main.Tests.Models;
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using Game.Main.Controllers;
-using Game.Main.Models;
 using Game.Main.Systems;
 using Game.Main.Data;
 

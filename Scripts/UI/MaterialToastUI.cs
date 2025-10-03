@@ -1,10 +1,9 @@
 #nullable enable
 
-using Godot;
-using System.Collections.Generic;
 using Game.Main.Utils;
+using Godot;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// Toast notification that appears when materials are collected.

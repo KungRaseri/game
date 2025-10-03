@@ -3,7 +3,6 @@
 using System;
 using System.Linq;
 using Xunit;
-using Game.Main.Models;
 using Game.Main.Data;
 
 namespace Game.Main.Tests.Models;

@@ -2,7 +2,6 @@
 
 using FluentAssertions;
 using Xunit;
-using Game.Main.Models;
 using Game.Main.Systems;
 
 namespace Game.Main.Tests.Systems;

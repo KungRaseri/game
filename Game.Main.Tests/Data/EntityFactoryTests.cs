@@ -1,6 +1,5 @@
 using Xunit;
 using Game.Main.Data;
-using Game.Main.Models;
 
 namespace Game.Main.Tests.Data
 {

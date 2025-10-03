@@ -1,18 +1,15 @@
 #nullable enable
 
-using Godot;
-using Game.Main.Controllers;
+using Game.Core.Models;
 using Game.Main.Managers;
-using Game.Main.Utils;
-using Game.Main.Data;
-using Game.Main.UI;
-using Game.Main.Models;
-using Game.Main.Models.Materials;
+using Game.Main.Systems;
 using Game.Main.Systems.Inventory;
 using Game.Main.Systems.Loot;
-using Game.Main.Systems;
-using System;
-using System.Collections.Generic;
+using Game.Main.Utils;
+using Game.Scripts.UI;
+using Godot;
+
+namespace Game.Scripts.Scenes;
 
 /// <summary>
 /// Main game scene that orchestrates the entire game experience.
@@ -227,7 +224,7 @@ public partial class MainGameScene : Control
         {
             controller.SendToGoblinCave();
             _expeditionPanelUI?.StartExpedition("Goblin Cave", 3);
-            EmitSignal(SignalName.GameStateChanged, "expedition_started");
+            EmitSignal(global::MainGameScene.SignalName.GameStateChanged, "expedition_started");
 
             GameLogger.Info("Expedition started via UI");
         }
@@ -243,7 +240,7 @@ public partial class MainGameScene : Control
         if (_gameManager?.AdventurerController != null)
         {
             _gameManager.AdventurerController.Retreat();
-            EmitSignal(SignalName.GameStateChanged, "retreating");
+            EmitSignal(global::MainGameScene.SignalName.GameStateChanged, "retreating");
 
             GameLogger.Info("Retreat ordered via UI");
         }
@@ -251,10 +248,10 @@ public partial class MainGameScene : Control
 
     private void OnAdventurerHealthChanged(int currentHealth, int maxHealth)
     {
-        EmitSignal(SignalName.AdventurerHealthChanged, currentHealth, maxHealth);
+        EmitSignal(global::MainGameScene.SignalName.AdventurerHealthChanged, currentHealth, maxHealth);
     }
 
-    private void OnMonsterDefeated(Game.Main.Models.CombatEntityStats monster)
+    private void OnMonsterDefeated(CombatEntityStats monster)
     {
         _expeditionPanelUI?.OnMonsterDefeated();
         _expeditionPanelUI?.SetCurrentEnemy(null); // Clear enemy display when defeated
@@ -268,7 +265,7 @@ public partial class MainGameScene : Control
 
     private void OnExpeditionCompleted()
     {
-        EmitSignal(SignalName.ExpeditionCompleted, true);
+        EmitSignal(global::MainGameScene.SignalName.ExpeditionCompleted, true);
         _expeditionPanelUI?.EndExpedition();
         _combatLogUI?.AddLogEntry("Expedition completed!", "cyan");
         GameLogger.Info("Expedition completed");
@@ -276,7 +273,7 @@ public partial class MainGameScene : Control
 
     private void OnAdventurerStateChanged(AdventurerState newState)
     {
-        EmitSignal(SignalName.GameStateChanged, newState.ToString());
+        EmitSignal(global::MainGameScene.SignalName.GameStateChanged, newState.ToString());
 
         // Update expedition panel based on state
         if (newState == AdventurerState.Fighting && _gameManager?.AdventurerController?.CurrentMonster != null)

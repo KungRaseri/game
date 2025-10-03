@@ -1,12 +1,10 @@
 #nullable enable
 
-using Godot;
 using Game.Main.Controllers;
 using Game.Main.Utils;
-using System;
-using System.Collections.Generic;
+using Godot;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component that displays combat events and status messages.

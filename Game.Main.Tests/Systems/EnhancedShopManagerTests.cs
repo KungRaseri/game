@@ -1,7 +1,6 @@
 #nullable enable
 
 using System.Linq;
-using Game.Main.Models;
 using Game.Main.Systems;
 using Xunit;
 

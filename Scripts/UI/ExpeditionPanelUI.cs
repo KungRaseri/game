@@ -1,11 +1,11 @@
 #nullable enable
 
-using Godot;
+using Game.Core.Models;
 using Game.Main.Controllers;
-using Game.Main.Models;
 using Game.Main.Utils;
+using Godot;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component that displays expedition progress and dungeon information.
@@ -24,7 +24,7 @@ public partial class ExpeditionPanelUI : Panel
     private AdventurerController? _adventurerController;
     private int _totalMonsters = 0;
     private int _defeatedMonsters = 0;
-    private Game.Main.Models.CombatEntityStats? _currentEnemy;
+    private CombatEntityStats? _currentEnemy;
 
     public override void _Ready()
     {
@@ -100,7 +100,7 @@ public partial class ExpeditionPanelUI : Panel
     /// <summary>
     /// Sets the current enemy entity and subscribes to its health changes.
     /// </summary>
-    public void SetCurrentEnemy(Game.Main.Models.CombatEntityStats? enemy)
+    public void SetCurrentEnemy(CombatEntityStats? enemy)
     {
         // Unsubscribe from previous enemy
         if (_currentEnemy != null)

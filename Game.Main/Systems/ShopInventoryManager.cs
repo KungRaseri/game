@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Game.Main.Models;
 using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
 

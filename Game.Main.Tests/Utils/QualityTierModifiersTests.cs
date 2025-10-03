@@ -1,5 +1,4 @@
 using Xunit;
-using Game.Main.Models;
 using Game.Main.Utils;
 
 namespace Game.Main.Tests.Utils;

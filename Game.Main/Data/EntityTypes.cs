@@ -1,4 +1,4 @@
-namespace Game.Main.Models;
+namespace Game.Main.Data;
 
 /// <summary>
 /// Predefined entity type configurations using modern C# features

@@ -2,7 +2,6 @@
 
 using System;
 using Xunit;
-using Game.Main.Models;
 using Game.Main.Systems;
 using Game.Main.Systems.Inventory;
 

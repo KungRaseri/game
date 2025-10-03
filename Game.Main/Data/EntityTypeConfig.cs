@@ -1,4 +1,4 @@
-namespace Game.Main.Models;
+namespace Game.Main.Data;
 
 /// <summary>
 /// Configuration data for different entity types

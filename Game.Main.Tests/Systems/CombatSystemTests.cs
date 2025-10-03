@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using Game.Main.Systems;
-using Game.Main.Models;
 using Game.Main.Data;
 
 namespace Game.Main.Tests.Systems

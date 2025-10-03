@@ -1,15 +1,11 @@
 #nullable enable
 
-using Godot;
-using Game.Inventory.Models;
-//using Game.Inventory.Systems;  // TODO: Implement InventoryManager in new architecture
-using Game.Adventure.Models;
 using Game.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Game.Inventory.Models;
+using Godot;
+//using Game.Inventory.Systems;  // TODO: Implement InventoryManager in new architecture
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component that displays the adventurer's material inventory as a list.
@@ -302,14 +298,14 @@ public partial class AdventurerInventoryUI : Panel
         var materialStack = materialStackUI.GetMaterialStack();
         if (materialStack != null)
         {
-            EmitSignal(SignalName.MaterialStackSelected);
+            EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.MaterialStackSelected);
             GameLogger.Info($"Material stack selected: {materialStack.Material.Name} x{materialStack.Quantity}");
         }
     }
 
     private void OnMaterialStackClicked(MaterialStack materialStack)
     {
-        EmitSignal(SignalName.MaterialStackSelected);
+        EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.MaterialStackSelected);
         GameLogger.Info($"Material stack selected: {materialStack.Material.Name} x{materialStack.Quantity}");
     }
 
@@ -320,7 +316,7 @@ public partial class AdventurerInventoryUI : Panel
     public void OnExpandCapacityPressed()
     {
         const int defaultExpansion = 5;
-        EmitSignal(SignalName.InventoryCapacityRequested, defaultExpansion);
+        EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.InventoryCapacityRequested, defaultExpansion);
         GameLogger.Info($"Inventory capacity expansion requested: +{defaultExpansion} slots");
     }
 
@@ -378,7 +374,7 @@ public partial class AdventurerInventoryUI : Panel
     /// </summary>
     public void OnRefreshPressed()
     {
-        EmitSignal(SignalName.RefreshRequested);
+        EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.RefreshRequested);
         RefreshDisplay();
         GameLogger.Info("Inventory refresh requested");
     }
@@ -388,7 +384,7 @@ public partial class AdventurerInventoryUI : Panel
     /// </summary>
     public void OnCapacityExpansionSuccess()
     {
-        EmitSignal(SignalName.CapacityExpanded);
+        EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.CapacityExpanded);
         UpdateUI();
     }
 }

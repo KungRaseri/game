@@ -1,12 +1,10 @@
 #nullable enable
 
-using Godot;
 using Game.Main.Systems.Inventory;
-using Game.Main.Models.Materials;
 using Game.Main.Utils;
-using System;
+using Godot;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// Main container that integrates all Material Collection UI components.
@@ -239,13 +237,13 @@ public partial class MaterialCollectionUI : Panel
 
     private void OnMaterialStackSelected()
     {
-        EmitSignal(SignalName.MaterialSelected);
+        EmitSignal(Main.UI.MaterialCollectionUI.SignalName.MaterialSelected);
         GameLogger.Debug("Material stack selected signal emitted");
     }
 
     private void OnCapacityExpanded()
     {
-        EmitSignal(SignalName.InventoryCapacityChanged);
+        EmitSignal(Main.UI.MaterialCollectionUI.SignalName.InventoryCapacityChanged);
         GameLogger.Info("Inventory capacity expanded");
     }
 

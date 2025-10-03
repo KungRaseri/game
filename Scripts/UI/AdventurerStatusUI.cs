@@ -1,11 +1,11 @@
 #nullable enable
 
-using Godot;
+using Game.Core.Models;
 using Game.Main.Controllers;
-using Game.Main.Models;
 using Game.Main.Utils;
+using Godot;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component that displays adventurer status and provides expedition controls.
@@ -231,7 +231,7 @@ public partial class AdventurerStatusUI : Panel
     /// </summary>
     public void OnSendExpeditionPressed()
     {
-        EmitSignal(SignalName.SendExpeditionRequested);
+        EmitSignal(Main.UI.AdventurerStatusUI.SignalName.SendExpeditionRequested);
         GameLogger.Info("Send expedition requested from UI");
     }
 
@@ -241,7 +241,7 @@ public partial class AdventurerStatusUI : Panel
     /// </summary>
     public void OnRetreatPressed()
     {
-        EmitSignal(SignalName.RetreatRequested);
+        EmitSignal(Main.UI.AdventurerStatusUI.SignalName.RetreatRequested);
         GameLogger.Info("Retreat requested from UI");
     }
 }

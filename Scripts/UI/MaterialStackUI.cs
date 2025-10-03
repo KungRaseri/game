@@ -1,12 +1,11 @@
 #nullable enable
 
-using Godot;
+using Game.Core.Models.Materials;
 using Game.Main.Systems.Inventory;
-using Game.Main.Models.Materials;
 using Game.Main.Utils;
-using System;
+using Godot;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component that displays a single material stack with icon, quantity, rarity indicators, and tooltip.
@@ -316,7 +315,7 @@ public partial class MaterialStackUI : Panel
     {
         if (_materialStack != null)
         {
-            EmitSignal(SignalName.MaterialStackClicked);
+            EmitSignal(Main.UI.MaterialStackUI.SignalName.MaterialStackClicked);
             GameLogger.Debug($"Material stack clicked: {_materialStack.Material.Name} x{_materialStack.Quantity}");
         }
     }

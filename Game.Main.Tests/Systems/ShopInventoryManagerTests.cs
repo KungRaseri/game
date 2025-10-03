@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 using FluentAssertions;
 using Xunit;
-using Game.Main.Models;
 using Game.Main.Systems;
 using Game.Main.Systems.Inventory;
 using Game.Main.Utils;

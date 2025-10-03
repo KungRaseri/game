@@ -1,17 +1,14 @@
 #nullable enable
 
-using Godot;
-using Game.Main.Models;
-using Game.Main.Models.Materials;
+using Game.Core.Models;
+using Game.Core.Models.Materials;
 using Game.Main.Systems;
 using Game.Main.Systems.Inventory;
 using Game.Main.Utils;
-using Game.Main.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Godot;
+using MaterialType = Game.Core.Models.Materials.MaterialType;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// Main shop management UI that provides a visual interface for managing the shop.
@@ -229,7 +226,7 @@ public partial class ShopManagementUI : Panel
 
         _isShopOpen = true;
         _trafficManager.StartTraffic();
-        EmitSignal(SignalName.ShopStateChanged, true);
+        EmitSignal(Main.UI.ShopManagementUI.SignalName.ShopStateChanged, true);
 
         UpdateUI();
         GameLogger.Info("Shop opened for business");
@@ -241,7 +238,7 @@ public partial class ShopManagementUI : Panel
 
         _isShopOpen = false;
         _ = _trafficManager.StopTrafficAsync(); // Fire and forget the async operation
-        EmitSignal(SignalName.ShopStateChanged, false);
+        EmitSignal(Main.UI.ShopManagementUI.SignalName.ShopStateChanged, false);
 
         UpdateUI();
         GameLogger.Info("Shop closed");
@@ -249,7 +246,7 @@ public partial class ShopManagementUI : Panel
 
     private void OnBackButtonPressed()
     {
-        EmitSignal(SignalName.BackToGameRequested);
+        EmitSignal(Main.UI.ShopManagementUI.SignalName.BackToGameRequested);
         GameLogger.Info("Back to game requested");
     }
 
@@ -395,7 +392,7 @@ public partial class ShopManagementUI : Panel
 
     private void OnCustomerPurchased(Customer customer, SaleTransaction transaction)
     {
-        EmitSignal(SignalName.CustomerServed, customer.CustomerId);
+        EmitSignal(Main.UI.ShopManagementUI.SignalName.CustomerServed, customer.CustomerId);
         GameLogger.Info($"Customer purchase: {customer.Name} bought {transaction.ItemSold.Name}");
     }
 
@@ -511,7 +508,7 @@ public partial class ShopManagementUI : Panel
         GameLogger.Debug($"Refreshed inventory display with {materials.Count} material types");
     }
 
-    private void OnMaterialSelected(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity, int quantity)
+    private void OnMaterialSelected(MaterialType materialType, MaterialRarity rarity, int quantity)
     {
         GameLogger.Info($"Selected material: {materialType.Name} x{quantity} ({rarity})");
 
@@ -533,7 +530,7 @@ public partial class ShopManagementUI : Panel
     /// <summary>
     /// Stocks a specific material in the given slot, consuming it from inventory.
     /// </summary>
-    private void StockMaterialInSlot(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity, int slotId)
+    private void StockMaterialInSlot(MaterialType materialType, MaterialRarity rarity, int slotId)
     {
         if (_shopManager == null || _inventoryManager == null) return;
 
@@ -555,7 +552,7 @@ public partial class ShopManagementUI : Panel
             {
                 RefreshDisplaySlots();
                 RefreshInventory(); // Update inventory display
-                EmitSignal(SignalName.ItemStocked, slotId, item.Name);
+                EmitSignal(Main.UI.ShopManagementUI.SignalName.ItemStocked, slotId, item.Name);
                 GameLogger.Info($"Stocked {item.Name} in slot {slotId} for {suggestedPrice:C} (consumed 1x {materialType.Name})");
             }
             else
@@ -666,7 +663,7 @@ public partial class ShopManagementUI : Panel
             _closeShopButton.Disabled = !_isShopOpen;
     }
 
-    private Item CreateItemFromMaterial(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity)
+    private Item CreateItemFromMaterial(MaterialType materialType, MaterialRarity rarity)
     {
         // Convert material type to item type based on material category
         var itemType = materialType.Category switch

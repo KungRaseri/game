@@ -1,7 +1,6 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.Main.Models;
 using System;
 using System.Linq;
 using Xunit;

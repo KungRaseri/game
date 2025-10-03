@@ -1,13 +1,11 @@
 #nullable enable
 
-using Godot;
+using Game.Core.Models.Materials;
 using Game.Main.Systems.Inventory;
-using Game.Main.Models.Materials;
 using Game.Main.Utils;
-using System.Collections.Generic;
-using System.Linq;
+using Godot;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component for displaying inventory statistics and material categorization.
@@ -254,7 +252,7 @@ public partial class InventoryStatsUI : Panel
 
     private void OnRefreshButtonPressed()
     {
-        EmitSignal(SignalName.StatsRefreshRequested);
+        EmitSignal(Main.UI.InventoryStatsUI.SignalName.StatsRefreshRequested);
         GameLogger.Info("Inventory stats refresh requested");
     }
 
