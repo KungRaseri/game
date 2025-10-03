@@ -15,15 +15,15 @@ public static class LootConfiguration
     /// </summary>
     public static Dictionary<string, Category> GetCategorys()
     {
-        var materials = new Dictionary<string, Category>();
+        var materials = new Dictionary<string, Material>();
 
         // Metal materials
-        materials["iron_ore"] = new Category(
+        materials["iron_ore"] = new Material(
             "iron_ore",
             "Iron Ore",
             "Common metal ore used in basic weapon and armor crafting.",
-            MaterialCategory.Metals,
-            MaterialRarity.Common,
+            Category.Metal,
+            Rarity.Common,
             StackLimit: 999,
             BaseValue: 2
         );

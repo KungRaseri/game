@@ -1,6 +1,5 @@
-using Game.Core.Models.Materials;
-using MaterialDrop = Game.Adventure.Models.MaterialDrop;
-using MaterialType = Game.Core.Models.MaterialType;
+using Game.Game.Item.Models.Materials;
+using Game.Game.Item.Utils;
 
 namespace Game.Inventory.Models;
 
@@ -13,8 +12,8 @@ namespace Game.Inventory.Models;
 /// <param name="Quantity">The number of materials currently in this stack</param>
 /// <param name="LastUpdated">When this stack was last modified</param>
 public record MaterialStack(
-    MaterialType Material,
-    MaterialRarity Rarity,
+    Material Material,
+    Rarity Rarity,
     int Quantity,
     DateTime LastUpdated
 )
@@ -23,12 +22,12 @@ public record MaterialStack(
     /// Gets the unique key for this material stack.
     /// Materials of the same type and rarity stack together.
     /// </summary>
-    public string StackKey => $"{Material.Id}_{Rarity}";
+    public string StackKey => $"{Material.ItemId}_{Rarity}";
 
     /// <summary>
     /// Gets the maximum number of materials that can be stored in this stack.
     /// </summary>
-    public int StackLimit => Material.StackLimit;
+    public int StackLimit => Material.MaxStackSize;
 
     /// <summary>
     /// Gets whether this stack is at its maximum capacity.
@@ -49,15 +48,15 @@ public record MaterialStack(
         {
             var rarityMultiplier = Rarity switch
             {
-                MaterialRarity.Common => 1.0f,
-                MaterialRarity.Uncommon => 2.0f,
-                MaterialRarity.Rare => 5.0f,
-                MaterialRarity.Epic => 15.0f,
-                MaterialRarity.Legendary => 50.0f,
+                Rarity.Common => 1.0f,
+                Rarity.Uncommon => 2.0f,
+                Rarity.Rare => 5.0f,
+                Rarity.Epic => 15.0f,
+                Rarity.Legendary => 50.0f,
                 _ => 1.0f
             };
 
-            return (int)(Material.BaseValue * Quantity * rarityMultiplier);
+            return (int)(Material.Value * QualityTierModifiers.GetValueMultiplier(Material.Quality) * Quantity * rarityMultiplier);
         }
     }
 
@@ -157,7 +156,7 @@ public record MaterialStack(
     /// <summary>
     /// Creates a MaterialStack from a MaterialDrop.
     /// </summary>
-    public static MaterialStack FromDrop(MaterialDrop drop)
+    public static MaterialStack FromDrop(Drop drop)
     {
         drop.Validate();
         
@@ -174,11 +173,11 @@ public record MaterialStack(
     /// </summary>
     public string GetRarityColor() => Rarity switch
     {
-        MaterialRarity.Common => "#808080",     // Gray
-        MaterialRarity.Uncommon => "#00FF00",   // Green
-        MaterialRarity.Rare => "#0080FF",       // Blue
-        MaterialRarity.Epic => "#8000FF",       // Purple
-        MaterialRarity.Legendary => "#FFD700",  // Gold
+        Rarity.Common => "#808080",     // Gray
+        Rarity.Uncommon => "#00FF00",   // Green
+        Rarity.Rare => "#0080FF",       // Blue
+        Rarity.Epic => "#8000FF",       // Purple
+        Rarity.Legendary => "#FFD700",  // Gold
         _ => "#FFFFFF"                          // White fallback
     };
 
