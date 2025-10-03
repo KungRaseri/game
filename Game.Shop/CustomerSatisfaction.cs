@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Customer satisfaction levels based on pricing and experience.

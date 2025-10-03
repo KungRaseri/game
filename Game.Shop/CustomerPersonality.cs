@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Personality traits that influence customer behavior and decision-making.

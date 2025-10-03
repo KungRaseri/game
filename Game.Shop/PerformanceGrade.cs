@@ -1,4 +1,4 @@
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Overall performance grade for the shop.

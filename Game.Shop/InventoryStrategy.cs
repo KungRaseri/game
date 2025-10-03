@@ -1,4 +1,4 @@
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// How competitors manage their inventory and stocking decisions.

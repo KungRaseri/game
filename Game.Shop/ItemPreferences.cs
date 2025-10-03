@@ -1,4 +1,6 @@
-namespace Game.Core.Models;
+using Game.Items.Models;
+
+namespace Game.Shop;
 
 /// <summary>
 /// Represents a customer's preferences for different item types and qualities.

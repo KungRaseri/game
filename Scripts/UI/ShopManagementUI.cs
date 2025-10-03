@@ -1,12 +1,12 @@
 #nullable enable
 
 using Game.Inventory.Systems;
-using Game.Item.Models;
-using Game.Item.Models.Materials;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
 using Game.Main.Systems;
 using Game.Main.Utils;
 using Godot;
-using Type = Game.Item.Models.Materials.Type;
+using Type = Game.Items.Models.Materials.Type;
 
 namespace Game.Scripts.UI;
 
@@ -663,7 +663,7 @@ public partial class ShopManagementUI : Panel
             _closeShopButton.Disabled = !_isShopOpen;
     }
 
-    private Item.Models.Item CreateItemFromMaterial(Type materialType, Rarity rarity)
+    private Items.Models.Item CreateItemFromMaterial(Type materialType, Rarity rarity)
     {
         // Convert material type to item type based on material category
         var itemType = materialType.Category switch
@@ -705,7 +705,7 @@ public partial class ShopManagementUI : Panel
 
         var finalValue = (int)(baseValue * rarityMultiplier);
 
-        return new Item.Models.Item(
+        return new Items.Models.Item(
             itemId: Guid.NewGuid().ToString(),
             name: itemName,
             description: $"{materialType.Description} ({rarity} quality)",
@@ -715,7 +715,7 @@ public partial class ShopManagementUI : Panel
         );
     }
 
-    private Item.Models.Item CreateTestItem()
+    private Items.Models.Item CreateTestItem()
     {
         var random = new Random();
         var itemTypes = new[] { ItemType.Weapon, ItemType.Armor, ItemType.Consumable, ItemType.Material };
@@ -735,7 +735,7 @@ public partial class ShopManagementUI : Panel
 
         var itemName = itemNames[random.Next(itemNames.Length)];
 
-        return new Item.Models.Item(
+        return new Items.Models.Item(
             itemId: Guid.NewGuid().ToString(),
             name: $"{quality} {itemName}",
             description: $"A {quality.ToString().ToLower()} quality {itemType.ToString().ToLower()}",
@@ -801,7 +801,7 @@ public partial class ShopManagementUI : Panel
         }
 
         // Find what item the customer is most interested in
-        Item.Models.Item? itemOfInterest = null;
+        Items.Models.Item? itemOfInterest = null;
         if (_shopManager != null)
         {
             var availableItems = _shopManager.DisplaySlots

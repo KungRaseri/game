@@ -1,3 +1,5 @@
+using Game.Items.Models;
+
 namespace Game.Main.Tests.Models;
 
 public class WeaponTests
@@ -103,6 +105,6 @@ public class WeaponTests
 
         // Act & Assert
         Assert.IsAssignableFrom<Equipment>(weapon);
-        Assert.IsAssignableFrom<Item>(weapon);
+        Assert.IsAssignableFrom<Items>(weapon);
     }
 }

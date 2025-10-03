@@ -1,4 +1,6 @@
 using Game.Adventure.Data;
+using Game.Adventure.Models;
+using Game.Adventure.Systems;
 
 namespace Game.Main.Tests.Systems
 {

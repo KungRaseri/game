@@ -1,4 +1,4 @@
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Expense breakdown by category for budgeting analysis.

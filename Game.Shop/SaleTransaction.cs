@@ -1,6 +1,8 @@
 #nullable enable
 
-namespace Game.Core.Models;
+using Game.Items.Models;
+
+namespace Game.Shop;
 
 /// <summary>
 /// Represents a completed sale transaction in the shop.

@@ -1,4 +1,4 @@
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Represents a customer's purchase decision after evaluating an item.

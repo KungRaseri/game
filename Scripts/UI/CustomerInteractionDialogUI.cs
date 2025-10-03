@@ -1,6 +1,6 @@
 #nullable enable
 
-using Game.Item.Models;
+using Game.Items.Models;
 using Game.Main.Systems;
 using Game.Main.Utils;
 using Godot;
@@ -32,7 +32,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
     
     // State
     private Customer? _currentCustomer;
-    private Item.Models.Item? _currentItem;
+    private Items.Models.Item? _currentItem;
     private ShopManager? _shopManager;
     private EnhancedCustomerAI? _customerAI;
     private ShopInteractionContext _interactionContext = new();
@@ -85,7 +85,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
     /// <summary>
     /// Shows the customer interaction dialog for a specific customer and item.
     /// </summary>
-    public void ShowCustomerInteraction(Customer customer, Item.Models.Item? item, ShopManager shopManager)
+    public void ShowCustomerInteraction(Customer customer, Items.Models.Item? item, ShopManager shopManager)
     {
         _currentCustomer = customer;
         _currentItem = item;
@@ -285,7 +285,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         };
     }
     
-    private List<string> GetItemSpecificThoughts(Item.Models.Item item)
+    private List<string> GetItemSpecificThoughts(Items.Models.Item item)
     {
         var thoughts = new List<string>();
         

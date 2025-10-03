@@ -41,7 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Milestone-1", "Milestone-1", "{6106A59B-2CAF-4EB6-B517-1B9B0B619E77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Item", "Game.Item\Game.Item.csproj", "{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Items", "Game.Items\Game.Items.csproj", "{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

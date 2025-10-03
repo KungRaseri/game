@@ -1,6 +1,8 @@
 #nullable enable
 
-namespace Game.Core.Models;
+using Game.Items.Models;
+
+namespace Game.Shop;
 
 /// <summary>
 /// Represents market data for a specific item type including demand, supply, and pricing history.

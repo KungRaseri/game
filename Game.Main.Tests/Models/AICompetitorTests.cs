@@ -1,5 +1,7 @@
 #nullable enable
 
+using Game.Items.Models;
+
 namespace Game.Main.Tests.Models;
 
 public class AICompetitorTests

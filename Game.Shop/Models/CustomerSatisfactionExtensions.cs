@@ -8,15 +8,15 @@ public static class CustomerSatisfactionExtensions
     /// <summary>
     /// Get a descriptive string for the satisfaction level.
     /// </summary>
-    public static string GetDescription(this Core.Models.CustomerSatisfaction satisfaction)
+    public static string GetDescription(this Shop.CustomerSatisfaction satisfaction)
     {
         return satisfaction switch
         {
-            Core.Models.CustomerSatisfaction.Angry => "Very Disappointed",
-            Core.Models.CustomerSatisfaction.Disappointed => "Disappointed", 
-            Core.Models.CustomerSatisfaction.Neutral => "Neutral",
-            Core.Models.CustomerSatisfaction.Satisfied => "Happy",
-            Core.Models.CustomerSatisfaction.Delighted => "Delighted",
+            Shop.CustomerSatisfaction.Angry => "Very Disappointed",
+            Shop.CustomerSatisfaction.Disappointed => "Disappointed", 
+            Shop.CustomerSatisfaction.Neutral => "Neutral",
+            Shop.CustomerSatisfaction.Satisfied => "Happy",
+            Shop.CustomerSatisfaction.Delighted => "Delighted",
             _ => "Unknown"
         };
     }
@@ -24,7 +24,7 @@ public static class CustomerSatisfactionExtensions
     /// <summary>
     /// Get a numeric score for analytics (1-5 scale).
     /// </summary>
-    public static int GetScore(this Core.Models.CustomerSatisfaction satisfaction)
+    public static int GetScore(this Shop.CustomerSatisfaction satisfaction)
     {
         return (int)satisfaction;
     }
@@ -32,8 +32,8 @@ public static class CustomerSatisfactionExtensions
     /// <summary>
     /// Determine if this represents a positive experience.
     /// </summary>
-    public static bool IsPositive(this Core.Models.CustomerSatisfaction satisfaction)
+    public static bool IsPositive(this Shop.CustomerSatisfaction satisfaction)
     {
-        return satisfaction >= Core.Models.CustomerSatisfaction.Satisfied;
+        return satisfaction >= Shop.CustomerSatisfaction.Satisfied;
     }
 }

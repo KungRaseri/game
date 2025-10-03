@@ -1,4 +1,4 @@
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Extension methods for PerformanceGrade enum.

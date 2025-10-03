@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Represents a business expense transaction for the shop.

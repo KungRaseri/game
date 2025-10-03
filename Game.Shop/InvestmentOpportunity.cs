@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Represents an investment opportunity for shop improvement.

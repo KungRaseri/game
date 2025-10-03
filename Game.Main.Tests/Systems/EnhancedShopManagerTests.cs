@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Items.Models;
 using Game.Main.Systems;
 
 namespace Game.Main.Tests.Systems;
@@ -15,9 +16,9 @@ public class EnhancedShopManagerTests
         return new ShopManager();
     }
     
-    private Item CreateTestItem(string name = "Test Sword", ItemType type = ItemType.Weapon, QualityTier quality = QualityTier.Common)
+    private Items CreateTestItem(string name = "Test Sword", ItemType type = ItemType.Weapon, QualityTier quality = QualityTier.Common)
     {
-        return new Item(
+        return new Items(
             itemId: Guid.NewGuid().ToString(),
             name: name,
             description: $"A test {name.ToLower()}",

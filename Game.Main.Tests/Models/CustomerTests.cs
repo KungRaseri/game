@@ -1,7 +1,8 @@
 #nullable enable
 
 using Game.Adventure.Data;
-using Game.Item.Data;
+using Game.Items.Data;
+using Game.Items.Models;
 
 namespace Game.Main.Tests.Models;
 
@@ -10,10 +11,10 @@ namespace Game.Main.Tests.Models;
 /// </summary>
 public class CustomerTests
 {
-    private readonly Item _testWeapon;
-    private readonly Item _testArmor;
-    private readonly Item _commonMaterial;
-    private readonly Item _legendaryWeapon;
+    private readonly Items _testWeapon;
+    private readonly Items _testArmor;
+    private readonly Items _commonMaterial;
+    private readonly Items _legendaryWeapon;
     
     public CustomerTests()
     {

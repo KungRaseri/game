@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Comprehensive financial tracking and analysis for the shop.

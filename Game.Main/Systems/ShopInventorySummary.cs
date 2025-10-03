@@ -1,3 +1,5 @@
+using Game.Items.Models;
+
 namespace Game.Main.Systems;
 
 /// <summary>
@@ -6,10 +8,10 @@ namespace Game.Main.Systems;
 public record ShopInventorySummary
 {
     /// <summary>Items available to be stocked in shop.</summary>
-    public List<Item> AvailableItems { get; init; } = new();
+    public List<Items> AvailableItems { get; init; } = new();
     
     /// <summary>Items currently displayed in shop.</summary>
-    public List<Item> DisplayedItems { get; init; } = new();
+    public List<Items> DisplayedItems { get; init; } = new();
     
     /// <summary>Total estimated value of available items.</summary>
     public decimal TotalAvailableValue { get; init; }

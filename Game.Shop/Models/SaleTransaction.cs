@@ -1,18 +1,6 @@
-using Game.Core.Models;
+using Game.Items.Models;
 
 namespace Game.Shop.Models;
-
-/// <summary>
-/// Customer satisfaction levels based on pricing and experience.
-/// </summary>
-public enum CustomerSatisfaction
-{
-    Delighted = 5,    // Excellent value, will recommend
-    Satisfied = 4,    // Good value, likely to return
-    Neutral = 3,      // Fair price, no strong opinion
-    Disappointed = 2, // Overpriced, unlikely to return
-    Angry = 1         // Severely overpriced, may leave negative reviews
-}
 
 /// <summary>
 /// Represents a completed sale transaction in the shop.
@@ -41,7 +29,7 @@ public record SaleTransaction(
     DateTime TransactionTime,
     
     /// <summary>Customer satisfaction level with this transaction.</summary>
-    Core.Models.CustomerSatisfaction CustomerSatisfaction
+    Shop.CustomerSatisfaction CustomerSatisfaction
 )
 {
     /// <summary>

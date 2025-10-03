@@ -1,8 +1,9 @@
 #nullable enable
 
 using Game.Core.Utils;
+using Game.Items.Models;
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Represents a customer visiting the shop with AI-driven behavior and decision-making.

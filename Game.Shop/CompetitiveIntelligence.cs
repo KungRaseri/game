@@ -1,6 +1,8 @@
 #nullable enable
 
-namespace Game.Core.Models;
+using Game.Items.Models;
+
+namespace Game.Shop;
 
 /// <summary>
 /// Provides competitive intelligence data for a specific item category.

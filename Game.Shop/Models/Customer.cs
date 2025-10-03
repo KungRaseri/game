@@ -1,7 +1,7 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Core.Models;
+using Game.Items.Models;
 
 namespace Game.Shop.Models;
 
@@ -46,7 +46,7 @@ public class Customer
     public CustomerState CurrentState { get; private set; } = CustomerState.Browsing;
 
     /// <summary>Item currently being considered for purchase.</summary>
-    public Item? ItemBeingConsidered { get; private set; }
+    public Items.Models.Item? ItemBeingConsidered { get; private set; }
 
     /// <summary>Current thoughts or reactions (for UI display).</summary>
     public string CurrentThought { get; private set; } = "";
@@ -192,7 +192,7 @@ public class Customer
     /// <summary>
     /// Completes a purchase and updates customer satisfaction.
     /// </summary>
-    public Core.Models.CustomerSatisfaction CompletePurchase(Item item, decimal finalPrice)
+    public Shop.CustomerSatisfaction CompletePurchase(Item item, decimal finalPrice)
     {
         if (ItemBeingConsidered?.ItemId != item.ItemId)
         {
@@ -220,13 +220,13 @@ public class Customer
     /// <summary>
     /// Customer leaves without purchasing anything.
     /// </summary>
-    public Core.Models.CustomerSatisfaction LeaveWithoutPurchase(string reason = "Nothing caught my interest")
+    public Shop.CustomerSatisfaction LeaveWithoutPurchase(string reason = "Nothing caught my interest")
     {
         CurrentState = CustomerState.Leaving;
         CurrentThought = reason;
 
         // Leaving without purchase slightly reduces loyalty
-        var satisfaction = ViewedItems.Count > 0 ? Core.Models.CustomerSatisfaction.Neutral : Core.Models.CustomerSatisfaction.Disappointed;
+        var satisfaction = ViewedItems.Count > 0 ? Shop.CustomerSatisfaction.Neutral : Shop.CustomerSatisfaction.Disappointed;
         Loyalty = Loyalty.UpdateAfterVisit(satisfaction);
 
         GameLogger.Info($"Customer {Name} left without purchase: {reason}");
@@ -403,7 +403,7 @@ public class Customer
         return PurchaseDecision.NotBuying;
     }
 
-    private Core.Models.CustomerSatisfaction CalculateSatisfaction(Item item, decimal finalPrice)
+    private Shop.CustomerSatisfaction CalculateSatisfaction(Item item, decimal finalPrice)
     {
         var satisfaction = 50f; // Base satisfaction
 
@@ -432,11 +432,11 @@ public class Customer
 
         return satisfaction switch
         {
-            >= 80f => Core.Models.CustomerSatisfaction.Delighted,
-            >= 60f => Core.Models.CustomerSatisfaction.Satisfied,
-            >= 40f => Core.Models.CustomerSatisfaction.Neutral,
-            >= 20f => Core.Models.CustomerSatisfaction.Disappointed,
-            _ => Core.Models.CustomerSatisfaction.Angry
+            >= 80f => Shop.CustomerSatisfaction.Delighted,
+            >= 60f => Shop.CustomerSatisfaction.Satisfied,
+            >= 40f => Shop.CustomerSatisfaction.Neutral,
+            >= 20f => Shop.CustomerSatisfaction.Disappointed,
+            _ => Shop.CustomerSatisfaction.Angry
         };
     }
 
@@ -478,15 +478,15 @@ public class Customer
         return thoughts[_random.Next(thoughts.Length)];
     }
 
-    private string GeneratePurchaseThought(Core.Models.CustomerSatisfaction satisfaction)
+    private string GeneratePurchaseThought(Shop.CustomerSatisfaction satisfaction)
     {
         return satisfaction switch
         {
-            Core.Models.CustomerSatisfaction.Delighted => "Excellent! Exactly what I needed!",
-            Core.Models.CustomerSatisfaction.Satisfied => "Good purchase, I'm happy with this.",
-            Core.Models.CustomerSatisfaction.Neutral => "This will do fine.",
-            Core.Models.CustomerSatisfaction.Disappointed => "Not quite what I hoped for...",
-            Core.Models.CustomerSatisfaction.Angry => "I think I overpaid for this...",
+            Shop.CustomerSatisfaction.Delighted => "Excellent! Exactly what I needed!",
+            Shop.CustomerSatisfaction.Satisfied => "Good purchase, I'm happy with this.",
+            Shop.CustomerSatisfaction.Neutral => "This will do fine.",
+            Shop.CustomerSatisfaction.Disappointed => "Not quite what I hoped for...",
+            Shop.CustomerSatisfaction.Angry => "I think I overpaid for this...",
             _ => "Thanks for the transaction."
         };
     }

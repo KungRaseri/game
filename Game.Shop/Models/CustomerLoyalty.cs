@@ -9,7 +9,7 @@ public record CustomerLoyalty(
     int VisitCount,
     int PurchaseCount,
     decimal TotalSpent,
-    Core.Models.CustomerSatisfaction LastVisitSatisfaction,
+    Shop.CustomerSatisfaction LastVisitSatisfaction,
     DateTime FirstVisit,
     DateTime LastVisit,
     float LoyaltyScore)
@@ -52,7 +52,7 @@ public record CustomerLoyalty(
             VisitCount: 1,
             PurchaseCount: 0,
             TotalSpent: 0m,
-            LastVisitSatisfaction: Core.Models.CustomerSatisfaction.Neutral,
+            LastVisitSatisfaction: Shop.CustomerSatisfaction.Neutral,
             FirstVisit: now,
             LastVisit: now,
             LoyaltyScore: 0.5f
@@ -62,15 +62,15 @@ public record CustomerLoyalty(
     /// <summary>
     /// Updates loyalty after a successful purchase.
     /// </summary>
-    public CustomerLoyalty UpdateAfterPurchase(Core.Models.CustomerSatisfaction satisfaction)
+    public CustomerLoyalty UpdateAfterPurchase(Shop.CustomerSatisfaction satisfaction)
     {
         var satisfactionBonus = satisfaction switch
         {
-            Core.Models.CustomerSatisfaction.Delighted => 0.2f,
-            Core.Models.CustomerSatisfaction.Satisfied => 0.1f,
-            Core.Models.CustomerSatisfaction.Neutral => 0.0f,
-            Core.Models.CustomerSatisfaction.Disappointed => -0.1f,
-            Core.Models.CustomerSatisfaction.Angry => -0.2f,
+            Shop.CustomerSatisfaction.Delighted => 0.2f,
+            Shop.CustomerSatisfaction.Satisfied => 0.1f,
+            Shop.CustomerSatisfaction.Neutral => 0.0f,
+            Shop.CustomerSatisfaction.Disappointed => -0.1f,
+            Shop.CustomerSatisfaction.Angry => -0.2f,
             _ => 0.0f
         };
         
@@ -88,15 +88,15 @@ public record CustomerLoyalty(
     /// <summary>
     /// Updates loyalty after a visit without purchase.
     /// </summary>
-    public CustomerLoyalty UpdateAfterVisit(Core.Models.CustomerSatisfaction satisfaction)
+    public CustomerLoyalty UpdateAfterVisit(Shop.CustomerSatisfaction satisfaction)
     {
         var satisfactionEffect = satisfaction switch
         {
-            Core.Models.CustomerSatisfaction.Delighted => 0.02f,   // Good browsing experience
-            Core.Models.CustomerSatisfaction.Satisfied => 0.01f,
-            Core.Models.CustomerSatisfaction.Neutral => 0.0f,
-            Core.Models.CustomerSatisfaction.Disappointed => -0.05f,    // Poor experience
-            Core.Models.CustomerSatisfaction.Angry => -0.1f, // Very poor experience
+            Shop.CustomerSatisfaction.Delighted => 0.02f,   // Good browsing experience
+            Shop.CustomerSatisfaction.Satisfied => 0.01f,
+            Shop.CustomerSatisfaction.Neutral => 0.0f,
+            Shop.CustomerSatisfaction.Disappointed => -0.05f,    // Poor experience
+            Shop.CustomerSatisfaction.Angry => -0.1f, // Very poor experience
             _ => 0.0f
         };
         

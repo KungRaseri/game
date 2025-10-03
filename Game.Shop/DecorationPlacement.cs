@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Represents a decorative element placed in the shop.

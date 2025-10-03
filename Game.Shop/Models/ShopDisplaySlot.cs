@@ -1,4 +1,4 @@
-using Game.Core.Models;
+using Game.Items.Models;
 using Godot;
 
 namespace Game.Shop.Models;

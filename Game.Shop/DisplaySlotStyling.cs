@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Visual styling options for display slots.

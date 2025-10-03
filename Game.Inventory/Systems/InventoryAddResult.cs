@@ -1,4 +1,4 @@
-using Game.Item.Models.Materials;
+using Game.Items.Models.Materials;
 
 namespace Game.Inventory.Systems;
 

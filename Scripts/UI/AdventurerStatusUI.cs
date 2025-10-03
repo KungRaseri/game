@@ -1,6 +1,7 @@
 #nullable enable
 
 using Game.Adventure.Controllers;
+using Game.Adventure.Models;
 using Game.Main.Utils;
 using Godot;
 

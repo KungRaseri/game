@@ -1,10 +1,6 @@
 #nullable enable
 
 using Game.Main.Utils;
-using Customer = Game.Core.Models.Customer;
-using CustomerInterest = Game.Core.Models.CustomerInterest;
-using CustomerSatisfaction = Game.Core.Models.CustomerSatisfaction;
-using SaleTransaction = Game.Core.Models.SaleTransaction;
 
 namespace Game.Main.Systems;
 
@@ -393,7 +389,7 @@ public class CustomerShoppingSession
         List<(Core.Models.Item Item, decimal Price, int SlotId)> availableItems)
     {
         // Customer examines items based on their preferences and personality
-        var itemsToExamine = new List<(Item, decimal, int)>();
+        var itemsToExamine = new List<(Items, decimal, int)>();
         
         // Sort items by customer preference
         var sortedItems = availableItems

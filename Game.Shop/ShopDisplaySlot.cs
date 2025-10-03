@@ -1,8 +1,9 @@
 #nullable enable
 
+using Game.Items.Models;
 using Godot;
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Represents a configurable display slot in the shop where items can be placed for sale.

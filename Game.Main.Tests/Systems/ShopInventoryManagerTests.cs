@@ -1,6 +1,7 @@
 #nullable enable
 
 using FluentAssertions;
+using Game.Items.Models;
 using Game.Main.Systems;
 using Game.Main.Utils;
 using Game.Main.Tests.Utils;
@@ -270,7 +271,7 @@ public class ShopInventoryManagerTests : IDisposable
     public void AutoStockNextItem_UseSuggestedPrice_UsesSuggestedPricing()
     {
         // Arrange - First, create an item and set a suggested price for it
-        var testItem = new Item(
+        var testItem = new Items(
             itemId: "test-sword-123",
             name: "Test Sword",
             description: "A basic test sword",
@@ -417,9 +418,9 @@ public class ShopInventoryManagerTests : IDisposable
             log.Message.Contains("ShopInventoryManager disposed"));
     }
 
-    private static Item CreateTestItem(string id, string name, ItemType type, QualityTier quality = QualityTier.Common, int value = 50)
+    private static Items CreateTestItem(string id, string name, ItemType type, QualityTier quality = QualityTier.Common, int value = 50)
     {
-        return new Item(id, name, $"A test {name.ToLower()}", type, quality, value);
+        return new Items(id, name, $"A test {name.ToLower()}", type, quality, value);
     }
 
     public void Dispose()

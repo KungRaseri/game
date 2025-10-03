@@ -1,3 +1,4 @@
+using Game.Items.Models;
 using Godot;
 
 namespace Game.Main.Tests.Models;
@@ -171,7 +172,7 @@ public class MaterialTests
         var material = new Material("mat_001", "Test", "Test", QualityTier.Common, 5, MaterialType.Metal);
 
         // Act & Assert
-        Assert.IsAssignableFrom<Item>(material);
+        Assert.IsAssignableFrom<Items>(material);
     }
 
     [Theory]

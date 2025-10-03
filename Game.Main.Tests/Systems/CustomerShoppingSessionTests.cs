@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Items.Models;
 using Game.Main.Systems;
 
 namespace Game.Main.Tests.Systems;
@@ -18,9 +19,9 @@ public class CustomerShoppingSessionTests
         return (shopManager, customer, session);
     }
     
-    private Item CreateTestItem(string name = "Test Sword", ItemType type = ItemType.Weapon, QualityTier quality = QualityTier.Common)
+    private Items CreateTestItem(string name = "Test Sword", ItemType type = ItemType.Weapon, QualityTier quality = QualityTier.Common)
     {
-        return new Item(
+        return new Items(
             itemId: Guid.NewGuid().ToString(),
             name: name,
             description: $"A test {name.ToLower()}",
@@ -70,7 +71,7 @@ public class CustomerShoppingSessionTests
         shopManager.StockItem(testItem, 0, 50m);
         
         // Track examined items
-        var examinedItems = new List<(Customer customer, Item item, CustomerInterest interest)>();
+        var examinedItems = new List<(Customer customer, Items item, CustomerInterest interest)>();
         session.ItemExamined += (c, i, interest) => examinedItems.Add((c, i, interest));
         
         // Act
@@ -168,7 +169,7 @@ public class CustomerShoppingSessionTests
         shopManager.StockItem(expensiveItem, 0, 200m); // Too expensive for novice adventurer
         
         // Track negotiation attempts
-        var negotiationAttempts = new List<(Customer customer, Item item, decimal offer)>();
+        var negotiationAttempts = new List<(Customer customer, Items item, decimal offer)>();
         session.NegotiationStarted += (c, i, offer) => negotiationAttempts.Add((c, i, offer));
         
         // Act

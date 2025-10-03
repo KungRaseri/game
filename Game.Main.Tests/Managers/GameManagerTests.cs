@@ -1,3 +1,4 @@
+using Game.Adventure.Models;
 using Game.Main.Managers;
 
 namespace Game.Main.Tests.Managers

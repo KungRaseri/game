@@ -1,4 +1,6 @@
-namespace Game.Core.Models;
+using Game.Items.Models;
+
+namespace Game.Shop;
 
 /// <summary>
 /// Represents an action taken by an AI competitor.

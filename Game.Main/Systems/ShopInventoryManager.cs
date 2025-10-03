@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Items.Models;
 using Game.Main.Utils;
 
 namespace Game.Main.Systems;
@@ -58,7 +59,7 @@ public class ShopInventoryManager : IDisposable
     /// <param name="displaySlotId">The shop display slot to use</param>
     /// <param name="price">The price to set for the item</param>
     /// <returns>True if successfully transferred and stocked</returns>
-    public bool TransferToShop(Item item, int displaySlotId, decimal price)
+    public bool TransferToShop(Items item, int displaySlotId, decimal price)
     {
         // Check if item is already displayed
         if (_shopManager.DisplaySlots.Any(slot => slot.CurrentItem?.ItemId == item.ItemId))
@@ -102,7 +103,7 @@ public class ShopInventoryManager : IDisposable
     /// </summary>
     /// <param name="item">The item to get suggested price for</param>
     /// <returns>Suggested price, or calculated price if no previous suggestion exists</returns>
-    public decimal GetSuggestedPrice(Item item)
+    public decimal GetSuggestedPrice(Items item)
     {
         if (_suggestedPrices.TryGetValue(item.ItemId, out var storedPrice))
         {
@@ -157,7 +158,7 @@ public class ShopInventoryManager : IDisposable
     /// Create a test item for Phase 1 demonstration.
     /// This will be replaced with actual crafted items in later phases.
     /// </summary>
-    private Item CreateTestItem()
+    private Items CreateTestItem()
     {
         var itemTypes = new[] { ItemType.Weapon, ItemType.Armor, ItemType.Material };
         var qualities = new[] { QualityTier.Common, QualityTier.Uncommon, QualityTier.Rare, QualityTier.Epic };
@@ -174,7 +175,7 @@ public class ShopInventoryManager : IDisposable
             _ => "Item"
         };
         
-        return new Item(
+        return new Items(
             itemId: Guid.NewGuid().ToString(),
             name: $"{quality} {baseName}",
             description: $"A {quality.ToString().ToLower()} quality {baseName.ToLower()}",
@@ -198,7 +199,7 @@ public class ShopInventoryManager : IDisposable
         
         return new ShopInventorySummary
         {
-            AvailableItems = new List<Item>(), // Simplified for Phase 1
+            AvailableItems = new List<Items>(), // Simplified for Phase 1
             DisplayedItems = displayedItems,
             TotalAvailableValue = 0m,
             TotalDisplayedValue = displayedItems.Sum(item => GetSuggestedPrice(item)),

@@ -2,7 +2,7 @@
 
 using Godot;
 
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Represents the overall layout and design configuration of the shop.

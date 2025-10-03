@@ -1,3 +1,5 @@
+using Game.Adventure.Models;
+
 namespace Game.Main.Tests.Models
 {
     public class AdventurerStateTests

@@ -1,4 +1,4 @@
-namespace Game.Core.Models;
+namespace Game.Shop;
 
 /// <summary>
 /// Types of customers that visit the shop, each with distinct behaviors and preferences.

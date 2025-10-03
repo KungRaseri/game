@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Items.Models;
 using Game.Main.Utils;
 
 namespace Game.Main.Systems;

@@ -1,6 +1,8 @@
 #nullable enable
 
-namespace Game.Core.Models;
+using Game.Items.Models;
+
+namespace Game.Shop;
 
 /// <summary>
 /// Represents an AI competitor shop with its own pricing strategy and market behavior.
