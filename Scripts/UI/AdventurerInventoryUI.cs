@@ -1,9 +1,9 @@
 #nullable enable
 
 using Godot;
-using Game.Main.Systems.Inventory;
-using Game.Main.Models.Materials;
-using Game.Main.Utils;
+using Game.Inventory.Models;
+using Game.Adventure.Models;
+using Game.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
