@@ -39,8 +39,10 @@ public class LootEntryTests
         // Arrange & Act
         var entry = new LootEntry(_testMaterial, 0.5f, 1, 2);
 
-        // Assert
-        Assert.Null(entry.Material.Quality);
+        // Assert - ForceQuality should not be set
+        Assert.False(entry.ForceQuality.HasValue);
+        // And GetEffectiveRarity should return the material's base quality
+        Assert.Equal(QualityTier.Common, entry.GetEffectiveRarity());
     }
 
     [Fact]
