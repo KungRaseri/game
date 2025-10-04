@@ -21,28 +21,57 @@ Fantasy Shop Keeper combines the excitement of dungeon crawling with the strateg
 
 ## 🏗️ Project Structure
 
+The project uses **Vertical Slice Architecture** with domain-focused C# modules:
+
+### Core Modules
+
 ```
-Game.Main/                 # Core game logic (C#)
-├── Controllers/           # Business logic controllers
-├── Data/                 # Entity factories and configurations
-├── Managers/             # System coordination and lifecycle
-├── Models/               # Data classes and game state
-├── Systems/              # Core game systems (Combat, Crafting, Shop)
-├── UI/                   # UI integration and management
-└── Utils/                # Helper classes and extensions
+Game.Core/                    # Shared utilities and cross-cutting concerns
+└── Utils/                    # Logging infrastructure (GameLogger, ILoggerBackend)
 
-Game.Main.Tests/          # Comprehensive unit tests
-├── Controllers/          # Controller unit tests
-├── Data/                 # Data layer tests
-├── Managers/             # Manager tests
-├── Models/               # Model tests
-└── Systems/              # System tests
+Game.Adventure/               # Adventurer management and combat system
+├── Controllers/              # High-level adventurer coordination
+├── Data/                    # Entity type configurations and factories
+├── Models/                  # Adventurer state and combat entities
+└── Systems/                 # Combat engine and battle mechanics
 
+Game.Items/                   # Item and material management
+├── Data/                    # Item and loot table definitions
+├── Models/                  # Item types, quality tiers, materials
+├── Systems/                 # Loot generation and drop systems
+└── Utils/                   # Quality tier calculations
+
+Game.Inventories/            # Inventory and storage management
+├── Models/                  # Inventory data structures
+└── Systems/                 # Inventory operations, validation, stacking
+
+Game.Crafting/               # Crafting system and recipes
+└── (Recipe and crafting logic)
+
+Game.Shop/                   # Shop management and customer simulation
+├── Models/                  # Customer types, purchase decisions, pricing
+└── Systems/                 # Customer behavior, purchase logic, shop operations
+
+Game.Economy/                # Financial tracking and treasury management
+├── Models/                  # Financial summaries, expense categories
+└── Systems/                 # Treasury operations, budgeting, financial analytics
+```
+
+### Test Projects
+
+Each module has a corresponding test project (e.g., `Game.Core.Tests`, `Game.Adventure.Tests`) with comprehensive unit tests.
+
+### Godot Integration
+
+```
 Scenes/                   # Godot scenes and UI components
 ├── main.tscn            # Main game scene
 ├── Game/                # Game object scenes
 ├── Prefabs/             # Reusable scene components
 └── UI/                  # User interface scenes
+
+Scripts/                 # Godot C# scene scripts
+└── (UI and scene controllers)
 
 Documentation/           # Project documentation
 ├── MILESTONES.md        # Development roadmap and feature specifications
@@ -89,11 +118,15 @@ Documentation/           # Project documentation
 git clone https://github.com/KungRaseri/game.git
 cd game
 
-# Build the C# project
-dotnet build Game.Main/Game.Main.csproj
+# Build all modules (solution includes all vertically sliced projects)
+dotnet build Game.sln
 
-# Run unit tests
-dotnet test Game.Main.Tests/Game.Main.Tests.csproj
+# Run all tests across all modules
+dotnet test Game.sln
+
+# Run tests for a specific module
+dotnet test Game.Adventure.Tests/Game.Adventure.Tests.csproj
+dotnet test Game.Items.Tests/Game.Items.Tests.csproj
 
 # Open in Godot
 # Launch Godot 4.5 and import the project.godot file
@@ -101,8 +134,14 @@ dotnet test Game.Main.Tests/Game.Main.Tests.csproj
 
 ### Running Tests
 ```bash
-# Run all tests with coverage
-dotnet test Game.Main.Tests/ --collect:"XPlat Code Coverage"
+# Run all tests across all modules with coverage
+dotnet test Game.sln --collect:"XPlat Code Coverage"
+
+# Run tests for specific modules
+dotnet test Game.Adventure.Tests/
+dotnet test Game.Items.Tests/
+dotnet test Game.Shop.Tests/
+dotnet test Game.Economy.Tests/
 
 # Run specific test category
 dotnet test --filter "Category=Combat"
@@ -139,7 +178,26 @@ This project includes a sophisticated test reporting system that provides:
 
 ## 🏛️ Architecture Overview
 
+### Vertical Slice Architecture
+
+The project is organized into **vertically sliced modules**, where each module represents a complete feature domain:
+
+- **Game.Core** - Shared utilities and cross-cutting concerns (logging, common interfaces)
+- **Game.Adventure** - Complete adventurer and combat system with its own models, controllers, and systems
+- **Game.Items** - Item definitions, materials, quality tiers, and loot generation
+- **Game.Inventories** - Inventory management, stacking, validation, and storage
+- **Game.Crafting** - Recipe system and item crafting logic
+- **Game.Shop** - Customer simulation, pricing, and shop management
+- **Game.Economy** - Financial tracking, treasury management, and economic analytics
+
+Each module is a separate C# project with:
+- Clear domain boundaries
+- Independent test project
+- Minimal coupling to other modules
+- Complete feature implementation (Models, Systems, Controllers, Data)
+
 ### Design Patterns
+- **Vertical Slice Architecture**: Features organized by domain rather than technical layers
 - **Generic Entity System**: Reusable `CombatEntityStats` for all combat units
 - **Factory Pattern**: `EntityFactory` creates configured adventurers and monsters  
 - **State Machine**: Robust state management for adventurer actions
