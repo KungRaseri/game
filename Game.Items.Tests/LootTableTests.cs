@@ -12,27 +12,33 @@ public class LootTableTests
         "iron_ore",
         "Iron Ore",
         "Common metal ore",
-        Category.Metal,
         QualityTier.Common,
-        BaseValue: 2
+        2,
+        Category.Metal,
+        true,
+        999
     );
 
     private readonly Material _leather = new(
         "leather",
         "Leather",
         "Basic leather",
-        Category.Organic,
         QualityTier.Common,
-        BaseValue: 1
+        1,
+        Category.Leather,
+        true,
+        999
     );
 
     private readonly Material _gem = new(
         "gem",
         "Gem",
         "Precious gem",
-        Category.Gems,
         QualityTier.Rare,
-        BaseValue: 10
+        10,
+        Category.Gem,
+        true,
+        999
     );
 
     [Fact]
@@ -178,27 +184,28 @@ public class LootTableTests
         // Arrange
         var entries = new List<LootEntry>
         {
-            new(_ironOre, 0.8f, 1, 3), // Metals
-            new(_leather, 0.6f, 1, 2), // Organic
-            new(_gem, 0.1f, 1, 1) // Gems
+            new(_ironOre, 0.8f, 1, 3), // Metal
+            new(_leather, 0.6f, 1, 2), // Leather
+            new(_gem, 0.1f, 1, 1) // Gem
         };
         var lootTable = new LootTable("goblin", entries);
 
         // Act
-        var metalDrops = lootTable.GetDropsByCategory(Category.Metals);
-        var organicDrops = lootTable.GetDropsByCategory(Category.Organic);
-        var gemDrops = lootTable.GetDropsByCategory(Category.Gems);
+        var metalDrops = lootTable.GetDropsByCategory(Category.Metal);
+        var leatherDrops = lootTable.GetDropsByCategory(Category.Leather);
+        var gemDrops = lootTable.GetDropsByCategory(Category.Gem);
 
         // Assert
         Assert.Single(metalDrops);
-        Assert.Equal(_ironOre.Id, metalDrops[0].Material.Id);
+        Assert.Equal(_ironOre.ItemId, metalDrops[0].Material.ItemId);
 
-        Assert.Single(organicDrops);
-        Assert.Equal(_leather.Id, organicDrops[0].Material.Id);
+        Assert.Single(leatherDrops);
+        Assert.Equal(_leather.ItemId, leatherDrops[0].Material.ItemId);
 
         Assert.Single(gemDrops);
-        Assert.Equal(_gem.Id, gemDrops[0].Material.Id);
+        Assert.Equal(_gem.ItemId, gemDrops[0].Material.ItemId);
     }
+
 
     [Fact]
     public void LootTable_GetDropsByRarity_ReturnsCorrectMaterials()
@@ -219,13 +226,13 @@ public class LootTableTests
 
         // Assert
         Assert.Single(commonDrops);
-        Assert.Equal(_ironOre.Id, commonDrops[0].Material.Id);
+        Assert.Equal(_ironOre.ItemId, commonDrops[0].Material.ItemId);
 
         Assert.Single(uncommonDrops);
-        Assert.Equal(_leather.Id, uncommonDrops[0].Material.Id);
+        Assert.Equal(_leather.ItemId, uncommonDrops[0].Material.ItemId);
 
         Assert.Single(rareDrops);
-        Assert.Equal(_gem.Id, rareDrops[0].Material.Id);
+        Assert.Equal(_gem.ItemId, rareDrops[0].Material.ItemId);
     }
 
     [Fact]

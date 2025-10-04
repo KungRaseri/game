@@ -1,32 +1,36 @@
 #nullable enable
 
+using Game.Items.Models;
+using Game.Items.Models.Materials;
 using Game.Items.Systems;
 
 namespace Game.Items.Tests;
 
 public class LootEntryTests
 {
-    private readonly MaterialType _testMaterial = new(
+    private readonly Material _testMaterial = new(
         "iron_ore",
         "Iron Ore",
         "Common metal ore",
-        MaterialCategory.Metals,
-        MaterialRarity.Common,
-        BaseValue: 2
+        QualityTier.Common,
+        2,
+        Category.Metal,
+        true,
+        999
     );
 
     [Fact]
     public void LootEntry_ValidConfiguration_CreatesSuccessfully()
     {
         // Arrange & Act
-        var entry = new LootEntry(_testMaterial, 0.8f, 1, 3, MaterialRarity.Uncommon);
+        var entry = new LootEntry(_testMaterial, 0.8f, 1, 3, QualityTier.Uncommon);
 
         // Assert
         Assert.Equal(_testMaterial, entry.Material);
         Assert.Equal(0.8f, entry.DropChance);
         Assert.Equal(1, entry.MinQuantity);
         Assert.Equal(3, entry.MaxQuantity);
-        Assert.Equal(MaterialRarity.Uncommon, entry.Quality);
+        Assert.Equal(QualityTier.Uncommon, entry.Quality);
     }
 
     [Fact]
@@ -78,7 +82,7 @@ public class LootEntryTests
     }
 
     [Theory]
-    [InlineData(5, 3)]  // Max < Min
+    [InlineData(5, 3)] // Max < Min
     [InlineData(10, 5)] // Max < Min
     public void LootEntry_Validate_WithMaxLessThanMin_ThrowsException(int minQuantity, int maxQuantity)
     {
@@ -94,13 +98,13 @@ public class LootEntryTests
     public void LootEntry_GetEffectiveRarity_WithForceRarity_ReturnsForceRarity()
     {
         // Arrange
-        var entry = new LootEntry(_testMaterial, 0.5f, 1, 3, MaterialRarity.Epic);
+        var entry = new LootEntry(_testMaterial, 0.5f, 1, 3, QualityTier.Epic);
 
         // Act
         var effectiveRarity = entry.GetEffectiveRarity();
 
         // Assert
-        Assert.Equal(MaterialRarity.Epic, effectiveRarity);
+        Assert.Equal(QualityTier.Epic, effectiveRarity);
     }
 
     [Fact]
@@ -113,7 +117,7 @@ public class LootEntryTests
         var effectiveRarity = entry.GetEffectiveRarity();
 
         // Assert
-        Assert.Equal(MaterialRarity.Common, effectiveRarity); // Material's base rarity
+        Assert.Equal(QualityTier.Common, effectiveRarity); // Material's base rarity
     }
 
     [Theory]
@@ -136,7 +140,7 @@ public class LootEntryTests
     public void LootEntry_ToString_WithForceRarity_ShowsForceRarity()
     {
         // Arrange
-        var entry = new LootEntry(_testMaterial, 0.8f, 1, 3, MaterialRarity.Epic);
+        var entry = new LootEntry(_testMaterial, 0.8f, 1, 3, QualityTier.Epic);
 
         // Act
         var result = entry.ToString();

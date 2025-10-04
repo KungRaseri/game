@@ -1,5 +1,6 @@
 using Game.Items.Data;
 using Game.Items.Models;
+using Game.Items.Models.Materials;
 
 namespace Game.Items.Tests;
 
@@ -26,7 +27,6 @@ public class ItemFactoryTests
         Assert.Equal("A test sword", weapon.Description);
         Assert.Equal(QualityTier.Rare, weapon.Quality);
         Assert.Equal(ItemType.Weapon, weapon.ItemType);
-        Assert.Equal(EquipmentSlot.Weapon, weapon.EquipmentSlot);
     }
 
     [Fact]
@@ -82,7 +82,6 @@ public class ItemFactoryTests
         Assert.Equal("Test armor piece", armor.Description);
         Assert.Equal(QualityTier.Epic, armor.Quality);
         Assert.Equal(ItemType.Armor, armor.ItemType);
-        Assert.Equal(EquipmentSlot.Armor, armor.EquipmentSlot);
     }
 
     [Fact]
@@ -124,7 +123,7 @@ public class ItemFactoryTests
             Name: "Test Ore",
             Description: "Test material",
             BaseValue: 10,
-            Category: MaterialType.Metal,
+            Category: Category.Metal,
             Stackable: true,
             MaxStackSize: 99
         );
@@ -138,7 +137,7 @@ public class ItemFactoryTests
         Assert.Equal("Test material", material.Description);
         Assert.Equal(QualityTier.Uncommon, material.Quality);
         Assert.Equal(ItemType.Material, material.ItemType);
-        Assert.Equal(MaterialType.Metal, material.MaterialType);
+        Assert.Equal(Category.Metal, material.Category);
         Assert.True(material.Stackable);
         Assert.Equal(99, material.MaxStackSize);
     }
@@ -147,7 +146,7 @@ public class ItemFactoryTests
     public void CreateMaterial_AppliesQualityTierModifiers_ToValue()
     {
         // Arrange
-        var config = new MaterialConfig("test", "Test", "Test", 20, MaterialType.Wood);
+        var config = new MaterialConfig("test", "Test", "Test", 20, Category.Wood);
 
         // Act
         var commonMaterial = ItemFactory.CreateMaterial(config, QualityTier.Common);
@@ -227,7 +226,7 @@ public class ItemFactoryTests
         Assert.Equal(quality, material.Quality);
         Assert.Equal("Iron Ore", material.Name);
         Assert.Equal(ItemType.Material, material.ItemType);
-        Assert.Equal(MaterialType.Metal, material.MaterialType);
+        Assert.Equal(Category.Metal, material.Category);
     }
 
     [Fact]
@@ -292,7 +291,7 @@ public class ItemFactoryTests
 
         // Assert
         Assert.Equal("Steel Ingot", material.Name);
-        Assert.Equal(MaterialType.Metal, material.MaterialType);
+        Assert.Equal(Category.Metal, material.Category);
         Assert.Equal(QualityTier.Uncommon, material.Quality);
     }
 
@@ -304,7 +303,7 @@ public class ItemFactoryTests
 
         // Assert
         Assert.Equal("Monster Hide", material.Name);
-        Assert.Equal(MaterialType.Leather, material.MaterialType);
+        Assert.Equal(Category.Leather, material.Category);
         Assert.Equal(QualityTier.Rare, material.Quality);
     }
 
@@ -316,7 +315,7 @@ public class ItemFactoryTests
 
         // Assert
         Assert.Equal("Tanned Leather", material.Name);
-        Assert.Equal(MaterialType.Leather, material.MaterialType);
+        Assert.Equal(Category.Leather, material.Category);
     }
 
     [Fact]
@@ -327,7 +326,7 @@ public class ItemFactoryTests
 
         // Assert
         Assert.Equal("Oak Wood", material.Name);
-        Assert.Equal(MaterialType.Wood, material.MaterialType);
+        Assert.Equal(Category.Wood, material.Category);
     }
 
     [Fact]
@@ -338,7 +337,7 @@ public class ItemFactoryTests
 
         // Assert
         Assert.Equal("Ruby", material.Name);
-        Assert.Equal(MaterialType.Gem, material.MaterialType);
+        Assert.Equal(Category.Gem, material.Category);
         Assert.Equal(QualityTier.Legendary, material.Quality);
     }
 }

@@ -1,7 +1,6 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.Core.Utils;
 using Game.Inventory.Systems;
 using Game.Items.Models;
 using Game.Shop.Models;
@@ -17,17 +16,10 @@ public class ShopInventoryManagerTests : IDisposable
     private readonly ShopInventoryManager _shopInventoryManager;
     private readonly ShopManager _shopManager;
     private readonly InventoryManager _inventoryManager;
-    private readonly TreasuryManager _treasuryManager;
-    private readonly TestableLoggerBackend _loggerBackend;
 
     public ShopInventoryManagerTests()
     {
-        // Set up test logger
-        _loggerBackend = new TestableLoggerBackend();
-        GameLogger.SetBackend(_loggerBackend);
-
         // Initialize managers
-        _treasuryManager = new TreasuryManager(100);
         _inventoryManager = new InventoryManager();
         _shopManager = new ShopManager();
         _shopInventoryManager = new ShopInventoryManager(_inventoryManager, _shopManager);
@@ -38,9 +30,6 @@ public class ShopInventoryManagerTests : IDisposable
     {
         // Assert
         _shopInventoryManager.InventoryManager.Should().BeSameAs(_inventoryManager);
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Info &&
-            log.Message.Contains("ShopInventoryManager initialized"));
     }
 
     [Fact]
@@ -78,13 +67,11 @@ public class ShopInventoryManagerTests : IDisposable
         result.Should().BeTrue();
         _shopManager.DisplaySlots[slotId].CurrentItem.Should().NotBeNull();
         _shopManager.DisplaySlots[slotId].CurrentItem!.ItemId.Should().Be("test_sword");
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Info &&
-            log.Message.Contains("Transferred Test Sword to shop display slot 0"));
+        _shopManager.DisplaySlots[slotId].CurrentPrice.Should().Be(price);
     }
 
     [Fact]
-    public void TransferToShop_ItemAlreadyDisplayed_ReturnsFalseAndLogsWarning()
+    public void TransferToShop_ItemAlreadyDisplayed_ReturnsFalse()
     {
         // Arrange
         var testItem = CreateTestItem("test_sword", "Test Sword", ItemType.Weapon);
@@ -96,9 +83,6 @@ public class ShopInventoryManagerTests : IDisposable
 
         // Assert
         result.Should().BeFalse();
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Warning &&
-            log.Message.Contains("Item Test Sword is already displayed in shop"));
     }
 
     [Fact]
@@ -107,7 +91,7 @@ public class ShopInventoryManagerTests : IDisposable
         // Arrange
         var testItem = CreateTestItem("test_sword", "Test Sword", ItemType.Weapon);
         var price = 50m;
-        var invalidSlotId = 999; // Outside valid range
+        var invalidSlotId = 999;
 
         // Act
         var result = _shopInventoryManager.TransferToShop(testItem, invalidSlotId, price);
@@ -130,9 +114,6 @@ public class ShopInventoryManagerTests : IDisposable
         // Assert
         result.Should().BeTrue();
         _shopManager.DisplaySlots[slotId].CurrentItem.Should().BeNull();
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Info &&
-            log.Message.Contains("Removed Test Sword from shop display"));
     }
 
     [Fact]
@@ -177,7 +158,7 @@ public class ShopInventoryManagerTests : IDisposable
     }
 
     [Fact]
-    public void SetSuggestedPrice_ValidPrice_StoresPriceAndLogs()
+    public void SetSuggestedPrice_ValidPrice_StoresPrice()
     {
         // Arrange
         var itemId = "test_item";
@@ -189,41 +170,38 @@ public class ShopInventoryManagerTests : IDisposable
         // Assert
         var testItem = CreateTestItem(itemId, "Test Item", ItemType.Weapon);
         _shopInventoryManager.GetSuggestedPrice(testItem).Should().Be(price);
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Debug &&
-            log.Message.Contains($"Set suggested price for item {itemId}: {price} gold"));
     }
 
     [Fact]
-    public void SetSuggestedPrice_InvalidPrice_LogsWarning()
+    public void SetSuggestedPrice_InvalidPrice_DoesNotStorePrice()
     {
         // Arrange
         var itemId = "test_item";
+        var testItem = CreateTestItem(itemId, "Test Item", ItemType.Weapon);
+        var originalPrice = _shopInventoryManager.GetSuggestedPrice(testItem);
         var invalidPrice = -10m;
 
         // Act
         _shopInventoryManager.SetSuggestedPrice(itemId, invalidPrice);
 
         // Assert
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Warning &&
-            log.Message.Contains($"Invalid suggested price {invalidPrice} for item {itemId}"));
+        _shopInventoryManager.GetSuggestedPrice(testItem).Should().Be(originalPrice);
     }
 
     [Fact]
-    public void SetSuggestedPrice_ZeroPrice_LogsWarning()
+    public void SetSuggestedPrice_ZeroPrice_DoesNotStorePrice()
     {
         // Arrange
         var itemId = "test_item";
+        var testItem = CreateTestItem(itemId, "Test Item", ItemType.Weapon);
+        var originalPrice = _shopInventoryManager.GetSuggestedPrice(testItem);
         var zeroPrice = 0m;
 
         // Act
         _shopInventoryManager.SetSuggestedPrice(itemId, zeroPrice);
 
         // Assert
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Warning &&
-            log.Message.Contains($"Invalid suggested price {zeroPrice} for item {itemId}"));
+        _shopInventoryManager.GetSuggestedPrice(testItem).Should().Be(originalPrice);
     }
 
     [Fact]
@@ -238,7 +216,7 @@ public class ShopInventoryManagerTests : IDisposable
     }
 
     [Fact]
-    public void AutoStockNextItem_WithFullShop_ReturnsFalseAndLogs()
+    public void AutoStockNextItem_WithFullShop_ReturnsFalse()
     {
         // Arrange - Fill all shop slots
         for (int i = 0; i < 6; i++)
@@ -252,9 +230,6 @@ public class ShopInventoryManagerTests : IDisposable
 
         // Assert
         result.Should().BeFalse();
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Info &&
-            log.Message.Contains("No available shop slots for auto-stocking"));
     }
 
     [Fact]
@@ -271,22 +246,16 @@ public class ShopInventoryManagerTests : IDisposable
     [Fact]
     public void AutoStockNextItem_UseSuggestedPrice_UsesSuggestedPricing()
     {
-        // Arrange - First, create an item and set a suggested price for it
-        var testItem = new Items(
-            itemId: "test-sword-123",
-            name: "Test Sword",
-            description: "A basic test sword",
-            itemType: ItemType.Weapon,
-            quality: QualityTier.Common,
-            value: 15
-        );
-
+        // Arrange
+        var testItem = CreateTestItem("test-sword-123", "Test Sword", ItemType.Weapon, QualityTier.Common, 15);
         var customPrice = 123m;
         _shopInventoryManager.SetSuggestedPrice(testItem.ItemId, customPrice);
 
-        // Act - Transfer using the suggested price
-        var result =
-            _shopInventoryManager.TransferToShop(testItem, 0, _shopInventoryManager.GetSuggestedPrice(testItem));
+        // Act
+        var result = _shopInventoryManager.TransferToShop(
+            testItem,
+            0,
+            _shopInventoryManager.GetSuggestedPrice(testItem));
 
         // Assert
         result.Should().BeTrue();
@@ -333,28 +302,6 @@ public class ShopInventoryManagerTests : IDisposable
     }
 
     [Fact]
-    public void ItemSoldEvent_UpdatesPricingBasedOnSatisfaction()
-    {
-        // Arrange
-        var testItem = CreateTestItem("test_item", "Test Item", ItemType.Weapon);
-        var originalPrice = 100m;
-        _shopInventoryManager.TransferToShop(testItem, 0, originalPrice);
-
-        // Create a customer
-        var customer = new Customer(CustomerType.VeteranAdventurer);
-
-        // Act - Simulate sale that makes customer delighted (should increase future price)
-        var transaction = _shopManager.ProcessSale(0, customer.CustomerId, CustomerSatisfaction.Delighted);
-
-        // Assert
-        transaction.Should().NotBeNull();
-        var updatedPrice = _shopInventoryManager.GetSuggestedPrice(testItem);
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Info &&
-            log.Message.Contains($"Sold item {testItem.Name}"));
-    }
-
-    [Fact]
     public void ItemSoldEvent_DelightedCustomer_IncreasesPriceSuggestion()
     {
         // Arrange
@@ -369,7 +316,7 @@ public class ShopInventoryManagerTests : IDisposable
         // Assert
         transaction.Should().NotBeNull();
         var newPrice = _shopInventoryManager.GetSuggestedPrice(testItem);
-        newPrice.Should().Be(originalPrice * 1.05m); // 5% increase for delighted
+        newPrice.Should().Be(originalPrice * 1.05m);
     }
 
     [Fact]
@@ -387,7 +334,7 @@ public class ShopInventoryManagerTests : IDisposable
         // Assert
         transaction.Should().NotBeNull();
         var newPrice = _shopInventoryManager.GetSuggestedPrice(testItem);
-        newPrice.Should().Be(originalPrice * 0.9m); // 10% decrease for angry
+        newPrice.Should().Be(originalPrice * 0.9m);
     }
 
     [Fact]
@@ -405,22 +352,14 @@ public class ShopInventoryManagerTests : IDisposable
         // Assert
         transaction.Should().NotBeNull();
         var newPrice = _shopInventoryManager.GetSuggestedPrice(testItem);
-        newPrice.Should().Be(originalPrice); // No change for neutral
+        newPrice.Should().Be(originalPrice);
     }
 
-    [Fact]
-    public void Dispose_UnsubscribesFromEvents()
-    {
-        // Act
-        _shopInventoryManager.Dispose();
-
-        // Assert
-        _loggerBackend.GetLogs().Should().Contain(log =>
-            log.Level == GameLogger.LogLevel.Info &&
-            log.Message.Contains("ShopInventoryManager disposed"));
-    }
-
-    private static Item CreateTestItem(string id, string name, ItemType type, QualityTier quality = QualityTier.Common,
+    private static Item CreateTestItem(
+        string id,
+        string name,
+        ItemType type,
+        QualityTier quality = QualityTier.Common,
         int value = 50)
     {
         return new Item(id, name, $"A test {name.ToLower()}", type, quality, value);

@@ -1,36 +1,44 @@
 #nullable enable
 
+using Game.Items.Models;
+using Game.Items.Models.Materials;
 using Game.Items.Systems;
 
 namespace Game.Items.Tests;
 
 public class LootGeneratorTests
 {
-    private readonly MaterialType _ironOre = new(
+    private readonly Material _ironOre = new(
         "iron_ore",
         "Iron Ore",
         "Common metal ore",
-        MaterialCategory.Metals,
-        MaterialRarity.Common,
-        BaseValue: 2
+        QualityTier.Common,
+        2,
+        Category.Metal,
+        true,
+        999
     );
 
-    private readonly MaterialType _leather = new(
+    private readonly Material _leather = new(
         "leather",
         "Leather",
         "Basic leather",
-        MaterialCategory.Organic,
-        MaterialRarity.Common,
-        BaseValue: 1
+        QualityTier.Common,
+        1,
+        Category.Leather,
+        true,
+        999
     );
 
-    private readonly MaterialType _gem = new(
+    private readonly Material _gem = new(
         "gem",
         "Gem",
         "Precious gem",
-        MaterialCategory.Gems,
-        MaterialRarity.Rare,
-        BaseValue: 10
+        QualityTier.Rare,
+        10,
+        Category.Gem,
+        true,
+        999
     );
 
     private Dictionary<string, LootTable> CreateTestLootTables()
@@ -42,9 +50,9 @@ public class LootGeneratorTests
             "goblin",
             new List<LootEntry>
             {
-                new(_ironOre, 1.0f, 1, 2),     // Always drops 1-2 iron ore
-                new(_leather, 0.5f, 1, 1),     // 50% chance for leather
-                new(_gem, 0.1f, 1, 1)          // 10% chance for gem
+                new(_ironOre, 1.0f, 1, 2), // Always drops 1-2 iron ore
+                new(_leather, 0.5f, 1, 1), // 50% chance for leather
+                new(_gem, 0.1f, 1, 1) // 10% chance for gem
             },
             guaranteedDropCount: 1,
             maximumDropCount: 3
@@ -83,7 +91,7 @@ public class LootGeneratorTests
     {
         // Arrange - This should throw during LootTable construction
         var invalidEntry = new LootEntry(_ironOre, 1.5f, 1, 1); // Invalid drop chance
-        
+
         // Act & Assert - Exception thrown during LootTable creation
         Assert.Throws<ArgumentException>(() => new LootTable("invalid", new List<LootEntry> { invalidEntry }));
     }
@@ -101,7 +109,7 @@ public class LootGeneratorTests
         // Assert
         Assert.NotNull(drops);
         Assert.NotEmpty(drops); // Goblin has guaranteed drops
-        Assert.All(drops, drop => 
+        Assert.All(drops, drop =>
         {
             Assert.True(drop.Quantity > 0);
             Assert.True(drop.AcquiredAt <= DateTime.UtcNow);
@@ -133,9 +141,9 @@ public class LootGeneratorTests
                 "guaranteed_monster",
                 new List<LootEntry>
                 {
-                    new(_ironOre, 0.01f, 1, 1),    // Very low chance
-                    new(_leather, 0.01f, 1, 1),    // Very low chance
-                    new(_gem, 0.01f, 1, 1)         // Very low chance
+                    new(_ironOre, 0.01f, 1, 1), // Very low chance
+                    new(_leather, 0.01f, 1, 1), // Very low chance
+                    new(_gem, 0.01f, 1, 1) // Very low chance
                 },
                 guaranteedDropCount: 2,
                 maximumDropCount: 5
@@ -160,9 +168,9 @@ public class LootGeneratorTests
                 "max_drops_monster",
                 new List<LootEntry>
                 {
-                    new(_ironOre, 1.0f, 5, 10),    // Always drops 5-10 items
-                    new(_leather, 1.0f, 5, 10),    // Always drops 5-10 items
-                    new(_gem, 1.0f, 5, 10)         // Always drops 5-10 items
+                    new(_ironOre, 1.0f, 5, 10), // Always drops 5-10 items
+                    new(_leather, 1.0f, 5, 10), // Always drops 5-10 items
+                    new(_gem, 1.0f, 5, 10) // Always drops 5-10 items
                 },
                 guaranteedDropCount: 0,
                 maximumDropCount: 2
@@ -178,7 +186,7 @@ public class LootGeneratorTests
     }
 
     [Theory]
-    [InlineData(42, 1000)]   // Different random seeds
+    [InlineData(42, 1000)] // Different random seeds
     [InlineData(123, 1000)]
     [InlineData(999, 1000)]
     public void LootGenerator_GenerateDrops_ProbabilityDistribution_IsReasonable(int seed, int trials)
@@ -190,7 +198,7 @@ public class LootGeneratorTests
                 "probability_test",
                 new List<LootEntry>
                 {
-                    new(_ironOre, 0.5f, 1, 1)  // Exactly 50% chance
+                    new(_ironOre, 0.5f, 1, 1) // Exactly 50% chance
                 },
                 guaranteedDropCount: 0,
                 maximumDropCount: 1
@@ -214,7 +222,7 @@ public class LootGeneratorTests
         double expectedRate = 0.5;
         double tolerance = 0.1; // 10% tolerance
 
-        Assert.True(Math.Abs(actualRate - expectedRate) < tolerance, 
+        Assert.True(Math.Abs(actualRate - expectedRate) < tolerance,
             $"Drop rate {actualRate:P1} should be within {tolerance:P0} of expected {expectedRate:P0}");
     }
 
@@ -228,7 +236,7 @@ public class LootGeneratorTests
                 "quantity_test",
                 new List<LootEntry>
                 {
-                    new(_ironOre, 1.0f, 3, 7)  // Always drops 3-7 items
+                    new(_ironOre, 1.0f, 3, 7) // Always drops 3-7 items
                 },
                 guaranteedDropCount: 1,
                 maximumDropCount: 1
@@ -240,10 +248,10 @@ public class LootGeneratorTests
         for (int i = 0; i < 100; i++)
         {
             var drops = generator.GenerateDrops("quantity_test");
-            
+
             Assert.Single(drops);
             var drop = drops[0];
-            Assert.True(drop.Quantity >= 3 && drop.Quantity <= 7, 
+            Assert.True(drop.Quantity >= 3 && drop.Quantity <= 7,
                 $"Quantity {drop.Quantity} should be between 3 and 7");
         }
     }
