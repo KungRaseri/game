@@ -42,6 +42,54 @@ public class Material : Item
         _maxStackSize = Math.Max(1, maxStackSize);
     }
 
+    /// <summary>
+    /// Validates the material's properties to ensure data integrity.
+    /// </summary>
+    /// <returns>True if all properties are valid, false otherwise.</returns>
+    public bool Validate()
+    {
+        // Validate base Item properties
+        if (string.IsNullOrWhiteSpace(ItemId))
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            return false;
+        }
+
+        if (Value < 0)
+        {
+            return false;
+        }
+
+        // Validate ItemType is Material
+        if (ItemType != ItemType.Material)
+        {
+            return false;
+        }
+
+        // Validate stackable constraints
+        if (Stackable && MaxStackSize <= 0)
+        {
+            return false;
+        }
+
+        if (!Stackable && MaxStackSize != 1)
+        {
+            return false;
+        }
+
+        // Validate Category is defined
+        if (!Enum.IsDefined(typeof(Category), Category))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public override string ToString()
     {
         return $"{Name} ({Quality} {Category}) - {Value}g [Stack: {MaxStackSize}]";

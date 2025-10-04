@@ -151,9 +151,10 @@ public class CategoryTests
             1,
             Category.Metal
         );
+        var drop = new Drop(material, 1, DateTime.UtcNow);
 
         // Act
-        var color = material.GetRarityColor();
+        var color = drop.GetRarityColor();
 
         // Assert
         Assert.Equal(expectedColor, color);
