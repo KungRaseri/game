@@ -1,11 +1,9 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Inventories.Systems;
-using Game.Main.Utils;
+using Game.Inventories.Models;
 using Godot;
 using GodotPlugins.Game;
-using InventoryStats = Game.Game.Inventories.Systems.InventoryStats;
 
 namespace Game.Scripts.UI;
 
@@ -17,10 +15,10 @@ public partial class InventoryStatsUI : Panel
 {
     [Export] public int MaxDisplayedCategories { get; set; } = 5;
     [Export] public int MaxDisplayedRarities { get; set; } = 4;
-    
+
     [Signal]
     public delegate void StatsRefreshRequestedEventHandler();
-    
+
     private Label? _capacityLabel;
     private ProgressBar? _capacityProgressBar;
     private Label? _totalMaterialsLabel;
@@ -28,7 +26,7 @@ public partial class InventoryStatsUI : Panel
     private VBoxContainer? _categoriesContainer;
     private VBoxContainer? _raritiesContainer;
     private Button? _refreshButton;
-    
+
     private InventoryStats? _currentStats;
 
     public override void _Ready()
@@ -71,14 +69,14 @@ public partial class InventoryStatsUI : Panel
             _capacityProgressBar = GetNode<ProgressBar>("VBox/CapacityContainer/CapacityProgressBar");
             _totalMaterialsLabel = GetNode<Label>("VBox/TotalMaterialsLabel");
             _totalValueLabel = GetNode<Label>("VBox/TotalValueLabel");
-            
+
             // Category and rarity breakdown containers
             _categoriesContainer = GetNode<VBoxContainer>("VBox/CategoryBreakdown/CategoriesContainer");
             _raritiesContainer = GetNode<VBoxContainer>("VBox/RarityBreakdown/RaritiesContainer");
-            
+
             // Refresh button
             _refreshButton = GetNode<Button>("VBox/RefreshButton");
-            
+
             GameLogger.Debug("InventoryStatsUI node references cached successfully");
         }
         catch (Exception ex)
@@ -116,7 +114,7 @@ public partial class InventoryStatsUI : Panel
         if (_capacityProgressBar != null) _capacityProgressBar.Value = 0;
         if (_totalMaterialsLabel != null) _totalMaterialsLabel.Text = "Total Materials: --";
         if (_totalValueLabel != null) _totalValueLabel.Text = "Total Value: --";
-        
+
         ClearBreakdownContainers();
     }
 
@@ -131,11 +129,11 @@ public partial class InventoryStatsUI : Panel
 
         if (_capacityProgressBar != null)
         {
-            double percentage = _currentStats.Capacity > 0 
+            double percentage = _currentStats.Capacity > 0
                 ? (double)_currentStats.UsedSlots / _currentStats.Capacity * 100
                 : 0;
             _capacityProgressBar.Value = percentage;
-            
+
             // Color coding for capacity usage
             var theme = _capacityProgressBar.Theme ?? new Theme();
             if (percentage >= 90)
@@ -193,7 +191,7 @@ public partial class InventoryStatsUI : Panel
                 .OrderByDescending(kvp => kvp.Value)
                 .Skip(MaxDisplayedCategories)
                 .Sum(kvp => kvp.Value);
-            
+
             var othersLabel = new Label();
             othersLabel.Text = $"Others: {othersCount:N0}";
             othersLabel.Modulate = Colors.Gray;
@@ -215,10 +213,10 @@ public partial class InventoryStatsUI : Panel
         {
             var label = new Label();
             label.Text = $"{rarity}: {count:N0}";
-            
+
             // Color coding by rarity
             label.Modulate = GetRarityColor(rarity);
-            
+
             _raritiesContainer.AddChild(label);
         }
     }

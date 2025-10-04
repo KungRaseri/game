@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Game.Inventories.Models;
 using Game.Inventories.Systems;
 using Game.Items.Models;
 using Game.Items.Models.Materials;

@@ -1,6 +1,6 @@
 using Game.Items.Models.Materials;
 
-namespace Game.Inventories.Systems;
+namespace Game.Inventories.Models;
 
 /// <summary>
 /// Result of adding materials to inventory.

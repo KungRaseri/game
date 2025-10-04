@@ -1,12 +1,10 @@
 #nullable enable
 
 using Game.Core.Utils;
+using Game.Inventories.Models;
 using Game.Inventories.Systems;
-using Game.Main.Utils;
 using Godot;
 using GodotPlugins.Game;
-using InventoryManager = Game.Game.Inventories.Systems.InventoryManager;
-using InventoryStats = Game.Game.Inventories.Systems.InventoryStats;
 
 namespace Game.Scripts.UI;
 
@@ -20,18 +18,18 @@ public partial class MaterialCollectionUI : Panel
     [Export] public PackedScene? InventoryStatsScene { get; set; }
     [Export] public bool AutoRefreshStats { get; set; } = false; // Temporarily disabled for debugging
     [Export] public double AutoRefreshInterval { get; set; } = 2.0;
-    
+
     [Signal]
     public delegate void MaterialSelectedEventHandler();
-    
+
     [Signal]
     public delegate void InventoryCapacityChangedEventHandler();
-    
+
     private AdventurerInventoryUI? _inventoryUI;
     private InventoryStatsUI? _statsUI;
     private InventoryManager? _inventoryManager;
     private Godot.Timer? _refreshTimer;
-    
+
     public override void _Ready()
     {
         GameLogger.SetBackend(new GodotLoggerBackend());
@@ -45,7 +43,9 @@ public partial class MaterialCollectionUI : Panel
         CleanupEventSubscriptions();
         _refreshTimer?.QueueFree();
         GameLogger.Info("MaterialCollectionUI disposed");
-    }    /// <summary>
+    }
+
+    /// <summary>
     /// Sets the inventory manager to be displayed and managed by this UI.
     /// </summary>
     public void SetInventoryManager(InventoryManager inventoryManager)
@@ -64,10 +64,10 @@ public partial class MaterialCollectionUI : Panel
         {
             _inventoryManager.InventoryUpdated += OnInventoryUpdated;
             _inventoryManager.OperationFailed += OnInventoryOperationFailed;
-            
+
             // Initialize UI with current inventory state
             RefreshAllComponents();
-            
+
             var stats = _inventoryManager.GetInventoryStats();
             GameLogger.Info($"MaterialCollectionUI: Inventory set with {stats.UsedSlots}/{stats.Capacity} slots");
         }
@@ -91,17 +91,19 @@ public partial class MaterialCollectionUI : Panel
             if (_inventoryUI != null)
             {
                 _inventoryUI.UpdateInventory(inventory);
-                
+
                 // Debug layout chain for MaterialCollectionUI
                 GameLogger.Debug($"MaterialCollectionUI: Main panel size: {Size}, visible: {Visible}");
                 if (_inventoryUI != null)
                 {
-                    GameLogger.Debug($"MaterialCollectionUI: AdventurerInventoryUI size: {_inventoryUI.Size}, visible: {_inventoryUI.Visible}");
+                    GameLogger.Debug(
+                        $"MaterialCollectionUI: AdventurerInventoryUI size: {_inventoryUI.Size}, visible: {_inventoryUI.Visible}");
                 }
-                
+
                 // Check the container hierarchy
                 var inventoryContainer = GetNode<Container>("VBox/HSplit/InventoryContainer");
-                GameLogger.Debug($"MaterialCollectionUI: InventoryContainer size: {inventoryContainer.Size}, visible: {inventoryContainer.Visible}");
+                GameLogger.Debug(
+                    $"MaterialCollectionUI: InventoryContainer size: {inventoryContainer.Size}, visible: {inventoryContainer.Visible}");
             }
 
             // Update statistics display
@@ -146,7 +148,7 @@ public partial class MaterialCollectionUI : Panel
             {
                 var inventoryInstance = AdventurerInventoryScene.Instantiate<AdventurerInventoryUI>();
                 _inventoryUI = inventoryInstance;
-                
+
                 // Ensure MaterialStackScene is set (fallback if not set by scene)
                 if (_inventoryUI.MaterialStackScene == null)
                 {
@@ -155,14 +157,14 @@ public partial class MaterialCollectionUI : Panel
                     _inventoryUI.MaterialStackScene = materialStackScene;
                     GameLogger.Info("MaterialStackScene set manually as fallback");
                 }
-                
+
                 inventoryContainer.AddChild(_inventoryUI);
-                
+
                 // Connect inventory UI events
                 _inventoryUI.MaterialStackSelected += OnMaterialStackSelected;
                 _inventoryUI.CapacityExpanded += OnCapacityExpanded;
                 _inventoryUI.RefreshRequested += OnInventoryRefreshRequested;
-                
+
                 GameLogger.Info("AdventurerInventoryUI instance created and connected");
             }
             else
@@ -177,7 +179,7 @@ public partial class MaterialCollectionUI : Panel
                 var statsInstance = InventoryStatsScene.Instantiate<InventoryStatsUI>();
                 _statsUI = statsInstance;
                 statsContainer.AddChild(_statsUI);
-                
+
                 // Connect stats UI events
                 _statsUI.StatsRefreshRequested += OnStatsRefreshRequested;
             }
@@ -194,7 +196,7 @@ public partial class MaterialCollectionUI : Panel
     {
         if (!AutoRefreshStats) return;
 
-                // Auto-refresh timer
+        // Auto-refresh timer
         _refreshTimer = new Godot.Timer();
         _refreshTimer.WaitTime = AutoRefreshInterval;
         _refreshTimer.Autostart = true;

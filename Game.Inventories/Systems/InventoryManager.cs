@@ -1,6 +1,7 @@
 #nullable enable
 
 using Game.Core.Utils;
+using Game.Inventories.Models;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 

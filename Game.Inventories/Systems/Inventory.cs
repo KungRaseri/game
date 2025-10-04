@@ -1,6 +1,7 @@
 #nullable enable
 
 using Game.Core.Utils;
+using Game.Inventories.Models;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 
@@ -245,7 +246,7 @@ public class Inventory
         }
 
         var lowercaseSearch = searchTerm.ToLowerInvariant();
-        return _materials.Values.Where(stack => 
+        return _materials.Values.Where(stack =>
             stack.Material.Name.ToLowerInvariant().Contains(lowercaseSearch) ||
             stack.Material.Description.ToLowerInvariant().Contains(lowercaseSearch)
         );
@@ -263,7 +264,7 @@ public class Inventory
 
         query = sortBy switch
         {
-            MaterialSortBy.Name => ascending 
+            MaterialSortBy.Name => ascending
                 ? query.OrderBy(s => s.Material.Name)
                 : query.OrderByDescending(s => s.Material.Name),
             MaterialSortBy.Quantity => ascending

@@ -1,33 +1,4 @@
-using Game.Items.Models.Materials;
-
 namespace Game.Inventories.Models;
-
-/// <summary>
-/// Result of adding materials to inventory.
-/// </summary>
-public class InventoryAddResult
-{
-    public List<Drop> SuccessfulAdds { get; } = new();
-    public List<Drop> PartialAdds { get; } = new();
-    public List<Drop> FailedAdds { get; } = new();
-
-    public bool HasAnyChanges => SuccessfulAdds.Count > 0 || PartialAdds.Count > 0;
-    public bool AllSuccessful => FailedAdds.Count == 0 && PartialAdds.Count == 0;
-    public int TotalProcessed => SuccessfulAdds.Count + PartialAdds.Count + FailedAdds.Count;
-}
-
-/// <summary>
-/// Sort options for material inventory.
-/// </summary>
-public enum MaterialSortBy
-{
-    Name,
-    Type,
-    Rarity,
-    Quantity,
-    Value,
-    DateAdded
-}
 
 /// <summary>
 /// Statistics about inventory state and usage.
@@ -39,12 +10,18 @@ public record InventoryStats
 
     /// <summary>Total inventory capacity.</summary>
     public int TotalSlots { get; init; }
+    
+    /// <summary>Total inventory capacity (alias for TotalSlots).</summary>
+    public int Capacity => TotalSlots;
 
     /// <summary>Number of free slots remaining.</summary>
     public int FreeSlots { get; init; }
 
     /// <summary>Total quantity of all materials.</summary>
     public int TotalQuantity { get; init; }
+    
+    /// <summary>Total quantity of all materials (alias for TotalQuantity).</summary>
+    public int TotalMaterials => TotalQuantity;
 
     /// <summary>Total value of all materials.</summary>
     public int TotalValue { get; init; }

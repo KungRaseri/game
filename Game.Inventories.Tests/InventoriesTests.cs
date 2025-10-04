@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Game.Inventories.Models;
 using Game.Inventories.Systems;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
@@ -315,9 +316,9 @@ public class InventoriesTests
         inventory.AddMaterial(_woodDrop); // Wood
 
         // Act
-        var ascending = inventory.SortMaterials(global::Game.Inventories.Systems.MaterialSortBy.Name, true)
+        var ascending = inventory.SortMaterials(MaterialSortBy.Name, true)
             .ToList();
-        var descending = inventory.SortMaterials(global::Game.Inventories.Systems.MaterialSortBy.Name, false)
+        var descending = inventory.SortMaterials(MaterialSortBy.Name, false)
             .ToList();
 
         // Assert
