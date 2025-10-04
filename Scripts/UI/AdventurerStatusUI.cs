@@ -232,7 +232,7 @@ public partial class AdventurerStatusUI : Panel
     /// </summary>
     public void OnSendExpeditionPressed()
     {
-        EmitSignal(Main.UI.AdventurerStatusUI.SignalName.SendExpeditionRequested);
+        EmitSignal(SignalName.SendExpeditionRequested);
         GameLogger.Info("Send expedition requested from UI");
     }
 
@@ -242,7 +242,7 @@ public partial class AdventurerStatusUI : Panel
     /// </summary>
     public void OnRetreatPressed()
     {
-        EmitSignal(Main.UI.AdventurerStatusUI.SignalName.RetreatRequested);
+        EmitSignal(SignalName.RetreatRequested);
         GameLogger.Info("Retreat requested from UI");
     }
 }

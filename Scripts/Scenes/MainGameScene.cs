@@ -225,7 +225,7 @@ public partial class MainGameScene : Control
         {
             controller.SendToGoblinCave();
             _expeditionPanelUI?.StartExpedition("Goblin Cave", 3);
-            EmitSignal(global::MainGameScene.SignalName.GameStateChanged, "expedition_started");
+            EmitSignal(SignalName.GameStateChanged, "expedition_started");
 
             GameLogger.Info("Expedition started via UI");
         }
@@ -241,7 +241,7 @@ public partial class MainGameScene : Control
         if (_gameManager?.AdventurerController != null)
         {
             _gameManager.AdventurerController.Retreat();
-            EmitSignal(global::MainGameScene.SignalName.GameStateChanged, "retreating");
+            EmitSignal(SignalName.GameStateChanged, "retreating");
 
             GameLogger.Info("Retreat ordered via UI");
         }
@@ -249,7 +249,7 @@ public partial class MainGameScene : Control
 
     private void OnAdventurerHealthChanged(int currentHealth, int maxHealth)
     {
-        EmitSignal(global::MainGameScene.SignalName.AdventurerHealthChanged, currentHealth, maxHealth);
+        EmitSignal(SignalName.AdventurerHealthChanged, currentHealth, maxHealth);
     }
 
     private void OnMonsterDefeated(CombatEntityStats monster)
@@ -266,7 +266,7 @@ public partial class MainGameScene : Control
 
     private void OnExpeditionCompleted()
     {
-        EmitSignal(global::MainGameScene.SignalName.ExpeditionCompleted, true);
+        EmitSignal(SignalName.ExpeditionCompleted, true);
         _expeditionPanelUI?.EndExpedition();
         _combatLogUI?.AddLogEntry("Expedition completed!", "cyan");
         GameLogger.Info("Expedition completed");
@@ -274,7 +274,7 @@ public partial class MainGameScene : Control
 
     private void OnAdventurerStateChanged(AdventurerState newState)
     {
-        EmitSignal(global::MainGameScene.SignalName.GameStateChanged, newState.ToString());
+        EmitSignal(SignalName.GameStateChanged, newState.ToString());
 
         // Update expedition panel based on state
         if (newState == AdventurerState.Fighting && _gameManager?.AdventurerController?.CurrentMonster != null)

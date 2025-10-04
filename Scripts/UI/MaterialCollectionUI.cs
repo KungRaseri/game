@@ -243,13 +243,13 @@ public partial class MaterialCollectionUI : Panel
 
     private void OnMaterialStackSelected()
     {
-        EmitSignal(Main.UI.MaterialCollectionUI.SignalName.MaterialSelected);
+        EmitSignal(SignalName.MaterialSelected);
         GameLogger.Debug("Material stack selected signal emitted");
     }
 
     private void OnCapacityExpanded()
     {
-        EmitSignal(Main.UI.MaterialCollectionUI.SignalName.InventoryCapacityChanged);
+        EmitSignal(SignalName.InventoryCapacityChanged);
         GameLogger.Info("Inventory capacity expanded");
     }
 

@@ -253,7 +253,7 @@ public partial class InventoryStatsUI : Panel
 
     private void OnRefreshButtonPressed()
     {
-        EmitSignal(Main.UI.InventoryStatsUI.SignalName.StatsRefreshRequested);
+        EmitSignal(SignalName.StatsRefreshRequested);
         GameLogger.Info("Inventory stats refresh requested");
     }
 

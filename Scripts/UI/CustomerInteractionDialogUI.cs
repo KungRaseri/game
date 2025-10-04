@@ -450,7 +450,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
             $"💰 Discount Offered!\n\n{reactionText}\n\n💭 \"{response.PrimaryReason}\"\n\n💡 {response.SuggestedAction}";
         _customerThoughts!.Text = fullResponse;
 
-        EmitSignal(Main.UI.CustomerInteractionDialogUI.SignalName.CustomerActionTaken, _currentCustomer.CustomerId,
+        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId,
             "discount_offered", _currentItem.ItemId);
 
         // Update action buttons based on new state
@@ -489,7 +489,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
             _customerThoughts!.Text = "😔 \"I appreciate the conversation, but I prefer not to negotiate on prices.\"";
         }
 
-        EmitSignal(Main.UI.CustomerInteractionDialogUI.SignalName.CustomerActionTaken, _currentCustomer.CustomerId,
+        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId,
             "negotiation_started", _currentItem.ItemId);
 
         // Update action buttons
@@ -548,7 +548,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
                 "💭 \"I appreciate you trying to help, but I'll stick with what I was looking at.\"";
         }
 
-        EmitSignal(Main.UI.CustomerInteractionDialogUI.SignalName.CustomerActionTaken, _currentCustomer.CustomerId,
+        EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId,
             "show_alternatives", _currentItem?.ItemId ?? "");
     }
 
@@ -557,7 +557,7 @@ public partial class CustomerInteractionDialogUI : AcceptDialog
         if (_currentCustomer != null)
         {
             GameLogger.Info($"Letting {_currentCustomer.Name} continue browsing");
-            EmitSignal(Main.UI.CustomerInteractionDialogUI.SignalName.CustomerActionTaken, _currentCustomer.CustomerId,
+            EmitSignal(SignalName.CustomerActionTaken, _currentCustomer.CustomerId,
                 "continue_browsing", "");
         }
 

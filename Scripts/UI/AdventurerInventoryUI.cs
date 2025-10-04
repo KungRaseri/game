@@ -311,14 +311,14 @@ public partial class AdventurerInventoryUI : Panel
         var materialStack = materialStackUI.GetMaterialStack();
         if (materialStack != null)
         {
-            EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.MaterialStackSelected);
+            EmitSignal(SignalName.MaterialStackSelected);
             GameLogger.Info($"Material stack selected: {materialStack.Material.Name} x{materialStack.Quantity}");
         }
     }
 
     private void OnMaterialStackClicked(MaterialStack materialStack)
     {
-        EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.MaterialStackSelected);
+        EmitSignal(SignalName.MaterialStackSelected);
         GameLogger.Info($"Material stack selected: {materialStack.Material.Name} x{materialStack.Quantity}");
     }
 
@@ -329,7 +329,7 @@ public partial class AdventurerInventoryUI : Panel
     public void OnExpandCapacityPressed()
     {
         const int defaultExpansion = 5;
-        EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.InventoryCapacityRequested, defaultExpansion);
+        EmitSignal(SignalName.InventoryCapacityRequested, defaultExpansion);
         GameLogger.Info($"Inventory capacity expansion requested: +{defaultExpansion} slots");
     }
 
@@ -387,7 +387,7 @@ public partial class AdventurerInventoryUI : Panel
     /// </summary>
     public void OnRefreshPressed()
     {
-        EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.RefreshRequested);
+        EmitSignal(SignalName.RefreshRequested);
         RefreshDisplay();
         GameLogger.Info("Inventory refresh requested");
     }
@@ -397,7 +397,7 @@ public partial class AdventurerInventoryUI : Panel
     /// </summary>
     public void OnCapacityExpansionSuccess()
     {
-        EmitSignal(Main.UI.AdventurerInventoryUI.SignalName.CapacityExpanded);
+        EmitSignal(SignalName.CapacityExpanded);
         UpdateUI();
     }
 }

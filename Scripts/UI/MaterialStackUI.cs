@@ -320,7 +320,7 @@ public partial class MaterialStackUI : Panel
     {
         if (_materialStack != null)
         {
-            EmitSignal(Main.UI.MaterialStackUI.SignalName.MaterialStackClicked);
+            EmitSignal(SignalName.MaterialStackClicked);
             GameLogger.Debug($"Material stack clicked: {_materialStack.Material.Name} x{_materialStack.Quantity}");
         }
     }

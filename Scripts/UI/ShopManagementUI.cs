@@ -234,7 +234,7 @@ public partial class ShopManagementUI : Panel
 
         _isShopOpen = true;
         _trafficManager.StartTraffic();
-        EmitSignal(Main.UI.ShopManagementUI.SignalName.ShopStateChanged, true);
+        EmitSignal(SignalName.ShopStateChanged, true);
 
         UpdateUI();
         GameLogger.Info("Shop opened for business");
@@ -246,7 +246,7 @@ public partial class ShopManagementUI : Panel
 
         _isShopOpen = false;
         _ = _trafficManager.StopTrafficAsync(); // Fire and forget the async operation
-        EmitSignal(Main.UI.ShopManagementUI.SignalName.ShopStateChanged, false);
+        EmitSignal(SignalName.ShopStateChanged, false);
 
         UpdateUI();
         GameLogger.Info("Shop closed");
@@ -254,7 +254,7 @@ public partial class ShopManagementUI : Panel
 
     private void OnBackButtonPressed()
     {
-        EmitSignal(Main.UI.ShopManagementUI.SignalName.BackToGameRequested);
+        EmitSignal(SignalName.BackToGameRequested);
         GameLogger.Info("Back to game requested");
     }
 
@@ -313,7 +313,7 @@ public partial class ShopManagementUI : Panel
         // TODO: In full implementation, show a selection dialog
         var materialToStock = materials.First();
 
-        StockMaterialInSlot(materialToStock.Material, materialToStock.Rarity, slotId);
+        StockMaterialInSlot(materialToStock.Material, materialToStock.Material.Quality, slotId);
     }
 
     private void OnPriceChangeRequested(int slotId, decimal newPrice)
@@ -400,7 +400,7 @@ public partial class ShopManagementUI : Panel
 
     private void OnCustomerPurchased(Customer customer, SaleTransaction transaction)
     {
-        EmitSignal(Main.UI.ShopManagementUI.SignalName.CustomerServed, customer.CustomerId);
+        EmitSignal(SignalName.CustomerServed, customer.CustomerId);
         GameLogger.Info($"Customer purchase: {customer.Name} bought {transaction.ItemSold.Name}");
     }
 
@@ -486,25 +486,25 @@ public partial class ShopManagementUI : Panel
         {
             var button = new Button
             {
-                Text = $"{materialStack.Material.Name} x{materialStack.Quantity} ({materialStack.Rarity})",
+                Text = $"{materialStack.Material.Name} x{materialStack.Quantity} ({materialStack.Material.Quality})",
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
                 SizeFlagsVertical = SizeFlags.ShrinkCenter,
                 CustomMinimumSize = new Vector2(0, 40) // Consistent height for list items
             };
 
             // Add tooltip with value information
-            var item = CreateItemFromMaterial(materialStack.Material, materialStack.Rarity);
+            var item = CreateItemFromMaterial(materialStack.Material, materialStack.Material.Quality);
             button.TooltipText =
                 $"{materialStack.Material.Description}\nShop Value: {item.Value}g\nCategory: {materialStack.Material.Category}";
 
             // Store material data in the button for later use
-            button.SetMeta("materialId", materialStack.Material.Id);
-            button.SetMeta("rarity", (int)materialStack.Rarity);
+            button.SetMeta("materialId", materialStack.Material.ItemId);
+            button.SetMeta("rarity", (int)materialStack.Material.Quality);
             button.SetMeta("quantity", materialStack.Quantity);
 
             // Connect button press to material selection
             button.Pressed += () =>
-                OnMaterialSelected(materialStack.Material, materialStack.Rarity, materialStack.Quantity);
+                OnMaterialSelected(materialStack.Material, materialStack.Material.Quality, materialStack.Quantity);
 
             _inventoryList.AddChild(button);
         }
@@ -563,7 +563,7 @@ public partial class ShopManagementUI : Panel
             {
                 RefreshDisplaySlots();
                 RefreshInventory(); // Update inventory display
-                EmitSignal(Main.UI.ShopManagementUI.SignalName.ItemStocked, slotId, item.Name);
+                EmitSignal(SignalName.ItemStocked, slotId, item.Name);
                 GameLogger.Info(
                     $"Stocked {item.Name} in slot {slotId} for {suggestedPrice:C} (consumed 1x {materialType.Name})");
             }
