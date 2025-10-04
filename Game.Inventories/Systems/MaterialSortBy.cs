@@ -1,4 +1,4 @@
-namespace Game.Inventory.Systems;
+namespace Game.Inventories.Systems;
 
 /// <summary>
 /// Sorting criteria for materials in inventory.

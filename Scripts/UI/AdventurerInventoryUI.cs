@@ -1,11 +1,13 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Inventory.Models;
+using Game.Inventories.Models;
 using Godot;
 using GodotPlugins.Game;
+using InventoryStats = Game.Game.Inventories.Models.InventoryStats;
+using MaterialStack = Game.Game.Inventories.Models.MaterialStack;
 
-//using Game.Inventory.Systems;  // TODO: Implement InventoryManager in new architecture
+//using Game.Inventories.Systems;  // TODO: Implement InventoryManager in new architecture
 
 namespace Game.Scripts.UI;
 

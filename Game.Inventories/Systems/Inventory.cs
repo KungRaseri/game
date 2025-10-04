@@ -4,7 +4,7 @@ using Game.Core.Utils;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 
-namespace Game.Inventory.Systems;
+namespace Game.Inventories.Systems;
 
 /// <summary>
 /// Manages material storage with capacity limits, automatic stacking, and organization.

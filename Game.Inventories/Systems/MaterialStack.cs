@@ -3,7 +3,7 @@
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 
-namespace Game.Inventory.Systems;
+namespace Game.Inventories.Systems;
 
 /// <summary>
 /// Represents a stack of materials of the same type and rarity in inventory.

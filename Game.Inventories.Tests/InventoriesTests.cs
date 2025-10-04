@@ -1,29 +1,48 @@
-#nullable enable
-
 using FluentAssertions;
+using Game.Inventories.Systems;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
 
-namespace Game.Inventory.Tests;
+namespace Game.Inventories.Tests;
 
-public class InventoryTests
+public class InventoriesTests
 {
-    private readonly MaterialType _woodMaterial;
-    private readonly MaterialType _stoneMaterial;
-    private readonly MaterialDrop _woodDrop;
-    private readonly MaterialDrop _stoneDrop;
+    private readonly Material _woodMaterial;
+    private readonly Material _stoneMaterial;
+    private readonly Drop _woodDrop;
+    private readonly Drop _stoneDrop;
 
-    public InventoryTests()
+    public InventoriesTests()
     {
-        _woodMaterial = new MaterialType("wood", "Wood", "Common crafting material", MaterialCategory.Organic, MaterialRarity.Common, 999, 5);
-        _stoneMaterial = new MaterialType("stone", "Stone", "Hard building material", MaterialCategory.Organic, MaterialRarity.Common, 999, 3);
-        _woodDrop = new MaterialDrop(_woodMaterial, MaterialRarity.Common, 10, DateTime.UtcNow);
-        _stoneDrop = new MaterialDrop(_stoneMaterial, MaterialRarity.Common, 15, DateTime.UtcNow);
+        _woodMaterial = new Material(
+            "wood",
+            "Wood",
+            "Common crafting material",
+            QualityTier.Common,
+            5,
+            Category.Wood,
+            stackable: true,
+            maxStackSize: 999
+        );
+        _stoneMaterial = new Material(
+            "stone",
+            "Stone",
+            "Hard building material",
+            QualityTier.Common,
+            3,
+            Category.Metal,
+            stackable: true,
+            maxStackSize: 999
+        );
+        _woodDrop = new Drop(_woodMaterial, 10, DateTime.UtcNow);
+        _stoneDrop = new Drop(_stoneMaterial, 15, DateTime.UtcNow);
     }
 
     [Fact]
     public void Constructor_WithValidCapacity_CreatesInventory()
     {
         // Act
-        var inventory = new Game.Main.Systems.Inventory.Inventory(25);
+        var inventory = new Inventory(25);
 
         // Assert
         inventory.Capacity.Should().Be(25);
@@ -38,7 +57,7 @@ public class InventoryTests
     public void Constructor_WithDefaultCapacity_CreatesInventory()
     {
         // Act
-        var inventory = new Game.Main.Systems.Inventory.Inventory();
+        var inventory = new Inventory();
 
         // Assert
         inventory.Capacity.Should().Be(20);
@@ -53,7 +72,7 @@ public class InventoryTests
     public void Constructor_WithInvalidCapacity_ThrowsArgumentException(int capacity)
     {
         // Act & Assert
-        var act = () => new Game.Main.Systems.Inventory.Inventory(capacity);
+        var act = () => new Inventory(capacity);
         act.Should().Throw<ArgumentException>()
             .WithParameterName("capacity");
     }
@@ -62,7 +81,7 @@ public class InventoryTests
     public void CanAddMaterial_WithEmptyInventory_ReturnsTrue()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
+        var inventory = new Inventory(10);
 
         // Act
         var canAdd = inventory.CanAddMaterial(_woodDrop);
@@ -75,10 +94,10 @@ public class InventoryTests
     public void CanAddMaterial_WithExistingStackWithSpace_ReturnsTrue()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
+        var inventory = new Inventory(10);
         inventory.AddMaterial(_woodDrop); // Add 10 wood
 
-        var additionalWoodDrop = new MaterialDrop(_woodMaterial, MaterialRarity.Common, 20, DateTime.UtcNow);
+        var additionalWoodDrop = new Drop(_woodMaterial, 20, DateTime.UtcNow);
 
         // Act
         var canAdd = inventory.CanAddMaterial(additionalWoodDrop);
@@ -91,7 +110,7 @@ public class InventoryTests
     public void CanAddMaterial_WithFullInventory_ReturnsFalse()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(1);
+        var inventory = new Inventory(1);
         inventory.AddMaterial(_woodDrop);
 
         // Act
@@ -105,8 +124,8 @@ public class InventoryTests
     public void AddMaterial_WithValidDrop_AddsSuccessfully()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
-        var materialAddedEvents = new List<MaterialDrop>();
+        var inventory = new Inventory(10);
+        var materialAddedEvents = new List<Drop>();
         var inventoryChangedEvents = 0;
 
         inventory.MaterialAdded += drop => materialAddedEvents.Add(drop);
@@ -120,7 +139,7 @@ public class InventoryTests
         inventory.UsedSlots.Should().Be(1);
         inventory.FreeSlots.Should().Be(9);
         inventory.Materials.Should().HaveCount(1);
-        inventory.GetMaterialQuantity(_woodMaterial.Id, MaterialRarity.Common).Should().Be(10);
+        inventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should().Be(10);
 
         materialAddedEvents.Should().HaveCount(1);
         materialAddedEvents[0].Should().Be(_woodDrop);
@@ -131,10 +150,10 @@ public class InventoryTests
     public void AddMaterial_WithExistingStack_CombinesStacks()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
+        var inventory = new Inventory(10);
         inventory.AddMaterial(_woodDrop); // Add 10 wood
 
-        var additionalWoodDrop = new MaterialDrop(_woodMaterial, MaterialRarity.Common, 5, DateTime.UtcNow);
+        var additionalWoodDrop = new Drop(_woodMaterial, 5, DateTime.UtcNow);
 
         // Act
         var result = inventory.AddMaterial(additionalWoodDrop);
@@ -142,17 +161,27 @@ public class InventoryTests
         // Assert
         result.Should().BeTrue();
         inventory.UsedSlots.Should().Be(1); // Still only one stack
-        inventory.GetMaterialQuantity(_woodMaterial.Id, MaterialRarity.Common).Should().Be(15);
+        inventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should().Be(15);
     }
 
     [Fact]
     public void AddMaterial_WithDifferentRarity_CreatesNewStack()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
+        var inventory = new Inventory(10);
         inventory.AddMaterial(_woodDrop); // Add common wood
 
-        var rareWoodDrop = new MaterialDrop(_woodMaterial, MaterialRarity.Rare, 5, DateTime.UtcNow);
+        var rareWoodMaterial = new Material(
+            "wood",
+            "Wood",
+            "Common crafting material",
+            QualityTier.Rare,
+            5,
+            Category.Wood,
+            stackable: true,
+            maxStackSize: 999
+        );
+        var rareWoodDrop = new Drop(rareWoodMaterial, 5, DateTime.UtcNow);
 
         // Act
         var result = inventory.AddMaterial(rareWoodDrop);
@@ -160,15 +189,15 @@ public class InventoryTests
         // Assert
         result.Should().BeTrue();
         inventory.UsedSlots.Should().Be(2); // Two different stacks
-        inventory.GetMaterialQuantity(_woodMaterial.Id, MaterialRarity.Common).Should().Be(10);
-        inventory.GetMaterialQuantity(_woodMaterial.Id, MaterialRarity.Rare).Should().Be(5);
+        inventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should().Be(10);
+        inventory.GetMaterialQuantity(rareWoodMaterial.ItemId, QualityTier.Rare).Should().Be(5);
     }
 
     [Fact]
     public void AddMaterial_ToFullInventory_ReturnsFalse()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(1);
+        var inventory = new Inventory(1);
         inventory.AddMaterial(_woodDrop);
 
         // Act
@@ -177,32 +206,32 @@ public class InventoryTests
         // Assert
         result.Should().BeFalse();
         inventory.UsedSlots.Should().Be(1);
-        inventory.GetMaterialQuantity(_stoneMaterial.Id, MaterialRarity.Common).Should().Be(0);
+        inventory.GetMaterialQuantity(_stoneMaterial.ItemId, QualityTier.Common).Should().Be(0);
     }
 
     [Fact]
     public void RemoveMaterial_WithSufficientQuantity_RemovesSuccessfully()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
+        var inventory = new Inventory(10);
         inventory.AddMaterial(_woodDrop); // Add 10 wood
 
-        var materialRemovedEvents = new List<(string, MaterialRarity, int)>();
+        var materialRemovedEvents = new List<(string, QualityTier, int)>();
         var inventoryChangedEvents = 0;
 
         inventory.MaterialRemoved += (id, rarity, qty) => materialRemovedEvents.Add((id, rarity, qty));
         inventory.InventoryChanged += () => inventoryChangedEvents++;
 
         // Act
-        var removed = inventory.RemoveMaterial(_woodMaterial.Id, MaterialRarity.Common, 5);
+        var removed = inventory.RemoveMaterial(_woodMaterial.ItemId, QualityTier.Common, 5);
 
         // Assert
         removed.Should().Be(5);
-        inventory.GetMaterialQuantity(_woodMaterial.Id, MaterialRarity.Common).Should().Be(5);
+        inventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should().Be(5);
         inventory.UsedSlots.Should().Be(1); // Stack still exists
 
         materialRemovedEvents.Should().HaveCount(1);
-        materialRemovedEvents[0].Should().Be((_woodMaterial.Id, MaterialRarity.Common, 5));
+        materialRemovedEvents[0].Should().Be((_woodMaterial.ItemId, QualityTier.Common, 5));
         inventoryChangedEvents.Should().Be(1);
     }
 
@@ -210,15 +239,15 @@ public class InventoryTests
     public void RemoveMaterial_WithExactQuantity_RemovesStack()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
+        var inventory = new Inventory(10);
         inventory.AddMaterial(_woodDrop); // Add 10 wood
 
         // Act
-        var removed = inventory.RemoveMaterial(_woodMaterial.Id, MaterialRarity.Common, 10);
+        var removed = inventory.RemoveMaterial(_woodMaterial.ItemId, QualityTier.Common, 10);
 
         // Assert
         removed.Should().Be(10);
-        inventory.GetMaterialQuantity(_woodMaterial.Id, MaterialRarity.Common).Should().Be(0);
+        inventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should().Be(0);
         inventory.UsedSlots.Should().Be(0); // Stack removed
         inventory.IsEmpty.Should().BeTrue();
     }
@@ -227,19 +256,28 @@ public class InventoryTests
     public void GetMaterialsByCategory_WithMixedCategories_ReturnsFilteredResults()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
-        var gemMaterial = new MaterialType("ruby", "Ruby", "Precious gem", MaterialCategory.Gems, MaterialRarity.Rare, 100, 50);
-        
-        inventory.AddMaterial(_woodDrop); // Organic category
-        inventory.AddMaterial(new MaterialDrop(gemMaterial, MaterialRarity.Rare, 3, DateTime.UtcNow)); // Gem category
+        var inventory = new Inventory(10);
+        var gemMaterial = new Material(
+            "ruby",
+            "Ruby",
+            "Precious gem",
+            QualityTier.Rare,
+            50,
+            Category.Gem,
+            stackable: true,
+            maxStackSize: 100
+        );
+
+        inventory.AddMaterial(_woodDrop); // Wood category
+        inventory.AddMaterial(new Drop(gemMaterial, 3, DateTime.UtcNow)); // Gem category
 
         // Act
-        var organicMaterials = inventory.GetMaterialsByCategory(MaterialCategory.Organic).ToList();
-        var gemMaterials = inventory.GetMaterialsByCategory(MaterialCategory.Gems).ToList();
+        var woodMaterials = inventory.GetMaterialsByCategory(Category.Wood).ToList();
+        var gemMaterials = inventory.GetMaterialsByCategory(Category.Gem).ToList();
 
         // Assert
-        organicMaterials.Should().HaveCount(1);
-        organicMaterials[0].Material.Should().Be(_woodMaterial);
+        woodMaterials.Should().HaveCount(1);
+        woodMaterials[0].Material.Should().Be(_woodMaterial);
 
         gemMaterials.Should().HaveCount(1);
         gemMaterials[0].Material.Should().Be(gemMaterial);
@@ -249,7 +287,7 @@ public class InventoryTests
     public void SearchMaterials_WithMatchingTerm_ReturnsMatchingStacks()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
+        var inventory = new Inventory(10);
         inventory.AddMaterial(_woodDrop);
         inventory.AddMaterial(_stoneDrop);
 
@@ -272,13 +310,15 @@ public class InventoryTests
     public void SortMaterials_ByName_ReturnsSortedResults()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
+        var inventory = new Inventory(10);
         inventory.AddMaterial(_stoneDrop); // Stone comes after Wood alphabetically
         inventory.AddMaterial(_woodDrop); // Wood
 
         // Act
-        var ascending = inventory.SortMaterials(MaterialSortBy.Name, true).ToList();
-        var descending = inventory.SortMaterials(MaterialSortBy.Name, false).ToList();
+        var ascending = inventory.SortMaterials(global::Game.Inventories.Systems.MaterialSortBy.Name, true)
+            .ToList();
+        var descending = inventory.SortMaterials(global::Game.Inventories.Systems.MaterialSortBy.Name, false)
+            .ToList();
 
         // Assert
         ascending.Should().HaveCount(2);
@@ -294,9 +334,9 @@ public class InventoryTests
     public void GetTotalValue_WithMultipleMaterials_ReturnsCorrectSum()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
-        inventory.AddMaterial(_woodDrop); // 10 * 5 = 50
-        inventory.AddMaterial(_stoneDrop); // 15 * 3 = 45
+        var inventory = new Inventory(10);
+        inventory.AddMaterial(_woodDrop); // 10 * 5 * 1 (common multiplier) = 50
+        inventory.AddMaterial(_stoneDrop); // 15 * 3 * 1 (common multiplier) = 45
 
         // Act
         var totalValue = inventory.GetTotalValue();
@@ -309,7 +349,7 @@ public class InventoryTests
     public void Clear_WithMaterials_RemovesAllMaterials()
     {
         // Arrange
-        var inventory = new Game.Main.Systems.Inventory.Inventory(10);
+        var inventory = new Inventory(10);
         inventory.AddMaterial(_woodDrop);
         inventory.AddMaterial(_stoneDrop);
 

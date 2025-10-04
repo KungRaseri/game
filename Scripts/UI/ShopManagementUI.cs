@@ -3,7 +3,7 @@
 using Game.Core.Utils;
 using Game.Game.Items.Models;
 using Game.Game.Items.Models.Materials;
-using Game.Inventory.Systems;
+using Game.Inventories.Systems;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 using Game.Main.Systems;
@@ -12,6 +12,7 @@ using Game.Shop.Models;
 using Game.Shop.Systems;
 using Godot;
 using GodotPlugins.Game;
+using InventoryManager = Game.Game.Inventories.Systems.InventoryManager;
 using Type = Game.Game.Items.Models.Materials.Type;
 
 namespace Game.Scripts.UI;

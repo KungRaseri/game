@@ -3,7 +3,7 @@
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 
-namespace Game.Main.Tests.Models.Materials;
+namespace Game.Items.Tests.Materials;
 
 public class CategoryTests
 {

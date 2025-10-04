@@ -1,28 +1,49 @@
-#nullable enable
-
 using FluentAssertions;
-using Game.Inventory.Systems;
+using Game.Inventories.Systems;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
 
-namespace Game.Inventory.Tests;
+namespace Game.Inventories.Tests;
 
 public class InventoryManagerTests
 {
-    private readonly MaterialType _woodMaterial;
-    private readonly MaterialType _stoneMaterial;
-    private readonly MaterialType _gemMaterial;
-    private readonly MaterialDrop _woodDrop;
-    private readonly MaterialDrop _stoneDrop;
-    private readonly MaterialDrop _gemDrop;
+    private readonly Material _woodMaterial;
+    private readonly Material _stoneMaterial;
+    private readonly Material _gemMaterial;
+    private readonly Drop _woodDrop;
+    private readonly Drop _stoneDrop;
+    private readonly Drop _gemDrop;
 
     public InventoryManagerTests()
     {
-        _woodMaterial = new MaterialType("wood", "Wood", "Common crafting material", MaterialCategory.Organic, MaterialRarity.Common, 999, 5);
-        _stoneMaterial = new MaterialType("stone", "Stone", "Hard building material", MaterialCategory.Organic, MaterialRarity.Common, 999, 3);
-        _gemMaterial = new MaterialType("ruby", "Ruby", "Precious gem", MaterialCategory.Gems, MaterialRarity.Rare, 100, 100);
-        
-        _woodDrop = new MaterialDrop(_woodMaterial, MaterialRarity.Common, 10, DateTime.UtcNow);
-        _stoneDrop = new MaterialDrop(_stoneMaterial, MaterialRarity.Common, 15, DateTime.UtcNow);
-        _gemDrop = new MaterialDrop(_gemMaterial, MaterialRarity.Rare, 3, DateTime.UtcNow);
+        _woodMaterial = new Material(
+            "wood",
+            "Wood",
+            "Common crafting material",
+            QualityTier.Common,
+            5,
+            Category.Wood
+        );
+        _stoneMaterial = new Material(
+            "stone",
+            "Stone",
+            "Hard building material",
+            QualityTier.Common,
+            3,
+            Category.Metal
+        );
+        _gemMaterial = new Material(
+            "ruby",
+            "Ruby",
+            "Precious gem",
+            QualityTier.Rare,
+            100,
+            Category.Gem
+        );
+
+        _woodDrop = new Drop(_woodMaterial, 10, DateTime.UtcNow);
+        _stoneDrop = new Drop(_stoneMaterial, 15, DateTime.UtcNow);
+        _gemDrop = new Drop(_gemMaterial, 3, DateTime.UtcNow);
     }
 
     [Fact]
@@ -99,7 +120,7 @@ public class InventoryManagerTests
     {
         // Arrange
         var manager = new InventoryManager();
-        var drops = Array.Empty<MaterialDrop>();
+        var drops = Array.Empty<Drop>();
 
         // Act
         var result = manager.AddMaterials(drops);
@@ -117,18 +138,18 @@ public class InventoryManagerTests
     {
         // Arrange
         var manager = new InventoryManager();
-        
+
         var inventoryUpdatedEvents = new List<InventoryStats>();
         manager.InventoryUpdated += stats => inventoryUpdatedEvents.Add(stats);
-        
+
         manager.AddMaterials(new[] { _woodDrop }); // Add 10 wood
 
         // Act
-        var removed = manager.RemoveMaterials(_woodMaterial.Id, MaterialRarity.Common, 5);
+        var removed = manager.RemoveMaterials(_woodMaterial.ItemId, QualityTier.Common, 5);
 
         // Assert
         removed.Should().Be(5);
-        manager.CurrentInventory.GetMaterialQuantity(_woodMaterial.Id, MaterialRarity.Common).Should().Be(5);
+        manager.CurrentInventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should().Be(5);
         inventoryUpdatedEvents.Should().HaveCount(2); // One for add, one for remove
     }
 
@@ -143,7 +164,7 @@ public class InventoryManagerTests
         manager.OperationFailed += message => operationFailedEvents.Add(message);
 
         // Act
-        var removed = manager.RemoveMaterials(_woodMaterial.Id, MaterialRarity.Common, 20);
+        var removed = manager.RemoveMaterials(_woodMaterial.ItemId, QualityTier.Common, 20);
 
         // Assert
         removed.Should().Be(10); // Only 10 were available
@@ -160,7 +181,7 @@ public class InventoryManagerTests
         manager.OperationFailed += message => operationFailedEvents.Add(message);
 
         // Act
-        var removed = manager.RemoveMaterials("nonexistent", MaterialRarity.Common, 5);
+        var removed = manager.RemoveMaterials("nonexistent", QualityTier.Common, 5);
 
         // Assert
         removed.Should().Be(0);
@@ -169,10 +190,11 @@ public class InventoryManagerTests
     }
 
     [Theory]
-    [InlineData("", MaterialRarity.Common, 5)]
-    [InlineData("wood", MaterialRarity.Common, 0)]
-    [InlineData("wood", MaterialRarity.Common, -1)]
-    public void RemoveMaterials_WithInvalidParameters_HandlesProperly(string materialId, MaterialRarity rarity, int quantity)
+    [InlineData("", QualityTier.Common, 5)]
+    [InlineData("wood", QualityTier.Common, 0)]
+    [InlineData("wood", QualityTier.Common, -1)]
+    public void RemoveMaterials_WithInvalidParameters_HandlesProperly(string materialId, QualityTier rarity,
+        int quantity)
     {
         // Arrange
         var manager = new InventoryManager();
@@ -197,7 +219,7 @@ public class InventoryManagerTests
 
         var criteria = new InventorySearchCriteria(
             SearchTerm: "wood",
-            CategoryFilter: MaterialCategory.Organic
+            CategoryFilter: Category.Wood
         );
 
         // Act
@@ -219,7 +241,7 @@ public class InventoryManagerTests
         manager.AddMaterials(new[] { _woodDrop, _stoneDrop, _gemDrop });
 
         var criteria = new InventorySearchCriteria(
-            RarityFilter: MaterialRarity.Rare
+            RarityFilter: QualityTier.Rare
         );
 
         // Act
@@ -228,7 +250,7 @@ public class InventoryManagerTests
         // Assert
         result.Results.Should().HaveCount(1);
         result.Results[0].Material.Should().Be(_gemMaterial);
-        result.Results[0].Rarity.Should().Be(MaterialRarity.Rare);
+        result.Results[0].Material.Quality.Should().Be(QualityTier.Rare);
     }
 
     [Fact]
@@ -240,7 +262,7 @@ public class InventoryManagerTests
 
         var criteria = new InventorySearchCriteria(
             MinQuantity: 2, // Wood(10), Stone(15), Gem(3) all pass
-            MinValue: 1000  // Only gem (1500) passes
+            MinValue: 1000 // Only gem (1500) passes
         );
 
         // Act
@@ -279,10 +301,10 @@ public class InventoryManagerTests
         var manager = new InventoryManager();
         manager.AddMaterials(new[] { _woodDrop, _stoneDrop }); // 10 wood, 15 stone
 
-        var requirements = new Dictionary<(string, MaterialRarity), int>
+        var requirements = new Dictionary<(string, QualityTier), int>
         {
-            { (_woodMaterial.Id, MaterialRarity.Common), 5 },
-            { (_stoneMaterial.Id, MaterialRarity.Common), 10 }
+            { (_woodMaterial.ItemId, QualityTier.Common), 5 },
+            { (_stoneMaterial.ItemId, QualityTier.Common), 10 }
         };
 
         // Act
@@ -299,10 +321,10 @@ public class InventoryManagerTests
         var manager = new InventoryManager();
         manager.AddMaterials(new[] { _woodDrop }); // Only 10 wood
 
-        var requirements = new Dictionary<(string, MaterialRarity), int>
+        var requirements = new Dictionary<(string, QualityTier), int>
         {
-            { (_woodMaterial.Id, MaterialRarity.Common), 15 }, // Need more than available
-            { (_stoneMaterial.Id, MaterialRarity.Common), 5 }   // Don't have any stone
+            { (_woodMaterial.ItemId, QualityTier.Common), 15 }, // Need more than available
+            { (_stoneMaterial.ItemId, QualityTier.Common), 5 } // Don't have any stone
         };
 
         // Act
@@ -317,16 +339,16 @@ public class InventoryManagerTests
     {
         // Arrange
         var manager = new InventoryManager();
-        
+
         var inventoryUpdatedEvents = new List<InventoryStats>();
         manager.InventoryUpdated += stats => inventoryUpdatedEvents.Add(stats);
-        
+
         manager.AddMaterials(new[] { _woodDrop, _stoneDrop }); // 10 wood, 15 stone
 
-        var requirements = new Dictionary<(string, MaterialRarity), int>
+        var requirements = new Dictionary<(string, QualityTier), int>
         {
-            { (_woodMaterial.Id, MaterialRarity.Common), 5 },
-            { (_stoneMaterial.Id, MaterialRarity.Common), 10 }
+            { (_woodMaterial.ItemId, QualityTier.Common), 5 },
+            { (_stoneMaterial.ItemId, QualityTier.Common), 10 }
         };
 
         // Act
@@ -334,8 +356,8 @@ public class InventoryManagerTests
 
         // Assert
         consumed.Should().BeTrue();
-        manager.CurrentInventory.GetMaterialQuantity(_woodMaterial.Id, MaterialRarity.Common).Should().Be(5);
-        manager.CurrentInventory.GetMaterialQuantity(_stoneMaterial.Id, MaterialRarity.Common).Should().Be(5);
+        manager.CurrentInventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should().Be(5);
+        manager.CurrentInventory.GetMaterialQuantity(_stoneMaterial.ItemId, QualityTier.Common).Should().Be(5);
         inventoryUpdatedEvents.Should().HaveCount(2); // One for initial add, one for consumption
     }
 
@@ -346,9 +368,9 @@ public class InventoryManagerTests
         var manager = new InventoryManager();
         manager.AddMaterials(new[] { _woodDrop }); // Only 10 wood
 
-        var requirements = new Dictionary<(string, MaterialRarity), int>
+        var requirements = new Dictionary<(string, QualityTier), int>
         {
-            { (_woodMaterial.Id, MaterialRarity.Common), 15 } // Need more than available
+            { (_woodMaterial.ItemId, QualityTier.Common), 15 } // Need more than available
         };
 
         var operationFailedEvents = new List<string>();
@@ -359,7 +381,7 @@ public class InventoryManagerTests
 
         // Assert
         consumed.Should().BeFalse();
-        manager.CurrentInventory.GetMaterialQuantity(_woodMaterial.Id, MaterialRarity.Common).Should().Be(10); // Unchanged
+        manager.CurrentInventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should().Be(10); // Unchanged
         operationFailedEvents.Should().HaveCount(1);
         operationFailedEvents[0].Should().Contain("Insufficient materials");
     }
@@ -422,10 +444,10 @@ public class InventoryManagerTests
     {
         // Arrange
         var manager = new InventoryManager();
-        
+
         var inventoryUpdatedEvents = new List<InventoryStats>();
         manager.InventoryUpdated += stats => inventoryUpdatedEvents.Add(stats);
-        
+
         manager.AddMaterials(new[] { _woodDrop, _stoneDrop });
 
         // Act
@@ -508,8 +530,15 @@ public class InventoryManagerTests
         for (int i = 0; i < 10; i++)
         {
             var materialId = $"material_{i}";
-            var material = new MaterialType(materialId, $"Material {i}", "Test material", MaterialCategory.Organic, MaterialRarity.Common, 999, 1);
-            var drop = new MaterialDrop(material, MaterialRarity.Common, 1, DateTime.UtcNow);
+            var material = new Material(
+                materialId,
+                $"Material {i}",
+                "Test material",
+                QualityTier.Common,
+                1,
+                Category.Metal
+            );
+            var drop = new Drop(material, 1, DateTime.UtcNow);
 
             tasks.Add(Task.Run(() =>
             {

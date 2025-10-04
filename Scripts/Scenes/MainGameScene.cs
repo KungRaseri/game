@@ -3,11 +3,12 @@
 using Game.Adventure.Models;
 using Game.Adventure.Systems;
 using Game.Core.Utils;
-using Game.Inventory.Systems;
+using Game.Inventories.Systems;
 using Game.Items.Data;
 using Game.Scripts.UI;
 using Game.Shop.Systems;
 using Godot;
+using InventoryManager = Game.Game.Inventories.Systems.InventoryManager;
 
 namespace Game.Scripts.Scenes;
 
@@ -107,7 +108,8 @@ public partial class MainGameScene : Control
 
             // Connect Material Collection UI to inventory system
             _inventoryPanelUI?.SetInventoryManager(_inventoryManager);
-            GameLogger.Info($"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
+            GameLogger.Info(
+                $"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
 
             // Connect Shop Management UI to shop systems
             _shopManagementUI?.Initialize(_shopManager, _trafficManager, _inventoryManager);
@@ -204,7 +206,7 @@ public partial class MainGameScene : Control
         {
             _shopButton.Pressed -= OnShopButtonPressed;
         }
-        
+
         if (_shopManagementUI != null)
         {
             _shopManagementUI.BackToGameRequested -= OnBackToGameRequested;
@@ -339,7 +341,8 @@ public partial class MainGameScene : Control
             foreach (var drop in result.SuccessfulAdds)
             {
                 materialsAdded.Add($"{drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
-                GameLogger.Debug($"Added to inventory: {drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
+                GameLogger.Debug(
+                    $"Added to inventory: {drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
             }
 
             // Report any failures

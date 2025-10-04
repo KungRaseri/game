@@ -1,10 +1,11 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Inventory.Systems;
+using Game.Inventories.Systems;
 using Game.Main.Utils;
 using Godot;
 using GodotPlugins.Game;
+using MaterialStack = Game.Game.Inventories.Systems.MaterialStack;
 
 namespace Game.Scripts.UI;
 

@@ -1,10 +1,12 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Inventory.Systems;
+using Game.Inventories.Systems;
 using Game.Main.Utils;
 using Godot;
 using GodotPlugins.Game;
+using InventoryManager = Game.Game.Inventories.Systems.InventoryManager;
+using InventoryStats = Game.Game.Inventories.Systems.InventoryStats;
 
 namespace Game.Scripts.UI;
 

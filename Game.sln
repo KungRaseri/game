@@ -21,9 +21,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Crafting", "Game.Craft
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Crafting.Tests", "Game.Crafting.Tests\Game.Crafting.Tests.csproj", "{E1B6B2C4-1234-4567-8901-234567890130}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Inventory", "Game.Inventory\Game.Inventory.csproj", "{E1B6B2C4-1234-4567-8901-234567890131}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Inventories", "Game.Inventories\Game.Inventories.csproj", "{E1B6B2C4-1234-4567-8901-234567890131}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Inventory.Tests", "Game.Inventory.Tests\Game.Inventory.Tests.csproj", "{E1B6B2C4-1234-4567-8901-234567890132}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Inventories.Tests", "Game.Inventories.Tests\Game.Inventories.Tests.csproj", "{E1B6B2C4-1234-4567-8901-234567890132}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Economy", "Game.Economy\Game.Economy.csproj", "{E1B6B2C4-1234-4567-8901-234567890133}"
 EndProject
