@@ -1,11 +1,12 @@
 #nullable enable
 
+using Game.Adventure.Controllers;
+using Game.Adventure.Models;
+using Game.Core.Utils;
 using Godot;
-using Game.Main.Controllers;
-using Game.Main.Models;
-using Game.Main.Utils;
+using GodotPlugins.Game;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component that displays adventurer status and provides expedition controls.

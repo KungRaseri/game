@@ -1,11 +1,11 @@
 #nullable enable
 
+using Game.Adventure.Controllers;
+using Game.Adventure.Models;
+using Game.Core.Utils;
 using Godot;
-using Game.Main.Controllers;
-using Game.Main.Models;
-using Game.Main.Utils;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component that displays expedition progress and dungeon information.
@@ -24,7 +24,7 @@ public partial class ExpeditionPanelUI : Panel
     private AdventurerController? _adventurerController;
     private int _totalMonsters = 0;
     private int _defeatedMonsters = 0;
-    private Game.Main.Models.CombatEntityStats? _currentEnemy;
+    private CombatEntityStats? _currentEnemy;
 
     public override void _Ready()
     {
@@ -100,7 +100,7 @@ public partial class ExpeditionPanelUI : Panel
     /// <summary>
     /// Sets the current enemy entity and subscribes to its health changes.
     /// </summary>
-    public void SetCurrentEnemy(Game.Main.Models.CombatEntityStats? enemy)
+    public void SetCurrentEnemy(CombatEntityStats? enemy)
     {
         // Unsubscribe from previous enemy
         if (_currentEnemy != null)
@@ -150,11 +150,14 @@ public partial class ExpeditionPanelUI : Panel
     private void CacheNodeReferences()
     {
         _dungeonName = GetNode<Label>("VBoxContainer/InfoContainer/DungeonContainer/DungeonName");
-        _progressText = GetNode<Label>("VBoxContainer/InfoContainer/ProgressContainer/ProgressLabelContainer/ProgressText");
+        _progressText =
+            GetNode<Label>("VBoxContainer/InfoContainer/ProgressContainer/ProgressLabelContainer/ProgressText");
         _progressBar = GetNode<ProgressBar>("VBoxContainer/InfoContainer/ProgressContainer/ProgressBar");
         _monsterName = GetNode<Label>("VBoxContainer/InfoContainer/MonsterContainer/MonsterName");
         _expeditionStatus = GetNode<Label>("VBoxContainer/InfoContainer/StatusContainer/ExpeditionStatus");
-        _enemyHealthText = GetNode<Label>("VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthLabelContainer/EnemyHealthText");
+        _enemyHealthText =
+            GetNode<Label>(
+                "VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthLabelContainer/EnemyHealthText");
         _enemyHealthBar = GetNode<ProgressBar>("VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthBar");
     }
 
@@ -236,7 +239,7 @@ public partial class ExpeditionPanelUI : Panel
 
         // Parse status messages only for non-combat events
         var lowerMessage = message.ToLowerInvariant();
-        
+
         if (lowerMessage.Contains("fighting") && lowerMessage.Contains("goblin"))
         {
             SetCurrentMonster("Goblin");

@@ -1,12 +1,10 @@
 #nullable enable
 
+using Game.Adventure.Controllers;
+using Game.Core.Utils;
 using Godot;
-using Game.Main.Controllers;
-using Game.Main.Utils;
-using System;
-using System.Collections.Generic;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component that displays combat events and status messages.
@@ -142,22 +140,22 @@ public partial class CombatLogUI : Panel
         {
             return "green";
         }
-        
+
         if (lowerMessage.Contains("damage") || lowerMessage.Contains("hurt"))
         {
             return "red";
         }
-        
+
         if (lowerMessage.Contains("retreat") || lowerMessage.Contains("fleeing"))
         {
             return "orange";
         }
-        
+
         if (lowerMessage.Contains("expedition") || lowerMessage.Contains("traveling"))
         {
             return "cyan";
         }
-        
+
         if (lowerMessage.Contains("health") || lowerMessage.Contains("healing"))
         {
             return "lime";

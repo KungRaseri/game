@@ -1,18 +1,15 @@
 #nullable enable
 
+using Game.Adventure.Models;
+using Game.Core.Utils;
+using Game.Inventories.Systems;
+using Game.Items.Data;
+using Game.Items.Systems;
+using Game.Scripts.UI;
+using Game.Shop.Systems;
 using Godot;
-using Game.Main.Controllers;
-using Game.Main.Managers;
-using Game.Main.Utils;
-using Game.Main.Data;
-using Game.Main.UI;
-using Game.Main.Models;
-using Game.Main.Models.Materials;
-using Game.Main.Systems.Inventory;
-using Game.Main.Systems.Loot;
-using Game.Main.Systems;
-using System;
-using System.Collections.Generic;
+
+namespace Game.Scripts.Scenes;
 
 /// <summary>
 /// Main game scene that orchestrates the entire game experience.
@@ -110,7 +107,8 @@ public partial class MainGameScene : Control
 
             // Connect Material Collection UI to inventory system
             _inventoryPanelUI?.SetInventoryManager(_inventoryManager);
-            GameLogger.Info($"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
+            GameLogger.Info(
+                $"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
 
             // Connect Shop Management UI to shop systems
             _shopManagementUI?.Initialize(_shopManager, _trafficManager, _inventoryManager);
@@ -207,7 +205,7 @@ public partial class MainGameScene : Control
         {
             _shopButton.Pressed -= OnShopButtonPressed;
         }
-        
+
         if (_shopManagementUI != null)
         {
             _shopManagementUI.BackToGameRequested -= OnBackToGameRequested;
@@ -254,7 +252,7 @@ public partial class MainGameScene : Control
         EmitSignal(SignalName.AdventurerHealthChanged, currentHealth, maxHealth);
     }
 
-    private void OnMonsterDefeated(Game.Main.Models.CombatEntityStats monster)
+    private void OnMonsterDefeated(CombatEntityStats monster)
     {
         _expeditionPanelUI?.OnMonsterDefeated();
         _expeditionPanelUI?.SetCurrentEnemy(null); // Clear enemy display when defeated
@@ -341,8 +339,9 @@ public partial class MainGameScene : Control
             var materialsAdded = new List<string>();
             foreach (var drop in result.SuccessfulAdds)
             {
-                materialsAdded.Add($"{drop.Material.Name} x{drop.Quantity} ({drop.ActualRarity})");
-                GameLogger.Debug($"Added to inventory: {drop.Material.Name} x{drop.Quantity} ({drop.ActualRarity})");
+                materialsAdded.Add($"{drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
+                GameLogger.Debug(
+                    $"Added to inventory: {drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
             }
 
             // Report any failures

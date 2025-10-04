@@ -14,6 +14,8 @@
 		<Compile Remove="Game.Economy\**" />
 		<Compile Remove="Game.Inventory.Tests\**" />
 		<Compile Remove="Game.Inventory\**" />
+		<Compile Remove="Game.Items.Tests\**" />
+		<Compile Remove="Game.Items\**" />
 		<Compile Remove="Game.Main.Tests\**" />
 		<Compile Remove="Game.Main\**" />
 		<Compile Remove="Game.Shop.Tests\**" />
@@ -28,10 +30,23 @@
 		<EmbeddedResource Remove="Game.Economy\**" />
 		<EmbeddedResource Remove="Game.Inventory.Tests\**" />
 		<EmbeddedResource Remove="Game.Inventory\**" />
+		<EmbeddedResource Remove="Game.Items.Tests\**" />
+		<EmbeddedResource Remove="Game.Items\**" />
 		<EmbeddedResource Remove="Game.Shop.Tests\**" />
 		<EmbeddedResource Remove="Game.Shop\**" />
+		<Compile Remove="Game.Item\**" />
+		<EmbeddedResource Remove="Game.Item\**" />
+		<Compile Remove="Game.Inventories\**" />
+		<EmbeddedResource Remove="Game.Inventories\**" />
+		<Compile Remove="Game.Inventories.Tests\**" />
+		<EmbeddedResource Remove="Game.Inventories.Tests\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="Game.Main\Game.Main.csproj" />
+	  <ProjectReference Include="Game.Core\Game.Core.csproj" />
+	  <ProjectReference Include="Game.Adventure\Game.Adventure.csproj" />
+	  <ProjectReference Include="Game.Inventories\Game.Inventories.csproj" />
+	  <ProjectReference Include="Game.Shop\Game.Shop.csproj" />
+	  <ProjectReference Include="Game.Economy\Game.Economy.csproj" />
+	  <ProjectReference Include="Game.Crafting\Game.Crafting.csproj" />
 	</ItemGroup>
 </Project>

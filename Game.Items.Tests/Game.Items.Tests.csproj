@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Game.Items\Game.Items.csproj" />
+    </ItemGroup>
+
+</Project>

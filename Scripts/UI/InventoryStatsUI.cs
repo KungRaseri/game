@@ -1,13 +1,12 @@
 #nullable enable
 
+using Game.Core.Utils;
+using Game.Inventories.Models;
+using Game.Items.Models;
 using Godot;
-using Game.Main.Systems.Inventory;
-using Game.Main.Models.Materials;
-using Game.Main.Utils;
-using System.Collections.Generic;
-using System.Linq;
+using GodotPlugins.Game;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component for displaying inventory statistics and material categorization.
@@ -17,10 +16,10 @@ public partial class InventoryStatsUI : Panel
 {
     [Export] public int MaxDisplayedCategories { get; set; } = 5;
     [Export] public int MaxDisplayedRarities { get; set; } = 4;
-    
+
     [Signal]
     public delegate void StatsRefreshRequestedEventHandler();
-    
+
     private Label? _capacityLabel;
     private ProgressBar? _capacityProgressBar;
     private Label? _totalMaterialsLabel;
@@ -28,7 +27,7 @@ public partial class InventoryStatsUI : Panel
     private VBoxContainer? _categoriesContainer;
     private VBoxContainer? _raritiesContainer;
     private Button? _refreshButton;
-    
+
     private InventoryStats? _currentStats;
 
     public override void _Ready()
@@ -71,17 +70,17 @@ public partial class InventoryStatsUI : Panel
             _capacityProgressBar = GetNode<ProgressBar>("VBox/CapacityContainer/CapacityProgressBar");
             _totalMaterialsLabel = GetNode<Label>("VBox/TotalMaterialsLabel");
             _totalValueLabel = GetNode<Label>("VBox/TotalValueLabel");
-            
+
             // Category and rarity breakdown containers
             _categoriesContainer = GetNode<VBoxContainer>("VBox/CategoryBreakdown/CategoriesContainer");
             _raritiesContainer = GetNode<VBoxContainer>("VBox/RarityBreakdown/RaritiesContainer");
-            
+
             // Refresh button
             _refreshButton = GetNode<Button>("VBox/RefreshButton");
-            
+
             GameLogger.Debug("InventoryStatsUI node references cached successfully");
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             GameLogger.Error(ex, "Failed to cache node references in InventoryStatsUI");
         }
@@ -116,7 +115,7 @@ public partial class InventoryStatsUI : Panel
         if (_capacityProgressBar != null) _capacityProgressBar.Value = 0;
         if (_totalMaterialsLabel != null) _totalMaterialsLabel.Text = "Total Materials: --";
         if (_totalValueLabel != null) _totalValueLabel.Text = "Total Value: --";
-        
+
         ClearBreakdownContainers();
     }
 
@@ -131,11 +130,11 @@ public partial class InventoryStatsUI : Panel
 
         if (_capacityProgressBar != null)
         {
-            double percentage = _currentStats.Capacity > 0 
+            double percentage = _currentStats.Capacity > 0
                 ? (double)_currentStats.UsedSlots / _currentStats.Capacity * 100
                 : 0;
             _capacityProgressBar.Value = percentage;
-            
+
             // Color coding for capacity usage
             var theme = _capacityProgressBar.Theme ?? new Theme();
             if (percentage >= 90)
@@ -193,7 +192,7 @@ public partial class InventoryStatsUI : Panel
                 .OrderByDescending(kvp => kvp.Value)
                 .Skip(MaxDisplayedCategories)
                 .Sum(kvp => kvp.Value);
-            
+
             var othersLabel = new Label();
             othersLabel.Text = $"Others: {othersCount:N0}";
             othersLabel.Modulate = Colors.Gray;
@@ -207,7 +206,7 @@ public partial class InventoryStatsUI : Panel
 
         ClearContainer(_raritiesContainer);
 
-        var sortedRarities = _currentStats.RarityCounts
+        var sortedRarities = _currentStats.QualityTierCounts
             .OrderBy(kvp => (int)kvp.Key) // Order by rarity enum value
             .Take(MaxDisplayedRarities);
 
@@ -215,10 +214,10 @@ public partial class InventoryStatsUI : Panel
         {
             var label = new Label();
             label.Text = $"{rarity}: {count:N0}";
-            
+
             // Color coding by rarity
             label.Modulate = GetRarityColor(rarity);
-            
+
             _raritiesContainer.AddChild(label);
         }
     }
@@ -239,15 +238,15 @@ public partial class InventoryStatsUI : Panel
         }
     }
 
-    private Color GetRarityColor(MaterialRarity rarity)
+    private Color GetRarityColor(QualityTier rarity)
     {
         return rarity switch
         {
-            MaterialRarity.Common => Colors.White,
-            MaterialRarity.Uncommon => Colors.Green,
-            MaterialRarity.Rare => Colors.Blue,
-            MaterialRarity.Epic => Colors.Purple,
-            MaterialRarity.Legendary => Colors.Orange,
+            QualityTier.Common => Colors.White,
+            QualityTier.Uncommon => Colors.Green,
+            QualityTier.Rare => Colors.Blue,
+            QualityTier.Epic => Colors.Purple,
+            QualityTier.Legendary => Colors.Orange,
             _ => Colors.Gray
         };
     }

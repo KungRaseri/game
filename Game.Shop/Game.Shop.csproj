@@ -2,6 +2,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Game.Core\Game.Core.csproj" />
+    <ProjectReference Include="..\Game.Economy\Game.Economy.csproj" />
+    <ProjectReference Include="..\Game.Inventories\Game.Inventories.csproj" />
+    <ProjectReference Include="..\Game.Items\Game.Items.csproj" />
   </ItemGroup>
 
 </Project>

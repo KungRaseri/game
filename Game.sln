@@ -5,10 +5,6 @@ VisualStudioVersion = 17.14.36408.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game.csproj", "{A4B6FDDD-2503-45C3-A52A-50FC208F21CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Main", "Game.Main\Game.Main.csproj", "{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Main.Tests", "Game.Main.Tests\Game.Main.Tests.csproj", "{D172332E-80C0-4D25-B22F-692522C9D44B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Core", "Game.Core\Game.Core.csproj", "{E1B6B2C4-1234-4567-8901-234567890123}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Core.Tests", "Game.Core.Tests\Game.Core.Tests.csproj", "{E1B6B2C4-1234-4567-8901-234567890124}"
@@ -25,9 +21,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Crafting", "Game.Craft
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Crafting.Tests", "Game.Crafting.Tests\Game.Crafting.Tests.csproj", "{E1B6B2C4-1234-4567-8901-234567890130}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Inventory", "Game.Inventory\Game.Inventory.csproj", "{E1B6B2C4-1234-4567-8901-234567890131}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Inventories", "Game.Inventories\Game.Inventories.csproj", "{E1B6B2C4-1234-4567-8901-234567890131}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Inventory.Tests", "Game.Inventory.Tests\Game.Inventory.Tests.csproj", "{E1B6B2C4-1234-4567-8901-234567890132}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Inventories.Tests", "Game.Inventories.Tests\Game.Inventories.Tests.csproj", "{E1B6B2C4-1234-4567-8901-234567890132}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Economy", "Game.Economy\Game.Economy.csproj", "{E1B6B2C4-1234-4567-8901-234567890133}"
 EndProject
@@ -36,14 +32,24 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		.github\copilot-instructions.md = .github\copilot-instructions.md
-		Documentation\IDEAS.md = Documentation\IDEAS.md
-		Documentation\MILESTONES.md = Documentation\MILESTONES.md
+		README.md = README.md
+		CLAUDE.md = CLAUDE.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Milestone-1", "Milestone-1", "{6106A59B-2CAF-4EB6-B517-1B9B0B619E77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Items", "Game.Items\Game.Items.csproj", "{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{09899EF8-BA43-4473-80A4-6419D113E8F8}"
 	ProjectSection(SolutionItems) = preProject
-		Documentation\milestone-1\README.md = Documentation\milestone-1\README.md
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.gitmodules = .gitmodules
+		coverlet.runsettings = coverlet.runsettings
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Items.Tests", "Game.Items.Tests\Game.Items.Tests.csproj", "{18600DDC-526C-4D17-BE94-0F6F1D501F06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,18 +64,6 @@ Global
 		{A4B6FDDD-2503-45C3-A52A-50FC208F21CE}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
 		{A4B6FDDD-2503-45C3-A52A-50FC208F21CE}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
 		{A4B6FDDD-2503-45C3-A52A-50FC208F21CE}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.ExportDebug|Any CPU.ActiveCfg = Release|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.ExportDebug|Any CPU.Build.0 = Release|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.ExportDebug|Any CPU.ActiveCfg = Release|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.ExportDebug|Any CPU.Build.0 = Release|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890123}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890123}.ExportDebug|Any CPU.ActiveCfg = Release|Any CPU
@@ -142,12 +136,21 @@ Global
 		{E1B6B2C4-1234-4567-8901-234567890134}.ExportDebug|Any CPU.Build.0 = Release|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890134}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890134}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{B125AC52-FEA1-4CA6-A3C4-22C954AD77DE}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{18600DDC-526C-4D17-BE94-0F6F1D501F06}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{6106A59B-2CAF-4EB6-B517-1B9B0B619E77} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F2C12CE0-8544-4C27-98BB-FFCE96D0748F}

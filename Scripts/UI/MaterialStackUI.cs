@@ -1,12 +1,11 @@
 #nullable enable
 
+using Game.Core.Utils;
+using Game.Inventories.Models;
+using Game.Items.Models;
 using Godot;
-using Game.Main.Systems.Inventory;
-using Game.Main.Models.Materials;
-using Game.Main.Utils;
-using System;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// UI component that displays a single material stack with icon, quantity, rarity indicators, and tooltip.
@@ -47,7 +46,8 @@ public partial class MaterialStackUI : Panel
 
     public override void _GuiInput(InputEvent @event)
     {
-        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
+        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed &&
+            mouseEvent.ButtonIndex == MouseButton.Left)
         {
             OnMaterialStackClicked();
         }
@@ -60,13 +60,13 @@ public partial class MaterialStackUI : Panel
     {
         GameLogger.Debug($"MaterialStackUI: SetMaterialStack called with {materialStack?.Material?.Name ?? "null"}");
         _materialStack = materialStack;
-        
+
         // Ensure node references are cached before updating display
         if (_nameLabel == null)
         {
             CacheNodeReferences();
         }
-        
+
         UpdateDisplay();
         GameLogger.Debug($"MaterialStackUI: SetMaterialStack completed for {materialStack?.Material?.Name ?? "null"}");
     }
@@ -89,10 +89,10 @@ public partial class MaterialStackUI : Panel
             _nameLabel = GetNode<Label>("HBox/InfoContainer/NameLabel");
             _rarityLabel = GetNode<Label>("HBox/InfoContainer/RarityLabel");
             _rarityIndicator = GetNode<ColorRect>("RarityIndicator");
-            
+
             // Note: No click button in the new layout - will handle clicks on the panel itself
             _clickButton = null;
-            
+
             GameLogger.Debug($"MaterialStackUI node references cached successfully");
         }
         catch (Exception ex)
@@ -106,10 +106,10 @@ public partial class MaterialStackUI : Panel
         // Set up mouse interaction on the main panel
         MouseEntered += OnMouseEntered;
         MouseExited += OnMouseExited;
-        
+
         // Enable input to capture clicks
-        MouseFilter = Control.MouseFilterEnum.Pass;
-        
+        MouseFilter = MouseFilterEnum.Pass;
+
         // Set up tooltip on background panel if available
         if (_backgroundPanel != null)
         {
@@ -130,12 +130,14 @@ public partial class MaterialStackUI : Panel
         // Ensure nodes are ready before updating
         if (_nameLabel == null || _quantityLabel == null)
         {
-            GameLogger.Debug($"MaterialStackUI: UpdateDisplay deferred - nodes not ready yet for {_materialStack.Material.Name}");
+            GameLogger.Debug(
+                $"MaterialStackUI: UpdateDisplay deferred - nodes not ready yet for {_materialStack.Material.Name}");
             return;
         }
 
-        GameLogger.Debug($"MaterialStackUI: Updating display for {_materialStack.Material.Name} x{_materialStack.Quantity}");
-        
+        GameLogger.Debug(
+            $"MaterialStackUI: Updating display for {_materialStack.Material.Name} x{_materialStack.Quantity}");
+
         UpdateMaterialIcon();
         UpdateNameDisplay();
         UpdateQuantityDisplay();
@@ -143,7 +145,7 @@ public partial class MaterialStackUI : Panel
         UpdateRarityIndicator();
         UpdateBackgroundStyling();
         UpdateTooltip();
-        
+
         GameLogger.Debug($"MaterialStackUI: UpdateDisplay completed for {_materialStack.Material.Name}");
     }
 
@@ -183,24 +185,25 @@ public partial class MaterialStackUI : Panel
 
         // TODO: Load material-specific icons based on material type
         // For now, use color-coding based on material rarity
-        _materialIcon.Color = GetMaterialColor(_materialStack.Material.BaseRarity);
+        _materialIcon.Color = GetMaterialColor(_materialStack.Material.Quality);
     }
 
-    private Color GetMaterialColor(MaterialRarity rarity) => rarity switch
+    private Color GetMaterialColor(QualityTier rarity) => rarity switch
     {
-        MaterialRarity.Common => Colors.Gray,
-        MaterialRarity.Uncommon => Colors.Green,
-        MaterialRarity.Rare => Colors.Blue,
-        MaterialRarity.Epic => Colors.Purple,
-        MaterialRarity.Legendary => Colors.Gold,
+        QualityTier.Common => Colors.Gray,
+        QualityTier.Uncommon => Colors.Green,
+        QualityTier.Rare => Colors.Blue,
+        QualityTier.Epic => Colors.Purple,
+        QualityTier.Legendary => Colors.Gold,
         _ => Colors.White
     };
 
     private void UpdateQuantityDisplay()
     {
-        if (_quantityLabel == null || _materialStack == null) 
+        if (_quantityLabel == null || _materialStack == null)
         {
-            GameLogger.Debug($"MaterialStackUI: UpdateQuantityDisplay skipped - _quantityLabel={_quantityLabel}, _materialStack={_materialStack}");
+            GameLogger.Debug(
+                $"MaterialStackUI: UpdateQuantityDisplay skipped - _quantityLabel={_quantityLabel}, _materialStack={_materialStack}");
             return;
         }
 
@@ -225,9 +228,10 @@ public partial class MaterialStackUI : Panel
 
     private void UpdateNameDisplay()
     {
-        if (_nameLabel == null || _materialStack == null) 
+        if (_nameLabel == null || _materialStack == null)
         {
-            GameLogger.Debug($"MaterialStackUI: UpdateNameDisplay skipped - _nameLabel={_nameLabel}, _materialStack={_materialStack}");
+            GameLogger.Debug(
+                $"MaterialStackUI: UpdateNameDisplay skipped - _nameLabel={_nameLabel}, _materialStack={_materialStack}");
             return;
         }
 
@@ -239,10 +243,10 @@ public partial class MaterialStackUI : Panel
     {
         if (_rarityLabel == null || _materialStack == null) return;
 
-        _rarityLabel.Text = _materialStack.Rarity.ToString();
-        
+        _rarityLabel.Text = _materialStack.Material.Quality.ToString();
+
         // Color the rarity label based on rarity
-        var rarityColor = GetMaterialColor(_materialStack.Rarity);
+        var rarityColor = GetMaterialColor(_materialStack.Material.Quality);
         _rarityLabel.Modulate = rarityColor;
     }
 
@@ -252,7 +256,7 @@ public partial class MaterialStackUI : Panel
 
         _rarityIndicator.Visible = true;
 
-        var rarityColor = GetMaterialColor(_materialStack.Material.BaseRarity);
+        var rarityColor = GetMaterialColor(_materialStack.Material.Quality);
         _rarityIndicator.Color = rarityColor;
     }
 
@@ -261,7 +265,7 @@ public partial class MaterialStackUI : Panel
         if (_backgroundPanel == null || _materialStack == null) return;
 
         var styleBox = new StyleBoxFlat();
-        
+
         if (_isHovered)
         {
             styleBox.BgColor = new Color(0.3f, 0.3f, 0.3f, 0.8f);
@@ -274,7 +278,7 @@ public partial class MaterialStackUI : Panel
         else
         {
             styleBox.BgColor = new Color(0.2f, 0.2f, 0.2f, 0.6f);
-            styleBox.BorderColor = GetMaterialColor(_materialStack.Material.BaseRarity);
+            styleBox.BorderColor = GetMaterialColor(_materialStack.Material.Quality);
             styleBox.BorderWidthBottom = 1;
             styleBox.BorderWidthTop = 1;
             styleBox.BorderWidthLeft = 1;
@@ -298,7 +302,7 @@ public partial class MaterialStackUI : Panel
         }
 
         var material = _materialStack.Material;
-        var tooltipText = $"{material.Name} ({_materialStack.Rarity})\n";
+        var tooltipText = $"{material.Name} ({_materialStack.Material.Quality})\n";
         tooltipText += $"Quantity: {_materialStack.Quantity:N0} / {_materialStack.StackLimit:N0}\n";
         tooltipText += $"Value: {_materialStack.TotalValue:N0}\n";
         tooltipText += $"Category: {material.Category}\n";

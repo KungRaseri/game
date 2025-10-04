@@ -1,17 +1,15 @@
 #nullable enable
 
+using Game.Core.Utils;
+using Game.Inventories.Systems;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
+using Game.Shop.Models;
+using Game.Shop.Systems;
 using Godot;
-using Game.Main.Models;
-using Game.Main.Models.Materials;
-using Game.Main.Systems;
-using Game.Main.Systems.Inventory;
-using Game.Main.Utils;
-using Game.Main.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Material = Game.Items.Models.Materials.Material;
 
-namespace Game.Main.UI;
+namespace Game.Scripts.UI;
 
 /// <summary>
 /// Main shop management UI that provides a visual interface for managing the shop.
@@ -79,7 +77,8 @@ public partial class ShopManagementUI : Panel
     /// <summary>
     /// Initialize the shop management UI with the shop manager, traffic manager, and inventory.
     /// </summary>
-    public void Initialize(ShopManager shopManager, ShopTrafficManager trafficManager, InventoryManager inventoryManager)
+    public void Initialize(ShopManager shopManager, ShopTrafficManager trafficManager,
+        InventoryManager inventoryManager)
     {
         _shopManager = shopManager;
         _trafficManager = trafficManager;
@@ -137,11 +136,17 @@ public partial class ShopManagementUI : Panel
         _backButton = GetNode<Button>("MainContainer/LeftPanel/ActionBar/BackButton");
         _priceAllButton = GetNode<Button>("MainContainer/RightPanel/ControlPanel/Pricing/QuickPricing/PriceAllButton");
         _clearAllButton = GetNode<Button>("MainContainer/RightPanel/ControlPanel/Pricing/QuickPricing/ClearAllButton");
-        _inventoryList = GetNode<VBoxContainer>("MainContainer/RightPanel/ControlPanel/Inventory/InventoryScroll/InventoryGrid");
-        _customerContainer = GetNode<VBoxContainer>("MainContainer/RightPanel/CustomerQueue/CustomerList/CustomerContainer");
-        _treasuryValue = GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/TreasuryInfo/TreasuryValue");
-        _salesValue = GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/SalesInfo/SalesValue");
-        _itemsValue = GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/ItemsInfo/ItemsValue");
+        _inventoryList =
+            GetNode<VBoxContainer>("MainContainer/RightPanel/ControlPanel/Inventory/InventoryScroll/InventoryGrid");
+        _customerContainer =
+            GetNode<VBoxContainer>("MainContainer/RightPanel/CustomerQueue/CustomerList/CustomerContainer");
+        _treasuryValue =
+            GetNode<Label>(
+                "MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/TreasuryInfo/TreasuryValue");
+        _salesValue =
+            GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/SalesInfo/SalesValue");
+        _itemsValue =
+            GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/ItemsInfo/ItemsValue");
     }
 
     private void InitializeDisplaySlots()
@@ -308,7 +313,7 @@ public partial class ShopManagementUI : Panel
         // TODO: In full implementation, show a selection dialog
         var materialToStock = materials.First();
 
-        StockMaterialInSlot(materialToStock.Material, materialToStock.Rarity, slotId);
+        StockMaterialInSlot(materialToStock.Material, materialToStock.Material.Quality, slotId);
     }
 
     private void OnPriceChangeRequested(int slotId, decimal newPrice)
@@ -414,7 +419,8 @@ public partial class ShopManagementUI : Panel
     {
         if (_inventoryList == null || _inventoryManager == null)
         {
-            GameLogger.Warning($"RefreshInventory called but references null: inventoryList={_inventoryList != null}, inventoryManager={_inventoryManager != null}");
+            GameLogger.Warning(
+                $"RefreshInventory called but references null: inventoryList={_inventoryList != null}, inventoryManager={_inventoryManager != null}");
             return;
         }
 
@@ -435,7 +441,7 @@ public partial class ShopManagementUI : Panel
             var noItemsLabel = new Label
             {
                 Text = "No materials in inventory\nGo on expeditions to collect materials!",
-                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+                SizeFlagsHorizontal = SizeFlags.ExpandFill,
                 HorizontalAlignment = HorizontalAlignment.Center
             };
             _inventoryList.AddChild(noItemsLabel);
@@ -447,7 +453,7 @@ public partial class ShopManagementUI : Panel
         var instructionLabel = new Label
         {
             Text = "Click materials to stock in shop:",
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
             HorizontalAlignment = HorizontalAlignment.Center,
             CustomMinimumSize = new Vector2(0, 25)
         };
@@ -456,7 +462,7 @@ public partial class ShopManagementUI : Panel
         // Add separator
         var separator = new HSeparator
         {
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+            SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
         _inventoryList.AddChild(separator);
 
@@ -464,8 +470,8 @@ public partial class ShopManagementUI : Panel
         var refreshButton = new Button
         {
             Text = "🔄 Refresh Inventory",
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
-            SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ShrinkCenter,
             CustomMinimumSize = new Vector2(0, 30)
         };
         refreshButton.Pressed += () =>
@@ -480,23 +486,25 @@ public partial class ShopManagementUI : Panel
         {
             var button = new Button
             {
-                Text = $"{materialStack.Material.Name} x{materialStack.Quantity} ({materialStack.Rarity})",
-                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
-                SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+                Text = $"{materialStack.Material.Name} x{materialStack.Quantity} ({materialStack.Material.Quality})",
+                SizeFlagsHorizontal = SizeFlags.ExpandFill,
+                SizeFlagsVertical = SizeFlags.ShrinkCenter,
                 CustomMinimumSize = new Vector2(0, 40) // Consistent height for list items
             };
 
             // Add tooltip with value information
-            var item = CreateItemFromMaterial(materialStack.Material, materialStack.Rarity);
-            button.TooltipText = $"{materialStack.Material.Description}\nShop Value: {item.Value}g\nCategory: {materialStack.Material.Category}";
+            var item = CreateItemFromMaterial(materialStack.Material, materialStack.Material.Quality);
+            button.TooltipText =
+                $"{materialStack.Material.Description}\nShop Value: {item.Value}g\nCategory: {materialStack.Material.Category}";
 
             // Store material data in the button for later use
-            button.SetMeta("materialId", materialStack.Material.Id);
-            button.SetMeta("rarity", (int)materialStack.Rarity);
+            button.SetMeta("materialId", materialStack.Material.ItemId);
+            button.SetMeta("rarity", (int)materialStack.Material.Quality);
             button.SetMeta("quantity", materialStack.Quantity);
 
             // Connect button press to material selection
-            button.Pressed += () => OnMaterialSelected(materialStack.Material, materialStack.Rarity, materialStack.Quantity);
+            button.Pressed += () =>
+                OnMaterialSelected(materialStack.Material, materialStack.Material.Quality, materialStack.Quantity);
 
             _inventoryList.AddChild(button);
         }
@@ -504,14 +512,14 @@ public partial class ShopManagementUI : Panel
         // Add bottom spacer for better visual separation
         var bottomSpacer = new HSeparator
         {
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+            SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
         _inventoryList.AddChild(bottomSpacer);
 
         GameLogger.Debug($"Refreshed inventory display with {materials.Count} material types");
     }
 
-    private void OnMaterialSelected(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity, int quantity)
+    private void OnMaterialSelected(Material materialType, QualityTier rarity, int quantity)
     {
         GameLogger.Info($"Selected material: {materialType.Name} x{quantity} ({rarity})");
 
@@ -533,7 +541,7 @@ public partial class ShopManagementUI : Panel
     /// <summary>
     /// Stocks a specific material in the given slot, consuming it from inventory.
     /// </summary>
-    private void StockMaterialInSlot(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity, int slotId)
+    private void StockMaterialInSlot(Material materialType, QualityTier rarity, int slotId)
     {
         if (_shopManager == null || _inventoryManager == null) return;
 
@@ -546,7 +554,7 @@ public partial class ShopManagementUI : Panel
         {
             // Remove one unit from inventory
             var removedQuantity = _inventoryManager.RemoveMaterials(
-                materialType.Id,
+                materialType.ItemId,
                 rarity,
                 1
             );
@@ -556,7 +564,8 @@ public partial class ShopManagementUI : Panel
                 RefreshDisplaySlots();
                 RefreshInventory(); // Update inventory display
                 EmitSignal(SignalName.ItemStocked, slotId, item.Name);
-                GameLogger.Info($"Stocked {item.Name} in slot {slotId} for {suggestedPrice:C} (consumed 1x {materialType.Name})");
+                GameLogger.Info(
+                    $"Stocked {item.Name} in slot {slotId} for {suggestedPrice:C} (consumed 1x {materialType.Name})");
             }
             else
             {
@@ -650,7 +659,8 @@ public partial class ShopManagementUI : Panel
             foreach (var record in _trafficManager.TrafficHistory.TakeLast(3))
             {
                 var historyItem = new Label();
-                historyItem.Text = $"📝 {record.CustomerType} - {(record.MadePurchase ? $"Bought {record.PurchaseAmount:C}" : "Left without buying")}";
+                historyItem.Text =
+                    $"📝 {record.CustomerType} - {(record.MadePurchase ? $"Bought {record.PurchaseAmount:C}" : "Left without buying")}";
                 historyItem.AddThemeColorOverride("font_color", new Color(0.7f, 0.7f, 0.7f));
                 _customerContainer.AddChild(historyItem);
             }
@@ -666,49 +676,48 @@ public partial class ShopManagementUI : Panel
             _closeShopButton.Disabled = !_isShopOpen;
     }
 
-    private Item CreateItemFromMaterial(Game.Main.Models.Materials.MaterialType materialType, MaterialRarity rarity)
+    private Item CreateItemFromMaterial(Material materialType, QualityTier rarity)
     {
         // Convert material type to item type based on material category
         var itemType = materialType.Category switch
         {
-            MaterialCategory.Metals => ItemType.Material,
-            MaterialCategory.Organic => ItemType.Material,
-            MaterialCategory.Gems => ItemType.Material,
-            MaterialCategory.Magical => ItemType.Consumable,
-            MaterialCategory.Specialty => ItemType.Material,
+            Category.Metal => ItemType.Material,
+            Category.Leather => ItemType.Material,
+            Category.Gem => ItemType.Material,
+            Category.Essence => ItemType.Consumable,
             _ => ItemType.Material
         };
 
         // Convert material rarity to quality tier
         var quality = rarity switch
         {
-            MaterialRarity.Common => QualityTier.Common,
-            MaterialRarity.Uncommon => QualityTier.Uncommon,
-            MaterialRarity.Rare => QualityTier.Rare,
-            MaterialRarity.Epic => QualityTier.Epic,
-            MaterialRarity.Legendary => QualityTier.Legendary,
+            QualityTier.Common => QualityTier.Common,
+            QualityTier.Uncommon => QualityTier.Uncommon,
+            QualityTier.Rare => QualityTier.Rare,
+            QualityTier.Epic => QualityTier.Epic,
+            QualityTier.Legendary => QualityTier.Legendary,
             _ => QualityTier.Common
         };
 
         // Create item name based on rarity and material
-        var qualityPrefix = rarity != MaterialRarity.Common ? $"{rarity} " : "";
+        var qualityPrefix = rarity != QualityTier.Common ? $"{rarity} " : "";
         var itemName = $"{qualityPrefix}{materialType.Name}";
 
         // Calculate base value from material properties and rarity
         var baseValue = materialType.BaseValue;
         var rarityMultiplier = rarity switch
         {
-            MaterialRarity.Common => 1.0f,
-            MaterialRarity.Uncommon => 1.5f,
-            MaterialRarity.Rare => 2.5f,
-            MaterialRarity.Epic => 4.0f,
-            MaterialRarity.Legendary => 6.0f,
+            QualityTier.Common => 1.0f,
+            QualityTier.Uncommon => 1.5f,
+            QualityTier.Rare => 2.5f,
+            QualityTier.Epic => 4.0f,
+            QualityTier.Legendary => 6.0f,
             _ => 1.0f
         };
 
         var finalValue = (int)(baseValue * rarityMultiplier);
 
-        return new Item(
+        return new Game.Items.Models.Item(
             itemId: Guid.NewGuid().ToString(),
             name: itemName,
             description: $"{materialType.Description} ({rarity} quality)",
@@ -718,7 +727,7 @@ public partial class ShopManagementUI : Panel
         );
     }
 
-    private Item CreateTestItem()
+    private Game.Items.Models.Item CreateTestItem()
     {
         var random = new Random();
         var itemTypes = new[] { ItemType.Weapon, ItemType.Armor, ItemType.Consumable, ItemType.Material };
@@ -738,7 +747,7 @@ public partial class ShopManagementUI : Panel
 
         var itemName = itemNames[random.Next(itemNames.Length)];
 
-        return new Item(
+        return new Game.Items.Models.Item(
             itemId: Guid.NewGuid().ToString(),
             name: $"{quality} {itemName}",
             description: $"A {quality.ToString().ToLower()} quality {itemType.ToString().ToLower()}",
@@ -804,7 +813,7 @@ public partial class ShopManagementUI : Panel
         }
 
         // Find what item the customer is most interested in
-        Item? itemOfInterest = null;
+        Game.Items.Models.Item? itemOfInterest = null;
         if (_shopManager != null)
         {
             var availableItems = _shopManager.DisplaySlots
@@ -847,66 +856,5 @@ public partial class ShopManagementUI : Panel
 
         // Update the customer display to reflect any changes
         UpdateCustomerDisplay();
-    }
-}
-
-/// <summary>
-/// Helper class to manage individual display slot UI elements.
-/// </summary>
-public class DisplaySlotUI
-{
-    public event Action<int>? StockRequested;
-#pragma warning disable CS0067 // The event is never used - reserved for future price change functionality
-    public event Action<int, decimal>? PriceChangeRequested;
-#pragma warning restore CS0067
-    public event Action<int>? RemoveRequested;
-
-    private readonly int _slotId;
-    private readonly Panel _slotPanel;
-    private readonly Label _itemNameLabel;
-    private readonly Label _itemPriceLabel;
-    private readonly Button _stockButton;
-
-    public DisplaySlotUI(int slotId, Panel slotPanel)
-    {
-        _slotId = slotId;
-        _slotPanel = slotPanel;
-
-        var itemDisplay = slotPanel.GetNode<VBoxContainer>("ItemDisplay");
-        _itemNameLabel = itemDisplay.GetNode<Label>("ItemName");
-        _itemPriceLabel = itemDisplay.GetNode<Label>("ItemPrice");
-        _stockButton = itemDisplay.GetNode<Button>("StockButton");
-
-        _stockButton.Pressed += OnStockButtonPressed;
-    }
-
-    public void UpdateDisplay(ShopDisplaySlot shopSlot)
-    {
-        if (shopSlot.IsOccupied && shopSlot.CurrentItem != null)
-        {
-            _itemNameLabel.Text = shopSlot.CurrentItem.Name;
-            _itemPriceLabel.Text = $"{shopSlot.CurrentPrice:C}";
-            _stockButton.Text = "Remove";
-            _slotPanel.Modulate = Colors.White;
-        }
-        else
-        {
-            _itemNameLabel.Text = "Empty";
-            _itemPriceLabel.Text = "0g";
-            _stockButton.Text = "Stock Item";
-            _slotPanel.Modulate = Colors.LightGray;
-        }
-    }
-
-    private void OnStockButtonPressed()
-    {
-        if (_stockButton.Text == "Stock Item")
-        {
-            StockRequested?.Invoke(_slotId);
-        }
-        else
-        {
-            RemoveRequested?.Invoke(_slotId);
-        }
     }
 }
