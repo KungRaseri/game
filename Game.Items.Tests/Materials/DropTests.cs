@@ -1,39 +1,42 @@
 #nullable enable
 
+using Game.Items.Models;
+using Game.Items.Models.Materials;
+
 namespace Game.Items.Tests.Materials;
 
-public class MaterialDropTests
+public class DropTests
 {
     private readonly Material _testMaterial = new(
         "iron_ore",
         "Iron Ore",
         "Common metal ore",
-        Category.Metal,
         QualityTier.Common,
-        BaseValue: 2
+        2,
+        Category.Metal
     );
 
     [Fact]
-    public void MaterialDrop_ValidConfiguration_CreatesSuccessfully()
+    public void Drop_ValidConfiguration_CreatesSuccessfully()
     {
         // Arrange
         var acquiredTime = DateTime.UtcNow;
 
         // Act
-        var drop = new MaterialDrop(_testMaterial, QualityTier.Uncommon, 3, acquiredTime);
+        var drop = new Drop(_testMaterial,3, acquiredTime);
 
         // Assert
         Assert.Equal(_testMaterial, drop.Material);
-        Assert.Equal(QualityTier.Uncommon, drop.ActualRarity);
+        Assert.Equal(QualityTier.Uncommon, drop.Material.Quality);
         Assert.Equal(3, drop.Quantity);
         Assert.Equal(acquiredTime, drop.AcquiredAt);
     }
 
     [Fact]
-    public void MaterialDrop_Validate_WithValidData_DoesNotThrow()
+    public void Drop_Validate_WithValidData_DoesNotThrow()
     {
         // Arrange
-        var drop = new MaterialDrop(_testMaterial, QualityTier.Common, 1, DateTime.UtcNow);
+        var drop = new Drop(_testMaterial, 1, DateTime.UtcNow);
 
         // Act & Assert (should not throw)
         drop.Validate();
@@ -43,10 +46,10 @@ public class MaterialDropTests
     [InlineData(0)]
     [InlineData(-1)]
     [InlineData(-100)]
-    public void MaterialDrop_Validate_WithInvalidQuantity_ThrowsException(int invalidQuantity)
+    public void Drop_Validate_WithInvalidQuantity_ThrowsException(int invalidQuantity)
     {
         // Arrange
-        var drop = new MaterialDrop(_testMaterial, QualityTier.Common, invalidQuantity, DateTime.UtcNow);
+        var drop = new Drop(_testMaterial, invalidQuantity, DateTime.UtcNow);
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() => drop.Validate());
@@ -54,11 +57,11 @@ public class MaterialDropTests
     }
 
     [Fact]
-    public void MaterialDrop_Validate_WithFutureDate_ThrowsException()
+    public void Drop_Validate_WithFutureDate_ThrowsException()
     {
         // Arrange
         var futureDate = DateTime.UtcNow.AddDays(1);
-        var drop = new MaterialDrop(_testMaterial, QualityTier.Common, 1, futureDate);
+        var drop = new Drop(_testMaterial, 1, futureDate);
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() => drop.Validate());
@@ -71,11 +74,11 @@ public class MaterialDropTests
     [InlineData(QualityTier.Rare, 1, 2, 10)]       // Base value 2 * quantity 1 * multiplier 5.0 = 10
     [InlineData(QualityTier.Epic, 1, 2, 30)]       // Base value 2 * quantity 1 * multiplier 15.0 = 30
     [InlineData(QualityTier.Legendary, 1, 2, 100)] // Base value 2 * quantity 1 * multiplier 50.0 = 100
-    public void MaterialDrop_GetTotalValue_CalculatesCorrectValue(QualityTier rarity, int quantity, int baseValue, int expectedValue)
+    public void Drop_GetTotalValue_CalculatesCorrectValue(QualityTier rarity, int quantity, int baseValue, int expectedValue)
     {
         // Arrange
-        var material = new MaterialType("test", "Test", "Test", MaterialCategory.Metals, QualityTier.Common, BaseValue: baseValue);
-        var drop = new MaterialDrop(material, rarity, quantity, DateTime.UtcNow);
+        var material = new Material("test", "Test", "Test", rarity, baseValue, Category.Metal);
+        var drop = new Drop(material, quantity, DateTime.UtcNow);
 
         // Act
         var totalValue = drop.GetTotalValue();
@@ -90,10 +93,11 @@ public class MaterialDropTests
     [InlineData(QualityTier.Rare, "#0080FF")]
     [InlineData(QualityTier.Epic, "#8000FF")]
     [InlineData(QualityTier.Legendary, "#FFD700")]
-    public void MaterialDrop_GetRarityColor_ReturnsCorrectColor(QualityTier rarity, string expectedColor)
+    public void Drop_GetRarityColor_ReturnsCorrectColor(QualityTier rarity, string expectedColor)
     {
         // Arrange
-        var drop = new MaterialDrop(_testMaterial, rarity, 1, DateTime.UtcNow);
+        _testMaterial.Quality = rarity;
+        var drop = new Drop(_testMaterial, 1, DateTime.UtcNow);
 
         // Act
         var color = drop.GetRarityColor();
@@ -103,13 +107,13 @@ public class MaterialDropTests
     }
 
     [Theory]
-    [InlineData(QualityTier.Common, 1, "Iron Ore (Common) x1")]
-    [InlineData(QualityTier.Uncommon, 3, "Iron Ore (Uncommon) x3")]
-    [InlineData(QualityTier.Legendary, 10, "Iron Ore (Legendary) x10")]
-    public void MaterialDrop_ToString_ReturnsCorrectFormat(QualityTier rarity, int quantity, string expected)
+    [InlineData(1, "Iron Ore (Common) x1")]
+    [InlineData(3, "Iron Ore (Uncommon) x3")]
+    [InlineData(10, "Iron Ore (Legendary) x10")]
+    public void Drop_ToString_ReturnsCorrectFormat(int quantity, string expected)
     {
         // Arrange
-        var drop = new MaterialDrop(_testMaterial, rarity, quantity, DateTime.UtcNow);
+        var drop = new Drop(_testMaterial, quantity, DateTime.UtcNow);
 
         // Act
         var result = drop.ToString();

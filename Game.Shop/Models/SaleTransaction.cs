@@ -1,3 +1,5 @@
+using Game.Items.Models;
+
 namespace Game.Shop.Models;
 
 /// <summary>
@@ -7,25 +9,18 @@ namespace Game.Shop.Models;
 public record SaleTransaction(
     /// <summary>Unique identifier for this transaction.</summary>
     string TransactionId,
-    
     /// <summary>The item that was sold.</summary>
-    Item.Models.Item ItemSold,
-    
+    Item ItemSold,
     /// <summary>The actual sale price paid by the customer.</summary>
     decimal SalePrice,
-    
     /// <summary>Estimated cost to create this item (materials + labor).</summary>
     decimal EstimatedCost,
-    
     /// <summary>Profit margin as a percentage (e.g., 0.5 = 50% margin).</summary>
     decimal ProfitMargin,
-    
     /// <summary>Identifier of the customer who made the purchase.</summary>
     string CustomerId,
-    
     /// <summary>When the transaction was completed.</summary>
     DateTime TransactionTime,
-    
     /// <summary>Customer satisfaction level with this transaction.</summary>
     CustomerSatisfaction CustomerSatisfaction
 )
@@ -34,7 +29,7 @@ public record SaleTransaction(
     /// Calculate the actual profit amount in gold.
     /// </summary>
     public decimal ProfitAmount => SalePrice - EstimatedCost;
-    
+
     /// <summary>
     /// Get a human-readable summary of this transaction.
     /// </summary>
@@ -42,12 +37,12 @@ public record SaleTransaction(
     {
         return $"{ItemSold.Name} sold for {SalePrice}g (profit: {ProfitAmount}g, {ProfitMargin:P1})";
     }
-    
+
     /// <summary>
     /// Determine if this was a profitable transaction.
     /// </summary>
     public bool WasProfitable => ProfitAmount > 0;
-    
+
     /// <summary>
     /// Get the transaction date (without time).
     /// </summary>

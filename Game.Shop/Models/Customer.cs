@@ -46,7 +46,7 @@ public class Customer
     public CustomerState CurrentState { get; private set; } = CustomerState.Browsing;
 
     /// <summary>Item currently being considered for purchase.</summary>
-    public Item.Models.Item? ItemBeingConsidered { get; private set; }
+    public Item? ItemBeingConsidered { get; private set; }
 
     /// <summary>Current thoughts or reactions (for UI display).</summary>
     public string CurrentThought { get; private set; } = "";
@@ -74,7 +74,7 @@ public class Customer
     /// <summary>
     /// Evaluates the customer's interest in a specific item.
     /// </summary>
-    public CustomerInterest EvaluateItem(Item.Models.Item item, decimal price)
+    public CustomerInterest EvaluateItem(Item item, decimal price)
     {
         // Check if already evaluated
         if (_itemInterests.TryGetValue(item.ItemId, out var cachedInterest))
@@ -101,7 +101,7 @@ public class Customer
     /// <summary>
     /// Makes a purchase decision for a specific item after evaluation.
     /// </summary>
-    public PurchaseDecision MakePurchaseDecision(Item.Models.Item item, decimal price)
+    public PurchaseDecision MakePurchaseDecision(Item item, decimal price)
     {
         var interest = EvaluateItem(item, price);
 
@@ -121,7 +121,7 @@ public class Customer
     /// <summary>
     /// Generates a negotiation offer if the customer wants to haggle.
     /// </summary>
-    public decimal? AttemptNegotiation(Item.Models.Item item, decimal askingPrice)
+    public decimal? AttemptNegotiation(Item item, decimal askingPrice)
     {
         if (Personality.NegotiationTendency < 0.3f)
         {
@@ -134,10 +134,10 @@ public class Customer
         var interest = _itemInterests.GetValueOrDefault(item.ItemId, CustomerInterest.NotInterested);
         var interestMultiplier = interest switch
         {
-            CustomerInterest.VeryInterested => 0.9f,     // Offer up to 90% of asking
-            CustomerInterest.HighlyInterested => 0.8f,   // Offer up to 80% of asking
+            CustomerInterest.VeryInterested => 0.9f, // Offer up to 90% of asking
+            CustomerInterest.HighlyInterested => 0.8f, // Offer up to 80% of asking
             CustomerInterest.ModeratelyInterested => 0.7f, // Offer up to 70% of asking
-            CustomerInterest.SlightlyInterested => 0.6f,  // Offer up to 60% of asking
+            CustomerInterest.SlightlyInterested => 0.6f, // Offer up to 60% of asking
             _ => 0.5f // Offer up to 50% of asking
         };
 
@@ -192,7 +192,7 @@ public class Customer
     /// <summary>
     /// Completes a purchase and updates customer satisfaction.
     /// </summary>
-    public CustomerSatisfaction CompletePurchase(Item.Models.Item item, decimal finalPrice)
+    public CustomerSatisfaction CompletePurchase(Item item, decimal finalPrice)
     {
         if (ItemBeingConsidered?.ItemId != item.ItemId)
         {
@@ -242,7 +242,7 @@ public class Customer
         CurrentThought = thought;
     }
 
-    private CustomerInterest CalculateInterest(Item.Models.Item item, decimal price)
+    private CustomerInterest CalculateInterest(Item item, decimal price)
     {
         var baseInterest = 0f;
 
@@ -272,7 +272,7 @@ public class Customer
         };
     }
 
-    private float EvaluatePrice(Item.Models.Item item, decimal price)
+    private float EvaluatePrice(Item item, decimal price)
     {
         // Check affordability
         if (!BudgetRange.CanAfford(price))
@@ -289,16 +289,16 @@ public class Customer
 
         return priceRatio switch
         {
-            <= 0.7f => 1.0f - sensitivity * 0.3f,        // Great deal
-            <= 0.9f => 1.0f - sensitivity * 0.1f,        // Good price
-            <= 1.1f => 1.0f - sensitivity * 0.5f,        // Fair price
-            <= 1.3f => 0.5f - sensitivity * 0.7f,        // Expensive
-            <= 1.5f => 0.2f - sensitivity * 0.8f,        // Very expensive
-            _ => -0.5f - sensitivity                      // Overpriced
+            <= 0.7f => 1.0f - sensitivity * 0.3f, // Great deal
+            <= 0.9f => 1.0f - sensitivity * 0.1f, // Good price
+            <= 1.1f => 1.0f - sensitivity * 0.5f, // Fair price
+            <= 1.3f => 0.5f - sensitivity * 0.7f, // Expensive
+            <= 1.5f => 0.2f - sensitivity * 0.8f, // Very expensive
+            _ => -0.5f - sensitivity // Overpriced
         };
     }
 
-    private float CalculateExpectedValue(Item.Models.Item item)
+    private float CalculateExpectedValue(Item item)
     {
         // Base values by type (what customer expects to pay)
         var baseValue = item.ItemType switch
@@ -324,18 +324,18 @@ public class Customer
         // Customer type affects perceived value
         var customerMultiplier = Type switch
         {
-            CustomerType.NoblePatron => 1.5f,      // Nobles expect to pay more
+            CustomerType.NoblePatron => 1.5f, // Nobles expect to pay more
             CustomerType.VeteranAdventurer => 1.2f, // Veterans know quality costs
-            CustomerType.MerchantTrader => 0.8f,    // Merchants want wholesale prices
+            CustomerType.MerchantTrader => 0.8f, // Merchants want wholesale prices
             CustomerType.CasualTownsperson => 0.9f, // Townspeople want deals
-            CustomerType.NoviceAdventurer => 0.7f,  // Novices expect cheap prices
+            CustomerType.NoviceAdventurer => 0.7f, // Novices expect cheap prices
             _ => 1.0f
         };
 
         return baseValue * qualityMultiplier * customerMultiplier;
     }
 
-    private PurchaseDecision DeterminePurchaseDecision(Item.Models.Item item, decimal price, CustomerInterest interest)
+    private PurchaseDecision DeterminePurchaseDecision(Item item, decimal price, CustomerInterest interest)
     {
         // Not interested = no purchase
         if (interest == CustomerInterest.NotInterested)
@@ -403,7 +403,7 @@ public class Customer
         return PurchaseDecision.NotBuying;
     }
 
-    private CustomerSatisfaction CalculateSatisfaction(Item.Models.Item item, decimal finalPrice)
+    private CustomerSatisfaction CalculateSatisfaction(Item item, decimal finalPrice)
     {
         var satisfaction = 50f; // Base satisfaction
 
@@ -417,11 +417,11 @@ public class Customer
 
         satisfaction += priceRatio switch
         {
-            <= 0.8f => 30f,  // Great deal
+            <= 0.8f => 30f, // Great deal
             <= 0.95f => 15f, // Good price
-            <= 1.05f => 0f,  // Fair price
+            <= 1.05f => 0f, // Fair price
             <= 1.2f => -15f, // Expensive
-            _ => -30f         // Overpriced
+            _ => -30f // Overpriced
         };
 
         // Shop aesthetics (if customer cares)
@@ -440,7 +440,7 @@ public class Customer
         };
     }
 
-    private void UpdateThoughtBasedOnItem(Item.Models.Item item, decimal price, CustomerInterest interest)
+    private void UpdateThoughtBasedOnItem(Item item, decimal price, CustomerInterest interest)
     {
         CurrentThought = interest switch
         {
@@ -452,7 +452,7 @@ public class Customer
         };
     }
 
-    private void UpdateThoughtBasedOnDecision(Item.Models.Item item, decimal price, PurchaseDecision decision)
+    private void UpdateThoughtBasedOnDecision(Item item, decimal price, PurchaseDecision decision)
     {
         CurrentThought = decision switch
         {
@@ -467,11 +467,16 @@ public class Customer
     {
         var thoughts = Type switch
         {
-            CustomerType.NoviceAdventurer => new[] { "I need better gear...", "Hope I can find something affordable", "Let's see what they have" },
-            CustomerType.VeteranAdventurer => new[] { "Looking for quality equipment", "I know good gear when I see it", "What's worth buying here?" },
-            CustomerType.NoblePatron => new[] { "I want only the finest", "Money is no object", "Show me your best items" },
-            CustomerType.MerchantTrader => new[] { "What can I resell?", "Looking for good deals", "Any bulk discounts?" },
-            CustomerType.CasualTownsperson => new[] { "Just browsing around", "Maybe something useful?", "Don't need much..." },
+            CustomerType.NoviceAdventurer => new[]
+                { "I need better gear...", "Hope I can find something affordable", "Let's see what they have" },
+            CustomerType.VeteranAdventurer => new[]
+                { "Looking for quality equipment", "I know good gear when I see it", "What's worth buying here?" },
+            CustomerType.NoblePatron => new[]
+                { "I want only the finest", "Money is no object", "Show me your best items" },
+            CustomerType.MerchantTrader => new[]
+                { "What can I resell?", "Looking for good deals", "Any bulk discounts?" },
+            CustomerType.CasualTownsperson => new[]
+                { "Just browsing around", "Maybe something useful?", "Don't need much..." },
             _ => new[] { "Let's have a look around" }
         };
 
@@ -495,7 +500,8 @@ public class Customer
     {
         var random = new Random();
 
-        var firstNames = new[] { "Alex", "Morgan", "Casey", "Jordan", "Taylor", "Riley", "Avery", "Quinn", "Sage", "Rowan" };
+        var firstNames = new[]
+            { "Alex", "Morgan", "Casey", "Jordan", "Taylor", "Riley", "Avery", "Quinn", "Sage", "Rowan" };
         var lastNames = type switch
         {
             CustomerType.NoviceAdventurer => new[] { "Greenhorn", "Hopeful", "Eager", "Brave", "Young" },

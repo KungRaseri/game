@@ -8,10 +8,10 @@ namespace Game.Shop.Systems;
 public record ShopInventorySummary
 {
     /// <summary>Items available to be stocked in shop.</summary>
-    public List<Item.Models.Item> AvailableItems { get; init; } = new();
+    public List<Item> AvailableItems { get; init; } = new();
     
     /// <summary>Items currently displayed in shop.</summary>
-    public List<Item.Models.Item> DisplayedItems { get; init; } = new();
+    public List<Item> DisplayedItems { get; init; } = new();
     
     /// <summary>Total estimated value of available items.</summary>
     public decimal TotalAvailableValue { get; init; }
