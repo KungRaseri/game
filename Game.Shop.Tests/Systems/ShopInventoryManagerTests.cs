@@ -176,9 +176,15 @@ public class ShopInventoryManagerTests : IDisposable
     public void SetSuggestedPrice_InvalidPrice_DoesNotStorePrice()
     {
         // Arrange
-        var itemId = "test_item";
+        var itemId = "invalid_price_test_item";
         var testItem = CreateTestItem(itemId, "Test Item", ItemType.Weapon);
+        
+        // First, set a valid price to ensure we have a known baseline
+        var validPrice = 100m;
+        _shopInventoryManager.SetSuggestedPrice(itemId, validPrice);
         var originalPrice = _shopInventoryManager.GetSuggestedPrice(testItem);
+        originalPrice.Should().Be(validPrice); // Verify our setup
+        
         var invalidPrice = -10m;
 
         // Act
@@ -192,9 +198,15 @@ public class ShopInventoryManagerTests : IDisposable
     public void SetSuggestedPrice_ZeroPrice_DoesNotStorePrice()
     {
         // Arrange
-        var itemId = "test_item";
+        var itemId = "zero_price_test_item";
         var testItem = CreateTestItem(itemId, "Test Item", ItemType.Weapon);
+        
+        // First, set a valid price to ensure we have a known baseline
+        var validPrice = 75m;
+        _shopInventoryManager.SetSuggestedPrice(itemId, validPrice);
         var originalPrice = _shopInventoryManager.GetSuggestedPrice(testItem);
+        originalPrice.Should().Be(validPrice); // Verify our setup
+        
         var zeroPrice = 0m;
 
         // Act
