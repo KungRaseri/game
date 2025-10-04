@@ -5,10 +5,6 @@ VisualStudioVersion = 17.14.36408.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game.csproj", "{A4B6FDDD-2503-45C3-A52A-50FC208F21CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Main", "Game.Main\Game.Main.csproj", "{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Main.Tests", "Game.Main.Tests\Game.Main.Tests.csproj", "{D172332E-80C0-4D25-B22F-692522C9D44B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Core", "Game.Core\Game.Core.csproj", "{E1B6B2C4-1234-4567-8901-234567890123}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Core.Tests", "Game.Core.Tests\Game.Core.Tests.csproj", "{E1B6B2C4-1234-4567-8901-234567890124}"
@@ -68,18 +64,6 @@ Global
 		{A4B6FDDD-2503-45C3-A52A-50FC208F21CE}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
 		{A4B6FDDD-2503-45C3-A52A-50FC208F21CE}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
 		{A4B6FDDD-2503-45C3-A52A-50FC208F21CE}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.ExportDebug|Any CPU.ActiveCfg = Release|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.ExportDebug|Any CPU.Build.0 = Release|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{9D10FCE3-7574-4CCA-84D9-60E3B56EFBD0}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.ExportDebug|Any CPU.ActiveCfg = Release|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.ExportDebug|Any CPU.Build.0 = Release|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{D172332E-80C0-4D25-B22F-692522C9D44B}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890123}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1B6B2C4-1234-4567-8901-234567890123}.ExportDebug|Any CPU.ActiveCfg = Release|Any CPU
