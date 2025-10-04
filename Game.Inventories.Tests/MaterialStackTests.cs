@@ -226,7 +226,7 @@ public class MaterialStackTests
         var totalValue = stack.TotalValue;
 
         // Assert
-        totalValue.Should().Be(250); // 10 * 5 * 5 (rare multiplier)
+        totalValue.Should().Be(200); // 10 * 5 * 4 (rare multiplier from QualityTierModifiers)
     }
 
     [Fact]
@@ -249,7 +249,7 @@ public class MaterialStackTests
         var totalValue = stack.TotalValue;
 
         // Assert
-        totalValue.Should().Be(1250); // 5 * 5 * 50 (legendary multiplier)
+        totalValue.Should().Be(400); // 5 * 5 * 16 (legendary multiplier from QualityTierModifiers)
     }
 
     [Fact]

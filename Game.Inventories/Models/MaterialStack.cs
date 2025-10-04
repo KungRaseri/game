@@ -46,18 +46,9 @@ public record MaterialStack(
     {
         get
         {
-            var rarityMultiplier = Material.Quality switch
-            {
-                QualityTier.Common => 1.0f,
-                QualityTier.Uncommon => 2.0f,
-                QualityTier.Rare => 5.0f,
-                QualityTier.Epic => 15.0f,
-                QualityTier.Legendary => 50.0f,
-                _ => 1.0f
-            };
-
-            return (int)(Material.Value * QualityTierModifiers.GetValueMultiplier(Material.Quality) * Quantity *
-                         rarityMultiplier);
+            // Material.Value already includes the quality tier multiplier
+            // (calculated via QualityTierModifiers.CalculateItemValue in Item class)
+            return Material.Value * Quantity;
         }
     }
 
@@ -114,6 +105,12 @@ public record MaterialStack(
         if (additionalQuantity <= 0)
         {
             return (this, 0);
+        }
+
+        // If stack is already full, return original stack unchanged
+        if (IsFull)
+        {
+            return (this, additionalQuantity);
         }
 
         var totalQuantity = Quantity + additionalQuantity;
