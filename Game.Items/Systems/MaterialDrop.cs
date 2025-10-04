@@ -1,7 +1,7 @@
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 
-namespace Game.Adventure.Models;
+namespace Game.Items.Systems;
 
 /// <summary>
 /// Represents an actual material drop that occurred from a monster defeat.

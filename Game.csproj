@@ -44,6 +44,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="Game.Core\Game.Core.csproj" />
 	  <ProjectReference Include="Game.Adventure\Game.Adventure.csproj" />
+	  <ProjectReference Include="Game.Inventories\Game.Inventories.csproj" />
 	  <ProjectReference Include="Game.Shop\Game.Shop.csproj" />
 	  <ProjectReference Include="Game.Economy\Game.Economy.csproj" />
 	  <ProjectReference Include="Game.Crafting\Game.Crafting.csproj" />

@@ -1,14 +1,12 @@
 #nullable enable
 
 using Game.Adventure.Models;
-using Game.Adventure.Systems;
 using Game.Core.Utils;
 using Game.Inventories.Systems;
 using Game.Items.Data;
 using Game.Scripts.UI;
 using Game.Shop.Systems;
 using Godot;
-using InventoryManager = Game.Game.Inventories.Systems.InventoryManager;
 
 namespace Game.Scripts.Scenes;
 

@@ -1,7 +1,6 @@
-using Game.Items.Models;
 using Game.Items.Models.Materials;
 
-namespace Game.Adventure.Models;
+namespace Game.Items.Models;
 
 /// <summary>
 /// Defines the possible loot drops for a specific monster type.

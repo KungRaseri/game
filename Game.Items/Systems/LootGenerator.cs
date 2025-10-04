@@ -1,8 +1,5 @@
-#nullable enable
-
 using Game.Core.Utils;
 using Game.Items.Models;
-using Game.Items.Models.Materials;
 
 namespace Game.Items.Systems;
 
@@ -37,15 +34,15 @@ public class LootGenerator
     /// </summary>
     /// <param name="monsterTypeId">The type of monster that was defeated</param>
     /// <returns>List of material drops generated</returns>
-    public List<Drop> GenerateDrops(string monsterTypeId)
+    public List<MaterialDrop> GenerateDrops(string monsterTypeId)
     {
         if (!_lootTables.TryGetValue(monsterTypeId, out var lootTable))
         {
             GameLogger.Warning($"No loot table found for monster type: {monsterTypeId}");
-            return new List<Drop>();
+            return new List<MaterialDrop>();
         }
 
-        var drops = new List<Drop>();
+        var drops = new List<MaterialDrop>();
         var currentTime = DateTime.UtcNow;
 
         // Process each possible drop based on probability
@@ -55,8 +52,9 @@ public class LootGenerator
             {
                 var quantity = _random.Next(entry.MinQuantity, entry.MaxQuantity + 1);
                 var rarity = DetermineActualRarity(entry);
+                entry.Material.Quality = rarity;
 
-                var drop = new Drop(
+                var drop = new MaterialDrop(
                     entry.Material,
                     quantity,
                     currentTime
@@ -100,7 +98,7 @@ public class LootGenerator
 
         // Small chance to upgrade rarity (5% chance per tier)
         var upgradeRoll = _random.NextSingle();
-
+        
         return baseRarity switch
         {
             QualityTier.Common when upgradeRoll < 0.05f => QualityTier.Uncommon,
@@ -114,7 +112,7 @@ public class LootGenerator
     /// <summary>
     /// Generates additional drops to meet the guaranteed minimum count.
     /// </summary>
-    private void GenerateGuaranteedDrops(LootTable lootTable, List<Drop> existingDrops, DateTime currentTime)
+    private void GenerateGuaranteedDrops(LootTable lootTable, List<MaterialDrop> existingDrops, DateTime currentTime)
     {
         var dropsNeeded = lootTable.GuaranteedDropCount - existingDrops.Count;
         var availableEntries = lootTable.PossibleDrops.ToList();
@@ -128,7 +126,7 @@ public class LootGenerator
             var quantity = _random.Next(entry.MinQuantity, entry.MaxQuantity + 1);
             var rarity = DetermineActualRarity(entry);
 
-            var drop = new Drop(
+            var drop = new MaterialDrop(
                 entry.Material,
                 quantity,
                 currentTime
@@ -153,7 +151,7 @@ public class LootGenerator
         }
 
         var stats = new Dictionary<string, float>();
-
+        
         foreach (var entry in lootTable.PossibleDrops)
         {
             stats[entry.Material.Name] = entry.DropChance;

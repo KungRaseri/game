@@ -30,7 +30,7 @@ public class LootEntryTests
         Assert.Equal(0.8f, entry.DropChance);
         Assert.Equal(1, entry.MinQuantity);
         Assert.Equal(3, entry.MaxQuantity);
-        Assert.Equal(QualityTier.Uncommon, entry.Quality);
+        Assert.Equal(QualityTier.Uncommon, entry.Material.Quality);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class LootEntryTests
         var entry = new LootEntry(_testMaterial, 0.5f, 1, 2);
 
         // Assert
-        Assert.Null(entry.Quality);
+        Assert.Null(entry.Material.Quality);
     }
 
     [Fact]
