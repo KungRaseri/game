@@ -3,64 +3,6 @@ using Godot;
 namespace Game.Shop.Models;
 
 /// <summary>
-/// Color scheme configuration for shop aesthetics.
-/// </summary>
-public record ShopColorScheme
-{
-    /// <summary>Main wall color.</summary>
-    public Color WallColor { get; init; } = new(0.9f, 0.85f, 0.7f); // Light cream
-
-    /// <summary>Floor color/texture.</summary>
-    public Color FloorColor { get; init; } = new(0.6f, 0.4f, 0.2f); // Wood brown
-
-    /// <summary>Accent color for trim and details.</summary>
-    public Color AccentColor { get; init; } = new(0.4f, 0.2f, 0.1f); // Dark brown
-
-    /// <summary>Primary text color.</summary>
-    public Color TextColor { get; init; } = Colors.Black;
-
-    /// <summary>Secondary text color.</summary>
-    public Color SecondaryTextColor { get; init; } = new(0.3f, 0.3f, 0.3f); // Dark gray
-
-    /// <summary>
-    /// Creates the default color scheme.
-    /// </summary>
-    public static ShopColorScheme CreateDefault()
-    {
-        return new ShopColorScheme();
-    }
-}
-
-/// <summary>
-/// Lighting configuration for shop ambiance.
-/// </summary>
-public record ShopLighting
-{
-    /// <summary>Overall brightness level (0.0 to 1.0).</summary>
-    public float AmbientBrightness { get; init; } = 0.8f;
-
-    /// <summary>Warmth of the lighting (0.0 = cool, 1.0 = warm).</summary>
-    public float WarmthLevel { get; init; } = 0.6f;
-
-    /// <summary>Whether accent lighting is installed.</summary>
-    public bool HasAccentLighting { get; init; } = false;
-
-    /// <summary>Whether spotlights are installed for display cases.</summary>
-    public bool HasSpotlights { get; init; } = false;
-
-    /// <summary>Whether dynamic lighting effects are enabled.</summary>
-    public bool HasDynamicLighting { get; init; } = false;
-
-    /// <summary>
-    /// Creates the default lighting configuration.
-    /// </summary>
-    public static ShopLighting CreateDefault()
-    {
-        return new ShopLighting();
-    }
-}
-
-/// <summary>
 /// Represents the overall layout and design configuration of the shop.
 /// Includes spatial arrangement, aesthetic settings, and functional features.
 /// </summary>
