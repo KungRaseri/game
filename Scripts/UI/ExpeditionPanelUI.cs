@@ -3,7 +3,6 @@
 using Game.Adventure.Controllers;
 using Game.Adventure.Models;
 using Game.Core.Utils;
-using Game.Main.Utils;
 using Godot;
 
 namespace Game.Scripts.UI;
@@ -151,11 +150,14 @@ public partial class ExpeditionPanelUI : Panel
     private void CacheNodeReferences()
     {
         _dungeonName = GetNode<Label>("VBoxContainer/InfoContainer/DungeonContainer/DungeonName");
-        _progressText = GetNode<Label>("VBoxContainer/InfoContainer/ProgressContainer/ProgressLabelContainer/ProgressText");
+        _progressText =
+            GetNode<Label>("VBoxContainer/InfoContainer/ProgressContainer/ProgressLabelContainer/ProgressText");
         _progressBar = GetNode<ProgressBar>("VBoxContainer/InfoContainer/ProgressContainer/ProgressBar");
         _monsterName = GetNode<Label>("VBoxContainer/InfoContainer/MonsterContainer/MonsterName");
         _expeditionStatus = GetNode<Label>("VBoxContainer/InfoContainer/StatusContainer/ExpeditionStatus");
-        _enemyHealthText = GetNode<Label>("VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthLabelContainer/EnemyHealthText");
+        _enemyHealthText =
+            GetNode<Label>(
+                "VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthLabelContainer/EnemyHealthText");
         _enemyHealthBar = GetNode<ProgressBar>("VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthBar");
     }
 
@@ -237,7 +239,7 @@ public partial class ExpeditionPanelUI : Panel
 
         // Parse status messages only for non-combat events
         var lowerMessage = message.ToLowerInvariant();
-        
+
         if (lowerMessage.Contains("fighting") && lowerMessage.Contains("goblin"))
         {
             SetCurrentMonster("Goblin");

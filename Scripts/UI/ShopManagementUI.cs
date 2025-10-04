@@ -1,19 +1,13 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.Game.Items.Models;
-using Game.Game.Items.Models.Materials;
 using Game.Inventories.Systems;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
-using Game.Main.Systems;
-using Game.Main.Utils;
 using Game.Shop.Models;
 using Game.Shop.Systems;
 using Godot;
-using GodotPlugins.Game;
-using InventoryManager = Game.Game.Inventories.Systems.InventoryManager;
-using Type = Game.Game.Items.Models.Materials.Type;
+using Material = Game.Items.Models.Materials.Material;
 
 namespace Game.Scripts.UI;
 
@@ -83,7 +77,8 @@ public partial class ShopManagementUI : Panel
     /// <summary>
     /// Initialize the shop management UI with the shop manager, traffic manager, and inventory.
     /// </summary>
-    public void Initialize(ShopManager shopManager, ShopTrafficManager trafficManager, InventoryManager inventoryManager)
+    public void Initialize(ShopManager shopManager, ShopTrafficManager trafficManager,
+        InventoryManager inventoryManager)
     {
         _shopManager = shopManager;
         _trafficManager = trafficManager;
@@ -141,11 +136,17 @@ public partial class ShopManagementUI : Panel
         _backButton = GetNode<Button>("MainContainer/LeftPanel/ActionBar/BackButton");
         _priceAllButton = GetNode<Button>("MainContainer/RightPanel/ControlPanel/Pricing/QuickPricing/PriceAllButton");
         _clearAllButton = GetNode<Button>("MainContainer/RightPanel/ControlPanel/Pricing/QuickPricing/ClearAllButton");
-        _inventoryList = GetNode<VBoxContainer>("MainContainer/RightPanel/ControlPanel/Inventory/InventoryScroll/InventoryGrid");
-        _customerContainer = GetNode<VBoxContainer>("MainContainer/RightPanel/CustomerQueue/CustomerList/CustomerContainer");
-        _treasuryValue = GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/TreasuryInfo/TreasuryValue");
-        _salesValue = GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/SalesInfo/SalesValue");
-        _itemsValue = GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/ItemsInfo/ItemsValue");
+        _inventoryList =
+            GetNode<VBoxContainer>("MainContainer/RightPanel/ControlPanel/Inventory/InventoryScroll/InventoryGrid");
+        _customerContainer =
+            GetNode<VBoxContainer>("MainContainer/RightPanel/CustomerQueue/CustomerList/CustomerContainer");
+        _treasuryValue =
+            GetNode<Label>(
+                "MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/TreasuryInfo/TreasuryValue");
+        _salesValue =
+            GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/SalesInfo/SalesValue");
+        _itemsValue =
+            GetNode<Label>("MainContainer/RightPanel/ControlPanel/Analytics/MetricsContainer/ItemsInfo/ItemsValue");
     }
 
     private void InitializeDisplaySlots()
@@ -418,7 +419,8 @@ public partial class ShopManagementUI : Panel
     {
         if (_inventoryList == null || _inventoryManager == null)
         {
-            GameLogger.Warning($"RefreshInventory called but references null: inventoryList={_inventoryList != null}, inventoryManager={_inventoryManager != null}");
+            GameLogger.Warning(
+                $"RefreshInventory called but references null: inventoryList={_inventoryList != null}, inventoryManager={_inventoryManager != null}");
             return;
         }
 
@@ -492,7 +494,8 @@ public partial class ShopManagementUI : Panel
 
             // Add tooltip with value information
             var item = CreateItemFromMaterial(materialStack.Material, materialStack.Rarity);
-            button.TooltipText = $"{materialStack.Material.Description}\nShop Value: {item.Value}g\nCategory: {materialStack.Material.Category}";
+            button.TooltipText =
+                $"{materialStack.Material.Description}\nShop Value: {item.Value}g\nCategory: {materialStack.Material.Category}";
 
             // Store material data in the button for later use
             button.SetMeta("materialId", materialStack.Material.Id);
@@ -500,7 +503,8 @@ public partial class ShopManagementUI : Panel
             button.SetMeta("quantity", materialStack.Quantity);
 
             // Connect button press to material selection
-            button.Pressed += () => OnMaterialSelected(materialStack.Material, materialStack.Rarity, materialStack.Quantity);
+            button.Pressed += () =>
+                OnMaterialSelected(materialStack.Material, materialStack.Rarity, materialStack.Quantity);
 
             _inventoryList.AddChild(button);
         }
@@ -515,7 +519,7 @@ public partial class ShopManagementUI : Panel
         GameLogger.Debug($"Refreshed inventory display with {materials.Count} material types");
     }
 
-    private void OnMaterialSelected(Type materialType, Rarity rarity, int quantity)
+    private void OnMaterialSelected(Material materialType, QualityTier rarity, int quantity)
     {
         GameLogger.Info($"Selected material: {materialType.Name} x{quantity} ({rarity})");
 
@@ -537,7 +541,7 @@ public partial class ShopManagementUI : Panel
     /// <summary>
     /// Stocks a specific material in the given slot, consuming it from inventory.
     /// </summary>
-    private void StockMaterialInSlot(Type materialType, Rarity rarity, int slotId)
+    private void StockMaterialInSlot(Material materialType, QualityTier rarity, int slotId)
     {
         if (_shopManager == null || _inventoryManager == null) return;
 
@@ -550,7 +554,7 @@ public partial class ShopManagementUI : Panel
         {
             // Remove one unit from inventory
             var removedQuantity = _inventoryManager.RemoveMaterials(
-                materialType.Id,
+                materialType.ItemId,
                 rarity,
                 1
             );
@@ -560,7 +564,8 @@ public partial class ShopManagementUI : Panel
                 RefreshDisplaySlots();
                 RefreshInventory(); // Update inventory display
                 EmitSignal(Main.UI.ShopManagementUI.SignalName.ItemStocked, slotId, item.Name);
-                GameLogger.Info($"Stocked {item.Name} in slot {slotId} for {suggestedPrice:C} (consumed 1x {materialType.Name})");
+                GameLogger.Info(
+                    $"Stocked {item.Name} in slot {slotId} for {suggestedPrice:C} (consumed 1x {materialType.Name})");
             }
             else
             {
@@ -654,7 +659,8 @@ public partial class ShopManagementUI : Panel
             foreach (var record in _trafficManager.TrafficHistory.TakeLast(3))
             {
                 var historyItem = new Label();
-                historyItem.Text = $"📝 {record.CustomerType} - {(record.MadePurchase ? $"Bought {record.PurchaseAmount:C}" : "Left without buying")}";
+                historyItem.Text =
+                    $"📝 {record.CustomerType} - {(record.MadePurchase ? $"Bought {record.PurchaseAmount:C}" : "Left without buying")}";
                 historyItem.AddThemeColorOverride("font_color", new Color(0.7f, 0.7f, 0.7f));
                 _customerContainer.AddChild(historyItem);
             }
@@ -670,43 +676,42 @@ public partial class ShopManagementUI : Panel
             _closeShopButton.Disabled = !_isShopOpen;
     }
 
-    private Game.Items.Models.Item CreateItemFromMaterial(Type materialType, Rarity rarity)
+    private Item CreateItemFromMaterial(Material materialType, QualityTier rarity)
     {
         // Convert material type to item type based on material category
         var itemType = materialType.Category switch
         {
-            Category.Metals => ItemType.Material,
-            Category.Organic => ItemType.Material,
-            Category.Gems => ItemType.Material,
-            Category.Magical => ItemType.Consumable,
-            Category.Specialty => ItemType.Material,
+            Category.Metal => ItemType.Material,
+            Category.Leather => ItemType.Material,
+            Category.Gem => ItemType.Material,
+            Category.Essence => ItemType.Consumable,
             _ => ItemType.Material
         };
 
         // Convert material rarity to quality tier
         var quality = rarity switch
         {
-            Rarity.Common => QualityTier.Common,
-            Rarity.Uncommon => QualityTier.Uncommon,
-            Rarity.Rare => QualityTier.Rare,
-            Rarity.Epic => QualityTier.Epic,
-            Rarity.Legendary => QualityTier.Legendary,
+            QualityTier.Common => QualityTier.Common,
+            QualityTier.Uncommon => QualityTier.Uncommon,
+            QualityTier.Rare => QualityTier.Rare,
+            QualityTier.Epic => QualityTier.Epic,
+            QualityTier.Legendary => QualityTier.Legendary,
             _ => QualityTier.Common
         };
 
         // Create item name based on rarity and material
-        var qualityPrefix = rarity != Rarity.Common ? $"{rarity} " : "";
+        var qualityPrefix = rarity != QualityTier.Common ? $"{rarity} " : "";
         var itemName = $"{qualityPrefix}{materialType.Name}";
 
         // Calculate base value from material properties and rarity
         var baseValue = materialType.BaseValue;
         var rarityMultiplier = rarity switch
         {
-            Rarity.Common => 1.0f,
-            Rarity.Uncommon => 1.5f,
-            Rarity.Rare => 2.5f,
-            Rarity.Epic => 4.0f,
-            Rarity.Legendary => 6.0f,
+            QualityTier.Common => 1.0f,
+            QualityTier.Uncommon => 1.5f,
+            QualityTier.Rare => 2.5f,
+            QualityTier.Epic => 4.0f,
+            QualityTier.Legendary => 6.0f,
             _ => 1.0f
         };
 

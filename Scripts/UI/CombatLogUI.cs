@@ -2,7 +2,6 @@
 
 using Game.Adventure.Controllers;
 using Game.Core.Utils;
-using Game.Main.Utils;
 using Godot;
 
 namespace Game.Scripts.UI;
@@ -141,22 +140,22 @@ public partial class CombatLogUI : Panel
         {
             return "green";
         }
-        
+
         if (lowerMessage.Contains("damage") || lowerMessage.Contains("hurt"))
         {
             return "red";
         }
-        
+
         if (lowerMessage.Contains("retreat") || lowerMessage.Contains("fleeing"))
         {
             return "orange";
         }
-        
+
         if (lowerMessage.Contains("expedition") || lowerMessage.Contains("traveling"))
         {
             return "cyan";
         }
-        
+
         if (lowerMessage.Contains("health") || lowerMessage.Contains("healing"))
         {
             return "lime";

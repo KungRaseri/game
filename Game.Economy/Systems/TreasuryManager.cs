@@ -1,7 +1,7 @@
 #nullable enable
 
-using Game.Economy.Models;
 using Game.Core.Utils;
+using Game.Economy.Models;
 
 namespace Game.Economy.Systems;
 

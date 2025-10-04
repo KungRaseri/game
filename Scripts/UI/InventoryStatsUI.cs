@@ -2,6 +2,7 @@
 
 using Game.Core.Utils;
 using Game.Inventories.Models;
+using Game.Items.Models;
 using Godot;
 using GodotPlugins.Game;
 
@@ -237,15 +238,15 @@ public partial class InventoryStatsUI : Panel
         }
     }
 
-    private Color GetRarityColor(Rarity rarity)
+    private Color GetRarityColor(QualityTier rarity)
     {
         return rarity switch
         {
-            Rarity.Common => Colors.White,
-            Rarity.Uncommon => Colors.Green,
-            Rarity.Rare => Colors.Blue,
-            Rarity.Epic => Colors.Purple,
-            Rarity.Legendary => Colors.Orange,
+            QualityTier.Common => Colors.White,
+            QualityTier.Uncommon => Colors.Green,
+            QualityTier.Rare => Colors.Blue,
+            QualityTier.Epic => Colors.Purple,
+            QualityTier.Legendary => Colors.Orange,
             _ => Colors.Gray
         };
     }

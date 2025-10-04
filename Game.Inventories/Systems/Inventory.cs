@@ -329,14 +329,15 @@ public class Inventory
             .GroupBy(stack => stack.Material.Quality)
             .ToDictionary(g => g.Key, g => g.Sum(stack => stack.Quantity));
 
-        return new InventoryStats(
-            _capacity,
-            UsedSlots,
-            totalMaterials,
-            GetTotalValue(),
-            categoryCounts,
-            rarityCounts
-        );
+        return new InventoryStats
+        {
+            UsedSlots = UsedSlots,
+            TotalSlots = _capacity,
+            FreeSlots = FreeSlots,
+            TotalQuantity = totalMaterials,
+            TotalValue = GetTotalValue(),
+            UniqueTypes = _materials.Count
+        };
     }
 
     /// <summary>

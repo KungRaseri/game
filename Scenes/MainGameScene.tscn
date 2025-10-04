@@ -1,11 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://ce3hfv7a2s1gs"]
+[gd_scene load_steps=7 format=3 uid="uid://ce3hfv7a2s1gs"]
 
-[ext_resource type="Script" uid="uid://1wcipswu6kfn" path="res://Scripts/Scenes/MainGameScene.cs" id="1_qla6v"]
+[ext_resource type="Script" uid="uid://bgrjwoa11mu0w" path="res://Scripts/Scenes/MainGameScene.cs" id="1_qla6v"]
 [ext_resource type="PackedScene" uid="uid://b7x3k2qm4wan1" path="res://Scenes/UI/AdventurerStatus.tscn" id="2_adventurer_status"]
 [ext_resource type="PackedScene" uid="uid://d2y4p8x1m6n7v" path="res://Scenes/UI/CombatLog.tscn" id="3_combat_log"]
 [ext_resource type="PackedScene" uid="uid://c5v7n2x4q8p1m" path="res://Scenes/UI/ExpeditionPanel.tscn" id="4_expedition_panel"]
 [ext_resource type="PackedScene" uid="uid://5vuncmhosicy" path="res://Scenes/UI/MaterialCollection.tscn" id="5_material_collection"]
-[ext_resource type="PackedScene" uid="uid://bbax4m7n2q5k8" path="res://Scenes/UI/MaterialToast.tscn" id="6_material_toast"]
 [ext_resource type="PackedScene" uid="uid://bw4x5n1k8g7h2" path="res://Scenes/UI/ShopManagement.tscn" id="7_shop_management"]
 
 [node name="MainGameScene" type="Control"]
@@ -16,8 +15,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_qla6v")
-UpdateInterval = 1.0
-MaterialToastScene = ExtResource("6_material_toast")
 
 [node name="MainContainer" type="HSplitContainer" parent="."]
 layout_mode = 1
@@ -92,10 +89,5 @@ grow_vertical = 2
 [node name="ShopManagementPanel" parent="UIOverlay" instance=ExtResource("7_shop_management")]
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
