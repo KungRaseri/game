@@ -6,6 +6,7 @@ namespace Game.Items.Models.Materials;
 public class Material : Item
 {
     private int _maxStackSize;
+    private int _originalMaxStackSize; // Store original value for validation
 
     /// <summary>
     /// The specific type of material (Metal, Wood, Leather, etc.).
@@ -23,7 +24,11 @@ public class Material : Item
     public int MaxStackSize
     {
         get => _maxStackSize;
-        set => _maxStackSize = Math.Max(1, value);
+        set
+        {
+            _originalMaxStackSize = value;
+            _maxStackSize = Math.Max(1, value);
+        }
     }
 
     public Material(
@@ -39,55 +44,54 @@ public class Material : Item
     {
         Category = category;
         Stackable = stackable;
+        _originalMaxStackSize = maxStackSize;
         _maxStackSize = Math.Max(1, maxStackSize);
     }
 
     /// <summary>
     /// Validates the material's properties to ensure data integrity.
     /// </summary>
-    /// <returns>True if all properties are valid, false otherwise.</returns>
-    public bool Validate()
+    /// <exception cref="ArgumentException">Thrown when any property is invalid.</exception>
+    public void Validate()
     {
         // Validate base Item properties
         if (string.IsNullOrWhiteSpace(ItemId))
         {
-            return false;
+            throw new ArgumentException("Material ID cannot be null or empty");
         }
 
         if (string.IsNullOrWhiteSpace(Name))
         {
-            return false;
+            throw new ArgumentException("Material Name cannot be null or empty");
         }
 
-        if (Value < 0)
+        if (OriginalValue < 0)
         {
-            return false;
+            throw new ArgumentException("Base value cannot be negative");
         }
 
         // Validate ItemType is Material
         if (ItemType != ItemType.Material)
         {
-            return false;
+            throw new ArgumentException("ItemType must be Material");
         }
 
         // Validate stackable constraints
-        if (Stackable && MaxStackSize <= 0)
+        if (Stackable && _originalMaxStackSize <= 0)
         {
-            return false;
+            throw new ArgumentException("Stack limit must be greater than zero");
         }
 
-        if (!Stackable && MaxStackSize != 1)
+        if (!Stackable && _originalMaxStackSize != 1)
         {
-            return false;
+            throw new ArgumentException("Non-stackable items must have MaxStackSize of 1");
         }
 
         // Validate Category is defined
         if (!Enum.IsDefined(typeof(Category), Category))
         {
-            return false;
+            throw new ArgumentException("Invalid Category value");
         }
-
-        return true;
     }
 
     public override string ToString()

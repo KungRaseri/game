@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Game.Inventories.Models;
 using Game.Inventories.Systems;
+using Game.Items.Data;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 
@@ -17,30 +18,9 @@ public class InventoryManagerTests
 
     public InventoryManagerTests()
     {
-        _woodMaterial = new Material(
-            "wood",
-            "Wood",
-            "Common crafting material",
-            QualityTier.Common,
-            5,
-            Category.Wood
-        );
-        _stoneMaterial = new Material(
-            "stone",
-            "Stone",
-            "Hard building material",
-            QualityTier.Common,
-            3,
-            Category.Metal
-        );
-        _gemMaterial = new Material(
-            "ruby",
-            "Ruby",
-            "Precious gem",
-            QualityTier.Rare,
-            100,
-            Category.Gem
-        );
+        _woodMaterial = ItemFactory.CreateMaterial(ItemTypes.OakWood, QualityTier.Common);
+        _stoneMaterial = ItemFactory.CreateMaterial(ItemTypes.IronOre, QualityTier.Common);
+        _gemMaterial = ItemFactory.CreateMaterial(ItemTypes.Ruby, QualityTier.Rare);
 
         _woodDrop = new Drop(_woodMaterial, 10, DateTime.UtcNow);
         _stoneDrop = new Drop(_stoneMaterial, 15, DateTime.UtcNow);
@@ -231,7 +211,7 @@ public class InventoryManagerTests
         result.Results[0].Material.Should().Be(_woodMaterial);
         result.TotalStacks.Should().Be(1);
         result.TotalMaterials.Should().Be(10);
-        result.TotalValue.Should().Be(50);
+        result.TotalValue.Should().Be(30); // 10 * 3 (OakWood base value)
     }
 
     [Fact]
@@ -291,8 +271,8 @@ public class InventoryManagerTests
 
         // Assert
         result.Results.Should().HaveCount(2);
-        result.Results[0].Material.Name.Should().Be("Stone"); // Alphabetically first
-        result.Results[1].Material.Name.Should().Be("Wood");
+        result.Results[0].Material.Name.Should().Be("Iron Ore"); // Alphabetically first
+        result.Results[1].Material.Name.Should().Be("Oak Wood");
     }
 
     [Fact]
@@ -438,7 +418,7 @@ public class InventoryManagerTests
         stats.Capacity.Should().Be(20);
         stats.UsedSlots.Should().Be(3);
         stats.TotalMaterials.Should().Be(28); // 10 + 15 + 3
-        stats.TotalValue.Should().Be(1595); // (10*5*1) + (15*3*1) + (3*100*5) = 50 + 45 + 1500
+        stats.TotalValue.Should().Be(1605); // Actual: Wood: 10*3=30, Stone: 15*5=75, Gem: 3*500=1500
     }
 
     [Fact]

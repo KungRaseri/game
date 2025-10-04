@@ -16,14 +16,14 @@ public static class ItemFactory
     public static Weapon CreateWeapon(WeaponConfig config, QualityTier quality)
     {
         int damageBonus = QualityTierModifiers.GetWeaponDamageBonus(quality);
-        int value = QualityTierModifiers.CalculateItemValue(config.BaseValue, quality);
+        int finalValue = QualityTierModifiers.CalculateItemValue(config.BaseValue, quality);
 
         return new Weapon(
             itemId: $"{config.ItemId}_{quality.ToString().ToLower()}",
             name: config.Name,
             description: config.Description,
             quality: quality,
-            value: value,
+            value: finalValue,
             damageBonus: damageBonus
         );
     }
@@ -34,14 +34,14 @@ public static class ItemFactory
     public static Armor CreateArmor(ArmorConfig config, QualityTier quality)
     {
         int damageReduction = QualityTierModifiers.GetArmorDamageReduction(quality);
-        int value = QualityTierModifiers.CalculateItemValue(config.BaseValue, quality);
+        int finalValue = QualityTierModifiers.CalculateItemValue(config.BaseValue, quality);
 
         return new Armor(
             itemId: $"{config.ItemId}_{quality.ToString().ToLower()}",
             name: config.Name,
             description: config.Description,
             quality: quality,
-            value: value,
+            value: finalValue,
             damageReduction: damageReduction
         );
     }
@@ -51,14 +51,14 @@ public static class ItemFactory
     /// </summary>
     public static Material CreateMaterial(MaterialConfig config, QualityTier quality)
     {
-        int value = QualityTierModifiers.CalculateItemValue(config.BaseValue, quality);
+        int finalValue = QualityTierModifiers.CalculateItemValue(config.BaseValue, quality);
 
         return new Material(
             itemId: $"{config.ItemId}_{quality.ToString().ToLower()}",
             name: config.Name,
             description: config.Description,
             quality: quality,
-            value: value,
+            value: finalValue,
             category: config.Category,
             stackable: config.Stackable,
             maxStackSize: config.MaxStackSize

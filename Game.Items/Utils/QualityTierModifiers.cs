@@ -63,4 +63,13 @@ public static class QualityTierModifiers
     {
         return (int)Math.Round(baseValue * GetValueMultiplier(quality));
     }
+
+    /// <summary>
+    /// Calculates the base value from final value and quality tier.
+    /// </summary>
+    public static int CalculateBaseValue(int finalValue, QualityTier quality)
+    {
+        float multiplier = GetValueMultiplier(quality);
+        return (int)Math.Round(finalValue / multiplier);
+    }
 }

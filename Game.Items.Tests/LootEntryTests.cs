@@ -30,7 +30,8 @@ public class LootEntryTests
         Assert.Equal(0.8f, entry.DropChance);
         Assert.Equal(1, entry.MinQuantity);
         Assert.Equal(3, entry.MaxQuantity);
-        Assert.Equal(QualityTier.Uncommon, entry.Material.Quality);
+        Assert.Equal(QualityTier.Common, entry.Material.Quality); // Original material quality unchanged
+        Assert.Equal(QualityTier.Uncommon, entry.GetEffectiveRarity()); // But effective quality is forced
     }
 
     [Fact]

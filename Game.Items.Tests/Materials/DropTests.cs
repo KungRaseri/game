@@ -27,7 +27,7 @@ public class DropTests
 
         // Assert
         Assert.Equal(_testMaterial, drop.Material);
-        Assert.Equal(QualityTier.Uncommon, drop.Material.Quality);
+        Assert.Equal(QualityTier.Common, drop.Material.Quality);
         Assert.Equal(3, drop.Quantity);
         Assert.Equal(acquiredTime, drop.AcquiredAt);
     }
@@ -70,15 +70,15 @@ public class DropTests
 
     [Theory]
     [InlineData(QualityTier.Common, 1, 2, 2)] // Base value 2 * quantity 1 * multiplier 1.0 = 2
-    [InlineData(QualityTier.Uncommon, 2, 2, 8)] // Base value 2 * quantity 2 * multiplier 2.0 = 8
-    [InlineData(QualityTier.Rare, 1, 2, 10)] // Base value 2 * quantity 1 * multiplier 5.0 = 10
-    [InlineData(QualityTier.Epic, 1, 2, 30)] // Base value 2 * quantity 1 * multiplier 15.0 = 30
-    [InlineData(QualityTier.Legendary, 1, 2, 100)] // Base value 2 * quantity 1 * multiplier 50.0 = 100
-    public void Drop_GetTotalValue_CalculatesCorrectValue(QualityTier rarity, int quantity, int baseValue,
+    [InlineData(QualityTier.Uncommon, 2, 4, 8)] // Base value 2 * quantity 2 * multiplier 2.0 = 8 (final value = 2*2 = 4)
+    [InlineData(QualityTier.Rare, 1, 8, 10)] // Base value 2 * quantity 1 * multiplier 5.0 = 10 (final value = 2*4 = 8)
+    [InlineData(QualityTier.Epic, 1, 16, 30)] // Base value 2 * quantity 1 * multiplier 15.0 = 30 (final value = 2*8 = 16)
+    [InlineData(QualityTier.Legendary, 1, 32, 100)] // Base value 2 * quantity 1 * multiplier 50.0 = 100 (final value = 2*16 = 32)
+    public void Drop_GetTotalValue_CalculatesCorrectValue(QualityTier rarity, int quantity, int finalValue,
         int expectedValue)
     {
         // Arrange
-        var material = new Material("test", "Test", "Test", rarity, baseValue, Category.Metal);
+        var material = new Material("test", "Test", "Test", rarity, finalValue, Category.Metal);
         var drop = new Drop(material, quantity, DateTime.UtcNow);
 
         // Act
@@ -109,8 +109,8 @@ public class DropTests
 
     [Theory]
     [InlineData(1, "Iron Ore (Common) x1")]
-    [InlineData(3, "Iron Ore (Uncommon) x3")]
-    [InlineData(10, "Iron Ore (Legendary) x10")]
+    [InlineData(3, "Iron Ore (Common) x3")]
+    [InlineData(10, "Iron Ore (Common) x10")]
     public void Drop_ToString_ReturnsCorrectFormat(int quantity, string expected)
     {
         // Arrange

@@ -11,6 +11,7 @@ public class Item
     private string _name;
     private string _description;
     private int _value;
+    private int _originalValue; // Store original value for validation
 
     /// <summary>
     /// Unique identifier for this item.
@@ -49,21 +50,30 @@ public class Item
     /// </summary>
     public QualityTier Quality { get; set; }
 
-    public int BaseValue => _value;
-
     /// <summary>
     /// Gold value of this item.
     /// </summary>
-    public int Value => QualityTierModifiers.CalculateItemValue(_value, Quality);
+    public int Value => _value;
+
+    /// <summary>
+    /// Base value before quality modifiers were applied.
+    /// </summary>
+    public int BaseValue => QualityTierModifiers.CalculateBaseValue(_value, Quality);
+
+    /// <summary>
+    /// Original value passed to constructor (for validation purposes).
+    /// </summary>
+    public int OriginalValue => _originalValue;
 
     public Item(string itemId, string name, string description, ItemType itemType, QualityTier quality, int value)
     {
         _itemId = itemId ?? throw new ArgumentNullException(nameof(itemId));
-        _name = name ?? throw new ArgumentNullException(nameof(name));
+        _name = name ?? throw new ArgumentNullException(nameof(name));  
         _description = description ?? throw new ArgumentNullException(nameof(description));
         ItemType = itemType;
         Quality = quality;
-        _value = Math.Max(0, value);
+        _originalValue = value;
+        _value = Math.Max(0, value); // Clamp negative values
     }
 
     public override string ToString()

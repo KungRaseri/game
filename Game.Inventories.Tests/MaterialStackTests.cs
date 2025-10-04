@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Game.Inventories.Models;
+using Game.Items.Data;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 
@@ -210,46 +211,30 @@ public class MaterialStackTests
     public void TotalValue_WithRareRarity_CalculatesCorrectly()
     {
         // Arrange
-        var rareMaterial = new Material(
-            "rare_wood",
-            "Rare Wood",
-            "Rare crafting material",
-            QualityTier.Rare,
-            5,
-            Category.Wood,
-            stackable: true,
-            maxStackSize: 999
-        );
+        var rareMaterial = ItemFactory.CreateMaterial(ItemTypes.OakWood, QualityTier.Rare);
         var stack = new MaterialStack(rareMaterial, 10, DateTime.UtcNow);
 
         // Act
         var totalValue = stack.TotalValue;
 
         // Assert
-        totalValue.Should().Be(200); // 10 * 5 * 4 (rare multiplier from QualityTierModifiers)
+        // OakWood base value = 3, Rare multiplier = 4x, so final value = 12 per item
+        totalValue.Should().Be(120); // 10 * 12
     }
 
     [Fact]
     public void TotalValue_WithLegendaryRarity_CalculatesCorrectly()
     {
         // Arrange
-        var legendaryMaterial = new Material(
-            "legendary_wood",
-            "Legendary Wood",
-            "Legendary crafting material",
-            QualityTier.Legendary,
-            5,
-            Category.Wood,
-            stackable: true,
-            maxStackSize: 999
-        );
+        var legendaryMaterial = ItemFactory.CreateMaterial(ItemTypes.OakWood, QualityTier.Legendary);
         var stack = new MaterialStack(legendaryMaterial, 5, DateTime.UtcNow);
 
         // Act
         var totalValue = stack.TotalValue;
 
         // Assert
-        totalValue.Should().Be(400); // 5 * 5 * 16 (legendary multiplier from QualityTierModifiers)
+        // OakWood base value = 3, Legendary multiplier = 16x, so final value = 48 per item
+        totalValue.Should().Be(240); // 5 * 48
     }
 
     [Fact]

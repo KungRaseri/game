@@ -47,7 +47,7 @@ public record Drop(
             _ => 1.0f
         };
 
-        return (int)(Material.Value * Quantity * rarityMultiplier);
+        return (int)(Material.BaseValue * Quantity * rarityMultiplier);
     }
 
     /// <summary>

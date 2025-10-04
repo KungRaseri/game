@@ -51,7 +51,6 @@ public class CategoryTests
 
     [Theory]
     [InlineData("", "Material ID cannot be null or empty")]
-    [InlineData(null, "Material ID cannot be null or empty")]
     [InlineData("   ", "Material ID cannot be null or empty")]
     public void Category_Validate_WithInvalidId_ThrowsException(string? invalidId, string expectedMessage)
     {
@@ -70,9 +69,22 @@ public class CategoryTests
         Assert.Contains(expectedMessage, exception.Message);
     }
 
+    [Fact]
+    public void Category_Constructor_WithNullId_ThrowsArgumentNullException()
+    {
+        // Arrange, Act & Assert
+        Assert.Throws<ArgumentNullException>(() => new Material(
+            null!,
+            "Valid Name",
+            "Valid Description",
+            QualityTier.Common,
+            1,
+            Category.Metal
+        ));
+    }
+
     [Theory]
     [InlineData("", "Material Name cannot be null or empty")]
-    [InlineData(null, "Material Name cannot be null or empty")]
     [InlineData("   ", "Material Name cannot be null or empty")]
     public void Category_Validate_WithInvalidName_ThrowsException(string? invalidName, string expectedMessage)
     {
@@ -89,6 +101,20 @@ public class CategoryTests
         // Act & Assert
         var exception = Assert.Throws<ArgumentException>(() => material.Validate());
         Assert.Contains(expectedMessage, exception.Message);
+    }
+
+    [Fact]
+    public void Category_Constructor_WithNullName_ThrowsArgumentNullException()
+    {
+        // Arrange, Act & Assert
+        Assert.Throws<ArgumentNullException>(() => new Material(
+            "valid_id",
+            null!,
+            "Valid Description",
+            QualityTier.Common,
+            1,
+            Category.Metal
+        ));
     }
 
     [Theory]
