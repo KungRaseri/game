@@ -325,7 +325,7 @@ public class Inventory
         var categoryCounts = _materials.Values
             .GroupBy(stack => stack.Material.Category)
             .ToDictionary(g => g.Key, g => g.Sum(stack => stack.Quantity));
-        var rarityCounts = _materials.Values
+        var qualityTierCounts = _materials.Values
             .GroupBy(stack => stack.Material.Quality)
             .ToDictionary(g => g.Key, g => g.Sum(stack => stack.Quantity));
 
@@ -336,7 +336,9 @@ public class Inventory
             FreeSlots = FreeSlots,
             TotalQuantity = totalMaterials,
             TotalValue = GetTotalValue(),
-            UniqueTypes = _materials.Count
+            UniqueTypes = _materials.Count,
+            CategoryCounts = categoryCounts,
+            QualityTierCounts = qualityTierCounts
         };
     }
 

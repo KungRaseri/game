@@ -206,7 +206,7 @@ public partial class InventoryStatsUI : Panel
 
         ClearContainer(_raritiesContainer);
 
-        var sortedRarities = _currentStats.RarityCounts
+        var sortedRarities = _currentStats.QualityTierCounts
             .OrderBy(kvp => (int)kvp.Key) // Order by rarity enum value
             .Take(MaxDisplayedRarities);
 
