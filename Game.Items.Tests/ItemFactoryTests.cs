@@ -1,8 +1,7 @@
-using Game.Adventure.Data;
 using Game.Items.Data;
 using Game.Items.Models;
 
-namespace Game.Main.Tests.Data;
+namespace Game.Items.Tests;
 
 public class ItemFactoryTests
 {

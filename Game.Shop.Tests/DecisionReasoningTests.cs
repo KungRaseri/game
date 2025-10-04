@@ -1,10 +1,9 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.Main.Systems;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Tests for decision reasoning data class.

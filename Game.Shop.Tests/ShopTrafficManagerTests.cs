@@ -1,10 +1,10 @@
 #nullable enable
 
 using Game.Items.Models;
-using Game.Main.Systems;
+using Game.Shop.Models;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Tests for the ShopTrafficManager that orchestrates multiple customer sessions.
@@ -19,9 +19,9 @@ public class ShopTrafficManagerTests
         return (shopManager, trafficManager);
     }
     
-    private Items CreateTestItem(string name = "Test Item", ItemType type = ItemType.Weapon)
+    private Item CreateTestItem(string name = "Test Item", ItemType type = ItemType.Weapon)
     {
-        return new Items(
+        return new Item(
             itemId: Guid.NewGuid().ToString(),
             name: name,
             description: $"A test {name.ToLower()}",

@@ -15,5 +15,7 @@ public enum Category
     Gem,
     Herb,
     Bone,
-    Essence
+    Magical,
+    Essence,
+    Fuel
 }

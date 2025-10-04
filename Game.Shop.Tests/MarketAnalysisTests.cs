@@ -2,10 +2,9 @@
 
 using FluentAssertions;
 using Game.Items.Models;
-using Game.Main.Systems;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Tests for the MarketAnalysis class.

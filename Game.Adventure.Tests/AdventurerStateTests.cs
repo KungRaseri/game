@@ -1,6 +1,6 @@
 using Game.Adventure.Models;
 
-namespace Game.Main.Tests.Models
+namespace Game.Adventure.Tests
 {
     public class AdventurerStateTests
     {

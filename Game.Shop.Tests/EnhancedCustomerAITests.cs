@@ -1,12 +1,11 @@
 #nullable enable
 
-using Game.Adventure.Data;
 using Game.Items.Data;
 using Game.Items.Models;
-using Game.Main.Systems;
+using Game.Shop.Models;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Tests for the Enhanced Customer AI system that provides sophisticated decision-making logic.

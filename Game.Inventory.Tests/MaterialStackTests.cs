@@ -1,8 +1,6 @@
 #nullable enable
 
-using Game.Adventure.Models;
-
-namespace Game.Main.Tests.Systems.Inventory;
+namespace Game.Inventory.Tests;
 
 public class MaterialStackTests
 {

@@ -1,9 +1,9 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.Adventure.Models;
+using Game.Inventory.Systems;
 
-namespace Game.Main.Tests.Systems.Inventory;
+namespace Game.Inventory.Tests;
 
 public class InventoryManagerTests
 {

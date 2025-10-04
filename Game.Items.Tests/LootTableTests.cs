@@ -1,35 +1,37 @@
 #nullable enable
 
-using Game.Main.Systems.Loot;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
+using Game.Items.Systems;
 
-namespace Game.Main.Tests.Systems.Loot;
+namespace Game.Items.Tests;
 
 public class LootTableTests
 {
-    private readonly MaterialType _ironOre = new(
+    private readonly Material _ironOre = new(
         "iron_ore",
         "Iron Ore",
         "Common metal ore",
-        MaterialCategory.Metals,
-        MaterialRarity.Common,
+        Category.Metal,
+        QualityTier.Common,
         BaseValue: 2
     );
 
-    private readonly MaterialType _leather = new(
+    private readonly Material _leather = new(
         "leather",
         "Leather",
         "Basic leather",
-        MaterialCategory.Organic,
-        MaterialRarity.Common,
+        Category.Organic,
+        QualityTier.Common,
         BaseValue: 1
     );
 
-    private readonly MaterialType _gem = new(
+    private readonly Material _gem = new(
         "gem",
         "Gem",
         "Precious gem",
-        MaterialCategory.Gems,
-        MaterialRarity.Rare,
+        Category.Gems,
+        QualityTier.Rare,
         BaseValue: 10
     );
 
@@ -134,9 +136,9 @@ public class LootTableTests
         // Arrange
         var entries = new List<LootEntry>
         {
-            new(_ironOre, 0.5f, 1, 3),    // Medium chance
-            new(_leather, 0.9f, 1, 2),    // High chance  
-            new(_gem, 0.1f, 1, 1)         // Low chance
+            new(_ironOre, 0.5f, 1, 3), // Medium chance
+            new(_leather, 0.9f, 1, 2), // High chance  
+            new(_gem, 0.1f, 1, 1) // Low chance
         };
         var lootTable = new LootTable("goblin", entries);
 
@@ -157,7 +159,7 @@ public class LootTableTests
         var entries = new List<LootEntry>
         {
             new(_ironOre, 0.5f, 1, 3),
-            new(_leather, 0.0f, 1, 2),    // Zero chance - should be excluded
+            new(_leather, 0.0f, 1, 2), // Zero chance - should be excluded
             new(_gem, 0.1f, 1, 1)
         };
         var lootTable = new LootTable("goblin", entries);
@@ -176,24 +178,24 @@ public class LootTableTests
         // Arrange
         var entries = new List<LootEntry>
         {
-            new(_ironOre, 0.8f, 1, 3),     // Metals
-            new(_leather, 0.6f, 1, 2),     // Organic
-            new(_gem, 0.1f, 1, 1)          // Gems
+            new(_ironOre, 0.8f, 1, 3), // Metals
+            new(_leather, 0.6f, 1, 2), // Organic
+            new(_gem, 0.1f, 1, 1) // Gems
         };
         var lootTable = new LootTable("goblin", entries);
 
         // Act
-        var metalDrops = lootTable.GetDropsByCategory(MaterialCategory.Metals);
-        var organicDrops = lootTable.GetDropsByCategory(MaterialCategory.Organic);
-        var gemDrops = lootTable.GetDropsByCategory(MaterialCategory.Gems);
+        var metalDrops = lootTable.GetDropsByCategory(Category.Metals);
+        var organicDrops = lootTable.GetDropsByCategory(Category.Organic);
+        var gemDrops = lootTable.GetDropsByCategory(Category.Gems);
 
         // Assert
         Assert.Single(metalDrops);
         Assert.Equal(_ironOre.Id, metalDrops[0].Material.Id);
-        
+
         Assert.Single(organicDrops);
         Assert.Equal(_leather.Id, organicDrops[0].Material.Id);
-        
+
         Assert.Single(gemDrops);
         Assert.Equal(_gem.Id, gemDrops[0].Material.Id);
     }
@@ -204,24 +206,24 @@ public class LootTableTests
         // Arrange
         var entries = new List<LootEntry>
         {
-            new(_ironOre, 0.8f, 1, 3),                                    // Common (base rarity)
-            new(_leather, 0.6f, 1, 2, MaterialRarity.Uncommon),          // Uncommon (forced)
-            new(_gem, 0.1f, 1, 1)                                        // Rare (base rarity)
+            new(_ironOre, 0.8f, 1, 3), // Common (base rarity)
+            new(_leather, 0.6f, 1, 2, QualityTier.Uncommon), // Uncommon (forced)
+            new(_gem, 0.1f, 1, 1) // Rare (base rarity)
         };
         var lootTable = new LootTable("goblin", entries);
 
         // Act
-        var commonDrops = lootTable.GetDropsByRarity(MaterialRarity.Common);
-        var uncommonDrops = lootTable.GetDropsByRarity(MaterialRarity.Uncommon);
-        var rareDrops = lootTable.GetDropsByRarity(MaterialRarity.Rare);
+        var commonDrops = lootTable.GetDropsByRarity(QualityTier.Common);
+        var uncommonDrops = lootTable.GetDropsByRarity(QualityTier.Uncommon);
+        var rareDrops = lootTable.GetDropsByRarity(QualityTier.Rare);
 
         // Assert
         Assert.Single(commonDrops);
         Assert.Equal(_ironOre.Id, commonDrops[0].Material.Id);
-        
+
         Assert.Single(uncommonDrops);
         Assert.Equal(_leather.Id, uncommonDrops[0].Material.Id);
-        
+
         Assert.Single(rareDrops);
         Assert.Equal(_gem.Id, rareDrops[0].Material.Id);
     }

@@ -1,8 +1,9 @@
 #nullable enable
 
 using Game.Items.Models;
+using Game.Shop.Models;
 
-namespace Game.Main.Tests.Models;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Tests for Customer preference and loyalty system.

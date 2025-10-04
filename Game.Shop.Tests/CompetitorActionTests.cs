@@ -1,6 +1,8 @@
+using FluentAssertions;
 using Game.Items.Models;
+using Game.Shop.Models;
 
-namespace Game.Main.Tests.Models;
+namespace Game.Shop.Tests;
 
 public class CompetitorActionTests
 {

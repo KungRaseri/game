@@ -3,7 +3,7 @@
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 
-namespace Game.Main.Systems.Loot;
+namespace Game.Items.Systems;
 
 /// <summary>
 /// Represents a single entry in a loot table with drop probability and quantity ranges.

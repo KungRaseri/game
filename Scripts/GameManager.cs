@@ -1,8 +1,8 @@
 using Game.Adventure.Controllers;
 using Game.Adventure.Systems;
-using Game.Main.Utils;
+using Game.Core.Utils;
 
-namespace Game.Managers;
+namespace Game.Scripts;
 
 /// <summary>
 /// Main game manager that coordinates all systems for Milestone 1

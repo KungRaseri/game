@@ -1,13 +1,13 @@
 #nullable enable
 
 using FluentAssertions;
+using Game.Core.Utils;
+using Game.Inventory.Systems;
 using Game.Items.Models;
-using Game.Main.Systems;
-using Game.Main.Utils;
-using Game.Main.Tests.Utils;
+using Game.Shop.Models;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Tests for the ShopInventoryManager system.
@@ -38,8 +38,8 @@ public class ShopInventoryManagerTests : IDisposable
     {
         // Assert
         _shopInventoryManager.InventoryManager.Should().BeSameAs(_inventoryManager);
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Info && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Info &&
             log.Message.Contains("ShopInventoryManager initialized"));
     }
 
@@ -78,8 +78,8 @@ public class ShopInventoryManagerTests : IDisposable
         result.Should().BeTrue();
         _shopManager.DisplaySlots[slotId].CurrentItem.Should().NotBeNull();
         _shopManager.DisplaySlots[slotId].CurrentItem!.ItemId.Should().Be("test_sword");
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Info && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Info &&
             log.Message.Contains("Transferred Test Sword to shop display slot 0"));
     }
 
@@ -96,8 +96,8 @@ public class ShopInventoryManagerTests : IDisposable
 
         // Assert
         result.Should().BeFalse();
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Warning && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Warning &&
             log.Message.Contains("Item Test Sword is already displayed in shop"));
     }
 
@@ -130,8 +130,8 @@ public class ShopInventoryManagerTests : IDisposable
         // Assert
         result.Should().BeTrue();
         _shopManager.DisplaySlots[slotId].CurrentItem.Should().BeNull();
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Info && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Info &&
             log.Message.Contains("Removed Test Sword from shop display"));
     }
 
@@ -189,8 +189,8 @@ public class ShopInventoryManagerTests : IDisposable
         // Assert
         var testItem = CreateTestItem(itemId, "Test Item", ItemType.Weapon);
         _shopInventoryManager.GetSuggestedPrice(testItem).Should().Be(price);
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Debug && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Debug &&
             log.Message.Contains($"Set suggested price for item {itemId}: {price} gold"));
     }
 
@@ -205,8 +205,8 @@ public class ShopInventoryManagerTests : IDisposable
         _shopInventoryManager.SetSuggestedPrice(itemId, invalidPrice);
 
         // Assert
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Warning && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Warning &&
             log.Message.Contains($"Invalid suggested price {invalidPrice} for item {itemId}"));
     }
 
@@ -221,8 +221,8 @@ public class ShopInventoryManagerTests : IDisposable
         _shopInventoryManager.SetSuggestedPrice(itemId, zeroPrice);
 
         // Assert
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Warning && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Warning &&
             log.Message.Contains($"Invalid suggested price {zeroPrice} for item {itemId}"));
     }
 
@@ -252,8 +252,8 @@ public class ShopInventoryManagerTests : IDisposable
 
         // Assert
         result.Should().BeFalse();
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Info && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Info &&
             log.Message.Contains("No available shop slots for auto-stocking"));
     }
 
@@ -280,12 +280,13 @@ public class ShopInventoryManagerTests : IDisposable
             quality: QualityTier.Common,
             value: 15
         );
-        
+
         var customPrice = 123m;
         _shopInventoryManager.SetSuggestedPrice(testItem.ItemId, customPrice);
 
         // Act - Transfer using the suggested price
-        var result = _shopInventoryManager.TransferToShop(testItem, 0, _shopInventoryManager.GetSuggestedPrice(testItem));
+        var result =
+            _shopInventoryManager.TransferToShop(testItem, 0, _shopInventoryManager.GetSuggestedPrice(testItem));
 
         // Assert
         result.Should().BeTrue();
@@ -341,15 +342,15 @@ public class ShopInventoryManagerTests : IDisposable
 
         // Create a customer
         var customer = new Customer(CustomerType.VeteranAdventurer);
-        
+
         // Act - Simulate sale that makes customer delighted (should increase future price)
         var transaction = _shopManager.ProcessSale(0, customer.CustomerId, CustomerSatisfaction.Delighted);
 
         // Assert
         transaction.Should().NotBeNull();
         var updatedPrice = _shopInventoryManager.GetSuggestedPrice(testItem);
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Info && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Info &&
             log.Message.Contains($"Sold item {testItem.Name}"));
     }
 
@@ -414,14 +415,15 @@ public class ShopInventoryManagerTests : IDisposable
         _shopInventoryManager.Dispose();
 
         // Assert
-        _loggerBackend.GetLogs().Should().Contain(log => 
-            log.Level == GameLogger.LogLevel.Info && 
+        _loggerBackend.GetLogs().Should().Contain(log =>
+            log.Level == GameLogger.LogLevel.Info &&
             log.Message.Contains("ShopInventoryManager disposed"));
     }
 
-    private static Items CreateTestItem(string id, string name, ItemType type, QualityTier quality = QualityTier.Common, int value = 50)
+    private static Item CreateTestItem(string id, string name, ItemType type, QualityTier quality = QualityTier.Common,
+        int value = 50)
     {
-        return new Items(id, name, $"A test {name.ToLower()}", type, quality, value);
+        return new Item(id, name, $"A test {name.ToLower()}", type, quality, value);
     }
 
     public void Dispose()

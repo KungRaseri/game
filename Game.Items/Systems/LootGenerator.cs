@@ -1,11 +1,10 @@
 #nullable enable
 
-using Game.Adventure.Models;
+using Game.Core.Utils;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
-using Game.Main.Utils;
 
-namespace Game.Main.Systems.Loot;
+namespace Game.Items.Systems;
 
 /// <summary>
 /// Generates material drops from loot tables using weighted probability calculations.
@@ -101,7 +100,7 @@ public class LootGenerator
 
         // Small chance to upgrade rarity (5% chance per tier)
         var upgradeRoll = _random.NextSingle();
-        
+
         return baseRarity switch
         {
             QualityTier.Common when upgradeRoll < 0.05f => QualityTier.Uncommon,
@@ -115,7 +114,7 @@ public class LootGenerator
     /// <summary>
     /// Generates additional drops to meet the guaranteed minimum count.
     /// </summary>
-    private void GenerateGuaranteedDrops(LootTable lootTable, List<MaterialDrop> existingDrops, DateTime currentTime)
+    private void GenerateGuaranteedDrops(LootTable lootTable, List<Drop> existingDrops, DateTime currentTime)
     {
         var dropsNeeded = lootTable.GuaranteedDropCount - existingDrops.Count;
         var availableEntries = lootTable.PossibleDrops.ToList();
@@ -129,9 +128,8 @@ public class LootGenerator
             var quantity = _random.Next(entry.MinQuantity, entry.MaxQuantity + 1);
             var rarity = DetermineActualRarity(entry);
 
-            var drop = new MaterialDrop(
+            var drop = new Drop(
                 entry.Material,
-                rarity,
                 quantity,
                 currentTime
             );
@@ -155,7 +153,7 @@ public class LootGenerator
         }
 
         var stats = new Dictionary<string, float>();
-        
+
         foreach (var entry in lootTable.PossibleDrops)
         {
             stats[entry.Material.Name] = entry.DropChance;

@@ -1,6 +1,6 @@
 using Game.Adventure.Data;
 
-namespace Game.Main.Tests.Data
+namespace Game.Adventure.Tests
 {
     public class EntityTypesTests
     {

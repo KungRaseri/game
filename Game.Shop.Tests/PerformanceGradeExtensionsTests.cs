@@ -1,6 +1,8 @@
 #nullable enable
 
-namespace Game.Main.Tests.Models;
+using FluentAssertions;
+
+namespace Game.Shop.Tests;
 
 public class PerformanceGradeExtensionsTests
 {

@@ -1,10 +1,10 @@
 #nullable enable
 
 using Game.Items.Models;
-using Game.Main.Systems;
+using Game.Shop.Models;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Integration tests for enhanced ShopManager with TreasuryManager integration.
@@ -17,9 +17,9 @@ public class EnhancedShopManagerTests
         return new ShopManager();
     }
     
-    private Items CreateTestItem(string name = "Test Sword", ItemType type = ItemType.Weapon, QualityTier quality = QualityTier.Common)
+    private Item CreateTestItem(string name = "Test Sword", ItemType type = ItemType.Weapon, QualityTier quality = QualityTier.Common)
     {
-        return new Items(
+        return new Item(
             itemId: Guid.NewGuid().ToString(),
             name: name,
             description: $"A test {name.ToLower()}",

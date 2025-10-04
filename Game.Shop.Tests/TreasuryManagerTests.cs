@@ -1,9 +1,8 @@
 #nullable enable
 
-using Game.Main.Systems;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Unit tests for the TreasuryManager enhanced gold management system.
@@ -313,7 +312,7 @@ public class TreasuryManagerTests
         
         // Act & Assert
         Assert.True(expense.IsDueForRecurrence(DateTime.Now));
-        Assert.NotNull(expense.GetNextOccurrence());
+        Assert.NotNull((object?)expense.GetNextOccurrence());
         Assert.Equal("Fixed Costs", expense.GetCategory());
         Assert.Contains("Every 30 days", expense.GetDisplayName());
     }

@@ -1,8 +1,10 @@
 #nullable enable
 
+using FluentAssertions;
+using Game.Shop.Models;
 using Godot;
 
-namespace Game.Main.Tests.Models;
+namespace Game.Shop.Tests;
 
 public class DecorationPlacementTests
 {

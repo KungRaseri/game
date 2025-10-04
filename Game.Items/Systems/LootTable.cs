@@ -1,6 +1,9 @@
 #nullable enable
 
-namespace Game.Main.Systems.Loot;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
+
+namespace Game.Items.Systems;
 
 /// <summary>
 /// Defines the possible loot drops for a specific monster type.
@@ -56,7 +59,8 @@ public class LootTable
 
         if (MaximumDropCount < GuaranteedDropCount)
         {
-            throw new ArgumentException("Maximum drop count cannot be less than guaranteed drop count", nameof(MaximumDropCount));
+            throw new ArgumentException("Maximum drop count cannot be less than guaranteed drop count",
+                nameof(MaximumDropCount));
         }
 
         // Validate all loot entries
@@ -80,7 +84,7 @@ public class LootTable
     /// <summary>
     /// Gets all loot entries for a specific material category.
     /// </summary>
-    public List<LootEntry> GetDropsByCategory(MaterialCategory category)
+    public List<LootEntry> GetDropsByCategory(Category category)
     {
         return PossibleDrops
             .Where(entry => entry.Material.Category == category)
@@ -90,7 +94,7 @@ public class LootTable
     /// <summary>
     /// Gets all loot entries for a specific rarity level.
     /// </summary>
-    public List<LootEntry> GetDropsByRarity(MaterialRarity rarity)
+    public List<LootEntry> GetDropsByRarity(QualityTier rarity)
     {
         return PossibleDrops
             .Where(entry => entry.GetEffectiveRarity() == rarity)
@@ -102,6 +106,7 @@ public class LootTable
     /// </summary>
     public override string ToString()
     {
-        return $"LootTable for {MonsterTypeId}: {PossibleDrops.Count} possible drops, {GuaranteedDropCount}-{MaximumDropCount} guaranteed";
+        return
+            $"LootTable for {MonsterTypeId}: {PossibleDrops.Count} possible drops, {GuaranteedDropCount}-{MaximumDropCount} guaranteed";
     }
 }

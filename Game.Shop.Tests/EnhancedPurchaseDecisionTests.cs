@@ -1,10 +1,10 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.Main.Systems;
+using Game.Shop.Models;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Tests for enhanced purchase decision analysis system.

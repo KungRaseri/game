@@ -1,9 +1,9 @@
 #nullable enable
 
 using System.Collections.Concurrent;
-using Game.Main.Utils;
+using Game.Core.Utils;
 
-namespace Game.Main.Tests.Utils;
+namespace Game.Core.Tests;
 
 /// <summary>
 /// A logger backend that captures log messages for testing purposes.
@@ -19,9 +19,11 @@ public class TestableLoggerBackend : ILoggerBackend
 
     public IReadOnlyList<LogEntry> GetLogs() => _logs.ToList();
 
-    public void Clear() 
+    public void Clear()
     {
-        while (_logs.TryDequeue(out _)) { }
+        while (_logs.TryDequeue(out _))
+        {
+        }
     }
 
     public record LogEntry(GameLogger.LogLevel Level, string Message);

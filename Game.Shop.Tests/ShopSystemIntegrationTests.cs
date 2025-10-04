@@ -1,10 +1,11 @@
 #nullable enable
 
+using Game.Inventory.Systems;
 using Game.Items.Models;
-using Game.Main.Systems;
+using Game.Shop.Models;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Integration tests for the complete shop system including inventory bridging.
@@ -21,9 +22,9 @@ public class ShopSystemIntegrationTests
         return (shopManager, shopInventory, inventoryManager);
     }
     
-    private Items CreateTestItem(string name = "Integration Test Item", ItemType type = ItemType.Weapon)
+    private Item CreateTestItem(string name = "Integration Test Item", ItemType type = ItemType.Weapon)
     {
-        return new Items(
+        return new Item(
             itemId: Guid.NewGuid().ToString(),
             name: name,
             description: "A test item for integration testing",

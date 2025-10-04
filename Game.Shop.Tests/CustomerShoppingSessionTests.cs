@@ -1,10 +1,10 @@
 #nullable enable
 
 using Game.Items.Models;
-using Game.Main.Systems;
+using Game.Shop.Models;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Tests for the CustomerShoppingSession system that orchestrates complete customer experiences.
@@ -20,7 +20,7 @@ public class CustomerShoppingSessionTests
         return (shopManager, customer, session);
     }
     
-    private Items CreateTestItem(string name = "Test Sword", ItemType type = ItemType.Weapon, QualityTier quality = QualityTier.Common)
+    private Item CreateTestItem(string name = "Test Sword", ItemType type = ItemType.Weapon, QualityTier quality = QualityTier.Common)
     {
         return new Items(
             itemId: Guid.NewGuid().ToString(),

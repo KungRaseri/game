@@ -1,8 +1,8 @@
 #nullable enable
 
-using Game.Main.Systems.Loot;
+using Game.Items.Systems;
 
-namespace Game.Main.Tests.Systems.Loot;
+namespace Game.Items.Tests;
 
 public class LootEntryTests
 {

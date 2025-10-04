@@ -4,7 +4,7 @@ using Game.Adventure.Models;
 using Game.Adventure.Systems;
 using Game.Core.Utils;
 using Game.Inventory.Systems;
-using Game.Managers;
+using Game.Items.Data;
 using Game.Scripts.UI;
 using Game.Shop.Systems;
 using Godot;

@@ -1,10 +1,9 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.Main.Systems;
 using Game.Shop.Systems;
 
-namespace Game.Main.Tests.Systems;
+namespace Game.Shop.Tests;
 
 /// <summary>
 /// Tests for shop interaction context tracking system.

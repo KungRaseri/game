@@ -3,6 +3,8 @@
 using Game.Core.Utils;
 using Game.Inventory.Models;
 using Godot;
+using GodotPlugins.Game;
+
 //using Game.Inventory.Systems;  // TODO: Implement InventoryManager in new architecture
 
 namespace Game.Scripts.UI;

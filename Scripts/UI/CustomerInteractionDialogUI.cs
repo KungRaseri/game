@@ -1,8 +1,12 @@
 #nullable enable
 
+using Game.Core.Utils;
 using Game.Game.Items.Models;
+using Game.Items.Models;
 using Game.Shop.Models;
+using Game.Shop.Systems;
 using Godot;
+using GodotPlugins.Game;
 
 namespace Game.Scripts.UI;
 

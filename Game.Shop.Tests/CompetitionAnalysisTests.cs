@@ -1,4 +1,7 @@
-namespace Game.Main.Tests.Models;
+using FluentAssertions;
+using Game.Shop.Models;
+
+namespace Game.Shop.Tests;
 
 public class CompetitionAnalysisTests
 {
