@@ -1,6 +1,6 @@
 #nullable enable
 
-using Game.Item.Models;
+using Game.Items.Models;
 using Game.Main.Systems;
 using Game.Shop.Systems;
 

@@ -1,4 +1,4 @@
-namespace Game.Item.Models.Materials;
+namespace Game.Items.Models.Materials;
 
 /// <summary>
 /// Represents a crafting material used to create items.

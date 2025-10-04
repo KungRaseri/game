@@ -1,5 +1,5 @@
-using Game.Item.Models;
-using Game.Item.Models.Materials;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
 
 namespace Game.Adventure.Models;
 

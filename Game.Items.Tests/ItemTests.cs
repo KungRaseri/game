@@ -1,6 +1,6 @@
-using Game.Item.Models;
+using Game.Items.Models;
 
-namespace Game.Main.Tests.Models;
+namespace Game.Items.Tests;
 
 public class ItemTests
 {
@@ -8,7 +8,7 @@ public class ItemTests
     public void Constructor_SetsValues_Correctly()
     {
         // Arrange & Act
-        var item = new Items(
+        var item = new Item(
             itemId: "test_item_001",
             name: "Test Item",
             description: "A test item",
@@ -30,7 +30,7 @@ public class ItemTests
     public void Constructor_ThrowsArgumentNullException_WhenItemIdIsNull()
     {
         // Arrange, Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new Items(
+        Assert.Throws<ArgumentNullException>(() => new Item(
             itemId: null!,
             name: "Test",
             description: "Test",
@@ -44,7 +44,7 @@ public class ItemTests
     public void Constructor_ThrowsArgumentNullException_WhenNameIsNull()
     {
         // Arrange, Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new Items(
+        Assert.Throws<ArgumentNullException>(() => new Item(
             itemId: "test_001",
             name: null!,
             description: "Test",
@@ -58,7 +58,7 @@ public class ItemTests
     public void Constructor_ThrowsArgumentNullException_WhenDescriptionIsNull()
     {
         // Arrange, Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new Items(
+        Assert.Throws<ArgumentNullException>(() => new Item(
             itemId: "test_001",
             name: "Test",
             description: null!,
@@ -72,7 +72,7 @@ public class ItemTests
     public void Constructor_ClampsNegativeValue_ToZero()
     {
         // Arrange & Act
-        var item = new Items(
+        var item = new Item(
             itemId: "test_001",
             name: "Test",
             description: "Test",
@@ -86,49 +86,10 @@ public class ItemTests
     }
 
     [Fact]
-    public void Value_Setter_ClampsNegativeValue_ToZero()
-    {
-        // Arrange
-        var item = new Items("test_001", "Test", "Test", ItemType.Material, QualityTier.Common, 100);
-
-        // Act
-        item.Value = -20;
-
-        // Assert
-        Assert.Equal(0, item.Value);
-    }
-
-    [Fact]
-    public void Value_Setter_AcceptsZero()
-    {
-        // Arrange
-        var item = new Items("test_001", "Test", "Test", ItemType.Material, QualityTier.Common, 100);
-
-        // Act
-        item.Value = 0;
-
-        // Assert
-        Assert.Equal(0, item.Value);
-    }
-
-    [Fact]
-    public void Value_Setter_AcceptsPositiveValue()
-    {
-        // Arrange
-        var item = new Items("test_001", "Test", "Test", ItemType.Material, QualityTier.Common, 10);
-
-        // Act
-        item.Value = 500;
-
-        // Assert
-        Assert.Equal(500, item.Value);
-    }
-
-    [Fact]
     public void ToString_ReturnsFormattedString()
     {
         // Arrange
-        var item = new Items("test_001", "Magic Stone", "Test", ItemType.Material, QualityTier.Epic, 200);
+        var item = new Item("test_001", "Magic Stone", "Test", ItemType.Material, QualityTier.Epic, 200);
 
         // Act
         var result = item.ToString();

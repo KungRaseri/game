@@ -1,8 +1,8 @@
 #nullable enable
 
 using Game.Adventure.Models;
-using Game.Item.Models;
-using Game.Item.Models.Materials;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
 using Game.Main.Utils;
 
 namespace Game.Main.Systems.Loot;

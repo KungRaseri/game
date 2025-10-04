@@ -1,18 +1,20 @@
 #nullable enable
 
+using Game.Items.Models.Materials;
+
 namespace Game.Main.Tests.Models.Materials;
 
-public class MaterialTypeTests
+public class CategoryTests
 {
     [Fact]
-    public void MaterialType_ValidConfiguration_CreatesSuccessfully()
+    public void Category_ValidConfiguration_CreatesSuccessfully()
     {
         // Arrange & Act
-        var material = new MaterialType(
+        var material = new Material(
             "iron_ore",
             "Iron Ore", 
             "Common metal ore",
-            MaterialCategory.Metals,
+            Category.Metal,
             MaterialRarity.Common,
             StackLimit: 999,
             BaseValue: 2
@@ -29,10 +31,10 @@ public class MaterialTypeTests
     }
 
     [Fact]
-    public void MaterialType_Validate_WithValidData_DoesNotThrow()
+    public void Category_Validate_WithValidData_DoesNotThrow()
     {
         // Arrange
-        var material = new MaterialType(
+        var material = new Category(
             "test_material",
             "Test Material",
             "A test material",
@@ -48,10 +50,10 @@ public class MaterialTypeTests
     [InlineData("", "Material ID cannot be null or empty")]
     [InlineData(null, "Material ID cannot be null or empty")]
     [InlineData("   ", "Material ID cannot be null or empty")]
-    public void MaterialType_Validate_WithInvalidId_ThrowsException(string? invalidId, string expectedMessage)
+    public void Category_Validate_WithInvalidId_ThrowsException(string? invalidId, string expectedMessage)
     {
         // Arrange
-        var material = new MaterialType(
+        var material = new Category(
             invalidId!,
             "Valid Name",
             "Valid Description",
@@ -68,10 +70,10 @@ public class MaterialTypeTests
     [InlineData("", "Material Name cannot be null or empty")]
     [InlineData(null, "Material Name cannot be null or empty")]
     [InlineData("   ", "Material Name cannot be null or empty")]
-    public void MaterialType_Validate_WithInvalidName_ThrowsException(string? invalidName, string expectedMessage)
+    public void Category_Validate_WithInvalidName_ThrowsException(string? invalidName, string expectedMessage)
     {
         // Arrange
-        var material = new MaterialType(
+        var material = new Category(
             "valid_id",
             invalidName!,
             "Valid Description",
@@ -88,10 +90,10 @@ public class MaterialTypeTests
     [InlineData(0)]
     [InlineData(-1)]
     [InlineData(-100)]
-    public void MaterialType_Validate_WithInvalidStackLimit_ThrowsException(int invalidStackLimit)
+    public void Category_Validate_WithInvalidStackLimit_ThrowsException(int invalidStackLimit)
     {
         // Arrange
-        var material = new MaterialType(
+        var material = new Category(
             "valid_id",
             "Valid Name",
             "Valid Description",
@@ -108,10 +110,10 @@ public class MaterialTypeTests
     [Theory]
     [InlineData(-1)]
     [InlineData(-100)]
-    public void MaterialType_Validate_WithNegativeBaseValue_ThrowsException(int invalidBaseValue)
+    public void Category_Validate_WithNegativeBaseValue_ThrowsException(int invalidBaseValue)
     {
         // Arrange
-        var material = new MaterialType(
+        var material = new Category(
             "valid_id",
             "Valid Name",
             "Valid Description",
@@ -131,10 +133,10 @@ public class MaterialTypeTests
     [InlineData(MaterialRarity.Rare, "#0080FF")]
     [InlineData(MaterialRarity.Epic, "#8000FF")]
     [InlineData(MaterialRarity.Legendary, "#FFD700")]
-    public void MaterialType_GetRarityColor_ReturnsCorrectColor(MaterialRarity rarity, string expectedColor)
+    public void Category_GetRarityColor_ReturnsCorrectColor(MaterialRarity rarity, string expectedColor)
     {
         // Arrange
-        var material = new MaterialType(
+        var material = new Category(
             "test_material",
             "Test Material",
             "A test material",

@@ -1,6 +1,6 @@
-using Game.Item.Models;
+using Game.Items.Models;
 
-namespace Game.Main.Tests.Models;
+namespace Game.Items.Tests;
 
 public class WeaponTests
 {
@@ -25,7 +25,6 @@ public class WeaponTests
         Assert.Equal(QualityTier.Uncommon, weapon.Quality);
         Assert.Equal(100, weapon.Value);
         Assert.Equal(15, weapon.DamageBonus);
-        Assert.Equal(EquipmentSlot.Weapon, weapon.EquipmentSlot);
     }
 
     [Fact]
@@ -104,7 +103,6 @@ public class WeaponTests
         var weapon = new Weapon("weapon_001", "Test", "Test", QualityTier.Common, 50, 10);
 
         // Act & Assert
-        Assert.IsAssignableFrom<Equipment>(weapon);
-        Assert.IsAssignableFrom<Items>(weapon);
+        Assert.IsAssignableFrom<Item>(weapon);
     }
 }

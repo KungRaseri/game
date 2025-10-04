@@ -1,7 +1,7 @@
-using Game.Item.Models;
-using Godot;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
 
-namespace Game.Main.Tests.Models;
+namespace Game.Items.Tests;
 
 public class MaterialTests
 {
@@ -15,7 +15,7 @@ public class MaterialTests
             description: "Raw iron ore",
             quality: QualityTier.Common,
             value: 5,
-            materialType: MaterialType.Metal,
+            Category.Metal,
             stackable: true,
             maxStackSize: 99
         );
@@ -27,7 +27,7 @@ public class MaterialTests
         Assert.Equal(ItemType.Material, material.ItemType);
         Assert.Equal(QualityTier.Common, material.Quality);
         Assert.Equal(5, material.Value);
-        Assert.Equal(MaterialType.Metal, material.MaterialType);
+        Assert.Equal(Category.Metal, material.Category);
         Assert.True(material.Stackable);
         Assert.Equal(99, material.MaxStackSize);
     }
@@ -42,7 +42,7 @@ public class MaterialTests
             description: "Test",
             quality: QualityTier.Common,
             value: 10,
-            materialType: MaterialType.Wood
+            Category.Wood
         );
 
         // Assert
@@ -59,7 +59,7 @@ public class MaterialTests
             description: "Test",
             quality: QualityTier.Common,
             value: 10,
-            materialType: MaterialType.Wood
+            Category.Wood
         );
 
         // Assert
@@ -76,7 +76,7 @@ public class MaterialTests
             description: "Test",
             quality: QualityTier.Common,
             value: 10,
-            materialType: MaterialType.Metal,
+            Category.Metal,
             stackable: true,
             maxStackSize: -10
         );
@@ -95,7 +95,7 @@ public class MaterialTests
             description: "Test",
             quality: QualityTier.Common,
             value: 10,
-            materialType: MaterialType.Metal,
+            Category.Metal,
             stackable: true,
             maxStackSize: 0
         );
@@ -108,7 +108,7 @@ public class MaterialTests
     public void MaxStackSize_Setter_ClampsNegativeValue_ToOne()
     {
         // Arrange
-        var material = new Material("mat_001", "Test", "Test", QualityTier.Common, 10, MaterialType.Wood);
+        var material = new Material("mat_001", "Test", "Test", QualityTier.Common, 10, Category.Wood);
 
         // Act
         material.MaxStackSize = -5;
@@ -121,7 +121,7 @@ public class MaterialTests
     public void MaxStackSize_Setter_ClampsZero_ToOne()
     {
         // Arrange
-        var material = new Material("mat_001", "Test", "Test", QualityTier.Common, 10, MaterialType.Wood);
+        var material = new Material("mat_001", "Test", "Test", QualityTier.Common, 10, Category.Wood);
 
         // Act
         material.MaxStackSize = 0;
@@ -134,7 +134,7 @@ public class MaterialTests
     public void MaxStackSize_Setter_AcceptsPositiveValue()
     {
         // Arrange
-        var material = new Material("mat_001", "Test", "Test", QualityTier.Common, 10, MaterialType.Wood);
+        var material = new Material("mat_001", "Test", "Test", QualityTier.Common, 10, Category.Wood);
 
         // Act
         material.MaxStackSize = 50;
@@ -144,7 +144,7 @@ public class MaterialTests
     }
 
     [Fact]
-    public void ToString_ReturnsFormattedString_WithMaterialType()
+    public void ToString_ReturnsFormattedString_WithCategory()
     {
         // Arrange
         var material = new Material(
@@ -153,7 +153,7 @@ public class MaterialTests
             "Test",
             QualityTier.Legendary,
             1000,
-            MaterialType.Gem,
+            Category.Gem,
             true,
             20
         );
@@ -169,22 +169,22 @@ public class MaterialTests
     public void Material_InheritsFrom_Item()
     {
         // Arrange
-        var material = new Material("mat_001", "Test", "Test", QualityTier.Common, 5, MaterialType.Metal);
+        var material = new Material("mat_001", "Test", "Test", QualityTier.Common, 5, Category.Metal);
 
         // Act & Assert
-        Assert.IsAssignableFrom<Items>(material);
+        Assert.IsAssignableFrom<Item>(material);
     }
 
     [Theory]
-    [InlineData(MaterialType.Metal)]
-    [InlineData(MaterialType.Wood)]
-    [InlineData(MaterialType.Leather)]
-    [InlineData(MaterialType.Cloth)]
-    [InlineData(MaterialType.Gem)]
-    [InlineData(MaterialType.Herb)]
-    [InlineData(MaterialType.Bone)]
-    [InlineData(MaterialType.Essence)]
-    public void Constructor_AcceptsAllMaterialTypes(MaterialType materialType)
+    [InlineData(Category.Metal)]
+    [InlineData(Category.Wood)]
+    [InlineData(Category.Leather)]
+    [InlineData(Category.Cloth)]
+    [InlineData(Category.Gem)]
+    [InlineData(Category.Herb)]
+    [InlineData(Category.Bone)]
+    [InlineData(Category.Essence)]
+    public void Constructor_AcceptsAllCategories(Category category)
     {
         // Arrange & Act
         var material = new Material(
@@ -193,10 +193,10 @@ public class MaterialTests
             "Test",
             QualityTier.Common,
             10,
-            materialType
+            category
         );
 
         // Assert
-        Assert.Equal(materialType, material.MaterialType);
+        Assert.Equal(category, material.Category);
     }
 }

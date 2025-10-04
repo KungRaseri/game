@@ -1,7 +1,7 @@
-using Game.Item.Models;
-using Game.Main.Utils;
+using Game.Items.Models;
+using Game.Items.Utils;
 
-namespace Game.Main.Tests.Utils;
+namespace Game.Items.Tests;
 
 public class QualityTierModifiersTests
 {

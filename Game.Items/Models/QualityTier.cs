@@ -1,4 +1,4 @@
-namespace Game.Item.Models;
+namespace Game.Items.Models;
 
 /// <summary>
 /// Defines the quality tiers for items and equipment.

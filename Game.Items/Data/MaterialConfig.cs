@@ -1,6 +1,6 @@
-using Game.Item.Models.Materials;
+using Game.Items.Models.Materials;
 
-namespace Game.Item.Data;
+namespace Game.Items.Data;
 
 /// <summary>
 /// Configuration record for creating materials.

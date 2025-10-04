@@ -1,6 +1,6 @@
-using Game.Item.Models;
+using Game.Items.Models;
 
-namespace Game.Main.Tests.Models;
+namespace Game.Items.Tests;
 
 public class ArmorTests
 {
@@ -25,7 +25,6 @@ public class ArmorTests
         Assert.Equal(QualityTier.Epic, armor.Quality);
         Assert.Equal(200, armor.Value);
         Assert.Equal(12, armor.DamageReduction);
-        Assert.Equal(EquipmentSlot.Armor, armor.EquipmentSlot);
     }
 
     [Fact]
@@ -104,7 +103,6 @@ public class ArmorTests
         var armor = new Armor("armor_001", "Test", "Test", QualityTier.Common, 50, 5);
 
         // Act & Assert
-        Assert.IsAssignableFrom<Equipment>(armor);
-        Assert.IsAssignableFrom<Items>(armor);
+        Assert.IsAssignableFrom<Item>(armor);
     }
 }

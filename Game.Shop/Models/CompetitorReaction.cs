@@ -1,4 +1,4 @@
-using Game.Item.Models;
+using Game.Items.Models;
 
 namespace Game.Shop.Models;
 
