@@ -56,7 +56,7 @@ namespace Game.Adventure.Tests
             // Act
             entity.TakeDamage(50); // 50% health remaining - should not retreat
             var shouldNotRetreat = entity.ShouldRetreat;
-            
+
             entity.TakeDamage(15); // 35% health remaining - should retreat
             var shouldRetreat = entity.ShouldRetreat;
 
@@ -121,13 +121,13 @@ namespace Game.Adventure.Tests
         [InlineData(0f, 50, false)] // No retreat threshold
         [InlineData(0.25f, 30, false)] // 30% health, 25% threshold - should not retreat
         [InlineData(0.25f, 25, false)] // Exactly at threshold - should not retreat
-        [InlineData(0.25f, 24, true)]  // Below threshold - should retreat
-        [InlineData(0.5f, 49, true)]   // 49% health, 50% threshold - should retreat
+        [InlineData(0.25f, 24, true)] // Below threshold - should retreat
+        [InlineData(0.5f, 49, true)] // 49% health, 50% threshold - should retreat
         public void ShouldRetreat_CalculatesCorrectly(float threshold, int currentHealth, bool expectedRetreat)
         {
             // Arrange
             var entity = new CombatEntityStats("Test", 100, 10, threshold);
-            
+
             // Act
             entity.TakeDamage(100 - currentHealth);
 

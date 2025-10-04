@@ -20,12 +20,12 @@ public class GameManager : IDisposable
     public GameManager()
     {
         GameLogger.Info("Initializing GameManager");
-        
+
         try
         {
             _combatSystem = new CombatSystem();
             _adventurerController = new AdventurerController(_combatSystem);
-            
+
             GameLogger.Info("GameManager initialization complete");
         }
         catch (Exception ex)
@@ -35,34 +35,34 @@ public class GameManager : IDisposable
         }
     }
 
-	/// <summary>
-	/// Updates all game systems (should be called from _Process)
-	/// </summary>
-	public void Update()
-	{
-		Update(1.0f); // Default to 1 second for backward compatibility
-	}
+    /// <summary>
+    /// Updates all game systems (should be called from _Process)
+    /// </summary>
+    public void Update()
+    {
+        Update(1.0f); // Default to 1 second for backward compatibility
+    }
 
-	/// <summary>
-	/// Updates all game systems with fixed time step
-	/// </summary>
-	public void Update(float fixedDeltaTime)
-	{
-		if (_disposed)
-		{
-			GameLogger.Warning("Update called on disposed GameManager");
-			return;
-		}
+    /// <summary>
+    /// Updates all game systems with fixed time step
+    /// </summary>
+    public void Update(float fixedDeltaTime)
+    {
+        if (_disposed)
+        {
+            GameLogger.Warning("Update called on disposed GameManager");
+            return;
+        }
 
-		try
-		{
-			_adventurerController.Update(fixedDeltaTime);
-		}
-		catch (Exception ex)
-		{
-			GameLogger.Error(ex, "Error during game update");
-		}
-	}
+        try
+        {
+            _adventurerController.Update(fixedDeltaTime);
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Error during game update");
+        }
+    }
 
     /// <summary>
     /// Initializes the game to starting state
@@ -76,7 +76,7 @@ public class GameManager : IDisposable
         }
 
         GameLogger.Info("Initializing game to starting state");
-        
+
         try
         {
             // Reset all systems to initial state
@@ -95,7 +95,7 @@ public class GameManager : IDisposable
         if (_disposed) return;
 
         GameLogger.Info("Disposing GameManager");
-        
+
         try
         {
             _adventurerController?.Dispose();

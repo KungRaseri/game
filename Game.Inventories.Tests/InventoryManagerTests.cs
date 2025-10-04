@@ -382,7 +382,8 @@ public class InventoryManagerTests
 
         // Assert
         consumed.Should().BeFalse();
-        manager.CurrentInventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should().Be(10); // Unchanged
+        manager.CurrentInventory.GetMaterialQuantity(_woodMaterial.ItemId, QualityTier.Common).Should()
+            .Be(10); // Unchanged
         operationFailedEvents.Should().HaveCount(1);
         operationFailedEvents[0].Should().Contain("Insufficient materials");
     }

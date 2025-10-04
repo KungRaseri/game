@@ -6,7 +6,7 @@ namespace Game.Adventure.Data;
 /// </summary>
 public record EntityTypeConfig(
     string Name,
-    int BaseHealth, 
+    int BaseHealth,
     int BaseDamage,
     float RetreatThreshold = 0f,
     int HealthRegenPerSecond = 0

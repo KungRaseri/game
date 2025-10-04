@@ -13,7 +13,7 @@ public class CategoryTests
         // Arrange & Act
         var material = new Material(
             "iron_ore",
-            "Iron Ore", 
+            "Iron Ore",
             "Common metal ore",
             QualityTier.Common,
             2,

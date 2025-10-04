@@ -14,19 +14,19 @@ public class PricingEngine
     private readonly Dictionary<(ItemType, QualityTier), MarketData> _marketData = new();
     private readonly Dictionary<ItemType, PricingStrategy> _itemStrategies = new();
     private readonly Random _random = new();
-    
+
     // Configuration parameters
     public double MaxPriceIncrease { get; set; } = 2.0; // 200% of base price
     public double MinPriceDecrease { get; set; } = 0.3; // 30% of base price
     public double PriceVolatility { get; set; } = 0.1; // Random price variance
     public bool EnableCompetitorSimulation { get; set; } = true;
     public double CustomerSensitivityFactor { get; set; } = 1.0;
-    
+
     public PricingEngine()
     {
         InitializeDefaultStrategies();
     }
-    
+
     /// <summary>
     /// Calculate the optimal price for an item based on market conditions.
     /// </summary>
@@ -34,31 +34,31 @@ public class PricingEngine
     {
         var marketData = GetOrCreateMarketData(item.ItemType, item.Quality);
         var strategy = GetPricingStrategy(item.ItemType);
-        
+
         // Get base market multiplier
         var marketMultiplier = marketData.GetPriceMultiplier();
-        
+
         // Apply strategy-specific adjustments
         var strategyMultiplier = GetStrategyMultiplier(strategy, marketData);
-        
+
         // Apply quality premium
         var qualityMultiplier = GetQualityMultiplier(item.Quality);
-        
+
         // Add some controlled randomness for market volatility
         var volatilityFactor = 1.0 + (_random.NextDouble() - 0.5) * PriceVolatility;
-        
+
         // Calculate final price
         var finalMultiplier = marketMultiplier * strategyMultiplier * qualityMultiplier * volatilityFactor;
-        
+
         // Apply min/max constraints
         finalMultiplier = Math.Max(MinPriceDecrease, Math.Min(MaxPriceIncrease, finalMultiplier));
-        
+
         var optimalPrice = basePrice * (decimal)finalMultiplier;
-        
+
         // Round to reasonable increments
         return RoundToReasonablePrice(optimalPrice);
     }
-    
+
     /// <summary>
     /// Get pricing strategy multiplier based on current market conditions.
     /// </summary>
@@ -82,7 +82,7 @@ public class PricingEngine
             _ => 1.0
         };
     }
-    
+
     /// <summary>
     /// Get quality tier pricing multiplier.
     /// </summary>
@@ -98,7 +98,7 @@ public class PricingEngine
             _ => 1.0
         };
     }
-    
+
     /// <summary>
     /// Predict customer satisfaction based on pricing.
     /// </summary>
@@ -106,10 +106,10 @@ public class PricingEngine
     {
         var marketData = GetOrCreateMarketData(item.ItemType, item.Quality);
         var priceRatio = proposedPrice / basePrice;
-        
+
         // Adjust satisfaction based on customer sensitivity and market conditions
         var adjustedRatio = (double)priceRatio * CustomerSensitivityFactor;
-        
+
         // Consider market conditions - customers expect higher prices in high demand
         if (marketData.CurrentCondition == MarketCondition.HighDemand)
         {
@@ -119,7 +119,7 @@ public class PricingEngine
         {
             adjustedRatio *= 1.2; // Less tolerant of high prices
         }
-        
+
         return adjustedRatio switch
         {
             <= 0.8 => CustomerSatisfaction.Delighted,
@@ -129,7 +129,7 @@ public class PricingEngine
             _ => CustomerSatisfaction.Angry
         };
     }
-    
+
     /// <summary>
     /// Record a sale and update market data.
     /// </summary>
@@ -137,7 +137,7 @@ public class PricingEngine
     {
         RecordSale(item, salePrice, salePrice, satisfaction);
     }
-    
+
     /// <summary>
     /// Record a sale and update market data.
     /// </summary>
@@ -145,14 +145,14 @@ public class PricingEngine
     {
         var marketData = GetOrCreateMarketData(item.ItemType, item.Quality);
         marketData.RecordSale(salePrice, originalPrice, satisfaction);
-        
+
         // Update competitor pricing simulation
         if (EnableCompetitorSimulation)
         {
             UpdateCompetitorPricing(marketData, salePrice, originalPrice);
         }
     }
-    
+
     /// <summary>
     /// Update market conditions periodically.
     /// </summary>
@@ -161,10 +161,10 @@ public class PricingEngine
         foreach (var marketData in _marketData.Values)
         {
             marketData.RecordTimePassed(timePassed);
-            
+
             // Simulate market evolution
             SimulateMarketEvolution(marketData, timePassed);
-            
+
             // Update competitor behavior
             if (EnableCompetitorSimulation)
             {
@@ -172,7 +172,7 @@ public class PricingEngine
             }
         }
     }
-    
+
     /// <summary>
     /// Set pricing strategy for a specific item type.
     /// </summary>
@@ -180,14 +180,14 @@ public class PricingEngine
     {
         _itemStrategies[itemType] = strategy;
     }
-    
+
     /// <summary>
     /// Get market analysis for an item type.
     /// </summary>
     public MarketAnalysis GetMarketAnalysis(ItemType itemType, QualityTier quality)
     {
         var marketData = GetOrCreateMarketData(itemType, quality);
-        
+
         return new MarketAnalysis
         {
             ItemType = itemType,
@@ -202,7 +202,7 @@ public class PricingEngine
             CompetitorPosition = GetCompetitorAnalysis(marketData)
         };
     }
-    
+
     /// <summary>
     /// Get or create market data for item type and quality.
     /// </summary>
@@ -217,9 +217,10 @@ public class PricingEngine
                 QualityTier = quality
             };
         }
+
         return _marketData[key];
     }
-    
+
     /// <summary>
     /// Get pricing strategy for item type.
     /// </summary>
@@ -227,7 +228,7 @@ public class PricingEngine
     {
         return _itemStrategies.GetValueOrDefault(itemType, PricingStrategy.Dynamic);
     }
-    
+
     /// <summary>
     /// Round price to reasonable increments.
     /// </summary>
@@ -235,13 +236,13 @@ public class PricingEngine
     {
         return price switch
         {
-            < 10 => Math.Round(price, 2),      // Round to cents
-            < 100 => Math.Round(price, 1),     // Round to 10 cents
-            < 1000 => Math.Round(price, 0),    // Round to dollars
-            _ => Math.Round(price / 5, 0) * 5  // Round to $5 increments
+            < 10 => Math.Round(price, 2), // Round to cents
+            < 100 => Math.Round(price, 1), // Round to 10 cents
+            < 1000 => Math.Round(price, 0), // Round to dollars
+            _ => Math.Round(price / 5, 0) * 5 // Round to $5 increments
         };
     }
-    
+
     /// <summary>
     /// Initialize default pricing strategies for different item types.
     /// </summary>
@@ -252,17 +253,17 @@ public class PricingEngine
         _itemStrategies[ItemType.Consumable] = PricingStrategy.Competitive;
         _itemStrategies[ItemType.Material] = PricingStrategy.Discount;
     }
-    
+
     /// <summary>
     /// Simulate market evolution over time.
     /// </summary>
     private void SimulateMarketEvolution(MarketData marketData, TimeSpan timePassed)
     {
         var hours = timePassed.TotalHours;
-        
+
         // Gradual return to normal demand/supply levels
         var normalizeRate = 0.01 * hours;
-        
+
         if (marketData.DemandLevel > 1.0)
         {
             marketData.DemandLevel = Math.Max(1.0, marketData.DemandLevel - normalizeRate);
@@ -271,7 +272,7 @@ public class PricingEngine
         {
             marketData.DemandLevel = Math.Min(1.0, marketData.DemandLevel + normalizeRate);
         }
-        
+
         if (marketData.SupplyLevel > 1.0)
         {
             marketData.SupplyLevel = Math.Max(1.0, marketData.SupplyLevel - normalizeRate);
@@ -281,7 +282,7 @@ public class PricingEngine
             marketData.SupplyLevel = Math.Min(1.0, marketData.SupplyLevel + normalizeRate);
         }
     }
-    
+
     /// <summary>
     /// Simulate competitor pricing behavior.
     /// </summary>
@@ -289,34 +290,34 @@ public class PricingEngine
     {
         // Competitors react to market conditions
         var targetMultiplier = marketData.GetPriceMultiplier() * 0.95; // Slightly undercut market
-        
+
         // Gradual adjustment towards target
         var adjustmentRate = 0.1;
-        marketData.CompetitorPriceMultiplier += 
+        marketData.CompetitorPriceMultiplier +=
             (targetMultiplier - marketData.CompetitorPriceMultiplier) * adjustmentRate;
     }
-    
+
     /// <summary>
     /// Update competitor pricing based on our sales.
     /// </summary>
     private void UpdateCompetitorPricing(MarketData marketData, decimal salePrice, decimal originalPrice)
     {
         var priceRatio = (double)(salePrice / originalPrice);
-        
+
         // If we're selling at high prices successfully, competitors may raise prices
         if (priceRatio > 1.2)
         {
-            marketData.CompetitorPriceMultiplier = Math.Min(1.5, 
+            marketData.CompetitorPriceMultiplier = Math.Min(1.5,
                 marketData.CompetitorPriceMultiplier + 0.02);
         }
         // If we're discounting heavily, competitors may follow
         else if (priceRatio < 0.8)
         {
-            marketData.CompetitorPriceMultiplier = Math.Max(0.7, 
+            marketData.CompetitorPriceMultiplier = Math.Max(0.7,
                 marketData.CompetitorPriceMultiplier - 0.01);
         }
     }
-    
+
     /// <summary>
     /// Get recommended strategy based on market conditions.
     /// </summary>
@@ -331,7 +332,7 @@ public class PricingEngine
             _ => "Dynamic Pricing - Balanced market"
         };
     }
-    
+
     /// <summary>
     /// Analyze competitor position.
     /// </summary>
@@ -346,7 +347,7 @@ public class PricingEngine
             _ => "Aggressive competitor pricing"
         };
     }
-    
+
     /// <summary>
     /// Get all market data for competition analysis.
     /// </summary>
@@ -354,17 +355,17 @@ public class PricingEngine
     {
         return new Dictionary<(ItemType, QualityTier), MarketData>(_marketData);
     }
-    
+
     /// <summary>
     /// Update competitor price information.
     /// </summary>
     public void UpdateCompetitorPrice(ItemType itemType, QualityTier quality, decimal price)
     {
         var marketData = GetOrCreateMarketData(itemType, quality);
-        
+
         // Calculate price ratio compared to current market conditions
         var basePrice = 100m; // Assume base price for calculations
-        
+
         // Create a reference item for price calculation
         var referenceItem = new Item(
             itemId: "ref_" + itemType.ToString().ToLower(),
@@ -374,9 +375,9 @@ public class PricingEngine
             quality: quality,
             value: (int)basePrice
         );
-        
+
         var currentOptimalPrice = CalculateOptimalPrice(referenceItem, basePrice);
-        
+
         if (currentOptimalPrice > 0)
         {
             var competitorMultiplier = (double)(price / currentOptimalPrice);

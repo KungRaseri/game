@@ -15,20 +15,20 @@ public class CompetitionSimulator
     private readonly List<AICompetitor> _competitors = new();
     private readonly Dictionary<(ItemType, QualityTier), decimal> _lastPlayerPrices = new();
     private readonly Random _random = new();
-    
+
     // Configuration
     public double CompetitorReactionSensitivity { get; set; } = 0.3;
     public double MaxCompetitorPriceChange { get; set; } = 0.25; // 25%
     public int MaxCompetitors { get; set; } = 5;
     public bool EnableAggressiveCompetition { get; set; } = true;
-    
+
     public IReadOnlyList<AICompetitor> Competitors => _competitors;
-    
+
     public CompetitionSimulator()
     {
         InitializeCompetitors();
     }
-    
+
     /// <summary>
     /// Updates competitor pricing and strategies based on market analysis.
     /// </summary>
@@ -36,7 +36,7 @@ public class CompetitionSimulator
         Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
         UpdateCompetitorStrategies(playerMetrics);
-        
+
         var analysis = new CompetitionAnalysis
         {
             TotalCompetitors = _competitors.Count,
@@ -47,14 +47,14 @@ public class CompetitionSimulator
             Opportunities = IdentifyMarketOpportunities(marketData),
             RecommendedActions = GenerateRecommendations(playerMetrics, marketData)
         };
-        
+
         GameLogger.Debug($"Competition analysis: {analysis.TotalCompetitors} competitors, " +
-                        $"Player market share: {analysis.MarketShare:P1}, " +
-                        $"Competitive pressure: {analysis.CompetitivePressure:F2}");
-        
+                         $"Player market share: {analysis.MarketShare:P1}, " +
+                         $"Competitive pressure: {analysis.CompetitivePressure:F2}");
+
         return analysis;
     }
-    
+
     /// <summary>
     /// Simulates competitor reactions to player pricing changes.
     /// </summary>
@@ -62,17 +62,17 @@ public class CompetitionSimulator
     {
         var priceChange = (double)(newPrice - oldPrice) / (double)oldPrice;
         _lastPlayerPrices[(itemType, quality)] = newPrice;
-        
+
         foreach (var competitor in _competitors.Where(c => c.SellsItem(itemType, quality)))
         {
             var reaction = CalculateCompetitorReaction(competitor, priceChange, itemType, quality);
             ApplyCompetitorReaction(competitor, reaction, itemType, quality);
         }
-        
+
         GameLogger.Info($"Competitors reacted to player price change: {itemType} {quality} " +
-                       $"{oldPrice:C} -> {newPrice:C} ({priceChange:P1})");
+                        $"{oldPrice:C} -> {newPrice:C} ({priceChange:P1})");
     }
-    
+
     /// <summary>
     /// Periodically updates competitor behavior and market dynamics.
     /// </summary>
@@ -82,18 +82,18 @@ public class CompetitionSimulator
         {
             // Update competitor performance based on market conditions
             UpdateCompetitorPerformance(competitor, marketData);
-            
+
             // Simulate competitor actions (inventory changes, promotions, etc.)
             SimulateCompetitorActions(competitor, marketData);
-            
+
             // Update pricing strategies
             UpdateCompetitorPricing(competitor, marketData);
         }
-        
+
         // Occasionally add or remove competitors based on market conditions
         ManageCompetitorPopulation(marketData);
     }
-    
+
     private void InitializeCompetitors()
     {
         var competitorTypes = new[]
@@ -104,7 +104,7 @@ public class CompetitionSimulator
             new { Name = "Quick & Cheap", Strategy = CompetitorStrategy.VolumeDiscount, Aggressiveness = 0.6 },
             new { Name = "Master Craftsman", Strategy = CompetitorStrategy.Specialized, Aggressiveness = 0.4 }
         };
-        
+
         foreach (var template in competitorTypes.Take(MaxCompetitors))
         {
             var competitor = new AICompetitor
@@ -117,18 +117,18 @@ public class CompetitionSimulator
                 InventoryStrategy = GetRandomInventoryStrategy(),
                 PricingModifier = _random.NextDouble() * 0.4 + 0.8 // 0.8-1.2
             };
-            
+
             InitializeCompetitorInventory(competitor);
             _competitors.Add(competitor);
         }
-        
+
         GameLogger.Info($"Initialized {_competitors.Count} AI competitors");
     }
-    
+
     private void UpdateCompetitorStrategies(ShopPerformanceMetrics playerMetrics)
     {
         var playerPerformanceGrade = playerMetrics.GetPerformanceGrade();
-        
+
         foreach (var competitor in _competitors)
         {
             // Adjust aggressiveness based on player performance
@@ -142,8 +142,8 @@ public class CompetitionSimulator
             }
         }
     }
-    
-    private CompetitorReaction CalculateCompetitorReaction(AICompetitor competitor, 
+
+    private CompetitorReaction CalculateCompetitorReaction(AICompetitor competitor,
         double playerPriceChange, ItemType itemType, QualityTier quality)
     {
         var reaction = new CompetitorReaction
@@ -153,15 +153,15 @@ public class CompetitionSimulator
             QualityTier = quality,
             ReactionType = CompetitorReactionType.NoChange
         };
-        
+
         // Calculate reaction probability based on competitor strategy and aggressiveness
         var reactionProbability = competitor.Aggressiveness * CompetitorReactionSensitivity;
-        
+
         if (_random.NextDouble() > reactionProbability)
         {
             return reaction; // No reaction
         }
-        
+
         // Determine reaction type based on strategy and price change
         switch (competitor.Strategy)
         {
@@ -176,29 +176,32 @@ public class CompetitionSimulator
                     reaction.ReactionType = CompetitorReactionType.MatchPrice;
                     reaction.PriceMultiplier = 0.98; // Match but slightly lower
                 }
+
                 break;
-                
+
             case CompetitorStrategy.QualityFocused:
                 if (playerPriceChange < -0.15) // Significant price drop
                 {
                     reaction.ReactionType = CompetitorReactionType.Promotion;
                     reaction.PriceMultiplier = 0.9; // Temporary promotion
                 }
+
                 break;
-                
+
             case CompetitorStrategy.Premium:
                 if (playerPriceChange > 0.2) // Large price increase
                 {
                     reaction.ReactionType = CompetitorReactionType.PriceIncrease;
                     reaction.PriceMultiplier = 1.05; // Follow the trend
                 }
+
                 break;
-                
+
             case CompetitorStrategy.VolumeDiscount:
                 reaction.ReactionType = CompetitorReactionType.BulkDiscount;
                 reaction.PriceMultiplier = 0.92; // Volume pricing
                 break;
-                
+
             case CompetitorStrategy.Specialized:
                 // Specialized competitors react less to general price changes
                 if (Math.Abs(playerPriceChange) > 0.25)
@@ -206,42 +209,43 @@ public class CompetitionSimulator
                     reaction.ReactionType = CompetitorReactionType.MatchPrice;
                     reaction.PriceMultiplier = 1.0 + playerPriceChange * 0.5;
                 }
+
                 break;
         }
-        
+
         return reaction;
     }
-    
-    private void ApplyCompetitorReaction(AICompetitor competitor, CompetitorReaction reaction, 
+
+    private void ApplyCompetitorReaction(AICompetitor competitor, CompetitorReaction reaction,
         ItemType itemType, QualityTier quality)
     {
         if (reaction.ReactionType == CompetitorReactionType.NoChange)
             return;
-            
+
         // Update competitor's pricing for this item
         var key = (itemType, quality);
         if (!competitor.ItemPrices.ContainsKey(key))
         {
             competitor.ItemPrices[key] = 100m; // Default base price
         }
-        
+
         var oldPrice = competitor.ItemPrices[key];
         var newPrice = oldPrice * (decimal)reaction.PriceMultiplier;
-        
+
         // Apply bounds to prevent extreme pricing
         var basePrice = GetBasePriceForItem(itemType, quality);
         newPrice = Math.Max(basePrice * 0.5m, Math.Min(basePrice * 3.0m, newPrice));
-        
+
         competitor.ItemPrices[key] = newPrice;
-        
+
         // Update competitor performance based on reaction success
         UpdateCompetitorReactionSuccess(competitor, reaction, oldPrice, newPrice);
-        
+
         GameLogger.Debug($"Competitor {competitor.Name} reacted: {reaction.ReactionType} " +
-                        $"for {itemType} {quality} {oldPrice:C} -> {newPrice:C}");
+                         $"for {itemType} {quality} {oldPrice:C} -> {newPrice:C}");
     }
-    
-    private void SimulateCompetitorActions(AICompetitor competitor, 
+
+    private void SimulateCompetitorActions(AICompetitor competitor,
         Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
         // Simulate periodic competitor actions
@@ -251,74 +255,75 @@ public class CompetitionSimulator
             ExecuteCompetitorAction(competitor, action);
         }
     }
-    
+
     private double CalculatePlayerMarketShare(ShopPerformanceMetrics playerMetrics)
     {
-        var totalMarketRevenue = playerMetrics.TotalRevenue + 
-            _competitors.Sum(c => (decimal)(c.PerformanceScore * 10000)); // Simulated competitor revenue
-        
+        var totalMarketRevenue = playerMetrics.TotalRevenue +
+                                 _competitors.Sum(c =>
+                                     (decimal)(c.PerformanceScore * 10000)); // Simulated competitor revenue
+
         return totalMarketRevenue > 0 ? (double)(playerMetrics.TotalRevenue / totalMarketRevenue) : 0.0;
     }
-    
+
     private double CalculateCompetitivePressure(Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
         var avgCompetitorAggressiveness = _competitors.Average(c => c.Aggressiveness);
         var marketSaturation = Math.Min(1.0, _competitors.Count / (double)MaxCompetitors);
-        
+
         return (avgCompetitorAggressiveness + marketSaturation) / 2.0;
     }
-    
+
     private List<string> IdentifyCompetitiveThreats()
     {
         var threats = new List<string>();
-        
+
         var topCompetitors = _competitors
             .OrderByDescending(c => c.PerformanceScore)
             .Take(2);
-            
+
         foreach (var competitor in topCompetitors)
         {
             if (competitor.PerformanceScore > 0.7)
             {
                 threats.Add($"{competitor.Name} is performing strongly with {competitor.Strategy} strategy");
             }
-            
+
             if (competitor.Aggressiveness > 0.8)
             {
                 threats.Add($"{competitor.Name} is being highly aggressive in pricing");
             }
         }
-        
+
         return threats;
     }
-    
+
     private List<string> IdentifyMarketOpportunities(Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
         var opportunities = new List<string>();
-        
+
         foreach (var (key, data) in marketData)
         {
             if (data.DemandLevel > 1.3 && data.SupplyLevel < 0.8)
             {
                 opportunities.Add($"High demand, low supply for {key.Item1} ({key.Item2}) - pricing opportunity");
             }
-            
+
             var competitorsInCategory = _competitors.Count(c => c.SellsItem(key.Item1, key.Item2));
             if (competitorsInCategory < 2)
             {
                 opportunities.Add($"Low competition in {key.Item1} ({key.Item2}) category");
             }
         }
-        
+
         return opportunities;
     }
-    
+
     private List<string> GenerateRecommendations(ShopPerformanceMetrics playerMetrics,
         Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
         var recommendations = new List<string>();
         var marketShare = CalculatePlayerMarketShare(playerMetrics);
-        
+
         if (marketShare < 0.2)
         {
             recommendations.Add("Consider aggressive pricing to gain market share");
@@ -327,28 +332,28 @@ public class CompetitionSimulator
         {
             recommendations.Add("Strong market position - consider premium pricing strategy");
         }
-        
+
         var avgCompetitorAggression = _competitors.Average(c => c.Aggressiveness);
         if (avgCompetitorAggression > 0.7)
         {
             recommendations.Add("High competitive pressure - focus on differentiation and customer service");
         }
-        
+
         return recommendations;
     }
-    
+
     // Helper methods for competitor management
     private InventoryStrategy GetRandomInventoryStrategy()
     {
         var strategies = Enum.GetValues<InventoryStrategy>();
         return strategies[_random.Next(strategies.Length)];
     }
-    
+
     private void InitializeCompetitorInventory(AICompetitor competitor)
     {
         var itemTypes = Enum.GetValues<ItemType>();
         var qualities = Enum.GetValues<QualityTier>();
-        
+
         foreach (var itemType in itemTypes)
         {
             if (_random.NextDouble() < 0.6) // 60% chance to sell this item type
@@ -364,7 +369,7 @@ public class CompetitionSimulator
             }
         }
     }
-    
+
     private double GetQualityProbability(QualityTier quality) => quality switch
     {
         QualityTier.Common => 0.8,
@@ -374,7 +379,7 @@ public class CompetitionSimulator
         QualityTier.Legendary => 0.1,
         _ => 0.5
     };
-    
+
     private decimal GetBasePriceForItem(ItemType itemType, QualityTier quality)
     {
         var basePrice = itemType switch
@@ -385,7 +390,7 @@ public class CompetitionSimulator
             ItemType.Material => 10m,
             _ => 25m
         };
-        
+
         var qualityMultiplier = quality switch
         {
             QualityTier.Common => 1.0m,
@@ -395,19 +400,19 @@ public class CompetitionSimulator
             QualityTier.Legendary => 16.0m,
             _ => 1.0m
         };
-        
+
         return basePrice * qualityMultiplier;
     }
-    
-    private void UpdateCompetitorPerformance(AICompetitor competitor, 
+
+    private void UpdateCompetitorPerformance(AICompetitor competitor,
         Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
         // Update performance based on strategy effectiveness and market conditions
         var strategyEffectiveness = CalculateStrategyEffectiveness(competitor, marketData);
-        competitor.PerformanceScore = Math.Max(0.1, Math.Min(1.0, 
+        competitor.PerformanceScore = Math.Max(0.1, Math.Min(1.0,
             competitor.PerformanceScore * 0.95 + strategyEffectiveness * 0.05));
     }
-    
+
     private double CalculateStrategyEffectiveness(AICompetitor competitor,
         Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
@@ -422,7 +427,7 @@ public class CompetitionSimulator
             _ => 0.5 + _random.NextDouble() * 0.3
         };
     }
-    
+
     private void UpdateCompetitorPricing(AICompetitor competitor,
         Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
@@ -436,13 +441,13 @@ public class CompetitionSimulator
             }
         }
     }
-    
+
     private CompetitorAction GenerateRandomCompetitorAction(AICompetitor competitor,
         Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
         var actionTypes = Enum.GetValues<CompetitorActionType>();
         var actionType = actionTypes[_random.Next(actionTypes.Length)];
-        
+
         return new CompetitorAction
         {
             CompetitorId = competitor.CompetitorId,
@@ -451,7 +456,7 @@ public class CompetitionSimulator
             Description = GenerateActionDescription(actionType, competitor)
         };
     }
-    
+
     private string GenerateActionDescription(CompetitorActionType actionType, AICompetitor competitor)
     {
         return actionType switch
@@ -465,7 +470,7 @@ public class CompetitionSimulator
             _ => $"{competitor.Name} made strategic adjustments"
         };
     }
-    
+
     private void ExecuteCompetitorAction(AICompetitor competitor, CompetitorAction action)
     {
         switch (action.ActionType)
@@ -477,20 +482,21 @@ public class CompetitionSimulator
                 {
                     competitor.ItemPrices[item] *= 0.9m; // 10% reduction
                 }
+
                 break;
-                
+
             case CompetitorActionType.QualityUpgrade:
                 competitor.PerformanceScore = Math.Min(1.0, competitor.PerformanceScore + 0.05);
                 break;
-                
+
             case CompetitorActionType.CustomerService:
                 competitor.Aggressiveness = Math.Max(0.1, competitor.Aggressiveness - 0.05);
                 break;
         }
-        
+
         GameLogger.Info($"Competitor action executed: {action.Description}");
     }
-    
+
     private void UpdateCompetitorReactionSuccess(AICompetitor competitor, CompetitorReaction reaction,
         decimal oldPrice, decimal newPrice)
     {
@@ -505,14 +511,14 @@ public class CompetitionSimulator
             competitor.PerformanceScore = Math.Max(0.1, competitor.PerformanceScore - 0.01);
         }
     }
-    
+
     private void ManageCompetitorPopulation(Dictionary<(ItemType, QualityTier), MarketData> marketData)
     {
         // Occasionally add or remove competitors based on market conditions
         if (_random.NextDouble() < 0.01) // 1% chance per update
         {
             var averageMarketPerformance = marketData.Values.Average(m => m.DemandLevel);
-            
+
             if (averageMarketPerformance > 1.2 && _competitors.Count < MaxCompetitors)
             {
                 // Good market - chance for new competitor
@@ -525,12 +531,12 @@ public class CompetitionSimulator
             }
         }
     }
-    
+
     private void AddNewCompetitor()
     {
         var competitorNames = new[] { "New Venture", "Market Entrant", "Startup Shop", "Fresh Store", "Rising Star" };
         var name = competitorNames[_random.Next(competitorNames.Length)];
-        
+
         var newCompetitor = new AICompetitor
         {
             CompetitorId = Guid.NewGuid().ToString(),
@@ -541,13 +547,13 @@ public class CompetitionSimulator
             InventoryStrategy = GetRandomInventoryStrategy(),
             PricingModifier = _random.NextDouble() * 0.4 + 0.8 // 0.8-1.2
         };
-        
+
         InitializeCompetitorInventory(newCompetitor);
         _competitors.Add(newCompetitor);
-        
+
         GameLogger.Info($"New competitor entered market: {name}");
     }
-    
+
     private void RemoveWeakestCompetitor()
     {
         var weakest = _competitors.OrderBy(c => c.PerformanceScore).FirstOrDefault();

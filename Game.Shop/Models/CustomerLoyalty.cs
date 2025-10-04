@@ -25,12 +25,12 @@ public record CustomerLoyalty(
         >= 0.2f => CustomerLoyaltyTier.Occasional,
         _ => CustomerLoyaltyTier.NewCustomer
     };
-    
+
     /// <summary>
     /// Checks if customer qualifies for loyalty discounts.
     /// </summary>
     public bool QualifiesForDiscount => Tier >= CustomerLoyaltyTier.Regular && PurchaseCount >= 3;
-    
+
     /// <summary>
     /// Gets the loyalty discount percentage (0.0-0.15).
     /// </summary>
@@ -41,7 +41,7 @@ public record CustomerLoyalty(
         CustomerLoyaltyTier.Regular => 0.05f,
         _ => 0.0f
     };
-    
+
     /// <summary>
     /// Creates a new customer loyalty record.
     /// </summary>
@@ -58,7 +58,7 @@ public record CustomerLoyalty(
             LoyaltyScore: 0.5f
         );
     }
-    
+
     /// <summary>
     /// Updates loyalty after a successful purchase.
     /// </summary>
@@ -73,9 +73,9 @@ public record CustomerLoyalty(
             CustomerSatisfaction.Angry => -0.2f,
             _ => 0.0f
         };
-        
+
         var newScore = Math.Clamp(LoyaltyScore + satisfactionBonus + 0.05f, 0.0f, 1.0f);
-        
+
         return this with
         {
             PurchaseCount = PurchaseCount + 1,
@@ -84,7 +84,7 @@ public record CustomerLoyalty(
             LoyaltyScore = newScore
         };
     }
-    
+
     /// <summary>
     /// Updates loyalty after a visit without purchase.
     /// </summary>
@@ -92,16 +92,16 @@ public record CustomerLoyalty(
     {
         var satisfactionEffect = satisfaction switch
         {
-            CustomerSatisfaction.Delighted => 0.02f,   // Good browsing experience
+            CustomerSatisfaction.Delighted => 0.02f, // Good browsing experience
             CustomerSatisfaction.Satisfied => 0.01f,
             CustomerSatisfaction.Neutral => 0.0f,
-            CustomerSatisfaction.Disappointed => -0.05f,    // Poor experience
+            CustomerSatisfaction.Disappointed => -0.05f, // Poor experience
             CustomerSatisfaction.Angry => -0.1f, // Very poor experience
             _ => 0.0f
         };
-        
+
         var newScore = Math.Clamp(LoyaltyScore + satisfactionEffect, 0.0f, 1.0f);
-        
+
         return this with
         {
             VisitCount = VisitCount + 1,

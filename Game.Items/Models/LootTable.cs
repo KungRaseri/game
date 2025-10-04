@@ -56,7 +56,8 @@ public class LootTable
 
         if (MaximumDropCount < GuaranteedDropCount)
         {
-            throw new ArgumentException("Maximum drop count cannot be less than guaranteed drop count", nameof(MaximumDropCount));
+            throw new ArgumentException("Maximum drop count cannot be less than guaranteed drop count",
+                nameof(MaximumDropCount));
         }
 
         // Validate all loot entries
@@ -102,6 +103,7 @@ public class LootTable
     /// </summary>
     public override string ToString()
     {
-        return $"LootTable for {MonsterTypeId}: {PossibleDrops.Count} possible drops, {GuaranteedDropCount}-{MaximumDropCount} guaranteed";
+        return
+            $"LootTable for {MonsterTypeId}: {PossibleDrops.Count} possible drops, {GuaranteedDropCount}-{MaximumDropCount} guaranteed";
     }
 }

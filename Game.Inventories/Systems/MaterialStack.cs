@@ -73,7 +73,8 @@ public record MaterialStack(
 
         if (Quantity > StackLimit)
         {
-            throw new ArgumentException($"Quantity ({Quantity}) cannot exceed stack limit ({StackLimit})", nameof(Quantity));
+            throw new ArgumentException($"Quantity ({Quantity}) cannot exceed stack limit ({StackLimit})",
+                nameof(Quantity));
         }
 
         if (LastUpdated > DateTime.UtcNow)
@@ -96,7 +97,8 @@ public record MaterialStack(
 
         if (newQuantity > StackLimit)
         {
-            throw new ArgumentException($"Quantity ({newQuantity}) cannot exceed stack limit ({StackLimit})", nameof(newQuantity));
+            throw new ArgumentException($"Quantity ({newQuantity}) cannot exceed stack limit ({StackLimit})",
+                nameof(newQuantity));
         }
 
         return this with { Quantity = newQuantity, LastUpdated = DateTime.UtcNow };
@@ -115,13 +117,13 @@ public record MaterialStack(
         }
 
         var maxCanAdd = RemainingSpace;
-        
+
         // If the stack is full, return the original stack unchanged
         if (maxCanAdd == 0)
         {
             return (this, quantityToAdd);
         }
-        
+
         var actuallyAdded = Math.Min(quantityToAdd, maxCanAdd);
         var overflow = quantityToAdd - actuallyAdded;
 
@@ -158,12 +160,12 @@ public record MaterialStack(
     /// </summary>
     public string GetRarityColor() => Material.Quality switch
     {
-        QualityTier.Common => "#808080",     // Gray
-        QualityTier.Uncommon => "#00FF00",   // Green
-        QualityTier.Rare => "#0080FF",       // Blue
-        QualityTier.Epic => "#8000FF",       // Purple
-        QualityTier.Legendary => "#FFD700",  // Gold
-        _ => "#FFFFFF"                          // White fallback
+        QualityTier.Common => "#808080", // Gray
+        QualityTier.Uncommon => "#00FF00", // Green
+        QualityTier.Rare => "#0080FF", // Blue
+        QualityTier.Epic => "#8000FF", // Purple
+        QualityTier.Legendary => "#FFD700", // Gold
+        _ => "#FFFFFF" // White fallback
     };
 
     /// <summary>
@@ -181,7 +183,7 @@ public record MaterialStack(
     public static MaterialStack FromDrop(Drop drop)
     {
         ArgumentNullException.ThrowIfNull(drop);
-        
+
         return new MaterialStack(
             drop.Material,
             drop.Quantity,

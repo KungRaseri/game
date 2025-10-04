@@ -159,6 +159,7 @@ public class CombatSystem
                     ExpeditionCompleted?.Invoke();
                 }
             }
+
             return;
         }
 
@@ -223,6 +224,7 @@ public class CombatSystem
             _currentMonster.Died -= OnMonsterDied;
             _currentMonster = null;
         }
+
         _monsters.Clear();
 
         // Transition to regenerating to begin healing

@@ -13,14 +13,14 @@ public static class CustomerSatisfactionExtensions
         return satisfaction switch
         {
             CustomerSatisfaction.Angry => "Very Disappointed",
-            CustomerSatisfaction.Disappointed => "Disappointed", 
+            CustomerSatisfaction.Disappointed => "Disappointed",
             CustomerSatisfaction.Neutral => "Neutral",
             CustomerSatisfaction.Satisfied => "Happy",
             CustomerSatisfaction.Delighted => "Delighted",
             _ => "Unknown"
         };
     }
-    
+
     /// <summary>
     /// Get a numeric score for analytics (1-5 scale).
     /// </summary>
@@ -28,7 +28,7 @@ public static class CustomerSatisfactionExtensions
     {
         return (int)satisfaction;
     }
-    
+
     /// <summary>
     /// Determine if this represents a positive experience.
     /// </summary>

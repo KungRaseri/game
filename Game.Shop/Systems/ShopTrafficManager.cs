@@ -17,34 +17,34 @@ public class ShopTrafficManager
     private readonly List<CustomerTrafficRecord> _trafficHistory;
     private readonly Timer? _customerGenerationTimer;
     private readonly bool _isTestMode;
-    
+
     private bool _isActive;
     private int _maxConcurrentCustomers = 3;
     private TrafficLevel _currentTrafficLevel = TrafficLevel.Moderate;
-    
+
     /// <summary>Currently active customer sessions.</summary>
-    public IReadOnlyList<CustomerShoppingSession> ActiveSessions => 
+    public IReadOnlyList<CustomerShoppingSession> ActiveSessions =>
         _activeSessions.Values.ToList().AsReadOnly();
-    
+
     /// <summary>Historical traffic data for analytics.</summary>
     public IReadOnlyList<CustomerTrafficRecord> TrafficHistory => _trafficHistory.AsReadOnly();
-    
+
     /// <summary>Current number of customers in the shop.</summary>
     public int CurrentCustomerCount => _activeSessions.Count;
-    
+
     /// <summary>Whether the traffic manager is actively generating customers.</summary>
     public bool IsActive => _isActive;
-    
+
     /// <summary>Current traffic level affecting customer generation rate.</summary>
     public TrafficLevel CurrentTrafficLevel => _currentTrafficLevel;
-    
+
     // Events for UI and analytics
     public event Action<Customer>? CustomerEntered;
     public event Action<Customer, CustomerSatisfaction, string>? CustomerLeft;
     public event Action<Customer, SaleTransaction>? CustomerPurchased;
     public event Action<TrafficLevel>? TrafficLevelChanged;
     public event Action<ShopTrafficAnalytics>? TrafficAnalyticsUpdated;
-    
+
     public ShopTrafficManager(ShopManager shopManager, bool isTestMode = false)
     {
         _shopManager = shopManager ?? throw new ArgumentNullException(nameof(shopManager));
@@ -52,47 +52,47 @@ public class ShopTrafficManager
         _activeSessions = new Dictionary<string, CustomerShoppingSession>();
         _trafficHistory = new List<CustomerTrafficRecord>();
         _isTestMode = isTestMode;
-        
+
         // Create timer for periodic customer generation
         _customerGenerationTimer = new Timer(OnCustomerGenerationTick, null, Timeout.Infinite, Timeout.Infinite);
-        
+
         GameLogger.Info("ShopTrafficManager initialized");
     }
-    
+
     /// <summary>
     /// Starts the traffic manager with automatic customer generation.
     /// </summary>
     public void StartTraffic()
     {
         if (_isActive) return;
-        
+
         _isActive = true;
         UpdateTrafficLevel();
-        
+
         // Start customer generation timer (check every 5-15 seconds)
         var intervalMs = CalculateCustomerGenerationInterval();
         _customerGenerationTimer?.Change(intervalMs, intervalMs);
-        
+
         GameLogger.Info($"Shop traffic started - Level: {_currentTrafficLevel}");
     }
-    
+
     /// <summary>
     /// Stops the traffic manager and completes all active sessions.
     /// </summary>
     public async Task StopTrafficAsync()
     {
         if (!_isActive) return;
-        
+
         _isActive = false;
         _customerGenerationTimer?.Change(Timeout.Infinite, Timeout.Infinite);
-        
+
         // Wait for all active sessions to complete
         var activeSessions = _activeSessions.Values.ToList();
         await Task.WhenAll((IEnumerable<Task>)activeSessions.Select(session => session.RunShoppingSessionAsync()));
-        
+
         GameLogger.Info("Shop traffic stopped");
     }
-    
+
     /// <summary>
     /// Manually adds a customer to the shop (for testing or special events).
     /// </summary>
@@ -103,31 +103,31 @@ public class ShopTrafficManager
             GameLogger.Warning($"Customer {customer.Name} is already in the shop");
             return CustomerSatisfaction.Neutral;
         }
-        
+
         var session = CreateCustomerSession(customer);
         return await session.RunShoppingSessionAsync();
     }
-    
+
     /// <summary>
     /// Updates the traffic level based on shop performance and time factors.
     /// </summary>
     public void UpdateTrafficLevel()
     {
         var newLevel = CalculateTrafficLevel();
-        
+
         if (newLevel != _currentTrafficLevel)
         {
             _currentTrafficLevel = newLevel;
             TrafficLevelChanged?.Invoke(_currentTrafficLevel);
-            
+
             // Update customer generation rate
             var intervalMs = CalculateCustomerGenerationInterval();
             _customerGenerationTimer?.Change(intervalMs, intervalMs);
-            
+
             GameLogger.Info($"Traffic level changed to {_currentTrafficLevel}");
         }
     }
-    
+
     /// <summary>
     /// Gets current traffic analytics for business intelligence.
     /// </summary>
@@ -136,46 +136,48 @@ public class ShopTrafficManager
         var now = DateTime.Now;
         var today = now.Date;
         var thisHour = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0);
-        
+
         var todayTraffic = _trafficHistory.Where(r => r.EntryTime.Date == today).ToList();
-        var thisHourTraffic = _trafficHistory.Where(r => r.EntryTime >= thisHour && r.EntryTime < thisHour.AddHours(1)).ToList();
-        
+        var thisHourTraffic = _trafficHistory.Where(r => r.EntryTime >= thisHour && r.EntryTime < thisHour.AddHours(1))
+            .ToList();
+
         var analytics = new ShopTrafficAnalytics
         {
             CurrentCustomers = CurrentCustomerCount,
             MaxConcurrentCustomers = _maxConcurrentCustomers,
             CurrentTrafficLevel = _currentTrafficLevel,
-            
+
             TodayVisitors = todayTraffic.Count,
             TodayPurchasers = todayTraffic.Count(r => r.MadePurchase),
-            TodayConversionRate = todayTraffic.Count > 0 ? 
-                (float)todayTraffic.Count(r => r.MadePurchase) / todayTraffic.Count : 0f,
-            
+            TodayConversionRate = todayTraffic.Count > 0
+                ? (float)todayTraffic.Count(r => r.MadePurchase) / todayTraffic.Count
+                : 0f,
+
             HourlyVisitors = thisHourTraffic.Count,
             HourlyPurchasers = thisHourTraffic.Count(r => r.MadePurchase),
-            
-            AverageSessionDuration = todayTraffic.Count > 0 ? 
-                todayTraffic.Average(r => r.SessionDuration.TotalMinutes) : 0.0,
-            
+
+            AverageSessionDuration =
+                todayTraffic.Count > 0 ? todayTraffic.Average(r => r.SessionDuration.TotalMinutes) : 0.0,
+
             CustomerTypeDistribution = todayTraffic
                 .GroupBy(r => r.CustomerType)
                 .ToDictionary(g => g.Key, g => g.Count()),
-            
+
             PeakTrafficHour = GetPeakTrafficHour(today),
             CalculatedAt = now
         };
-        
+
         TrafficAnalyticsUpdated?.Invoke(analytics);
         return analytics;
     }
-    
+
     private void OnCustomerGenerationTick(object? state)
     {
         if (!_isActive || CurrentCustomerCount >= _maxConcurrentCustomers)
         {
             return;
         }
-        
+
         // Determine if a new customer should be generated
         if (ShouldGenerateCustomer())
         {
@@ -183,7 +185,7 @@ public class ShopTrafficManager
             _ = Task.Run(async () => await AddCustomerAsync(customer));
         }
     }
-    
+
     private bool ShouldGenerateCustomer()
     {
         // Base generation probability based on traffic level
@@ -196,21 +198,21 @@ public class ShopTrafficManager
             TrafficLevel.VeryBusy => 0.70f,
             _ => 0.25f
         };
-        
+
         // Adjust for current customer count (fewer customers = higher probability)
         var occupancyFactor = 1.0f - (float)CurrentCustomerCount / _maxConcurrentCustomers;
         var adjustedProbability = baseProbability * occupancyFactor;
-        
+
         return _random.NextSingle() < adjustedProbability;
     }
-    
+
     private Customer GenerateRandomCustomer()
     {
         // Generate customer type based on shop reputation and time factors
         var customerType = ChooseCustomerType();
         return new Customer(customerType);
     }
-    
+
     private CustomerType ChooseCustomerType()
     {
         // Base distribution of customer types
@@ -222,11 +224,11 @@ public class ShopTrafficManager
             { CustomerType.MerchantTrader, 15f },
             { CustomerType.NoblePatron, 5f }
         };
-        
+
         // Adjust weights based on shop performance
         var metrics = _shopManager.GetPerformanceMetrics();
         var reputation = metrics.GetPerformanceGrade();
-        
+
         switch (reputation)
         {
             case PerformanceGrade.Poor:
@@ -234,19 +236,19 @@ public class ShopTrafficManager
                 typeWeights[CustomerType.VeteranAdventurer] *= 0.7f;
                 typeWeights[CustomerType.CasualTownsperson] *= 1.3f;
                 break;
-                
+
             case PerformanceGrade.Excellent:
                 typeWeights[CustomerType.NoblePatron] *= 2.0f;
                 typeWeights[CustomerType.VeteranAdventurer] *= 1.5f;
                 typeWeights[CustomerType.NoviceAdventurer] *= 0.8f;
                 break;
         }
-        
+
         // Weighted random selection
         var totalWeight = typeWeights.Values.Sum();
         var randomValue = _random.NextSingle() * totalWeight;
         var cumulativeWeight = 0f;
-        
+
         foreach (var (type, weight) in typeWeights)
         {
             cumulativeWeight += weight;
@@ -255,21 +257,21 @@ public class ShopTrafficManager
                 return type;
             }
         }
-        
+
         return CustomerType.NoviceAdventurer; // Fallback
     }
-    
+
     private CustomerShoppingSession CreateCustomerSession(Customer customer)
     {
         var session = new CustomerShoppingSession(customer, _shopManager, _isTestMode);
-        
+
         // Subscribe to session events
         session.SessionEnded += OnSessionEnded;
         session.PurchaseCompleted += OnPurchaseCompleted;
-        
+
         _activeSessions[customer.CustomerId] = session;
         CustomerEntered?.Invoke(customer);
-        
+
         // Record traffic entry
         var trafficRecord = new CustomerTrafficRecord
         {
@@ -280,18 +282,18 @@ public class ShopTrafficManager
             MadePurchase = false,
             FinalSatisfaction = CustomerSatisfaction.Neutral
         };
-        
+
         _trafficHistory.Add(trafficRecord);
-        
+
         return session;
     }
-    
+
     private void OnSessionEnded(Customer customer, CustomerSatisfaction satisfaction, string reason)
     {
         if (_activeSessions.Remove(customer.CustomerId))
         {
             CustomerLeft?.Invoke(customer, satisfaction, reason);
-            
+
             // Update traffic record
             var record = _trafficHistory.FirstOrDefault(r => r.CustomerId == customer.CustomerId);
             if (record != null)
@@ -299,15 +301,15 @@ public class ShopTrafficManager
                 record.SessionDuration = DateTime.Now - customer.EntryTime;
                 record.FinalSatisfaction = satisfaction;
             }
-            
+
             GameLogger.Debug($"Customer session ended: {customer.Name} - {satisfaction}");
         }
     }
-    
+
     private void OnPurchaseCompleted(Customer customer, SaleTransaction transaction)
     {
         CustomerPurchased?.Invoke(customer, transaction);
-        
+
         // Update traffic record
         var record = _trafficHistory.FirstOrDefault(r => r.CustomerId == customer.CustomerId);
         if (record != null)
@@ -315,10 +317,10 @@ public class ShopTrafficManager
             record.MadePurchase = true;
             record.PurchaseAmount = transaction.SalePrice;
         }
-        
+
         GameLogger.Info($"Customer purchase recorded: {customer.Name} bought {transaction.ItemSold.Name}");
     }
-    
+
     private TrafficLevel CalculateTrafficLevel()
     {
         var metrics = _shopManager.GetPerformanceMetrics();
@@ -327,19 +329,19 @@ public class ShopTrafficManager
         var recentSales = _trafficHistory
             .Where(r => r.EntryTime > DateTime.Now.AddHours(-1))
             .Count(r => r.MadePurchase);
-        
+
         // Calculate traffic score
         var trafficScore = 0f;
-        
+
         // Reputation factor (0-40 points)
         trafficScore += (float)reputation * 6.67f; // PerformanceGrade is 1-6
-        
+
         // Utilization factor (0-30 points)
         trafficScore += utilization * 30f;
-        
+
         // Recent sales factor (0-30 points)
         trafficScore += Math.Min(recentSales * 5f, 30f);
-        
+
         return trafficScore switch
         {
             >= 80f => TrafficLevel.VeryBusy,
@@ -349,37 +351,37 @@ public class ShopTrafficManager
             _ => TrafficLevel.Dead
         };
     }
-    
+
     private int CalculateCustomerGenerationInterval()
     {
         // Return interval in milliseconds
         return _currentTrafficLevel switch
         {
-            TrafficLevel.Dead => 60000,     // 1 minute
-            TrafficLevel.Slow => 30000,     // 30 seconds
+            TrafficLevel.Dead => 60000, // 1 minute
+            TrafficLevel.Slow => 30000, // 30 seconds
             TrafficLevel.Moderate => 15000, // 15 seconds
-            TrafficLevel.Busy => 10000,     // 10 seconds
-            TrafficLevel.VeryBusy => 5000,  // 5 seconds
-            _ => 20000                      // 20 seconds default
+            TrafficLevel.Busy => 10000, // 10 seconds
+            TrafficLevel.VeryBusy => 5000, // 5 seconds
+            _ => 20000 // 20 seconds default
         };
     }
-    
+
     private int GetPeakTrafficHour(DateTime date)
     {
         var hourlyTraffic = _trafficHistory
             .Where(r => r.EntryTime.Date == date)
             .GroupBy(r => r.EntryTime.Hour)
             .ToList();
-        
+
         if (!hourlyTraffic.Any())
             return 12; // Default to noon
-        
+
         return hourlyTraffic
             .OrderByDescending(g => g.Count())
             .First()
             .Key;
     }
-    
+
     public void Dispose()
     {
         _customerGenerationTimer?.Dispose();

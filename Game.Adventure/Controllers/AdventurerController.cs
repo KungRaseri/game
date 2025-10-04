@@ -12,21 +12,21 @@ public class AdventurerController : IDisposable
     private readonly CombatEntityStats _adventurer;
     private readonly CombatSystem _combatSystem;
 
-        public CombatEntityStats Adventurer => _adventurer;
-        public AdventurerState State => _combatSystem.State;
-        public bool IsAvailable => State == AdventurerState.Idle;
-        public CombatEntityStats? CurrentMonster => _combatSystem.CurrentMonster;
+    public CombatEntityStats Adventurer => _adventurer;
+    public AdventurerState State => _combatSystem.State;
+    public bool IsAvailable => State == AdventurerState.Idle;
+    public CombatEntityStats? CurrentMonster => _combatSystem.CurrentMonster;
 
-        public event Action<string>? StatusUpdated;
-        public event Action<AdventurerState>? StateChanged;
-        public event Action<CombatEntityStats>? MonsterDefeated;
-        public event Action? ExpeditionCompleted;
+    public event Action<string>? StatusUpdated;
+    public event Action<AdventurerState>? StateChanged;
+    public event Action<CombatEntityStats>? MonsterDefeated;
+    public event Action? ExpeditionCompleted;
 
     public AdventurerController(CombatSystem combatSystem)
     {
         _combatSystem = combatSystem ?? throw new ArgumentNullException(nameof(combatSystem));
         _adventurer = EntityFactory.CreateNoviceAdventurer();
-        
+
         // Subscribe to combat system events
         _combatSystem.StateChanged += OnStateChanged;
         _combatSystem.CombatLogUpdated += OnCombatLogUpdated;
@@ -66,21 +66,21 @@ public class AdventurerController : IDisposable
         UpdateStatus("Retreat order given to adventurer");
     }
 
-        /// <summary>
-        /// Updates the adventurer's combat state (should be called regularly)
-        /// </summary>
-        public void Update()
-        {
-            _combatSystem.Update();
-        }
+    /// <summary>
+    /// Updates the adventurer's combat state (should be called regularly)
+    /// </summary>
+    public void Update()
+    {
+        _combatSystem.Update();
+    }
 
-        /// <summary>
-        /// Updates the adventurer's combat state with fixed time step
-        /// </summary>
-        public void Update(float fixedDeltaTime)
-        {
-            _combatSystem.Update(fixedDeltaTime);
-        }
+    /// <summary>
+    /// Updates the adventurer's combat state with fixed time step
+    /// </summary>
+    public void Update(float fixedDeltaTime)
+    {
+        _combatSystem.Update(fixedDeltaTime);
+    }
 
     /// <summary>
     /// Gets current adventurer status information
@@ -100,34 +100,34 @@ public class AdventurerController : IDisposable
         return $"{healthInfo} | {stateInfo}{combatInfo}";
     }
 
-        private void OnStateChanged(AdventurerState newState)
-        {
-            UpdateStatus($"Adventurer state changed to: {newState}");
-            StateChanged?.Invoke(newState);
-        }
+    private void OnStateChanged(AdventurerState newState)
+    {
+        UpdateStatus($"Adventurer state changed to: {newState}");
+        StateChanged?.Invoke(newState);
+    }
 
     private void OnCombatLogUpdated(string logMessage)
     {
         UpdateStatus(logMessage);
     }
 
-        private void OnMonsterDefeated(CombatEntityStats monster)
-        {
-            UpdateStatus($"Victory! {monster.Name} has been defeated!");
-            MonsterDefeated?.Invoke(monster);
-        }
+    private void OnMonsterDefeated(CombatEntityStats monster)
+    {
+        UpdateStatus($"Victory! {monster.Name} has been defeated!");
+        MonsterDefeated?.Invoke(monster);
+    }
 
-        private void OnExpeditionCompleted()
+    private void OnExpeditionCompleted()
+    {
+        var message = State switch
         {
-            var message = State switch
-            {
-                AdventurerState.Retreating => "Expedition ended - adventurer retreated safely",
-                AdventurerState.Regenerating => "Expedition completed successfully!",
-                _ => "Expedition ended"
-            };
-            UpdateStatus(message);
-            ExpeditionCompleted?.Invoke();
-        }
+            AdventurerState.Retreating => "Expedition ended - adventurer retreated safely",
+            AdventurerState.Regenerating => "Expedition completed successfully!",
+            _ => "Expedition ended"
+        };
+        UpdateStatus(message);
+        ExpeditionCompleted?.Invoke();
+    }
 
     private void UpdateStatus(string message)
     {

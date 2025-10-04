@@ -20,17 +20,17 @@ public record InvestmentOpportunity(
     /// Calculate the expected profit from this investment.
     /// </summary>
     public decimal ExpectedProfit => ExpectedReturn - Cost;
-    
+
     /// <summary>
     /// Calculate the return on investment percentage.
     /// </summary>
     public decimal ROIPercentage => Cost > 0 ? (ExpectedProfit / Cost) * 100 : 0;
-    
+
     /// <summary>
     /// Calculate daily return rate.
     /// </summary>
     public decimal DailyReturnRate => PaybackPeriodDays > 0 ? ExpectedReturn / PaybackPeriodDays : 0;
-    
+
     /// <summary>
     /// Get investment risk category.
     /// </summary>
@@ -45,7 +45,7 @@ public record InvestmentOpportunity(
             _ => "Conservative"
         };
     }
-    
+
     /// <summary>
     /// Get a formatted description of the investment benefits.
     /// </summary>
@@ -65,7 +65,7 @@ public record InvestmentOpportunity(
             _ => "General business improvement"
         };
     }
-    
+
     /// <summary>
     /// Check if this investment is financially viable given current treasury.
     /// </summary>

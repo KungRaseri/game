@@ -25,7 +25,7 @@ public class InventoryManager
     {
         _inventory = new Inventory(initialCapacity);
         _isLoaded = false;
-        
+
         // Subscribe to inventory events for logging and validation
         _inventory.MaterialAdded += OnMaterialAdded;
         _inventory.MaterialRemoved += OnMaterialRemoved;
@@ -63,13 +63,13 @@ public class InventoryManager
         lock (_lockObject)
         {
             var result = new InventoryAddResult();
-            
+
             foreach (var drop in drops)
             {
                 try
                 {
                     drop.Validate();
-                    
+
                     if (_inventory.CanAddMaterial(drop))
                     {
                         if (_inventory.AddMaterial(drop))
@@ -127,7 +127,7 @@ public class InventoryManager
                 }
 
                 var removed = _inventory.RemoveMaterial(materialId, quality, quantity);
-                
+
                 if (removed > 0)
                 {
                     InventoryUpdated?.Invoke(_inventory.GetStats());
@@ -195,7 +195,7 @@ public class InventoryManager
                 results = ApplySorting(results, criteria.SortBy, criteria.SortAscending);
 
                 var resultList = results.ToList();
-                
+
                 return new InventorySearchResult(
                     resultList,
                     resultList.Count,
@@ -214,11 +214,12 @@ public class InventoryManager
     /// <summary>
     /// Applies sorting to a collection of material stacks.
     /// </summary>
-    private static IEnumerable<MaterialStack> ApplySorting(IEnumerable<MaterialStack> materials, MaterialSortBy sortBy, bool ascending)
+    private static IEnumerable<MaterialStack> ApplySorting(IEnumerable<MaterialStack> materials, MaterialSortBy sortBy,
+        bool ascending)
     {
         return sortBy switch
         {
-            MaterialSortBy.Name => ascending 
+            MaterialSortBy.Name => ascending
                 ? materials.OrderBy(s => s.Material.Name)
                 : materials.OrderByDescending(s => s.Material.Name),
             MaterialSortBy.Quantity => ascending
@@ -299,7 +300,7 @@ public class InventoryManager
                 {
                     var (materialId, rarity) = requirement.Key;
                     var requiredQuantity = requirement.Value;
-                    
+
                     var actuallyRemoved = _inventory.RemoveMaterial(materialId, rarity, requiredQuantity);
                     removedMaterials.Add((materialId, rarity, actuallyRemoved));
 
@@ -319,7 +320,8 @@ public class InventoryManager
                     {
                         // This would require recreating MaterialDrops, which is complex
                         // For now, just log the issue - in production, this would need better handling
-                        GameLogger.Error($"Need to restore {quantity} {materialId} ({rarity}) - rollback not implemented");
+                        GameLogger.Error(
+                            $"Need to restore {quantity} {materialId} ({rarity}) - rollback not implemented");
                     }
                 }
                 else

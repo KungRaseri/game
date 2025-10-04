@@ -56,7 +56,8 @@ public record MaterialStack(
                 _ => 1.0f
             };
 
-            return (int)(Material.Value * QualityTierModifiers.GetValueMultiplier(Material.Quality) * Quantity * rarityMultiplier);
+            return (int)(Material.Value * QualityTierModifiers.GetValueMultiplier(Material.Quality) * Quantity *
+                         rarityMultiplier);
         }
     }
 
@@ -72,7 +73,8 @@ public record MaterialStack(
 
         if (Quantity > StackLimit)
         {
-            throw new ArgumentException($"Quantity ({Quantity}) cannot exceed stack limit ({StackLimit})", nameof(Quantity));
+            throw new ArgumentException($"Quantity ({Quantity}) cannot exceed stack limit ({StackLimit})",
+                nameof(Quantity));
         }
 
         if (LastUpdated > DateTime.UtcNow)
@@ -95,7 +97,8 @@ public record MaterialStack(
 
         if (newQuantity > StackLimit)
         {
-            throw new ArgumentException($"Quantity ({newQuantity}) cannot exceed stack limit ({StackLimit})", nameof(newQuantity));
+            throw new ArgumentException($"Quantity ({newQuantity}) cannot exceed stack limit ({StackLimit})",
+                nameof(newQuantity));
         }
 
         return this with { Quantity = newQuantity, LastUpdated = DateTime.UtcNow };
@@ -114,7 +117,7 @@ public record MaterialStack(
         }
 
         var totalQuantity = Quantity + additionalQuantity;
-        
+
         if (totalQuantity <= StackLimit)
         {
             // All quantity fits in this stack
@@ -159,7 +162,7 @@ public record MaterialStack(
     public static MaterialStack FromDrop(Drop drop)
     {
         drop.Validate();
-        
+
         return new MaterialStack(
             drop.Material,
             drop.Quantity,
@@ -172,12 +175,12 @@ public record MaterialStack(
     /// </summary>
     public string GetRarityColor() => Material.Quality switch
     {
-        QualityTier.Common => "#808080",     // Gray
-        QualityTier.Uncommon => "#00FF00",   // Green
-        QualityTier.Rare => "#0080FF",       // Blue
-        QualityTier.Epic => "#8000FF",       // Purple
-        QualityTier.Legendary => "#FFD700",  // Gold
-        _ => "#FFFFFF"                          // White fallback
+        QualityTier.Common => "#808080", // Gray
+        QualityTier.Uncommon => "#00FF00", // Green
+        QualityTier.Rare => "#0080FF", // Blue
+        QualityTier.Epic => "#8000FF", // Purple
+        QualityTier.Legendary => "#FFD700", // Gold
+        _ => "#FFFFFF" // White fallback
     };
 
     /// <summary>

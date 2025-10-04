@@ -15,7 +15,7 @@ public static class EntityTypes
     );
 
     public static EntityTypeConfig ExperiencedAdventurer { get; } = new(
-        Name: "Experienced Adventurer", 
+        Name: "Experienced Adventurer",
         BaseHealth: 150,
         BaseDamage: 15,
         RetreatThreshold: 0.20f,

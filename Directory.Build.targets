@@ -1,16 +1,17 @@
 <Project>
-  <!-- Test result configuration for test projects -->
-  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
-    <!-- Set test results directory to root TestResults folder with project name subfolder -->
-    <VSTestResultsDirectory>$(MSBuildThisFileDirectory)TestResults\$(MSBuildProjectName)\</VSTestResultsDirectory>
-    <!-- Configure test logger (TRX format) -->
-    <VSTestLogger>trx</VSTestLogger>
-    <!-- Enable code coverage collection -->
-    <VSTestCollect>XPlat Code Coverage</VSTestCollect>
-  </PropertyGroup>
+    <!-- Test result configuration for test projects -->
+    <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+        <!-- Set test results directory to root TestResults folder with project name subfolder -->
+        <VSTestResultsDirectory>$(MSBuildThisFileDirectory)TestResults\$(MSBuildProjectName)\</VSTestResultsDirectory>
+        <!-- Configure test logger (TRX format) -->
+        <VSTestLogger>trx</VSTestLogger>
+        <!-- Enable code coverage collection -->
+        <VSTestCollect>XPlat Code Coverage</VSTestCollect>
+    </PropertyGroup>
 
-  <!-- Ensure TestResults directory exists before running tests -->
-  <Target Name="CreateTestResultsDirectory" BeforeTargets="VSTest" Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
-    <MakeDir Directories="$(VSTestResultsDirectory)" />
-  </Target>
+    <!-- Ensure TestResults directory exists before running tests -->
+    <Target Name="CreateTestResultsDirectory" BeforeTargets="VSTest"
+            Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+        <MakeDir Directories="$(VSTestResultsDirectory)" />
+    </Target>
 </Project>

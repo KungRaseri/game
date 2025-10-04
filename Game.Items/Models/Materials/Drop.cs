@@ -55,12 +55,12 @@ public record Drop(
     /// </summary>
     public string GetRarityColor() => Material.Quality switch
     {
-        QualityTier.Common => "#808080",     // Gray
-        QualityTier.Uncommon => "#00FF00",   // Green
-        QualityTier.Rare => "#0080FF",       // Blue
-        QualityTier.Epic => "#8000FF",       // Purple
-        QualityTier.Legendary => "#FFD700",  // Gold
-        _ => "#FFFFFF"                          // White fallback
+        QualityTier.Common => "#808080", // Gray
+        QualityTier.Uncommon => "#00FF00", // Green
+        QualityTier.Rare => "#0080FF", // Blue
+        QualityTier.Epic => "#8000FF", // Purple
+        QualityTier.Legendary => "#FFD700", // Gold
+        _ => "#FFFFFF" // White fallback
     };
 
     /// <summary>

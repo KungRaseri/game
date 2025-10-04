@@ -1,6 +1,4 @@
-using Game.Shop.Models;
-
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Historical price entry for market analysis.

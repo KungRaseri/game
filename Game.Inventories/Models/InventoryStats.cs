@@ -10,7 +10,7 @@ public record InventoryStats
 
     /// <summary>Total inventory capacity.</summary>
     public int TotalSlots { get; init; }
-    
+
     /// <summary>Total inventory capacity (alias for TotalSlots).</summary>
     public int Capacity => TotalSlots;
 
@@ -19,7 +19,7 @@ public record InventoryStats
 
     /// <summary>Total quantity of all materials.</summary>
     public int TotalQuantity { get; init; }
-    
+
     /// <summary>Total quantity of all materials (alias for TotalQuantity).</summary>
     public int TotalMaterials => TotalQuantity;
 

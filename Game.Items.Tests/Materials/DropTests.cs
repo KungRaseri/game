@@ -23,7 +23,7 @@ public class DropTests
         var acquiredTime = DateTime.UtcNow;
 
         // Act
-        var drop = new Drop(_testMaterial,3, acquiredTime);
+        var drop = new Drop(_testMaterial, 3, acquiredTime);
 
         // Assert
         Assert.Equal(_testMaterial, drop.Material);
@@ -69,12 +69,13 @@ public class DropTests
     }
 
     [Theory]
-    [InlineData(QualityTier.Common, 1, 2, 2)]      // Base value 2 * quantity 1 * multiplier 1.0 = 2
-    [InlineData(QualityTier.Uncommon, 2, 2, 8)]    // Base value 2 * quantity 2 * multiplier 2.0 = 8
-    [InlineData(QualityTier.Rare, 1, 2, 10)]       // Base value 2 * quantity 1 * multiplier 5.0 = 10
-    [InlineData(QualityTier.Epic, 1, 2, 30)]       // Base value 2 * quantity 1 * multiplier 15.0 = 30
+    [InlineData(QualityTier.Common, 1, 2, 2)] // Base value 2 * quantity 1 * multiplier 1.0 = 2
+    [InlineData(QualityTier.Uncommon, 2, 2, 8)] // Base value 2 * quantity 2 * multiplier 2.0 = 8
+    [InlineData(QualityTier.Rare, 1, 2, 10)] // Base value 2 * quantity 1 * multiplier 5.0 = 10
+    [InlineData(QualityTier.Epic, 1, 2, 30)] // Base value 2 * quantity 1 * multiplier 15.0 = 30
     [InlineData(QualityTier.Legendary, 1, 2, 100)] // Base value 2 * quantity 1 * multiplier 50.0 = 100
-    public void Drop_GetTotalValue_CalculatesCorrectValue(QualityTier rarity, int quantity, int baseValue, int expectedValue)
+    public void Drop_GetTotalValue_CalculatesCorrectValue(QualityTier rarity, int quantity, int baseValue,
+        int expectedValue)
     {
         // Arrange
         var material = new Material("test", "Test", "Test", rarity, baseValue, Category.Metal);

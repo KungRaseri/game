@@ -42,7 +42,7 @@ namespace Game.Adventure.Tests
             Assert.NotNull(combatSystem.CurrentMonster);
             Assert.True(combatSystem.IsInCombat);
             Assert.True(combatSystem.HasMonstersRemaining);
-            
+
             // Check events
             Assert.Contains(AdventurerState.Traveling, stateChangedEvents);
             Assert.Contains(AdventurerState.Fighting, stateChangedEvents);
@@ -60,7 +60,7 @@ namespace Game.Adventure.Tests
             combatSystem.StartExpedition(adventurer, monsters);
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => 
+            Assert.Throws<InvalidOperationException>(() =>
                 combatSystem.StartExpedition(adventurer, monsters));
         }
 
@@ -72,7 +72,7 @@ namespace Game.Adventure.Tests
             var monsters = new List<CombatEntityStats> { EntityFactory.CreateGoblin() };
 
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => 
+            Assert.Throws<ArgumentNullException>(() =>
                 combatSystem.StartExpedition(null!, monsters));
         }
 
@@ -107,16 +107,16 @@ namespace Game.Adventure.Tests
             var initialMonsterHealth = monster.CurrentHealth;
 
             combatSystem.StartExpedition(adventurer, new List<CombatEntityStats> { monster });
-            
+
             // Simulate time passing by calling Update multiple times with longer delays
             // Act
             for (int i = 0; i < 20; i++)
             {
                 combatSystem.Update();
                 Thread.Sleep(100); // Longer delay to ensure damage is applied
-                
+
                 // Break early if either entity takes damage or dies
-                if (adventurer.CurrentHealth < initialAdventurerHealth || 
+                if (adventurer.CurrentHealth < initialAdventurerHealth ||
                     monster.CurrentHealth < initialMonsterHealth ||
                     !adventurer.IsAlive || !monster.IsAlive)
                 {
@@ -129,7 +129,7 @@ namespace Game.Adventure.Tests
             var adventurerTookDamage = adventurer.CurrentHealth < initialAdventurerHealth;
             var monsterTookDamage = monster.CurrentHealth < initialMonsterHealth;
             var fightIsOver = !adventurer.IsAlive || !monster.IsAlive;
-            
+
             Assert.True(adventurerTookDamage || monsterTookDamage || fightIsOver);
         }
 
@@ -204,8 +204,8 @@ namespace Game.Adventure.Tests
             // Arrange
             var combatSystem = new CombatSystem();
             var adventurer = EntityFactory.CreateNoviceAdventurer();
-            var monsters = new List<CombatEntityStats> 
-            { 
+            var monsters = new List<CombatEntityStats>
+            {
                 EntityFactory.CreateGoblin(),
                 EntityFactory.CreateGoblin(),
                 EntityFactory.CreateGoblin()
@@ -286,14 +286,14 @@ namespace Game.Adventure.Tests
             // Arrange
             var combatSystem = new CombatSystem();
             var adventurer = EntityFactory.CreateNoviceAdventurer();
-            
+
             // Damage adventurer and put in regenerating state
             adventurer.TakeDamage(50);
             var initialHealth = adventurer.CurrentHealth;
-            
+
             // Complete an expedition to enter regenerating state
             combatSystem.StartExpedition(adventurer, new List<CombatEntityStats>());
-            
+
             // Act
             combatSystem.Update();
 
@@ -309,11 +309,11 @@ namespace Game.Adventure.Tests
             // Arrange
             var combatSystem = new CombatSystem();
             var adventurer = EntityFactory.CreateNoviceAdventurer();
-            
+
             // Damage adventurer slightly and put in regenerating state
             adventurer.TakeDamage(1);
             combatSystem.StartExpedition(adventurer, new List<CombatEntityStats>());
-            
+
             // Act
             combatSystem.Update(); // This should heal the 1 HP and return to idle
 
@@ -339,7 +339,7 @@ namespace Game.Adventure.Tests
 
             // Act - Force retreat and then process updates
             combatSystem.ForceRetreat();
-            
+
             // Verify initial retreat state
             Assert.Equal(AdventurerState.Retreating, combatSystem.State);
 
@@ -359,7 +359,7 @@ namespace Game.Adventure.Tests
             // Assert final state
             Assert.Equal(AdventurerState.Idle, combatSystem.State);
             Assert.Equal(adventurer.MaxHealth, adventurer.CurrentHealth);
-            
+
             // Verify state transition sequence
             Assert.Contains(AdventurerState.Traveling, stateChanges);
             Assert.Contains(AdventurerState.Fighting, stateChanges);

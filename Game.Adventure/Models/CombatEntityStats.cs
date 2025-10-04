@@ -11,40 +11,40 @@ public class CombatEntityStats
     private string _name;
     private float _retreatThreshold;
 
-    public int CurrentHealth 
-    { 
+    public int CurrentHealth
+    {
         get => _currentHealth;
-        private set 
+        private set
         {
             _currentHealth = Math.Max(0, Math.Min(value, _maxHealth));
             HealthChanged?.Invoke(_currentHealth, _maxHealth);
         }
     }
 
-    public int MaxHealth 
-    { 
+    public int MaxHealth
+    {
         get => _maxHealth;
-        set 
+        set
         {
             _maxHealth = Math.Max(1, value);
             CurrentHealth = Math.Min(_currentHealth, _maxHealth);
         }
     }
 
-    public int DamagePerSecond 
-    { 
+    public int DamagePerSecond
+    {
         get => _damagePerSecond;
         set => _damagePerSecond = Math.Max(1, value);
     }
 
-    public string Name 
-    { 
+    public string Name
+    {
         get => _name;
         set => _name = value ?? throw new ArgumentNullException(nameof(value));
     }
 
-    public float RetreatThreshold 
-    { 
+    public float RetreatThreshold
+    {
         get => _retreatThreshold;
         set => _retreatThreshold = Math.Clamp(value, 0f, 1f);
     }
@@ -68,9 +68,9 @@ public class CombatEntityStats
     public void TakeDamage(int damage)
     {
         if (damage <= 0 || !IsAlive) return;
-        
+
         CurrentHealth -= damage;
-        
+
         if (!IsAlive)
         {
             Died?.Invoke(this);

@@ -22,10 +22,10 @@ public record ShopExpense(
     {
         if (!IsRecurring || RecurrenceDays <= 0)
             return null;
-            
+
         return ExpenseDate.AddDays(RecurrenceDays);
     }
-    
+
     /// <summary>
     /// Check if this expense is due for another occurrence.
     /// </summary>
@@ -33,11 +33,11 @@ public record ShopExpense(
     {
         if (!IsRecurring || RecurrenceDays <= 0)
             return false;
-            
+
         var nextOccurrence = GetNextOccurrence();
         return nextOccurrence.HasValue && currentDate >= nextOccurrence.Value;
     }
-    
+
     /// <summary>
     /// Create a friendly display name for the expense.
     /// </summary>
@@ -46,7 +46,7 @@ public record ShopExpense(
         var recurring = IsRecurring ? $" (Every {RecurrenceDays} days)" : "";
         return $"{Type}: {Description}{recurring}";
     }
-    
+
     /// <summary>
     /// Get expense category for budgeting purposes.
     /// </summary>

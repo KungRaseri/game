@@ -1,4 +1,4 @@
-namespace Game.Shop;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Extension methods for PerformanceGrade enum.
@@ -21,7 +21,7 @@ public static class PerformanceGradeExtensions
             _ => "Unknown"
         };
     }
-    
+
     /// <summary>
     /// Get a color associated with the performance grade.
     /// </summary>
