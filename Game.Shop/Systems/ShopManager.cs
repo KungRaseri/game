@@ -1,6 +1,8 @@
 #nullable enable
 
 using Game.Core.Utils;
+using Game.Economy.Models;
+using Game.Economy.Systems;
 using Game.Items.Models;
 using Game.Shop.Models;
 
