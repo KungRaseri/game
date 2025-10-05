@@ -1,7 +1,9 @@
 #nullable enable
 
-using Game.Adventure.Controllers;
+using Game.Adventure.Commands;
 using Game.Adventure.Models;
+using Game.Adventure.Queries;
+using Game.Core.CQS;
 using Game.Core.Utils;
 using Godot;
 using GodotPlugins.Game;
@@ -11,6 +13,7 @@ namespace Game.Scripts.UI;
 /// <summary>
 /// UI component that displays adventurer status and provides expedition controls.
 /// Follows Godot 4.5 C# best practices and coding conventions.
+/// Uses CQS pattern for data access and commands.
 /// </summary>
 public partial class AdventurerStatusUI : Panel
 {
@@ -29,13 +32,15 @@ public partial class AdventurerStatusUI : Panel
     private Button? _sendExpeditionButton;
     private Button? _retreatButton;
 
-    private AdventurerController? _adventurerController;
+    private IDispatcher? _dispatcher;
+    private Timer? _updateTimer;
 
     public override void _Ready()
     {
         GameLogger.Info("AdventurerStatusUI initializing");
 
         CacheNodeReferences();
+        SetupUpdateTimer();
         UpdateUI();
 
         GameLogger.Info("AdventurerStatusUI ready");
@@ -43,25 +48,21 @@ public partial class AdventurerStatusUI : Panel
 
     public override void _ExitTree()
     {
-        UnsubscribeFromController();
+        if (_updateTimer != null)
+        {
+            _updateTimer.Timeout -= OnUpdateTimer;
+            _updateTimer?.QueueFree();
+        }
         GameLogger.Info("AdventurerStatusUI disposed");
     }
 
     /// <summary>
-    /// Sets the adventurer controller and subscribes to its events.
+    /// Sets the CQS dispatcher for this UI component.
     /// </summary>
-    public void SetAdventurerController(AdventurerController controller)
+    public void SetDispatcher(IDispatcher dispatcher)
     {
-        UnsubscribeFromController();
-
-        _adventurerController = controller;
-
-        if (_adventurerController != null)
-        {
-            _adventurerController.Adventurer.HealthChanged += OnHealthChanged;
-            _adventurerController.StatusUpdated += OnStatusUpdated;
-            UpdateUI();
-        }
+        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+        UpdateUI();
     }
 
     private void CacheNodeReferences()
@@ -74,26 +75,38 @@ public partial class AdventurerStatusUI : Panel
         _retreatButton = GetNode<Button>("VBoxContainer/ButtonContainer/RetreatButton");
     }
 
-    private void UnsubscribeFromController()
+    private void SetupUpdateTimer()
     {
-        if (_adventurerController != null)
-        {
-            _adventurerController.Adventurer.HealthChanged -= OnHealthChanged;
-            _adventurerController.StatusUpdated -= OnStatusUpdated;
-        }
+        _updateTimer = new Timer();
+        _updateTimer.WaitTime = 0.1; // Update 10 times per second
+        _updateTimer.Autostart = true;
+        _updateTimer.Timeout += OnUpdateTimer;
+        AddChild(_updateTimer);
     }
 
-    private void UpdateUI()
+    private void OnUpdateTimer()
     {
-        if (_adventurerController == null)
+        UpdateUI();
+    }
+
+    private async void UpdateUI()
+    {
+        if (_dispatcher == null)
         {
             SetDefaultUI();
             return;
         }
 
-        UpdateAdventurerInfo();
-        UpdateHealthDisplay();
-        UpdateButtonStates();
+        try
+        {
+            await UpdateAdventurerInfo();
+            await UpdateHealthDisplay();
+            await UpdateButtonStates();
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Failed to update AdventurerStatusUI");
+        }
     }
 
     private void SetDefaultUI()
@@ -121,26 +134,36 @@ public partial class AdventurerStatusUI : Panel
         SetButtonsEnabled(false);
     }
 
-    private void UpdateAdventurerInfo()
+    private async Task UpdateAdventurerInfo()
     {
-        if (_adventurerController == null) return;
+        if (_dispatcher == null) return;
 
-        if (_adventurerName != null)
+        var adventurerQuery = new GetAdventurerQuery();
+        var adventurer = await _dispatcher.DispatchQueryAsync(adventurerQuery);
+
+        if (adventurer != null && _adventurerName != null)
         {
-            _adventurerName.Text = _adventurerController.Adventurer.Name;
+            _adventurerName.Text = adventurer.Name;
         }
+
+        var stateQuery = new GetAdventurerStateQuery();
+        var state = await _dispatcher.DispatchQueryAsync(stateQuery);
 
         if (_adventurerState != null)
         {
-            _adventurerState.Text = GetStateDisplayText(_adventurerController.State);
+            _adventurerState.Text = GetStateDisplayText(state);
         }
     }
 
-    private void UpdateHealthDisplay()
+    private async Task UpdateHealthDisplay()
     {
-        if (_adventurerController == null) return;
+        if (_dispatcher == null) return;
 
-        var adventurer = _adventurerController.Adventurer;
+        var adventurerQuery = new GetAdventurerQuery();
+        var adventurer = await _dispatcher.DispatchQueryAsync(adventurerQuery);
+
+        if (adventurer == null) return;
+
         var currentHealth = adventurer.CurrentHealth;
         var maxHealth = adventurer.MaxHealth;
 
@@ -171,15 +194,16 @@ public partial class AdventurerStatusUI : Panel
         }
     }
 
-    private void UpdateButtonStates()
+    private async Task UpdateButtonStates()
     {
-        if (_adventurerController == null)
+        if (_dispatcher == null)
         {
             SetButtonsEnabled(false);
             return;
         }
 
-        var state = _adventurerController.State;
+        var stateQuery = new GetAdventurerStateQuery();
+        var state = await _dispatcher.DispatchQueryAsync(stateQuery);
 
         if (_sendExpeditionButton != null)
         {
@@ -215,34 +239,53 @@ public partial class AdventurerStatusUI : Panel
         _ => "Unknown"
     };
 
-    private void OnHealthChanged(int currentHealth, int maxHealth)
-    {
-        CallDeferred(nameof(UpdateHealthDisplay));
-    }
-
-    private void OnStatusUpdated(string message)
-    {
-        GameLogger.Info($"Adventurer Status: {message}");
-        CallDeferred(nameof(UpdateButtonStates));
-    }
-
     /// <summary>
     /// Called when the Send Expedition button is pressed.
     /// Connected via Godot editor.
     /// </summary>
-    public void OnSendExpeditionPressed()
+    public async void OnSendExpeditionPressed()
     {
-        EmitSignal(SignalName.SendExpeditionRequested);
-        GameLogger.Info("Send expedition requested from UI");
+        if (_dispatcher == null)
+        {
+            GameLogger.Warning("Cannot send expedition - no dispatcher available");
+            return;
+        }
+
+        try
+        {
+            var command = new SendToGoblinCaveCommand();
+            await _dispatcher.DispatchCommandAsync(command);
+            EmitSignal(SignalName.SendExpeditionRequested);
+            GameLogger.Info("Send expedition command dispatched from UI");
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Failed to send expedition command");
+        }
     }
 
     /// <summary>
     /// Called when the Retreat button is pressed.
     /// Connected via Godot editor.
     /// </summary>
-    public void OnRetreatPressed()
+    public async void OnRetreatPressed()
     {
-        EmitSignal(SignalName.RetreatRequested);
-        GameLogger.Info("Retreat requested from UI");
+        if (_dispatcher == null)
+        {
+            GameLogger.Warning("Cannot retreat - no dispatcher available");
+            return;
+        }
+
+        try
+        {
+            var command = new ForceRetreatCommand();
+            await _dispatcher.DispatchCommandAsync(command);
+            EmitSignal(SignalName.RetreatRequested);
+            GameLogger.Info("Retreat command dispatched from UI");
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Failed to send retreat command");
+        }
     }
 }

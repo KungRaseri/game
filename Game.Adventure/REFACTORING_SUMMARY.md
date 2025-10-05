@@ -94,7 +94,7 @@ services.AddAdventureModule();
 - `README_CQS.md` - Comprehensive documentation
 
 ### Moved Files
-- `Controllers/AdventurerController.cs` → `Legacy/AdventurerController.cs`
+- `Controllers/AdventurerController.cs` → **REMOVED** (replaced with CQS Commands/Queries)
 
 ### Preserved Files
 - All existing `Models/`, `Data/`, and `Systems/CombatSystem.cs` unchanged

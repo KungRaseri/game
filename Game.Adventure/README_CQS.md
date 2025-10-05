@@ -22,7 +22,7 @@ Game.Adventure/
 ├── Data/                        # Entity factories and configs
 ├── Extensions/                  # Service registration
 │   └── AdventureServiceCollectionExtensions.cs
-└── Legacy/                      # Old controller (deprecated)
+└── **REMOVED**                  # Old controller (deleted)
     └── AdventurerController.cs
 ```
 
@@ -214,8 +214,9 @@ All CQS operations include comprehensive debug logging:
 
 ## Migration from Old Controller
 
-**Old Usage:**
+**Old Usage (REMOVED):**
 ```csharp
+// This no longer works - controller has been deleted
 var controller = new AdventurerController(combatSystem);
 controller.SendToGoblinCave();
 var status = controller.GetStatusInfo();
@@ -230,7 +231,7 @@ var statusQuery = new GetAdventurerStatusQuery();
 var status = await dispatcher.DispatchQueryAsync<GetAdventurerStatusQuery, string>(statusQuery);
 ```
 
-The old controller has been moved to `Game.Adventure/Legacy/` and should not be used in new code.
+The old controller has been completely removed from the codebase.
 
 ## Test Coverage
 
