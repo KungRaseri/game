@@ -46,16 +46,16 @@ public abstract partial class InjectableNode : Node
                     if (service != null)
                     {
                         property.SetValue(this, service);
-                        GD.Print($"✅ Injected {property.PropertyType.Name} into {type.Name}.{property.Name}");
+                        GD.Print($"Injected {property.PropertyType.Name} into {type.Name}.{property.Name}");
                     }
                     else
                     {
-                        GD.PrintErr($"❌ Failed to inject {property.PropertyType.Name} into {type.Name}.{property.Name} - service not registered");
+                        GD.PrintErr($"Failed to inject {property.PropertyType.Name} into {type.Name}.{property.Name} - service not registered");
                     }
                 }
                 catch (Exception ex)
                 {
-                    GD.PrintErr($"❌ Error injecting {property.PropertyType.Name} into {type.Name}.{property.Name}: {ex.Message}");
+                    GD.PrintErr($"Error injecting {property.PropertyType.Name} into {type.Name}.{property.Name}: {ex.Message}");
                 }
             }
         }

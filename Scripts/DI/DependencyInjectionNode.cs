@@ -4,7 +4,6 @@ using Game.Adventure.Extensions;
 using Game.Core.CQS;
 using Game.Core.Extensions;
 using Game.Core.Utils;
-using Game.DI.Examples;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -48,9 +47,6 @@ public partial class DependencyInjectionNode : Node
         _serviceProvider = _services.BuildServiceProvider();
         
         GD.Print("Dependency injection initialized successfully!");
-        
-        // Test the integration
-        TestIntegration();
     }
 
     public override void _ExitTree()
@@ -74,40 +70,12 @@ public partial class DependencyInjectionNode : Node
         GameLogger.Debug("[DI] Registering Adventure module...");
         services.AddAdventureModule();
 
-        // Register example services
-        GameLogger.Debug("[DI] Registering game services...");
-        services.AddScoped<IGameService, GameService>();
-        
-        // Register CQS handlers
-        GameLogger.Debug("[DI] Registering CQS handlers...");
-        services.AddCommandHandler<LogGameEventCommand, LogGameEventCommandHandler>();
-        services.AddQueryHandler<GetGameStatusQuery, GameStatus, GetGameStatusQueryHandler>();
-
-        // Add other game services here
+        // Add other game services here as needed
         // services.AddScoped<IAdventurerService, AdventurerService>();
         // services.AddScoped<IShopService, ShopService>();
         // etc.
         
         GameLogger.Debug($"[DI] Service configuration completed - Registered {services.Count} services");
         GD.Print($"Registered {services.Count} services");
-    }
-
-    /// <summary>
-    /// Test that the DI integration works correctly.
-    /// </summary>
-    private static async void TestIntegration()
-    {
-        try
-        {
-            var gameService = GetService<IGameService>();
-            await gameService.LogEventAsync("DITest", "Dependency injection integration test successful!");
-            
-            var status = await gameService.GetStatusAsync();
-            GD.Print($"CQS Integration test - Status: {status}");
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"DI Integration test failed: {ex.Message}");
-        }
     }
 }
