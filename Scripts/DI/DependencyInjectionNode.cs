@@ -47,7 +47,7 @@ public partial class DependencyInjectionNode : Node
         ConfigureServices(_services);
         _serviceProvider = _services.BuildServiceProvider();
         
-        GD.Print("✅ Dependency injection initialized successfully!");
+        GD.Print("Dependency injection initialized successfully!");
         
         // Test the integration
         TestIntegration();
@@ -65,21 +65,21 @@ public partial class DependencyInjectionNode : Node
     /// </summary>
     private static void ConfigureServices(IServiceCollection services)
     {
-        GameLogger.Debug("🔧 [DI] Starting service configuration...");
+        GameLogger.Debug("[DI] Starting service configuration...");
         
         // Add CQS infrastructure
         services.AddCQS();
 
         // Add Adventure module services
-        GameLogger.Debug("🏰 [DI] Registering Adventure module...");
+        GameLogger.Debug("[DI] Registering Adventure module...");
         services.AddAdventureModule();
 
         // Register example services
-        GameLogger.Debug("📦 [DI] Registering game services...");
+        GameLogger.Debug("[DI] Registering game services...");
         services.AddScoped<IGameService, GameService>();
         
         // Register CQS handlers
-        GameLogger.Debug("🎯 [DI] Registering CQS handlers...");
+        GameLogger.Debug("[DI] Registering CQS handlers...");
         services.AddCommandHandler<LogGameEventCommand, LogGameEventCommandHandler>();
         services.AddQueryHandler<GetGameStatusQuery, GameStatus, GetGameStatusQueryHandler>();
 
@@ -88,7 +88,7 @@ public partial class DependencyInjectionNode : Node
         // services.AddScoped<IShopService, ShopService>();
         // etc.
         
-        GameLogger.Debug($"✅ [DI] Service configuration completed - Registered {services.Count} services");
+        GameLogger.Debug($"[DI] Service configuration completed - Registered {services.Count} services");
         GD.Print($"Registered {services.Count} services");
     }
 
@@ -103,11 +103,11 @@ public partial class DependencyInjectionNode : Node
             await gameService.LogEventAsync("DITest", "Dependency injection integration test successful!");
             
             var status = await gameService.GetStatusAsync();
-            GD.Print($"✅ CQS Integration test - Status: {status}");
+            GD.Print($"CQS Integration test - Status: {status}");
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"❌ DI Integration test failed: {ex.Message}");
+            GD.PrintErr($"DI Integration test failed: {ex.Message}");
         }
     }
 }

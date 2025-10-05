@@ -28,12 +28,12 @@ public class SendAdventurerToGoblinCaveCommandHandler : ICommandHandler<SendAdve
 
     public Task HandleAsync(SendAdventurerToGoblinCaveCommand command, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🎯 [Handler] SendAdventurerToGoblinCaveCommandHandler processing expedition request");
+        GameLogger.Debug($"[Handler] SendAdventurerToGoblinCaveCommandHandler processing expedition request");
 
         if (_combatSystem.State != AdventurerState.Idle)
         {
             var errorMessage = "Adventurer is not available for expedition";
-            GameLogger.Warning($"⚠️ [Handler] {errorMessage} - Current state: {_combatSystem.State}");
+            GameLogger.Warning($"[Handler] {errorMessage} - Current state: {_combatSystem.State}");
             throw new InvalidOperationException(errorMessage);
         }
 
@@ -46,13 +46,13 @@ public class SendAdventurerToGoblinCaveCommandHandler : ICommandHandler<SendAdve
             EntityFactory.CreateGoblin()
         };
 
-        GameLogger.Debug($"📊 [Handler] Created adventurer: {adventurer.Name} with {adventurer.MaxHealth} HP");
-        GameLogger.Debug($"👹 [Handler] Created {monsters.Count} goblins for expedition");
+        GameLogger.Debug($"[Handler] Created adventurer: {adventurer.Name} with {adventurer.MaxHealth} HP");
+        GameLogger.Debug($"[Handler] Created {monsters.Count} goblins for expedition");
 
         // Start the expedition
         _combatSystem.StartExpedition(adventurer, monsters);
 
-        GameLogger.Debug($"✅ [Handler] Goblin Cave expedition started successfully");
+        GameLogger.Debug($"[Handler] Goblin Cave expedition started successfully");
         return Task.CompletedTask;
     }
 }
@@ -71,12 +71,12 @@ public class ForceAdventurerRetreatCommandHandler : ICommandHandler<ForceAdventu
 
     public Task HandleAsync(ForceAdventurerRetreatCommand command, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🎯 [Handler] ForceAdventurerRetreatCommandHandler processing retreat request");
-        GameLogger.Debug($"📊 [Handler] Current state before retreat: {_combatSystem.State}");
+        GameLogger.Debug($"[Handler] ForceAdventurerRetreatCommandHandler processing retreat request");
+        GameLogger.Debug($"[Handler] Current state before retreat: {_combatSystem.State}");
 
         _combatSystem.ForceRetreat();
 
-        GameLogger.Debug($"✅ [Handler] Retreat command executed - New state: {_combatSystem.State}");
+        GameLogger.Debug($"[Handler] Retreat command executed - New state: {_combatSystem.State}");
         return Task.CompletedTask;
     }
 }
@@ -95,7 +95,7 @@ public class UpdateAdventurerStateCommandHandler : ICommandHandler<UpdateAdventu
 
     public Task HandleAsync(UpdateAdventurerStateCommand command, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🎯 [Handler] UpdateAdventurerStateCommandHandler processing update with deltaTime: {command.DeltaTime}");
+        GameLogger.Debug($"[Handler] UpdateAdventurerStateCommandHandler processing update with deltaTime: {command.DeltaTime}");
 
         var stateBefore = _combatSystem.State;
         _combatSystem.Update(command.DeltaTime);
@@ -103,10 +103,10 @@ public class UpdateAdventurerStateCommandHandler : ICommandHandler<UpdateAdventu
 
         if (stateBefore != stateAfter)
         {
-            GameLogger.Debug($"📊 [Handler] State changed during update: {stateBefore} -> {stateAfter}");
+            GameLogger.Debug($"[Handler] State changed during update: {stateBefore} -> {stateAfter}");
         }
 
-        GameLogger.Debug($"✅ [Handler] Adventurer state update completed");
+        GameLogger.Debug($"[Handler] Adventurer state update completed");
         return Task.CompletedTask;
     }
 }
@@ -125,12 +125,12 @@ public class ResetCombatSystemCommandHandler : ICommandHandler<ResetCombatSystem
 
     public Task HandleAsync(ResetCombatSystemCommand command, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🎯 [Handler] ResetCombatSystemCommandHandler processing reset request");
-        GameLogger.Debug($"📊 [Handler] State before reset: {_combatSystem.State}");
+        GameLogger.Debug($"[Handler] ResetCombatSystemCommandHandler processing reset request");
+        GameLogger.Debug($"[Handler] State before reset: {_combatSystem.State}");
 
         _combatSystem.Reset();
 
-        GameLogger.Debug($"✅ [Handler] Combat system reset completed - State: {_combatSystem.State}");
+        GameLogger.Debug($"[Handler] Combat system reset completed - State: {_combatSystem.State}");
         return Task.CompletedTask;
     }
 }

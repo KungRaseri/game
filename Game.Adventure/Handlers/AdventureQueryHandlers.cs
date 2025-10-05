@@ -25,12 +25,12 @@ public class GetAdventurerStatusQueryHandler : IQueryHandler<GetAdventurerStatus
 
     public Task<string> HandleAsync(GetAdventurerStatusQuery query, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🔍 [Handler] GetAdventurerStatusQueryHandler processing status request");
+        GameLogger.Debug($"[Handler] GetAdventurerStatusQueryHandler processing status request");
 
         var adventurer = _combatSystem.CurrentAdventurer;
         if (adventurer == null)
         {
-            GameLogger.Debug($"⚠️ [Handler] No current adventurer found");
+            GameLogger.Debug($"[Handler] No current adventurer found");
             return Task.FromResult("No adventurer currently active");
         }
 
@@ -46,7 +46,7 @@ public class GetAdventurerStatusQueryHandler : IQueryHandler<GetAdventurerStatus
 
         var result = $"{healthInfo} | {stateInfo}{combatInfo}";
         
-        GameLogger.Debug($"✅ [Handler] Status generated: {result}");
+        GameLogger.Debug($"[Handler] Status generated: {result}");
         return Task.FromResult(result);
     }
 }
@@ -65,10 +65,10 @@ public class GetAdventurerStateQueryHandler : IQueryHandler<GetAdventurerStateQu
 
     public Task<AdventurerState> HandleAsync(GetAdventurerStateQuery query, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🔍 [Handler] GetAdventurerStateQueryHandler processing state request");
+        GameLogger.Debug($"[Handler] GetAdventurerStateQueryHandler processing state request");
         
         var state = _combatSystem.State;
-        GameLogger.Debug($"✅ [Handler] Current adventurer state: {state}");
+        GameLogger.Debug($"[Handler] Current adventurer state: {state}");
         
         return Task.FromResult(state);
     }
@@ -88,10 +88,10 @@ public class IsAdventurerAvailableQueryHandler : IQueryHandler<IsAdventurerAvail
 
     public Task<bool> HandleAsync(IsAdventurerAvailableQuery query, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🔍 [Handler] IsAdventurerAvailableQueryHandler checking availability");
+        GameLogger.Debug($"[Handler] IsAdventurerAvailableQueryHandler checking availability");
         
         var isAvailable = _combatSystem.State == AdventurerState.Idle;
-        GameLogger.Debug($"✅ [Handler] Adventurer availability: {isAvailable} (State: {_combatSystem.State})");
+        GameLogger.Debug($"[Handler] Adventurer availability: {isAvailable} (State: {_combatSystem.State})");
         
         return Task.FromResult(isAvailable);
     }
@@ -111,10 +111,10 @@ public class GetCurrentAdventurerQueryHandler : IQueryHandler<GetCurrentAdventur
 
     public Task<CombatEntityStats?> HandleAsync(GetCurrentAdventurerQuery query, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🔍 [Handler] GetCurrentAdventurerQueryHandler retrieving current adventurer");
+        GameLogger.Debug($"[Handler] GetCurrentAdventurerQueryHandler retrieving current adventurer");
         
         var adventurer = _combatSystem.CurrentAdventurer;
-        GameLogger.Debug($"✅ [Handler] Current adventurer: {adventurer?.Name ?? "None"}");
+        GameLogger.Debug($"[Handler] Current adventurer: {adventurer?.Name ?? "None"}");
         
         return Task.FromResult(adventurer);
     }
@@ -134,10 +134,10 @@ public class GetCurrentMonsterQueryHandler : IQueryHandler<GetCurrentMonsterQuer
 
     public Task<CombatEntityStats?> HandleAsync(GetCurrentMonsterQuery query, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🔍 [Handler] GetCurrentMonsterQueryHandler retrieving current monster");
+        GameLogger.Debug($"[Handler] GetCurrentMonsterQueryHandler retrieving current monster");
         
         var monster = _combatSystem.CurrentMonster;
-        GameLogger.Debug($"✅ [Handler] Current monster: {monster?.Name ?? "None"}");
+        GameLogger.Debug($"[Handler] Current monster: {monster?.Name ?? "None"}");
         
         return Task.FromResult(monster);
     }
@@ -157,10 +157,10 @@ public class IsAdventurerInCombatQueryHandler : IQueryHandler<IsAdventurerInComb
 
     public Task<bool> HandleAsync(IsAdventurerInCombatQuery query, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🔍 [Handler] IsAdventurerInCombatQueryHandler checking combat status");
+        GameLogger.Debug($"[Handler] IsAdventurerInCombatQueryHandler checking combat status");
         
         var inCombat = _combatSystem.IsInCombat;
-        GameLogger.Debug($"✅ [Handler] In combat status: {inCombat}");
+        GameLogger.Debug($"[Handler] In combat status: {inCombat}");
         
         return Task.FromResult(inCombat);
     }
@@ -180,10 +180,10 @@ public class HasMonstersRemainingQueryHandler : IQueryHandler<HasMonstersRemaini
 
     public Task<bool> HandleAsync(HasMonstersRemainingQuery query, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🔍 [Handler] HasMonstersRemainingQueryHandler checking for remaining monsters");
+        GameLogger.Debug($"[Handler] HasMonstersRemainingQueryHandler checking for remaining monsters");
         
         var hasMonsters = _combatSystem.HasMonstersRemaining;
-        GameLogger.Debug($"✅ [Handler] Has monsters remaining: {hasMonsters}");
+        GameLogger.Debug($"[Handler] Has monsters remaining: {hasMonsters}");
         
         return Task.FromResult(hasMonsters);
     }
@@ -203,7 +203,7 @@ public class GetAdventurerInfoQueryHandler : IQueryHandler<GetAdventurerInfoQuer
 
     public Task<AdventurerInfo> HandleAsync(GetAdventurerInfoQuery query, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🔍 [Handler] GetAdventurerInfoQueryHandler retrieving comprehensive adventurer info");
+        GameLogger.Debug($"[Handler] GetAdventurerInfoQueryHandler retrieving comprehensive adventurer info");
 
         var adventurer = _combatSystem.CurrentAdventurer;
         var state = _combatSystem.State;
@@ -241,7 +241,7 @@ public class GetAdventurerInfoQueryHandler : IQueryHandler<GetAdventurerInfoQuer
             StatusInfo: statusInfo
         );
 
-        GameLogger.Debug($"✅ [Handler] Comprehensive adventurer info retrieved - State: {state}, Available: {isAvailable}");
+        GameLogger.Debug($"[Handler] Comprehensive adventurer info retrieved - State: {state}, Available: {isAvailable}");
         return Task.FromResult(info);
     }
 }

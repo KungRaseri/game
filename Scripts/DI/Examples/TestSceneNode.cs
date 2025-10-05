@@ -38,19 +38,19 @@ public partial class TestSceneNode : InjectableNode2D
     {
         if (Dispatcher == null)
         {
-            GameLogger.Error("❌ Dispatcher injection failed!");
+            GameLogger.Error("Dispatcher injection failed!");
             return;
         }
         
         if (GameService == null)
         {
-            GameLogger.Error("❌ GameService injection failed!");
+            GameLogger.Error("GameService injection failed!");
             return;
         }
         
-        GameLogger.Info("✅ All services injected successfully!");
-        GameLogger.Info($"✅ Dispatcher type: {Dispatcher.GetType().Name}");
-        GameLogger.Info($"✅ GameService type: {GameService.GetType().Name}");
+        GameLogger.Info("All services injected successfully!");
+        GameLogger.Info($"Dispatcher type: {Dispatcher.GetType().Name}");
+        GameLogger.Info($"GameService type: {GameService.GetType().Name}");
     }
     
     private async void TestCQSIntegration()
@@ -62,16 +62,16 @@ public partial class TestSceneNode : InjectableNode2D
             // Test command execution
             var testCommand = new LogGameEventCommand("DI_TEST", "Dependency Injection Test");
             await Dispatcher.DispatchCommandAsync(testCommand);
-            GameLogger.Info("✅ Command execution successful!");
+            GameLogger.Info("Command execution successful!");
             
             // Test query execution
             var testQuery = new GetGameStatusQuery();
             var result = await Dispatcher.DispatchQueryAsync<GetGameStatusQuery, GameStatus>(testQuery);
-            GameLogger.Info($"✅ Query execution successful! Result: {result}");
+            GameLogger.Info($"Query execution successful! Result: {result}");
         }
         catch (System.Exception ex)
         {
-            GameLogger.Error(ex, "❌ CQS integration test failed");
+            GameLogger.Error(ex, "CQS integration test failed");
         }
     }
     
@@ -83,7 +83,7 @@ public partial class TestSceneNode : InjectableNode2D
         _testTimer.Autostart = true;
         AddChild(_testTimer);
         
-        GameLogger.Info("🔄 Periodic test timer set up (every 5 seconds)");
+        GameLogger.Info("Periodic test timer set up (every 5 seconds)");
     }
     
     private async void OnPeriodicTest()
@@ -94,11 +94,11 @@ public partial class TestSceneNode : InjectableNode2D
         {
             var query = new GetGameStatusQuery();
             var status = await Dispatcher.DispatchQueryAsync<GetGameStatusQuery, GameStatus>(query);
-            GameLogger.Info($"🔄 Periodic test - Game Status: {status}");
+            GameLogger.Info($"Periodic test - Game Status: {status}");
         }
         catch (System.Exception ex)
         {
-            GameLogger.Error(ex, "❌ Periodic test failed");
+            GameLogger.Error(ex, "Periodic test failed");
         }
     }
     
@@ -111,7 +111,7 @@ public partial class TestSceneNode : InjectableNode2D
                 // Test input handling through CQS
                 var command = new LogGameEventCommand("INPUT", $"Key pressed: {keyEvent.Keycode}");
                 _ = Dispatcher.DispatchCommandAsync(command);
-                GameLogger.Info($"🎮 Input test - Key {keyEvent.Keycode} processed through CQS");
+                GameLogger.Info($"Input test - Key {keyEvent.Keycode} processed through CQS");
             }
         }
     }

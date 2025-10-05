@@ -20,7 +20,7 @@ public class Dispatcher : IDispatcher
     public Dispatcher(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        GameLogger.Debug("🏗️ [CQS] Dispatcher created with service provider");
+        GameLogger.Debug("[CQS] Dispatcher created with service provider");
     }
 
     /// <summary>
@@ -33,39 +33,39 @@ public class Dispatcher : IDispatcher
         var commandType = typeof(TCommand).Name;
         var stopwatch = Stopwatch.StartNew();
         
-        GameLogger.Debug($"🚀 [CQS] Starting command dispatch: {commandType}");
-        GameLogger.Debug($"📦 [CQS] Command data: {command}");
+        GameLogger.Debug($"[CQS] Starting command dispatch: {commandType}");
+        GameLogger.Debug($"[CQS] Command data: {command}");
         
         if (command == null)
         {
-            GameLogger.Error($"❌ [CQS] Command is null for type: {commandType}");
+            GameLogger.Error($"[CQS] Command is null for type: {commandType}");
             throw new ArgumentNullException(nameof(command));
         }
 
-        GameLogger.Debug($"🔍 [CQS] Resolving handler for command: {commandType}");
+        GameLogger.Debug($"[CQS] Resolving handler for command: {commandType}");
         var handler = _serviceProvider.GetService<ICommandHandler<TCommand>>();
         
         if (handler == null)
         {
-            GameLogger.Error($"❌ [CQS] No command handler registered for command type: {commandType}");
+            GameLogger.Error($"[CQS] No command handler registered for command type: {commandType}");
             throw new InvalidOperationException(
                 $"No command handler registered for command type: {commandType}");
         }
 
-        GameLogger.Debug($"✅ [CQS] Handler resolved: {handler.GetType().Name} for command: {commandType}");
+        GameLogger.Debug($"[CQS] Handler resolved: {handler.GetType().Name} for command: {commandType}");
         
         try
         {
-            GameLogger.Debug($"⏳ [CQS] Executing command handler for: {commandType}");
+            GameLogger.Debug($"[CQS] Executing command handler for: {commandType}");
             await handler.HandleAsync(command, cancellationToken);
             stopwatch.Stop();
             
-            GameLogger.Debug($"✅ [CQS] Command execution completed successfully: {commandType} (took {stopwatch.ElapsedMilliseconds}ms)");
+            GameLogger.Debug($"[CQS] Command execution completed successfully: {commandType} (took {stopwatch.ElapsedMilliseconds}ms)");
         }
         catch (Exception ex)
         {
             stopwatch.Stop();
-            GameLogger.Error(ex, $"💥 [CQS] Command execution failed: {commandType} (failed after {stopwatch.ElapsedMilliseconds}ms)");
+            GameLogger.Error(ex, $"[CQS] Command execution failed: {commandType} (failed after {stopwatch.ElapsedMilliseconds}ms)");
             throw;
         }
     }
@@ -81,42 +81,42 @@ public class Dispatcher : IDispatcher
         var resultType = typeof(TResult).Name;
         var stopwatch = Stopwatch.StartNew();
         
-        GameLogger.Debug($"🚀 [CQS] Starting command dispatch with result: {commandType} -> {resultType}");
-        GameLogger.Debug($"📦 [CQS] Command data: {command}");
+        GameLogger.Debug($"[CQS] Starting command dispatch with result: {commandType} -> {resultType}");
+        GameLogger.Debug($"[CQS] Command data: {command}");
         
         if (command == null)
         {
-            GameLogger.Error($"❌ [CQS] Command is null for type: {commandType}");
+            GameLogger.Error($"[CQS] Command is null for type: {commandType}");
             throw new ArgumentNullException(nameof(command));
         }
 
-        GameLogger.Debug($"🔍 [CQS] Resolving handler for command with result: {commandType} -> {resultType}");
+        GameLogger.Debug($"[CQS] Resolving handler for command with result: {commandType} -> {resultType}");
         var handler = _serviceProvider.GetService<ICommandHandler<TCommand, TResult>>();
         
         if (handler == null)
         {
-            GameLogger.Error($"❌ [CQS] No command handler registered for command type: {commandType} -> {resultType}");
+            GameLogger.Error($"[CQS] No command handler registered for command type: {commandType} -> {resultType}");
             throw new InvalidOperationException(
                 $"No command handler registered for command type: {commandType}");
         }
 
-        GameLogger.Debug($"✅ [CQS] Handler resolved: {handler.GetType().Name} for command: {commandType} -> {resultType}");
+        GameLogger.Debug($"[CQS] Handler resolved: {handler.GetType().Name} for command: {commandType} -> {resultType}");
         
         try
         {
-            GameLogger.Debug($"⏳ [CQS] Executing command handler for: {commandType} -> {resultType}");
+            GameLogger.Debug($"[CQS] Executing command handler for: {commandType} -> {resultType}");
             var result = await handler.HandleAsync(command, cancellationToken);
             stopwatch.Stop();
             
-            GameLogger.Debug($"✅ [CQS] Command execution completed with result: {commandType} -> {resultType} (took {stopwatch.ElapsedMilliseconds}ms)");
-            GameLogger.Debug($"📤 [CQS] Command result: {result}");
+            GameLogger.Debug($"[CQS] Command execution completed with result: {commandType} -> {resultType} (took {stopwatch.ElapsedMilliseconds}ms)");
+            GameLogger.Debug($"[CQS] Command result: {result}");
             
             return result;
         }
         catch (Exception ex)
         {
             stopwatch.Stop();
-            GameLogger.Error(ex, $"💥 [CQS] Command execution failed: {commandType} -> {resultType} (failed after {stopwatch.ElapsedMilliseconds}ms)");
+            GameLogger.Error(ex, $"[CQS] Command execution failed: {commandType} -> {resultType} (failed after {stopwatch.ElapsedMilliseconds}ms)");
             throw;
         }
     }
@@ -132,42 +132,42 @@ public class Dispatcher : IDispatcher
         var resultType = typeof(TResult).Name;
         var stopwatch = Stopwatch.StartNew();
         
-        GameLogger.Debug($"🔍 [CQS] Starting query dispatch: {queryType} -> {resultType}");
-        GameLogger.Debug($"📋 [CQS] Query data: {query}");
+        GameLogger.Debug($"[CQS] Starting query dispatch: {queryType} -> {resultType}");
+        GameLogger.Debug($"[CQS] Query data: {query}");
         
         if (query == null)
         {
-            GameLogger.Error($"❌ [CQS] Query is null for type: {queryType}");
+            GameLogger.Error($"[CQS] Query is null for type: {queryType}");
             throw new ArgumentNullException(nameof(query));
         }
 
-        GameLogger.Debug($"🔍 [CQS] Resolving handler for query: {queryType} -> {resultType}");
+        GameLogger.Debug($"[CQS] Resolving handler for query: {queryType} -> {resultType}");
         var handler = _serviceProvider.GetService<IQueryHandler<TQuery, TResult>>();
         
         if (handler == null)
         {
-            GameLogger.Error($"❌ [CQS] No query handler registered for query type: {queryType} -> {resultType}");
+            GameLogger.Error($"[CQS] No query handler registered for query type: {queryType} -> {resultType}");
             throw new InvalidOperationException(
                 $"No query handler registered for query type: {queryType}");
         }
 
-        GameLogger.Debug($"✅ [CQS] Handler resolved: {handler.GetType().Name} for query: {queryType} -> {resultType}");
+        GameLogger.Debug($"[CQS] Handler resolved: {handler.GetType().Name} for query: {queryType} -> {resultType}");
         
         try
         {
-            GameLogger.Debug($"⏳ [CQS] Executing query handler for: {queryType} -> {resultType}");
+            GameLogger.Debug($"[CQS] Executing query handler for: {queryType} -> {resultType}");
             var result = await handler.HandleAsync(query, cancellationToken);
             stopwatch.Stop();
             
-            GameLogger.Debug($"✅ [CQS] Query execution completed successfully: {queryType} -> {resultType} (took {stopwatch.ElapsedMilliseconds}ms)");
-            GameLogger.Debug($"📤 [CQS] Query result: {result}");
+            GameLogger.Debug($"[CQS] Query execution completed successfully: {queryType} -> {resultType} (took {stopwatch.ElapsedMilliseconds}ms)");
+            GameLogger.Debug($"[CQS] Query result: {result}");
             
             return result;
         }
         catch (Exception ex)
         {
             stopwatch.Stop();
-            GameLogger.Error(ex, $"💥 [CQS] Query execution failed: {queryType} -> {resultType} (failed after {stopwatch.ElapsedMilliseconds}ms)");
+            GameLogger.Error(ex, $"[CQS] Query execution failed: {queryType} -> {resultType} (failed after {stopwatch.ElapsedMilliseconds}ms)");
             throw;
         }
     }

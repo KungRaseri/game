@@ -71,8 +71,8 @@ public class LogGameEventCommandHandler : ICommandHandler<LogGameEventCommand>
 {
     public Task HandleAsync(LogGameEventCommand command, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🎯 [Handler] LogGameEventCommandHandler received command: {command.Event}");
-        GameLogger.Debug($"📝 [Handler] Command details - Event: {command.Event}, Message: {command.Message}");
+        GameLogger.Debug($"[Handler] LogGameEventCommandHandler received command: {command.Event}");
+        GameLogger.Debug($"[Handler] Command details - Event: {command.Event}, Message: {command.Message}");
         
         // Direct business logic - log the event
         var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
@@ -82,7 +82,7 @@ public class LogGameEventCommandHandler : ICommandHandler<LogGameEventCommand>
         Console.WriteLine(logMessage);
         Godot.GD.Print(logMessage);
         
-        GameLogger.Debug($"✅ [Handler] LogGameEventCommandHandler completed successfully");
+        GameLogger.Debug($"[Handler] LogGameEventCommandHandler completed successfully");
         return Task.CompletedTask;
     }
 }
@@ -94,7 +94,7 @@ public class GetGameStatusQueryHandler : IQueryHandler<GetGameStatusQuery, GameS
 {
     public Task<GameStatus> HandleAsync(GetGameStatusQuery query, CancellationToken cancellationToken = default)
     {
-        GameLogger.Debug($"🔍 [Handler] GetGameStatusQueryHandler received query");
+        GameLogger.Debug($"[Handler] GetGameStatusQueryHandler received query");
         
         // Direct business logic - get current game status
         var currentScene = "Unknown";
@@ -104,7 +104,7 @@ public class GetGameStatusQueryHandler : IQueryHandler<GetGameStatusQuery, GameS
             currentScene = sceneTree.CurrentScene?.Name ?? "Unknown";
         }
         
-        GameLogger.Debug($"📊 [Handler] Current scene detected: {currentScene}");
+        GameLogger.Debug($"[Handler] Current scene detected: {currentScene}");
         
         var status = new GameStatus(
             IsRunning: true,
@@ -112,7 +112,7 @@ public class GetGameStatusQueryHandler : IQueryHandler<GetGameStatusQuery, GameS
             PlayerCount: 1 // This would come from actual game state
         );
         
-        GameLogger.Debug($"✅ [Handler] GetGameStatusQueryHandler completed - Status: {status}");
+        GameLogger.Debug($"[Handler] GetGameStatusQueryHandler completed - Status: {status}");
         return Task.FromResult(status);
     }
 }
