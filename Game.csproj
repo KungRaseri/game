@@ -16,8 +16,6 @@
 		<Compile Remove="Game.Inventory\**" />
 		<Compile Remove="Game.Items.Tests\**" />
 		<Compile Remove="Game.Items\**" />
-		<Compile Remove="Game.Main.Tests\**" />
-		<Compile Remove="Game.Main\**" />
 		<Compile Remove="Game.Shop.Tests\**" />
 		<Compile Remove="Game.Shop\**" />
 		<EmbeddedResource Remove="Game.Adventure.Tests\**" />
@@ -34,8 +32,6 @@
 		<EmbeddedResource Remove="Game.Items\**" />
 		<EmbeddedResource Remove="Game.Shop.Tests\**" />
 		<EmbeddedResource Remove="Game.Shop\**" />
-		<Compile Remove="Game.Item\**" />
-		<EmbeddedResource Remove="Game.Item\**" />
 		<Compile Remove="Game.Inventories\**" />
 		<EmbeddedResource Remove="Game.Inventories\**" />
 		<Compile Remove="Game.Inventories.Tests\**" />
