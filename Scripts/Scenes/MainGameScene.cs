@@ -19,7 +19,7 @@ namespace Game.Scripts.Scenes;
 /// </summary>
 public partial class MainGameScene : Control
 {
-    [Export] public float UpdateInterval { get; set; } = 0.1f;
+    [Export] public float UpdateInterval { get; set; } = 1.0f;
     [Export] public int MaxCombatLogEntries { get; set; } = 50;
     [Export] public PackedScene? MaterialToastScene { get; set; }
 
