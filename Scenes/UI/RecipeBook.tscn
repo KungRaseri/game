@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://c8j9k1l2m3n4o"]
+[gd_scene load_steps=3 format=3 uid="uid://c8kak1l2m3n4o"]
 
 [ext_resource type="Script" path="res://Scripts/UI/RecipeBookUI.cs" id="1_0r3k6"]
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://d9h8i7j6k5l4m"]
+[gd_scene load_steps=3 format=3 uid="uid://e3dw5mw0xqdu"]
 
 [ext_resource type="Script" path="res://Scripts/UI/CraftingProgressUI.cs" id="1_0r4l7"]
 
