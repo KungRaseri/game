@@ -24,7 +24,7 @@ public class Dispatcher : IDispatcher
     /// Dispatches a command to its registered handler.
     /// Throws InvalidOperationException if no handler is registered.
     /// </summary>
-    public async Task DispatchAsync<TCommand>(TCommand command, CancellationToken cancellationToken = default)
+    public async Task DispatchCommandAsync<TCommand>(TCommand command, CancellationToken cancellationToken = default)
         where TCommand : ICommand
     {
         if (command == null)
@@ -44,7 +44,7 @@ public class Dispatcher : IDispatcher
     /// Dispatches a command to its registered handler and returns the result.
     /// Throws InvalidOperationException if no handler is registered.
     /// </summary>
-    public async Task<TResult> DispatchAsync<TCommand, TResult>(TCommand command, CancellationToken cancellationToken = default)
+    public async Task<TResult> DispatchCommandAsync<TCommand, TResult>(TCommand command, CancellationToken cancellationToken = default)
         where TCommand : ICommand<TResult>
     {
         if (command == null)
@@ -64,7 +64,7 @@ public class Dispatcher : IDispatcher
     /// Dispatches a query to its registered handler and returns the result.
     /// Throws InvalidOperationException if no handler is registered.
     /// </summary>
-    public async Task<TResult> DispatchAsync<TQuery, TResult>(TQuery query, CancellationToken cancellationToken = default)
+    public async Task<TResult> DispatchQueryAsync<TQuery, TResult>(TQuery query, CancellationToken cancellationToken = default)
         where TQuery : IQuery<TResult>
     {
         if (query == null)

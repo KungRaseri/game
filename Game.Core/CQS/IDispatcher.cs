@@ -18,7 +18,7 @@ public interface IDispatcher
     /// <typeparam name="TCommand">Type of command to dispatch</typeparam>
     /// <param name="command">Command to execute</param>
     /// <param name="cancellationToken">Cancellation token for async operations</param>
-    Task DispatchAsync<TCommand>(TCommand command, CancellationToken cancellationToken = default)
+    Task DispatchCommandAsync<TCommand>(TCommand command, CancellationToken cancellationToken = default)
         where TCommand : ICommand;
 
     /// <summary>
@@ -30,7 +30,7 @@ public interface IDispatcher
     /// <param name="command">Command to execute</param>
     /// <param name="cancellationToken">Cancellation token for async operations</param>
     /// <returns>Result of the command execution</returns>
-    Task<TResult> DispatchAsync<TCommand, TResult>(TCommand command, CancellationToken cancellationToken = default)
+    Task<TResult> DispatchCommandAsync<TCommand, TResult>(TCommand command, CancellationToken cancellationToken = default)
         where TCommand : ICommand<TResult>;
 
     /// <summary>
@@ -42,6 +42,6 @@ public interface IDispatcher
     /// <param name="query">Query to execute</param>
     /// <param name="cancellationToken">Cancellation token for async operations</param>
     /// <returns>Data requested by the query</returns>
-    Task<TResult> DispatchAsync<TQuery, TResult>(TQuery query, CancellationToken cancellationToken = default)
+    Task<TResult> DispatchQueryAsync<TQuery, TResult>(TQuery query, CancellationToken cancellationToken = default)
         where TQuery : IQuery<TResult>;
 }
