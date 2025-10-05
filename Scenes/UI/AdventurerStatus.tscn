@@ -1,28 +1,25 @@
 [gd_scene load_steps=2 format=3 uid="uid://b7x3k2qm4wan1"]
 
-[ext_resource type="Script" path="res://Scripts/UI/AdventurerStatusUI.cs" id="1_adventurer_script"]
+[ext_resource type="Script" uid="uid://ugx0dmymfcvp" path="res://Scripts/UI/AdventurerStatusUI.cs" id="1_adventurer_script"]
 
 [node name="AdventurerStatus" type="Panel"]
-layout_mode = 3
-anchors_preset = 1
-anchor_left = 0.0
-anchor_top = 0.0
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 0.0
 offset_bottom = 200.0
+grow_horizontal = 0
 script = ExtResource("1_adventurer_script")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = -10.0
 offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TitleLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
@@ -41,26 +38,26 @@ layout_mode = 2
 
 [node name="NameLabel" type="Label" parent="VBoxContainer/InfoContainer/NameContainer"]
 layout_mode = 2
-text = "Name:"
 size_flags_horizontal = 0
+text = "Name:"
 
 [node name="AdventurerName" type="Label" parent="VBoxContainer/InfoContainer/NameContainer"]
 layout_mode = 2
-text = "Unknown Adventurer"
 size_flags_horizontal = 3
+text = "Unknown Adventurer"
 
 [node name="StateContainer" type="HBoxContainer" parent="VBoxContainer/InfoContainer"]
 layout_mode = 2
 
 [node name="StateLabel" type="Label" parent="VBoxContainer/InfoContainer/StateContainer"]
 layout_mode = 2
-text = "State:"
 size_flags_horizontal = 0
+text = "State:"
 
 [node name="AdventurerState" type="Label" parent="VBoxContainer/InfoContainer/StateContainer"]
 layout_mode = 2
-text = "Idle"
 size_flags_horizontal = 3
+text = "Idle"
 
 [node name="HealthContainer" type="VBoxContainer" parent="VBoxContainer/InfoContainer"]
 layout_mode = 2
@@ -70,18 +67,16 @@ layout_mode = 2
 
 [node name="HealthLabel" type="Label" parent="VBoxContainer/InfoContainer/HealthContainer/HealthLabelContainer"]
 layout_mode = 2
-text = "Health:"
 size_flags_horizontal = 0
+text = "Health:"
 
 [node name="HealthText" type="Label" parent="VBoxContainer/InfoContainer/HealthContainer/HealthLabelContainer"]
 layout_mode = 2
-text = "100 / 100"
 size_flags_horizontal = 3
+text = "100 / 100"
 
 [node name="HealthBar" type="ProgressBar" parent="VBoxContainer/InfoContainer/HealthContainer"]
 layout_mode = 2
-min_value = 0.0
-max_value = 100.0
 value = 100.0
 show_percentage = false
 
@@ -99,8 +94,8 @@ text = "Send to Goblin Cave"
 [node name="RetreatButton" type="Button" parent="VBoxContainer/ButtonContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Retreat"
 disabled = true
+text = "Retreat"
 
 [connection signal="pressed" from="VBoxContainer/ButtonContainer/SendExpeditionButton" to="." method="OnSendExpeditionPressed"]
 [connection signal="pressed" from="VBoxContainer/ButtonContainer/RetreatButton" to="." method="OnRetreatPressed"]

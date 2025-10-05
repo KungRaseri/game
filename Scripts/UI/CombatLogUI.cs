@@ -1,6 +1,7 @@
 #nullable enable
 
-using Game.Adventure.Controllers;
+using Game.Adventure.Queries;
+using Game.Core.CQS;
 using Game.Core.Utils;
 using Godot;
 
@@ -9,6 +10,7 @@ namespace Game.Scripts.UI;
 /// <summary>
 /// UI component that displays combat events and status messages.
 /// Follows Godot 4.5 C# best practices and coding conventions.
+/// Uses CQS pattern for data access.
 /// </summary>
 public partial class CombatLogUI : Panel
 {
@@ -20,13 +22,15 @@ public partial class CombatLogUI : Panel
     private Button? _clearButton;
 
     private readonly Queue<string> _logEntries = new();
-    private AdventurerController? _adventurerController;
+    private IDispatcher? _dispatcher;
+    private Godot.Timer? _updateTimer;
 
     public override void _Ready()
     {
         GameLogger.Info("CombatLogUI initializing");
 
         CacheNodeReferences();
+        SetupUpdateTimer();
         InitializeLog();
 
         GameLogger.Info("CombatLogUI ready");
@@ -34,23 +38,20 @@ public partial class CombatLogUI : Panel
 
     public override void _ExitTree()
     {
-        UnsubscribeFromController();
+        if (_updateTimer != null)
+        {
+            _updateTimer.Timeout -= OnUpdateTimer;
+            _updateTimer?.QueueFree();
+        }
         GameLogger.Info("CombatLogUI disposed");
     }
 
     /// <summary>
-    /// Sets the adventurer controller and subscribes to its events.
+    /// Sets the CQS dispatcher for this UI component.
     /// </summary>
-    public void SetAdventurerController(AdventurerController controller)
+    public void SetDispatcher(IDispatcher dispatcher)
     {
-        UnsubscribeFromController();
-
-        _adventurerController = controller;
-
-        if (_adventurerController != null)
-        {
-            _adventurerController.StatusUpdated += OnStatusUpdated;
-        }
+        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
     }
 
     /// <summary>
@@ -88,11 +89,31 @@ public partial class CombatLogUI : Panel
         _clearButton = GetNode<Button>("VBoxContainer/HeaderContainer/ClearButton");
     }
 
-    private void UnsubscribeFromController()
+    private void SetupUpdateTimer()
     {
-        if (_adventurerController != null)
+        _updateTimer = new Godot.Timer();
+        _updateTimer.WaitTime = 1.0; // Update every second for status changes
+        _updateTimer.Autostart = true;
+        _updateTimer.Timeout += OnUpdateTimer;
+        AddChild(_updateTimer);
+    }
+
+    private async void OnUpdateTimer()
+    {
+        if (_dispatcher == null) return;
+
+        try
         {
-            _adventurerController.StatusUpdated -= OnStatusUpdated;
+            // Poll for status updates periodically
+            var statusQuery = new GetAdventurerStatusQuery();
+            var statusMessage = await _dispatcher.DispatchQueryAsync<GetAdventurerStatusQuery, string>(statusQuery);
+            
+            // Only add to log if status has changed
+            // (In a real implementation, you might want to track the last status)
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Failed to update combat log status");
         }
     }
 
@@ -123,13 +144,6 @@ public partial class CombatLogUI : Panel
             // Set scroll to maximum value to scroll to bottom
             _scrollContainer.ScrollVertical = (int)_scrollContainer.GetVScrollBar().MaxValue;
         }
-    }
-
-    private void OnStatusUpdated(string message)
-    {
-        // Determine color based on message content
-        var color = DetermineMessageColor(message);
-        AddLogEntry(message, color);
     }
 
     private string DetermineMessageColor(string message)

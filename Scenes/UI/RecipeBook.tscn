@@ -1,0 +1,191 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8kak1l2m3n4o"]
+
+[ext_resource type="Script" path="res://Scripts/UI/RecipeBookUI.cs" id="1_0r3k6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2tufh"]
+bg_color = Color(0.15, 0.2, 0.25, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.4, 0.2, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="RecipeBook" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_0r3k6")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_2tufh")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+
+[node name="Header" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MainContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Recipe Book"
+
+[node name="StatsContainer" type="HBoxContainer" parent="MainContainer/Header"]
+layout_mode = 2
+
+[node name="DiscoveredLabel" type="Label" parent="MainContainer/Header/StatsContainer"]
+layout_mode = 2
+text = "Discovered: 0/0"
+
+[node name="UnlockedLabel" type="Label" parent="MainContainer/Header/StatsContainer"]
+layout_mode = 2
+text = "Unlocked: 0/0"
+
+[node name="CloseButton" type="Button" parent="MainContainer/Header"]
+layout_mode = 2
+text = "×"
+
+[node name="FilterContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="SearchBox" type="LineEdit" parent="MainContainer/FilterContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search recipes by name or ingredient..."
+
+[node name="CategoryFilter" type="OptionButton" parent="MainContainer/FilterContainer"]
+layout_mode = 2
+text = "All Categories"
+
+[node name="StatusFilter" type="OptionButton" parent="MainContainer/FilterContainer"]
+layout_mode = 2
+text = "All Recipes"
+
+[node name="SortByFilter" type="OptionButton" parent="MainContainer/FilterContainer"]
+layout_mode = 2
+text = "Sort by Name"
+
+[node name="ContentContainer" type="HSplitContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RecipeListPanel" type="VBoxContainer" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RecipeListLabel" type="Label" parent="MainContainer/ContentContainer/RecipeListPanel"]
+layout_mode = 2
+text = "Recipes"
+
+[node name="RecipeTree" type="Tree" parent="MainContainer/ContentContainer/RecipeListPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 3
+column_titles_visible = true
+
+[node name="RecipeDetailsPanel" type="VBoxContainer" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RecipeDetailsLabel" type="Label" parent="MainContainer/ContentContainer/RecipeDetailsPanel"]
+layout_mode = 2
+text = "Recipe Details"
+
+[node name="RecipeDetailsScroll" type="ScrollContainer" parent="MainContainer/ContentContainer/RecipeDetailsPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RecipeDetailsContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RecipeNameLabel" type="Label" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
+layout_mode = 2
+text = "Select a Recipe"
+
+[node name="RecipeImage" type="TextureRect" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(64, 64)
+
+[node name="RecipeStatusLabel" type="Label" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
+layout_mode = 2
+text = "Status: Unknown"
+
+[node name="RecipeCategoryLabel" type="Label" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
+layout_mode = 2
+text = "Category: -"
+
+[node name="RecipeDescriptionLabel" type="Label" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
+layout_mode = 2
+text = "Description:"
+
+[node name="RecipeDescription" type="RichTextLabel" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "Select a recipe to view its description and crafting requirements."
+
+[node name="RequirementsSection" type="VBoxContainer" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
+layout_mode = 2
+
+[node name="RequirementsLabel" type="Label" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer/RequirementsSection"]
+layout_mode = 2
+text = "Requirements:"
+
+[node name="MaterialRequirementsList" type="VBoxContainer" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer/RequirementsSection"]
+layout_mode = 2
+
+[node name="SkillRequirementsLabel" type="Label" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer/RequirementsSection"]
+layout_mode = 2
+text = "Skill Requirements:"
+
+[node name="SkillRequirementsList" type="VBoxContainer" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer/RequirementsSection"]
+layout_mode = 2
+
+[node name="UnlockSection" type="VBoxContainer" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
+layout_mode = 2
+
+[node name="UnlockLabel" type="Label" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer/UnlockSection"]
+layout_mode = 2
+text = "Unlock Requirements:"
+
+[node name="UnlockRequirementsList" type="VBoxContainer" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer/UnlockSection"]
+layout_mode = 2
+
+[node name="ActionButtonsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/RecipeDetailsPanel"]
+layout_mode = 2
+
+[node name="TryCraftButton" type="Button" parent="MainContainer/ContentContainer/RecipeDetailsPanel/ActionButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Try to Craft"
+
+[node name="AddToWorkshopButton" type="Button" parent="MainContainer/ContentContainer/RecipeDetailsPanel/ActionButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add to Workshop"
+
+[connection signal="pressed" from="MainContainer/Header/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="text_changed" from="MainContainer/FilterContainer/SearchBox" to="." method="OnSearchTextChanged"]
+[connection signal="item_selected" from="MainContainer/FilterContainer/CategoryFilter" to="." method="OnCategoryFilterChanged"]
+[connection signal="item_selected" from="MainContainer/FilterContainer/StatusFilter" to="." method="OnStatusFilterChanged"]
+[connection signal="item_selected" from="MainContainer/FilterContainer/SortByFilter" to="." method="OnSortFilterChanged"]
+[connection signal="item_selected" from="MainContainer/ContentContainer/RecipeListPanel/RecipeTree" to="." method="OnRecipeSelected"]
+[connection signal="pressed" from="MainContainer/ContentContainer/RecipeDetailsPanel/ActionButtonsContainer/TryCraftButton" to="." method="OnTryCraftPressed"]
+[connection signal="pressed" from="MainContainer/ContentContainer/RecipeDetailsPanel/ActionButtonsContainer/AddToWorkshopButton" to="." method="OnAddToWorkshopPressed"]

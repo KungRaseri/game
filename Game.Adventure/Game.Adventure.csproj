@@ -5,4 +5,9 @@
     <ProjectReference Include="..\Game.Items\Game.Items.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="Microsoft.Extensions.Logging" Version="9.0.9" />
+    <PackageReference Update="System.Text.Json" Version="9.0.9" />
+  </ItemGroup>
+
 </Project>
