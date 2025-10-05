@@ -1,28 +1,25 @@
 [gd_scene load_steps=2 format=3 uid="uid://c5v7n2x4q8p1m"]
 
-[ext_resource type="Script" path="res://Scripts/UI/ExpeditionPanelUI.cs" id="1_expedition_script"]
+[ext_resource type="Script" uid="uid://d36ec5wwsnoum" path="res://Scripts/UI/ExpeditionPanelUI.cs" id="1_expedition_script"]
 
 [node name="ExpeditionPanel" type="Panel"]
-layout_mode = 3
-anchors_preset = 1
-anchor_left = 0.0
-anchor_top = 0.0
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 0.0
 offset_bottom = 180.0
+grow_horizontal = 0
 script = ExtResource("1_expedition_script")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = -10.0
 offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TitleLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
@@ -41,13 +38,13 @@ layout_mode = 2
 
 [node name="DungeonLabel" type="Label" parent="VBoxContainer/InfoContainer/DungeonContainer"]
 layout_mode = 2
-text = "Dungeon:"
 size_flags_horizontal = 0
+text = "Dungeon:"
 
 [node name="DungeonName" type="Label" parent="VBoxContainer/InfoContainer/DungeonContainer"]
 layout_mode = 2
-text = "None Selected"
 size_flags_horizontal = 3
+text = "None Selected"
 
 [node name="ProgressContainer" type="VBoxContainer" parent="VBoxContainer/InfoContainer"]
 layout_mode = 2
@@ -57,19 +54,16 @@ layout_mode = 2
 
 [node name="ProgressLabel" type="Label" parent="VBoxContainer/InfoContainer/ProgressContainer/ProgressLabelContainer"]
 layout_mode = 2
-text = "Progress:"
 size_flags_horizontal = 0
+text = "Progress:"
 
 [node name="ProgressText" type="Label" parent="VBoxContainer/InfoContainer/ProgressContainer/ProgressLabelContainer"]
 layout_mode = 2
-text = "0 / 0"
 size_flags_horizontal = 3
+text = "0 / 0"
 
 [node name="ProgressBar" type="ProgressBar" parent="VBoxContainer/InfoContainer/ProgressContainer"]
 layout_mode = 2
-min_value = 0.0
-max_value = 100.0
-value = 0.0
 show_percentage = false
 
 [node name="MonsterContainer" type="HBoxContainer" parent="VBoxContainer/InfoContainer"]
@@ -77,13 +71,13 @@ layout_mode = 2
 
 [node name="MonsterLabel" type="Label" parent="VBoxContainer/InfoContainer/MonsterContainer"]
 layout_mode = 2
-text = "Current Enemy:"
 size_flags_horizontal = 0
+text = "Current Enemy:"
 
 [node name="MonsterName" type="Label" parent="VBoxContainer/InfoContainer/MonsterContainer"]
 layout_mode = 2
-text = "None"
 size_flags_horizontal = 3
+text = "None"
 
 [node name="EnemyHealthContainer" type="VBoxContainer" parent="VBoxContainer/InfoContainer"]
 layout_mode = 2
@@ -93,19 +87,16 @@ layout_mode = 2
 
 [node name="EnemyHealthLabel" type="Label" parent="VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthLabelContainer"]
 layout_mode = 2
-text = "Enemy Health:"
 size_flags_horizontal = 0
+text = "Enemy Health:"
 
 [node name="EnemyHealthText" type="Label" parent="VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthLabelContainer"]
 layout_mode = 2
-text = "-- / --"
 size_flags_horizontal = 3
+text = "-- / --"
 
 [node name="EnemyHealthBar" type="ProgressBar" parent="VBoxContainer/InfoContainer/EnemyHealthContainer"]
 layout_mode = 2
-min_value = 0.0
-max_value = 100.0
-value = 0.0
 show_percentage = false
 
 [node name="StatusContainer" type="HBoxContainer" parent="VBoxContainer/InfoContainer"]
@@ -113,10 +104,10 @@ layout_mode = 2
 
 [node name="StatusLabel" type="Label" parent="VBoxContainer/InfoContainer/StatusContainer"]
 layout_mode = 2
-text = "Status:"
 size_flags_horizontal = 0
+text = "Status:"
 
 [node name="ExpeditionStatus" type="Label" parent="VBoxContainer/InfoContainer/StatusContainer"]
 layout_mode = 2
-text = "Not Active"
 size_flags_horizontal = 3
+text = "Not Active"

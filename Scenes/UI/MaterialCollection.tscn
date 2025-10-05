@@ -1,29 +1,28 @@
 [gd_scene load_steps=3 format=3 uid="uid://5vuncmhosicy"]
 
-[ext_resource type="Script" path="res://Scripts/UI/MaterialCollectionUI.cs" id="1_material_collection_script"]
+[ext_resource type="Script" uid="uid://d2ugl7sc2cfj3" path="res://Scripts/UI/MaterialCollectionUI.cs" id="1_material_collection_script"]
 [ext_resource type="PackedScene" uid="uid://bcs7go00s7rgn" path="res://Scenes/UI/AdventurerInventory.tscn" id="2_adventurer_inventory"]
 
 [node name="MaterialCollection" type="Panel"]
-layout_mode = 3
 anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_material_collection_script")
 AdventurerInventoryScene = ExtResource("2_adventurer_inventory")
 
 [node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = -10.0
 offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TitleLabel" type="Label" parent="VBox"]
 layout_mode = 2
