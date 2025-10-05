@@ -2,6 +2,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Game.Core.CQS;
+using Game.Core.Utils;
 
 namespace Game.Core.Extensions;
 
@@ -19,9 +20,12 @@ public static class ServiceCollectionExtensions
     /// <returns>Service collection for method chaining</returns>
     public static IServiceCollection AddCQS(this IServiceCollection services)
     {
+        GameLogger.Debug("🏗️ [CQS] Registering core CQS services...");
+        
         // Register the dispatcher as singleton for performance
         services.AddSingleton<IDispatcher, Dispatcher>();
         
+        GameLogger.Debug("✅ [CQS] Core CQS services registered successfully");
         return services;
     }
 
@@ -40,7 +44,14 @@ public static class ServiceCollectionExtensions
         where TCommand : ICommand
         where THandler : class, ICommandHandler<TCommand>
     {
+        var commandType = typeof(TCommand).Name;
+        var handlerType = typeof(THandler).Name;
+        
+        GameLogger.Debug($"📝 [CQS] Registering command handler: {commandType} -> {handlerType} ({lifetime})");
+        
         services.Add(new ServiceDescriptor(typeof(ICommandHandler<TCommand>), typeof(THandler), lifetime));
+        
+        GameLogger.Debug($"✅ [CQS] Command handler registered: {commandType} -> {handlerType}");
         return services;
     }
 
@@ -60,7 +71,15 @@ public static class ServiceCollectionExtensions
         where TCommand : ICommand<TResult>
         where THandler : class, ICommandHandler<TCommand, TResult>
     {
+        var commandType = typeof(TCommand).Name;
+        var resultType = typeof(TResult).Name;
+        var handlerType = typeof(THandler).Name;
+        
+        GameLogger.Debug($"📝 [CQS] Registering command handler with result: {commandType} -> {resultType} via {handlerType} ({lifetime})");
+        
         services.Add(new ServiceDescriptor(typeof(ICommandHandler<TCommand, TResult>), typeof(THandler), lifetime));
+        
+        GameLogger.Debug($"✅ [CQS] Command handler with result registered: {commandType} -> {resultType} via {handlerType}");
         return services;
     }
 
@@ -80,7 +99,15 @@ public static class ServiceCollectionExtensions
         where TQuery : IQuery<TResult>
         where THandler : class, IQueryHandler<TQuery, TResult>
     {
+        var queryType = typeof(TQuery).Name;
+        var resultType = typeof(TResult).Name;
+        var handlerType = typeof(THandler).Name;
+        
+        GameLogger.Debug($"📋 [CQS] Registering query handler: {queryType} -> {resultType} via {handlerType} ({lifetime})");
+        
         services.Add(new ServiceDescriptor(typeof(IQueryHandler<TQuery, TResult>), typeof(THandler), lifetime));
+        
+        GameLogger.Debug($"✅ [CQS] Query handler registered: {queryType} -> {resultType} via {handlerType}");
         return services;
     }
 }

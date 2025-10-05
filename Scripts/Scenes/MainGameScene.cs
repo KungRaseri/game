@@ -51,7 +51,6 @@ public partial class MainGameScene : Control
     public override void _Ready()
     {
         // Set up Godot logging backend for proper GD.Print integration
-        GameLogger.SetBackend(new GodotLoggerBackend());
         GameLogger.Info("MainGameScene initializing");
 
         CacheUIReferences();

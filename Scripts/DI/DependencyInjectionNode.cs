@@ -4,6 +4,7 @@ using Godot;
 using Microsoft.Extensions.DependencyInjection;
 using Game.Core.CQS;
 using Game.Core.Extensions;
+using Game.Core.Utils;
 using Game.DI.Examples;
 
 namespace Game.DI;
@@ -39,6 +40,7 @@ public partial class DependencyInjectionNode : Node
     public override void _Ready()
     {
         GD.Print("Initializing custom dependency injection...");
+        GameLogger.SetBackend(new GodotLoggerBackend());
         
         _services = new ServiceCollection();
         ConfigureServices(_services);
@@ -62,13 +64,17 @@ public partial class DependencyInjectionNode : Node
     /// </summary>
     private static void ConfigureServices(IServiceCollection services)
     {
+        GameLogger.Debug("🔧 [DI] Starting service configuration...");
+        
         // Add CQS infrastructure
         services.AddCQS();
 
         // Register example services
+        GameLogger.Debug("📦 [DI] Registering game services...");
         services.AddScoped<IGameService, GameService>();
         
         // Register CQS handlers
+        GameLogger.Debug("🎯 [DI] Registering CQS handlers...");
         services.AddCommandHandler<LogGameEventCommand, LogGameEventCommandHandler>();
         services.AddQueryHandler<GetGameStatusQuery, GameStatus, GetGameStatusQueryHandler>();
 
@@ -77,6 +83,7 @@ public partial class DependencyInjectionNode : Node
         // services.AddScoped<IShopService, ShopService>();
         // etc.
         
+        GameLogger.Debug($"✅ [DI] Service configuration completed - Registered {services.Count} services");
         GD.Print($"Registered {services.Count} services");
     }
 
