@@ -1,11 +1,12 @@
 #nullable enable
 
-using Godot;
-using Microsoft.Extensions.DependencyInjection;
+using Game.Adventure.Extensions;
 using Game.Core.CQS;
 using Game.Core.Extensions;
 using Game.Core.Utils;
 using Game.DI.Examples;
+using Godot;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Game.DI;
 
@@ -68,6 +69,10 @@ public partial class DependencyInjectionNode : Node
         
         // Add CQS infrastructure
         services.AddCQS();
+
+        // Add Adventure module services
+        GameLogger.Debug("🏰 [DI] Registering Adventure module...");
+        services.AddAdventureModule();
 
         // Register example services
         GameLogger.Debug("📦 [DI] Registering game services...");

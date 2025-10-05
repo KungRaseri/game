@@ -1,7 +1,8 @@
 #nullable enable
 
-using Game.Adventure.Controllers;
 using Game.Adventure.Models;
+using Game.Adventure.Queries;
+using Game.Core.CQS;
 using Game.Core.Utils;
 using Godot;
 
@@ -10,6 +11,7 @@ namespace Game.Scripts.UI;
 /// <summary>
 /// UI component that displays expedition progress and dungeon information.
 /// Follows Godot 4.5 C# best practices and coding conventions.
+/// Uses CQS pattern for data access.
 /// </summary>
 public partial class ExpeditionPanelUI : Panel
 {
@@ -21,16 +23,15 @@ public partial class ExpeditionPanelUI : Panel
     private Label? _enemyHealthText;
     private ProgressBar? _enemyHealthBar;
 
-    private AdventurerController? _adventurerController;
-    private int _totalMonsters = 0;
-    private int _defeatedMonsters = 0;
-    private CombatEntityStats? _currentEnemy;
+    private IDispatcher? _dispatcher;
+    private Godot.Timer? _updateTimer;
 
     public override void _Ready()
     {
         GameLogger.Info("ExpeditionPanelUI initializing");
 
         CacheNodeReferences();
+        SetupUpdateTimer();
         UpdateUI();
 
         GameLogger.Info("ExpeditionPanelUI ready");
@@ -38,113 +39,20 @@ public partial class ExpeditionPanelUI : Panel
 
     public override void _ExitTree()
     {
-        UnsubscribeFromController();
+        if (_updateTimer != null)
+        {
+            _updateTimer.Timeout -= OnUpdateTimer;
+            _updateTimer?.QueueFree();
+        }
         GameLogger.Info("ExpeditionPanelUI disposed");
     }
 
     /// <summary>
-    /// Sets the adventurer controller and subscribes to its events.
+    /// Sets the CQS dispatcher for this UI component.
     /// </summary>
-    public void SetAdventurerController(AdventurerController controller)
+    public void SetDispatcher(IDispatcher dispatcher)
     {
-        UnsubscribeFromController();
-
-        _adventurerController = controller;
-
-        if (_adventurerController != null)
-        {
-            // Subscribe to combat system events through the controller
-            // Note: We'll need to expose these events from the controller
-            _adventurerController.StatusUpdated += OnStatusUpdated;
-            UpdateUI();
-        }
-    }
-
-    /// <summary>
-    /// Updates expedition progress when a monster is defeated.
-    /// </summary>
-    public void OnMonsterDefeated()
-    {
-        _defeatedMonsters++;
-        CallDeferred(nameof(UpdateProgressDisplay));
-    }
-
-    /// <summary>
-    /// Sets up expedition tracking for a new expedition.
-    /// </summary>
-    public void StartExpedition(string dungeonName, int totalMonsters)
-    {
-        if (_dungeonName != null)
-        {
-            _dungeonName.Text = dungeonName;
-        }
-
-        _totalMonsters = totalMonsters;
-        _defeatedMonsters = 0;
-
-        CallDeferred(nameof(UpdateUI));
-        GameLogger.Info($"Expedition started: {dungeonName} with {totalMonsters} monsters");
-    }
-
-    /// <summary>
-    /// Sets the current monster being fought.
-    /// </summary>
-    public void SetCurrentMonster(string monsterName)
-    {
-        if (_monsterName != null)
-        {
-            _monsterName.Text = monsterName;
-        }
-    }
-
-    /// <summary>
-    /// Sets the current enemy entity and subscribes to its health changes.
-    /// </summary>
-    public void SetCurrentEnemy(CombatEntityStats? enemy)
-    {
-        // Unsubscribe from previous enemy
-        if (_currentEnemy != null)
-        {
-            _currentEnemy.HealthChanged -= OnEnemyHealthChanged;
-        }
-
-        _currentEnemy = enemy;
-
-        if (_currentEnemy != null)
-        {
-            _currentEnemy.HealthChanged += OnEnemyHealthChanged;
-            SetCurrentMonster(_currentEnemy.Name);
-            UpdateEnemyHealthDisplay();
-        }
-        else
-        {
-            SetCurrentMonster("None");
-            ClearEnemyHealthDisplay();
-        }
-    }
-
-    /// <summary>
-    /// Clears expedition data when expedition ends.
-    /// </summary>
-    public void EndExpedition()
-    {
-        if (_dungeonName != null)
-        {
-            _dungeonName.Text = "None Selected";
-        }
-
-        if (_monsterName != null)
-        {
-            _monsterName.Text = "None";
-        }
-
-        _totalMonsters = 0;
-        _defeatedMonsters = 0;
-
-        SetCurrentEnemy(null);
-
-        CallDeferred(nameof(UpdateUI));
-        GameLogger.Info("Expedition ended");
+        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
     }
 
     private void CacheNodeReferences()
@@ -161,55 +69,182 @@ public partial class ExpeditionPanelUI : Panel
         _enemyHealthBar = GetNode<ProgressBar>("VBoxContainer/InfoContainer/EnemyHealthContainer/EnemyHealthBar");
     }
 
-    private void UnsubscribeFromController()
+    private void SetupUpdateTimer()
     {
-        if (_adventurerController != null)
+        _updateTimer = new Godot.Timer();
+        _updateTimer.WaitTime = 0.2; // Update 5 times per second for smooth updates
+        _updateTimer.Autostart = true;
+        _updateTimer.Timeout += OnUpdateTimer;
+        AddChild(_updateTimer);
+    }
+
+    private void OnUpdateTimer()
+    {
+        UpdateUI();
+    }
+
+    private async void UpdateUI()
+    {
+        if (_dispatcher == null)
         {
-            _adventurerController.StatusUpdated -= OnStatusUpdated;
+            SetDefaultUI();
+            return;
         }
 
-        if (_currentEnemy != null)
+        try
         {
-            _currentEnemy.HealthChanged -= OnEnemyHealthChanged;
+            await UpdateExpeditionInfo();
+            await UpdateCombatInfo();
+            await UpdateStatusDisplay();
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Failed to update ExpeditionPanelUI");
         }
     }
 
-    private void UpdateUI()
+    private void SetDefaultUI()
     {
-        UpdateProgressDisplay();
-        UpdateStatusDisplay();
-    }
+        if (_dungeonName != null)
+        {
+            _dungeonName.Text = "No Active Expedition";
+        }
 
-    private void UpdateProgressDisplay()
-    {
         if (_progressText != null)
         {
-            _progressText.Text = $"{_defeatedMonsters} / {_totalMonsters}";
+            _progressText.Text = "0 / 0";
         }
 
         if (_progressBar != null)
         {
-            if (_totalMonsters > 0)
+            _progressBar.Value = 0;
+        }
+
+        if (_monsterName != null)
+        {
+            _monsterName.Text = "None";
+        }
+
+        if (_expeditionStatus != null)
+        {
+            _expeditionStatus.Text = "Not Active";
+            _expeditionStatus.Modulate = Colors.Gray;
+        }
+
+        ClearEnemyHealthDisplay();
+    }
+
+    private async Task UpdateExpeditionInfo()
+    {
+        if (_dispatcher == null) return;
+
+        // Check if adventurer is in combat (indicates active expedition)
+        var isInCombatQuery = new IsAdventurerInCombatQuery();
+        var isInCombat = await _dispatcher.DispatchQueryAsync<IsAdventurerInCombatQuery, bool>(isInCombatQuery);
+
+        // Check if there are monsters remaining
+        var hasMonstersQuery = new HasMonstersRemainingQuery();
+        var hasMonstersRemaining = await _dispatcher.DispatchQueryAsync<HasMonstersRemainingQuery, bool>(hasMonstersQuery);
+
+        var stateQuery = new GetAdventurerStateQuery();
+        var state = await _dispatcher.DispatchQueryAsync<GetAdventurerStateQuery, AdventurerState>(stateQuery);
+
+        bool isExpeditionActive = isInCombat || hasMonstersRemaining || 
+                                  state == AdventurerState.Traveling || 
+                                  state == AdventurerState.Fighting ||
+                                  state == AdventurerState.Retreating;
+
+        if (!isExpeditionActive)
+        {
+            if (_dungeonName != null)
             {
-                var progressPercent = ((double)_defeatedMonsters / _totalMonsters) * 100;
-                _progressBar.Value = progressPercent;
+                _dungeonName.Text = "No Active Expedition";
+            }
+
+            if (_progressText != null)
+            {
+                _progressText.Text = "0 / 0";
+            }
+
+            if (_progressBar != null)
+            {
+                _progressBar.Value = 0;
+            }
+            return;
+        }
+
+        if (_dungeonName != null)
+        {
+            _dungeonName.Text = "Goblin Cave"; // For now, hardcoded since we only have one dungeon
+        }
+
+        // For now, we don't have exact progress tracking in queries
+        // We can show basic progress indication
+        if (_progressText != null)
+        {
+            if (hasMonstersRemaining)
+            {
+                _progressText.Text = "In Progress...";
             }
             else
             {
-                _progressBar.Value = 0;
+                _progressText.Text = "Completed";
+            }
+        }
+
+        if (_progressBar != null)
+        {
+            if (hasMonstersRemaining)
+            {
+                _progressBar.Value = 50; // Approximate progress
+            }
+            else
+            {
+                _progressBar.Value = 100;
             }
         }
     }
 
-    private void UpdateStatusDisplay()
+    private async Task UpdateCombatInfo()
     {
-        if (_expeditionStatus == null || _adventurerController == null) return;
+        if (_dispatcher == null) return;
 
-        var status = GetExpeditionStatusText(_adventurerController.State);
+        // Get current monster
+        var currentMonsterQuery = new GetCurrentMonsterQuery();
+        var currentMonster = await _dispatcher.DispatchQueryAsync<GetCurrentMonsterQuery, CombatEntityStats?>(currentMonsterQuery);
+
+        if (currentMonster != null)
+        {
+            if (_monsterName != null)
+            {
+                _monsterName.Text = currentMonster.Name;
+            }
+
+            UpdateEnemyHealthDisplay(currentMonster);
+        }
+        else
+        {
+            if (_monsterName != null)
+            {
+                _monsterName.Text = "None";
+            }
+
+            ClearEnemyHealthDisplay();
+        }
+    }
+
+    private async Task UpdateStatusDisplay()
+    {
+        if (_dispatcher == null || _expeditionStatus == null) return;
+
+        var stateQuery = new GetAdventurerStateQuery();
+        var state = await _dispatcher.DispatchQueryAsync<GetAdventurerStateQuery, AdventurerState>(stateQuery);
+
+        var status = GetExpeditionStatusText(state);
         _expeditionStatus.Text = status;
 
         // Color the status based on state
-        var color = GetStatusColor(_adventurerController.State);
+        var color = GetStatusColor(state);
         _expeditionStatus.Modulate = color;
     }
 
@@ -233,34 +268,10 @@ public partial class ExpeditionPanelUI : Panel
         _ => Colors.White
     };
 
-    private void OnStatusUpdated(string message)
+    private void UpdateEnemyHealthDisplay(CombatEntityStats enemy)
     {
-        CallDeferred(nameof(UpdateStatusDisplay));
-
-        // Parse status messages only for non-combat events
-        var lowerMessage = message.ToLowerInvariant();
-
-        if (lowerMessage.Contains("fighting") && lowerMessage.Contains("goblin"))
-        {
-            SetCurrentMonster("Goblin");
-        }
-        else if (lowerMessage.Contains("expedition completed") || lowerMessage.Contains("retreated"))
-        {
-            EndExpedition();
-        }
-        // Remove the defeated parsing - this should be handled by the MonsterDefeated event instead
-    }
-
-    private void UpdateEnemyHealthDisplay()
-    {
-        if (_currentEnemy == null)
-        {
-            ClearEnemyHealthDisplay();
-            return;
-        }
-
-        var currentHealth = _currentEnemy.CurrentHealth;
-        var maxHealth = _currentEnemy.MaxHealth;
+        var currentHealth = enemy.CurrentHealth;
+        var maxHealth = enemy.MaxHealth;
 
         if (_enemyHealthText != null)
         {
@@ -301,10 +312,5 @@ public partial class ExpeditionPanelUI : Panel
             _enemyHealthBar.Value = 0;
             _enemyHealthBar.Modulate = Colors.Gray;
         }
-    }
-
-    private void OnEnemyHealthChanged(int currentHealth, int maxHealth)
-    {
-        CallDeferred(nameof(UpdateEnemyHealthDisplay));
     }
 }

@@ -1,6 +1,7 @@
 #nullable enable
 
 using Game.Adventure.Models;
+using Game.Core.CQS;
 using Game.Core.Utils;
 using Game.Inventories.Systems;
 using Game.Items.Data;
@@ -86,8 +87,9 @@ public partial class MainGameScene : Control
 
     private void InitializeGameSystems()
     {
-        _gameManager = new GameManager();
-        _gameManager.Initialize();
+        // Get the dispatcher from DI
+        var dispatcher = Game.DI.DependencyInjectionNode.GetService<IDispatcher>();
+        _gameManager = new GameManager(dispatcher);
 
         // Initialize inventory and loot systems
         _inventoryManager = new InventoryManager(20); // Start with 20 slot capacity
@@ -97,61 +99,41 @@ public partial class MainGameScene : Control
         _shopManager = new ShopManager(); // Use default layout
         _trafficManager = new ShopTrafficManager(_shopManager);
 
-        // Connect UI components to the game manager
-        if (_gameManager.AdventurerController != null)
+        // Connect UI components to use CQS pattern
+        _adventurerStatusUI?.SetDispatcher(dispatcher);
+        _combatLogUI?.SetDispatcher(dispatcher);
+        _expeditionPanelUI?.SetDispatcher(dispatcher);
+
+        // Connect Material Collection UI to inventory system
+        _inventoryPanelUI?.SetInventoryManager(_inventoryManager);
+        GameLogger.Info(
+            $"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
+
+        // Connect Shop Management UI to shop systems
+        _shopManagementUI?.Initialize(_shopManager, _trafficManager, _inventoryManager);
+        GameLogger.Info("Connected shop management systems");
+
+        // Connect shop management events
+        if (_shopManagementUI != null)
         {
-            _adventurerStatusUI?.SetAdventurerController(_gameManager.AdventurerController);
-            _combatLogUI?.SetAdventurerController(_gameManager.AdventurerController);
-            _expeditionPanelUI?.SetAdventurerController(_gameManager.AdventurerController);
-
-            // Connect Material Collection UI to inventory system
-            _inventoryPanelUI?.SetInventoryManager(_inventoryManager);
-            GameLogger.Info(
-                $"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
-
-            // Connect Shop Management UI to shop systems
-            _shopManagementUI?.Initialize(_shopManager, _trafficManager, _inventoryManager);
-            GameLogger.Info("Connected shop management systems");
-
-            // Connect shop management events
-            if (_shopManagementUI != null)
-            {
-                _shopManagementUI.BackToGameRequested += OnBackToGameRequested;
-            }
-
-            // Subscribe to additional events from the combat system
-            SubscribeToGameEvents();
+            _shopManagementUI.BackToGameRequested += OnBackToGameRequested;
         }
+
+        // Subscribe to additional events from the combat system
+        SubscribeToGameEvents();
     }
 
     private void SubscribeToGameEvents()
     {
-        if (_gameManager?.AdventurerController == null) return;
-
-        var controller = _gameManager.AdventurerController;
-
-        // Subscribe to health changes
-        controller.Adventurer.HealthChanged += OnAdventurerHealthChanged;
-
-        // Subscribe to controller events
-        controller.StateChanged += OnAdventurerStateChanged;
-        controller.MonsterDefeated += OnMonsterDefeated;
-        controller.ExpeditionCompleted += OnExpeditionCompleted;
+        // With CQS pattern, most state monitoring is handled by the UI components themselves
+        // We only need to handle high-level game events here
+        GameLogger.Info("Game events subscription completed - CQS pattern handles most state monitoring");
     }
 
     private void UnsubscribeFromGameEvents()
     {
-        if (_gameManager?.AdventurerController == null) return;
-
-        var controller = _gameManager.AdventurerController;
-
-        // Unsubscribe from health changes
-        controller.Adventurer.HealthChanged -= OnAdventurerHealthChanged;
-
-        // Unsubscribe from controller events
-        controller.StateChanged -= OnAdventurerStateChanged;
-        controller.MonsterDefeated -= OnMonsterDefeated;
-        controller.ExpeditionCompleted -= OnExpeditionCompleted;
+        // With CQS pattern, UI components handle their own cleanup
+        GameLogger.Info("Game events unsubscription completed");
     }
 
     private void SetupUpdateTimer()
@@ -218,86 +200,39 @@ public partial class MainGameScene : Control
 
     private void OnSendExpeditionRequested()
     {
-        // More explicit null and property check for readability
-        var controller = _gameManager?.AdventurerController;
-        if (controller != null && controller.IsAvailable)
-        {
-            controller.SendToGoblinCave();
-            _expeditionPanelUI?.StartExpedition("Goblin Cave", 3);
-            EmitSignal(SignalName.GameStateChanged, "expedition_started");
-
-            GameLogger.Info("Expedition started via UI");
-        }
-        else
-        {
-            GameLogger.Warning("Cannot start expedition - adventurer not available");
-            _combatLogUI?.AddLogEntry("Cannot start expedition - adventurer not available", "orange");
-        }
+        // With CQS pattern, the UI components handle their own command dispatching
+        // The MainGameScene just responds to the signal for game-level effects
+        EmitSignal(SignalName.GameStateChanged, "expedition_started");
+        GameLogger.Info("Expedition started via UI");
     }
 
     private void OnRetreatRequested()
     {
-        if (_gameManager?.AdventurerController != null)
-        {
-            _gameManager.AdventurerController.Retreat();
-            EmitSignal(SignalName.GameStateChanged, "retreating");
-
-            GameLogger.Info("Retreat ordered via UI");
-        }
+        // With CQS pattern, the UI components handle their own command dispatching
+        // The MainGameScene just responds to the signal for game-level effects
+        EmitSignal(SignalName.GameStateChanged, "retreating");
+        GameLogger.Info("Retreat ordered via UI");
     }
 
-    private void OnAdventurerHealthChanged(int currentHealth, int maxHealth)
-    {
-        EmitSignal(SignalName.AdventurerHealthChanged, currentHealth, maxHealth);
-    }
-
-    private void OnMonsterDefeated(CombatEntityStats monster)
-    {
-        _expeditionPanelUI?.OnMonsterDefeated();
-        _expeditionPanelUI?.SetCurrentEnemy(null); // Clear enemy display when defeated
-        _combatLogUI?.AddLogEntry($"Defeated {monster.Name}!", "green");
-
-        // Generate loot from defeated monster
-        GenerateAndCollectLoot(monster);
-
-        GameLogger.Info($"Monster defeated: {monster.Name}");
-    }
-
-    private void OnExpeditionCompleted()
-    {
-        EmitSignal(SignalName.ExpeditionCompleted, true);
-        _expeditionPanelUI?.EndExpedition();
-        _combatLogUI?.AddLogEntry("Expedition completed!", "cyan");
-        GameLogger.Info("Expedition completed");
-    }
-
-    private void OnAdventurerStateChanged(AdventurerState newState)
-    {
-        EmitSignal(SignalName.GameStateChanged, newState.ToString());
-
-        // Update expedition panel based on state
-        if (newState == AdventurerState.Fighting && _gameManager?.AdventurerController?.CurrentMonster != null)
-        {
-            var currentMonster = _gameManager.AdventurerController.CurrentMonster;
-            _expeditionPanelUI?.SetCurrentEnemy(currentMonster);
-        }
-        else if (newState == AdventurerState.Idle)
-        {
-            _expeditionPanelUI?.SetCurrentEnemy(null);
-        }
-    }
+    // These event handlers are simplified in the CQS pattern
+    // Most UI state management is handled by the UI components themselves through queries
 
     /// <summary>
     /// Gets the current game status for debugging or UI display.
     /// </summary>
-    public string GetGameStatus()
+    public async Task<string> GetGameStatus()
     {
-        if (_gameManager?.AdventurerController == null)
+        try
         {
-            return "Game not initialized";
+            var dispatcher = Game.DI.DependencyInjectionNode.GetService<IDispatcher>();
+            var statusQuery = new Game.Adventure.Queries.GetAdventurerStatusQuery();
+            return await dispatcher.DispatchQueryAsync<Game.Adventure.Queries.GetAdventurerStatusQuery, string>(statusQuery);
         }
-
-        return _gameManager.AdventurerController.GetStatusInfo();
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Failed to get game status");
+            return "Unable to get game status";
+        }
     }
 
     /// <summary>

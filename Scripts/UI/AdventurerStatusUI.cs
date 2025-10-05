@@ -33,7 +33,7 @@ public partial class AdventurerStatusUI : Panel
     private Button? _retreatButton;
 
     private IDispatcher? _dispatcher;
-    private Timer? _updateTimer;
+    private Godot.Timer? _updateTimer;
 
     public override void _Ready()
     {
@@ -77,7 +77,7 @@ public partial class AdventurerStatusUI : Panel
 
     private void SetupUpdateTimer()
     {
-        _updateTimer = new Timer();
+        _updateTimer = new Godot.Timer();
         _updateTimer.WaitTime = 0.1; // Update 10 times per second
         _updateTimer.Autostart = true;
         _updateTimer.Timeout += OnUpdateTimer;
@@ -138,8 +138,8 @@ public partial class AdventurerStatusUI : Panel
     {
         if (_dispatcher == null) return;
 
-        var adventurerQuery = new GetAdventurerQuery();
-        var adventurer = await _dispatcher.DispatchQueryAsync(adventurerQuery);
+        var adventurerQuery = new GetCurrentAdventurerQuery();
+        var adventurer = await _dispatcher.DispatchQueryAsync<GetCurrentAdventurerQuery, CombatEntityStats?>(adventurerQuery);
 
         if (adventurer != null && _adventurerName != null)
         {
@@ -147,7 +147,7 @@ public partial class AdventurerStatusUI : Panel
         }
 
         var stateQuery = new GetAdventurerStateQuery();
-        var state = await _dispatcher.DispatchQueryAsync(stateQuery);
+        var state = await _dispatcher.DispatchQueryAsync<GetAdventurerStateQuery, AdventurerState>(stateQuery);
 
         if (_adventurerState != null)
         {
@@ -159,8 +159,8 @@ public partial class AdventurerStatusUI : Panel
     {
         if (_dispatcher == null) return;
 
-        var adventurerQuery = new GetAdventurerQuery();
-        var adventurer = await _dispatcher.DispatchQueryAsync(adventurerQuery);
+        var adventurerQuery = new GetCurrentAdventurerQuery();
+        var adventurer = await _dispatcher.DispatchQueryAsync<GetCurrentAdventurerQuery, CombatEntityStats?>(adventurerQuery);
 
         if (adventurer == null) return;
 
@@ -203,7 +203,7 @@ public partial class AdventurerStatusUI : Panel
         }
 
         var stateQuery = new GetAdventurerStateQuery();
-        var state = await _dispatcher.DispatchQueryAsync(stateQuery);
+        var state = await _dispatcher.DispatchQueryAsync<GetAdventurerStateQuery, AdventurerState>(stateQuery);
 
         if (_sendExpeditionButton != null)
         {
@@ -253,7 +253,7 @@ public partial class AdventurerStatusUI : Panel
 
         try
         {
-            var command = new SendToGoblinCaveCommand();
+            var command = new SendAdventurerToGoblinCaveCommand();
             await _dispatcher.DispatchCommandAsync(command);
             EmitSignal(SignalName.SendExpeditionRequested);
             GameLogger.Info("Send expedition command dispatched from UI");
@@ -278,7 +278,7 @@ public partial class AdventurerStatusUI : Panel
 
         try
         {
-            var command = new ForceRetreatCommand();
+            var command = new ForceAdventurerRetreatCommand();
             await _dispatcher.DispatchCommandAsync(command);
             EmitSignal(SignalName.RetreatRequested);
             GameLogger.Info("Retreat command dispatched from UI");
