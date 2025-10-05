@@ -1,0 +1,227 @@
+[gd_scene load_steps=3 format=3 uid="uid://d9h8i7j6k5l4m"]
+
+[ext_resource type="Script" path="res://Scripts/UI/CraftingProgressUI.cs" id="1_0r4l7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3vwgi"]
+bg_color = Color(0.25, 0.15, 0.2, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.6, 0.4, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="CraftingProgress" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_0r4l7")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_3vwgi")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 25.0
+offset_top = 25.0
+offset_right = -25.0
+offset_bottom = -25.0
+
+[node name="Header" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MainContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Crafting Progress"
+
+[node name="StatusContainer" type="HBoxContainer" parent="MainContainer/Header"]
+layout_mode = 2
+
+[node name="QueueSizeLabel" type="Label" parent="MainContainer/Header/StatusContainer"]
+layout_mode = 2
+text = "Queue: 0 items"
+
+[node name="ActiveTasksLabel" type="Label" parent="MainContainer/Header/StatusContainer"]
+layout_mode = 2
+text = "Active: 0/1"
+
+[node name="CloseButton" type="Button" parent="MainContainer/Header"]
+layout_mode = 2
+text = "×"
+
+[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="PlayPauseButton" type="Button" parent="MainContainer/ControlsContainer"]
+layout_mode = 2
+text = "▶ Start"
+
+[node name="StopAllButton" type="Button" parent="MainContainer/ControlsContainer"]
+layout_mode = 2
+text = "⏹ Stop All"
+
+[node name="ClearCompletedButton" type="Button" parent="MainContainer/ControlsContainer"]
+layout_mode = 2
+text = "Clear Completed"
+
+[node name="RefreshButton" type="Button" parent="MainContainer/ControlsContainer"]
+layout_mode = 2
+text = "🔄 Refresh"
+
+[node name="ProgressTabs" type="TabContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Active Tasks" type="VBoxContainer" parent="MainContainer/ProgressTabs"]
+layout_mode = 2
+
+[node name="ActiveTasksLabel" type="Label" parent="MainContainer/ProgressTabs/Active Tasks"]
+layout_mode = 2
+text = "Currently Crafting:"
+
+[node name="ActiveTasksList" type="VBoxContainer" parent="MainContainer/ProgressTabs/Active Tasks"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Queue" type="VBoxContainer" parent="MainContainer/ProgressTabs"]
+layout_mode = 2
+
+[node name="QueueControlsContainer" type="HBoxContainer" parent="MainContainer/ProgressTabs/Queue"]
+layout_mode = 2
+
+[node name="QueueLabel" type="Label" parent="MainContainer/ProgressTabs/Queue/QueueControlsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Crafting Queue:"
+
+[node name="MoveUpButton" type="Button" parent="MainContainer/ProgressTabs/Queue/QueueControlsContainer"]
+layout_mode = 2
+text = "↑ Move Up"
+
+[node name="MoveDownButton" type="Button" parent="MainContainer/ProgressTabs/Queue/QueueControlsContainer"]
+layout_mode = 2
+text = "↓ Move Down"
+
+[node name="RemoveSelectedButton" type="Button" parent="MainContainer/ProgressTabs/Queue/QueueControlsContainer"]
+layout_mode = 2
+text = "Remove"
+
+[node name="QueueList" type="ItemList" parent="MainContainer/ProgressTabs/Queue"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="History" type="VBoxContainer" parent="MainContainer/ProgressTabs"]
+layout_mode = 2
+
+[node name="HistoryControlsContainer" type="HBoxContainer" parent="MainContainer/ProgressTabs/History"]
+layout_mode = 2
+
+[node name="HistoryLabel" type="Label" parent="MainContainer/ProgressTabs/History/HistoryControlsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Crafting History:"
+
+[node name="ClearHistoryButton" type="Button" parent="MainContainer/ProgressTabs/History/HistoryControlsContainer"]
+layout_mode = 2
+text = "Clear History"
+
+[node name="HistoryList" type="ItemList" parent="MainContainer/ProgressTabs/History"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Statistics" type="VBoxContainer" parent="MainContainer/ProgressTabs"]
+layout_mode = 2
+
+[node name="StatsContainer" type="GridContainer" parent="MainContainer/ProgressTabs/Statistics"]
+layout_mode = 2
+columns = 2
+
+[node name="TotalCraftedLabel" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "Total Items Crafted:"
+
+[node name="TotalCraftedValue" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "0"
+
+[node name="SuccessRateLabel" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "Success Rate:"
+
+[node name="SuccessRateValue" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "0%"
+
+[node name="TotalTimeLabel" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "Total Crafting Time:"
+
+[node name="TotalTimeValue" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "0m 0s"
+
+[node name="FavoriteRecipeLabel" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "Most Crafted Recipe:"
+
+[node name="FavoriteRecipeValue" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "None"
+
+[node name="MaterialsUsedLabel" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "Materials Used:"
+
+[node name="MaterialsUsedValue" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "0"
+
+[node name="AverageTimeLabel" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "Average Craft Time:"
+
+[node name="AverageTimeValue" type="Label" parent="MainContainer/ProgressTabs/Statistics/StatsContainer"]
+layout_mode = 2
+text = "0s"
+
+[node name="DetailedStatsContainer" type="VBoxContainer" parent="MainContainer/ProgressTabs/Statistics"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DetailedStatsLabel" type="Label" parent="MainContainer/ProgressTabs/Statistics/DetailedStatsContainer"]
+layout_mode = 2
+text = "Recipe Statistics:"
+
+[node name="RecipeStatsTree" type="Tree" parent="MainContainer/ProgressTabs/Statistics/DetailedStatsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 4
+column_titles_visible = true
+
+[node name="ProgressUpdateTimer" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
+[connection signal="pressed" from="MainContainer/Header/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="pressed" from="MainContainer/ControlsContainer/PlayPauseButton" to="." method="OnPlayPausePressed"]
+[connection signal="pressed" from="MainContainer/ControlsContainer/StopAllButton" to="." method="OnStopAllPressed"]
+[connection signal="pressed" from="MainContainer/ControlsContainer/ClearCompletedButton" to="." method="OnClearCompletedPressed"]
+[connection signal="pressed" from="MainContainer/ControlsContainer/RefreshButton" to="." method="OnRefreshPressed"]
+[connection signal="pressed" from="MainContainer/ProgressTabs/Queue/QueueControlsContainer/MoveUpButton" to="." method="OnMoveUpPressed"]
+[connection signal="pressed" from="MainContainer/ProgressTabs/Queue/QueueControlsContainer/MoveDownButton" to="." method="OnMoveDownPressed"]
+[connection signal="pressed" from="MainContainer/ProgressTabs/Queue/QueueControlsContainer/RemoveSelectedButton" to="." method="OnRemoveSelectedPressed"]
+[connection signal="item_selected" from="MainContainer/ProgressTabs/Queue/QueueList" to="." method="OnQueueItemSelected"]
+[connection signal="pressed" from="MainContainer/ProgressTabs/History/HistoryControlsContainer/ClearHistoryButton" to="." method="OnClearHistoryPressed"]
+[connection signal="timeout" from="ProgressUpdateTimer" to="." method="OnProgressUpdateTimer"]

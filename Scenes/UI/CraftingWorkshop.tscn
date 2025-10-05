@@ -1,0 +1,219 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxkwrmqt2afd1"]
+
+[ext_resource type="Script" path="res://Scripts/UI/CraftingWorkshopUI.cs" id="1_0r2j5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1sdfg"]
+bg_color = Color(0.2, 0.2, 0.3, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.6, 0.8, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="CraftingWorkshop" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_0r2j5")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1sdfg")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="Header" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MainContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Crafting Workshop"
+label_settings = null
+
+[node name="CloseButton" type="Button" parent="MainContainer/Header"]
+layout_mode = 2
+text = "×"
+
+[node name="ContentContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="VBoxContainer" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RecipeSection" type="VBoxContainer" parent="MainContainer/ContentContainer/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RecipeHeader" type="HBoxContainer" parent="MainContainer/ContentContainer/LeftPanel/RecipeSection"]
+layout_mode = 2
+
+[node name="RecipeLabel" type="Label" parent="MainContainer/ContentContainer/LeftPanel/RecipeSection/RecipeHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Available Recipes"
+
+[node name="OpenRecipeBookButton" type="Button" parent="MainContainer/ContentContainer/LeftPanel/RecipeSection/RecipeHeader"]
+layout_mode = 2
+text = "Recipe Book"
+
+[node name="RecipeSearchContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/LeftPanel/RecipeSection"]
+layout_mode = 2
+
+[node name="SearchBox" type="LineEdit" parent="MainContainer/ContentContainer/LeftPanel/RecipeSection/RecipeSearchContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search recipes..."
+
+[node name="CategoryFilter" type="OptionButton" parent="MainContainer/ContentContainer/LeftPanel/RecipeSection/RecipeSearchContainer"]
+layout_mode = 2
+text = "All Categories"
+
+[node name="RecipeList" type="ItemList" parent="MainContainer/ContentContainer/LeftPanel/RecipeSection"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MaterialsSection" type="VBoxContainer" parent="MainContainer/ContentContainer/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MaterialsLabel" type="Label" parent="MainContainer/ContentContainer/LeftPanel/MaterialsSection"]
+layout_mode = 2
+text = "Available Materials"
+
+[node name="MaterialsList" type="ItemList" parent="MainContainer/ContentContainer/LeftPanel/MaterialsSection"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RightPanel" type="VBoxContainer" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RecipeDetailsSection" type="VBoxContainer" parent="MainContainer/ContentContainer/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RecipeDetailsLabel" type="Label" parent="MainContainer/ContentContainer/RightPanel/RecipeDetailsSection"]
+layout_mode = 2
+text = "Recipe Details"
+
+[node name="RecipeDetailsPanel" type="Panel" parent="MainContainer/ContentContainer/RightPanel/RecipeDetailsSection"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RecipeDetailsContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/RightPanel/RecipeDetailsSection/RecipeDetailsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+
+[node name="RecipeName" type="Label" parent="MainContainer/ContentContainer/RightPanel/RecipeDetailsSection/RecipeDetailsPanel/RecipeDetailsContainer"]
+layout_mode = 2
+text = "Select a Recipe"
+
+[node name="RecipeDescription" type="RichTextLabel" parent="MainContainer/ContentContainer/RightPanel/RecipeDetailsSection/RecipeDetailsPanel/RecipeDetailsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "Select a recipe from the list to view its details, requirements, and crafting information."
+
+[node name="RequiredMaterialsLabel" type="Label" parent="MainContainer/ContentContainer/RightPanel/RecipeDetailsSection/RecipeDetailsPanel/RecipeDetailsContainer"]
+layout_mode = 2
+text = "Required Materials:"
+
+[node name="RequiredMaterialsList" type="VBoxContainer" parent="MainContainer/ContentContainer/RightPanel/RecipeDetailsSection/RecipeDetailsPanel/RecipeDetailsContainer"]
+layout_mode = 2
+
+[node name="CraftingActionsSection" type="VBoxContainer" parent="MainContainer/ContentContainer/RightPanel"]
+layout_mode = 2
+
+[node name="CraftingActionsLabel" type="Label" parent="MainContainer/ContentContainer/RightPanel/CraftingActionsSection"]
+layout_mode = 2
+text = "Crafting Actions"
+
+[node name="CraftingButtonsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/RightPanel/CraftingActionsSection"]
+layout_mode = 2
+
+[node name="QuantitySpinBox" type="SpinBox" parent="MainContainer/ContentContainer/RightPanel/CraftingActionsSection/CraftingButtonsContainer"]
+layout_mode = 2
+min_value = 1.0
+max_value = 99.0
+value = 1.0
+
+[node name="CraftButton" type="Button" parent="MainContainer/ContentContainer/RightPanel/CraftingActionsSection/CraftingButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Craft Item"
+
+[node name="QueueButton" type="Button" parent="MainContainer/ContentContainer/RightPanel/CraftingActionsSection/CraftingButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add to Queue"
+
+[node name="CraftingQueueSection" type="VBoxContainer" parent="MainContainer/ContentContainer/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="QueueHeader" type="HBoxContainer" parent="MainContainer/ContentContainer/RightPanel/CraftingQueueSection"]
+layout_mode = 2
+
+[node name="QueueLabel" type="Label" parent="MainContainer/ContentContainer/RightPanel/CraftingQueueSection/QueueHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Crafting Queue"
+
+[node name="ViewProgressButton" type="Button" parent="MainContainer/ContentContainer/RightPanel/CraftingQueueSection/QueueHeader"]
+layout_mode = 2
+text = "View Progress"
+
+[node name="QueueList" type="ItemList" parent="MainContainer/ContentContainer/RightPanel/CraftingQueueSection"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="QueueControls" type="HBoxContainer" parent="MainContainer/ContentContainer/RightPanel/CraftingQueueSection"]
+layout_mode = 2
+
+[node name="StartAllButton" type="Button" parent="MainContainer/ContentContainer/RightPanel/CraftingQueueSection/QueueControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Start All"
+
+[node name="ClearQueueButton" type="Button" parent="MainContainer/ContentContainer/RightPanel/CraftingQueueSection/QueueControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Clear Queue"
+
+[connection signal="pressed" from="MainContainer/Header/CloseButton" to="." method="OnCloseButtonPressed"]
+[connection signal="pressed" from="MainContainer/ContentContainer/LeftPanel/RecipeSection/RecipeHeader/OpenRecipeBookButton" to="." method="OnOpenRecipeBookPressed"]
+[connection signal="text_changed" from="MainContainer/ContentContainer/LeftPanel/RecipeSection/RecipeSearchContainer/SearchBox" to="." method="OnSearchTextChanged"]
+[connection signal="item_selected" from="MainContainer/ContentContainer/LeftPanel/RecipeSection/RecipeSearchContainer/CategoryFilter" to="." method="OnCategoryFilterChanged"]
+[connection signal="item_selected" from="MainContainer/ContentContainer/LeftPanel/RecipeSection/RecipeList" to="." method="OnRecipeSelected"]
+[connection signal="value_changed" from="MainContainer/ContentContainer/RightPanel/CraftingActionsSection/CraftingButtonsContainer/QuantitySpinBox" to="." method="OnQuantityChanged"]
+[connection signal="pressed" from="MainContainer/ContentContainer/RightPanel/CraftingActionsSection/CraftingButtonsContainer/CraftButton" to="." method="OnCraftButtonPressed"]
+[connection signal="pressed" from="MainContainer/ContentContainer/RightPanel/CraftingActionsSection/CraftingButtonsContainer/QueueButton" to="." method="OnAddToQueuePressed"]
+[connection signal="pressed" from="MainContainer/ContentContainer/RightPanel/CraftingQueueSection/QueueHeader/ViewProgressButton" to="." method="OnViewProgressPressed"]
+[connection signal="item_selected" from="MainContainer/ContentContainer/RightPanel/CraftingQueueSection/QueueList" to="." method="OnQueueItemSelected"]
+[connection signal="pressed" from="MainContainer/ContentContainer/RightPanel/CraftingQueueSection/QueueControls/StartAllButton" to="." method="OnStartAllPressed"]
+[connection signal="pressed" from="MainContainer/ContentContainer/RightPanel/CraftingQueueSection/QueueControls/ClearQueueButton" to="." method="OnClearQueuePressed"]
