@@ -125,6 +125,15 @@ public partial class MainGameScene : Control
 
     private void SubscribeToGameEvents()
     {
+        // Subscribe to combat system events for real-time updates
+        if (_gameManager?.CombatSystem != null && _combatLogUI != null)
+        {
+            _gameManager.CombatSystem.CombatLogUpdated += OnCombatLogUpdated;
+            _gameManager.CombatSystem.MonsterDefeated += OnMonsterDefeated;
+            _gameManager.CombatSystem.ExpeditionCompleted += OnExpeditionCompleted;
+            GameLogger.Info("Subscribed to combat system events for UI updates");
+        }
+        
         // With CQS pattern, most state monitoring is handled by the UI components themselves
         // We only need to handle high-level game events here
         GameLogger.Info("Game events subscription completed - CQS pattern handles most state monitoring");
@@ -132,6 +141,15 @@ public partial class MainGameScene : Control
 
     private void UnsubscribeFromGameEvents()
     {
+        // Unsubscribe from combat system events
+        if (_gameManager?.CombatSystem != null)
+        {
+            _gameManager.CombatSystem.CombatLogUpdated -= OnCombatLogUpdated;
+            _gameManager.CombatSystem.MonsterDefeated -= OnMonsterDefeated;
+            _gameManager.CombatSystem.ExpeditionCompleted -= OnExpeditionCompleted;
+            GameLogger.Info("Unsubscribed from combat system events");
+        }
+        
         // With CQS pattern, UI components handle their own cleanup
         GameLogger.Info("Game events unsubscription completed");
     }
@@ -216,6 +234,63 @@ public partial class MainGameScene : Control
 
     // These event handlers are simplified in the CQS pattern
     // Most UI state management is handled by the UI components themselves through queries
+
+    /// <summary>
+    /// Handles combat log messages from the combat system.
+    /// </summary>
+    private void OnCombatLogUpdated(string message)
+    {
+        var color = DetermineCombatLogColor(message);
+        _combatLogUI?.AddLogEntry(message, color);
+    }
+
+    /// <summary>
+    /// Handles monster defeated events from the combat system.
+    /// </summary>
+    private void OnMonsterDefeated(CombatEntityStats monster)
+    {
+        _combatLogUI?.AddLogEntry($"Victory! {monster.Name} has been defeated!", "green");
+        
+        // Generate and collect loot when a monster is defeated
+        GenerateAndCollectLoot(monster);
+    }
+
+    /// <summary>
+    /// Handles expedition completed events from the combat system.
+    /// </summary>
+    private void OnExpeditionCompleted()
+    {
+        _combatLogUI?.AddLogEntry("Expedition completed! Adventurer is returning to town.", "cyan");
+        EmitSignal(SignalName.ExpeditionCompleted, true);
+    }
+
+    /// <summary>
+    /// Determines the appropriate color for combat log messages.
+    /// </summary>
+    private string DetermineCombatLogColor(string message)
+    {
+        var lowerMessage = message.ToLowerInvariant();
+
+        if (lowerMessage.Contains("defeated") || lowerMessage.Contains("victory"))
+            return "green";
+        
+        if (lowerMessage.Contains("damage") || lowerMessage.Contains("takes"))
+            return "red";
+        
+        if (lowerMessage.Contains("retreat") || lowerMessage.Contains("fleeing"))
+            return "orange";
+        
+        if (lowerMessage.Contains("expedition") || lowerMessage.Contains("begins"))
+            return "cyan";
+        
+        if (lowerMessage.Contains("health") || lowerMessage.Contains("regenerate"))
+            return "lime";
+        
+        if (lowerMessage.Contains("combat") || lowerMessage.Contains("fighting"))
+            return "yellow";
+
+        return "white";
+    }
 
     /// <summary>
     /// Gets the current game status for debugging or UI display.
