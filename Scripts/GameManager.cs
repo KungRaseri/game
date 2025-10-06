@@ -14,11 +14,11 @@ namespace Game.Scripts;
 /// </summary>
 public class GameManager : IDisposable
 {
-    private readonly CombatSystem _combatSystem;
+    private readonly AdventureSystem _adventureSystem;
     private readonly IDispatcher _dispatcher;
     private bool _disposed = false;
 
-    public CombatSystem CombatSystem => _combatSystem;
+    public AdventureSystem AdventureSystem => _adventureSystem;
     public IDispatcher Dispatcher => _dispatcher;
 
     public GameManager(IDispatcher dispatcher)
@@ -28,10 +28,10 @@ public class GameManager : IDisposable
         try
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            
-            // Get the CombatSystem from DI instead of creating a new instance
+
+            // Get the AdventureSystem from DI instead of creating a new instance
             // This ensures we use the same instance that the CQS handlers use
-            _combatSystem = Game.DI.DependencyInjectionNode.GetService<CombatSystem>();
+            _adventureSystem = Game.DI.DependencyInjectionNode.GetService<AdventureSystem>();
 
             GameLogger.Info("GameManager initialization complete");
         }
@@ -63,9 +63,7 @@ public class GameManager : IDisposable
 
         try
         {
-            // Since we're using the same CombatSystem instance from DI,
-            // we can update it directly for better performance in the game loop
-            _combatSystem.Update(fixedDeltaTime);
+            _adventureSystem.CombatSystem.Update(fixedDeltaTime);
         }
         catch (Exception ex)
         {
@@ -88,9 +86,7 @@ public class GameManager : IDisposable
 
         try
         {
-            // Since we're using the same CombatSystem instance from DI,
-            // we can reset it directly for initialization
-            _combatSystem.Reset();
+            _adventureSystem.CombatSystem.Reset();
             GameLogger.Info("Game successfully initialized to starting state");
         }
         catch (Exception ex)

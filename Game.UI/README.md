@@ -1,14 +1,14 @@
 # Game.UI - Toast System with CQS Architecture
 
-A complete toast notification system implemented using Command Query Separation (CQS) pattern for better architecture, testability, and maintainability.
+A complete toast notification system implemented using Command Query Separation (CQS) pattern following the same structure as Game.Adventure.
 
 ## Architecture Overview
 
-The toast system is divided into several layers:
+The toast system follows the same CQS pattern as Game.Adventure:
 
 1. **Game.UI** - Pure C# CQS layer (no Godot dependencies)
 2. **Scripts.UI** - Godot-specific implementations that implement the Game.UI interfaces
-3. **Direct Integration** - Commands and queries operate directly on ToastManager
+3. **Individual Handlers** - Each command/query has its own dedicated handler class
 
 ## Components
 
@@ -41,33 +41,85 @@ All queries implement `IQuery<T>` from Game.Core.CQS:
 - `IsToastLimitReachedQuery` - Check if toast limit is reached
 
 #### Handlers (`Game.UI.Handlers`)
-- `ToastCommandHandlers` - Handles all toast commands, operates directly on `IToastManager`
-- `ToastQueryHandlers` - Handles all toast queries, operates directly on `IToastManager`
-- `IToastManager` - Interface defining the contract for toast operations
+Individual handler classes (following Game.Adventure pattern):
+
+**Command Handlers:**
+- `ShowToastCommandHandler`
+- `ShowSimpleToastCommandHandler`
+- `ShowTitledToastCommandHandler`
+- `ShowMaterialToastCommandHandler`
+- `ShowSuccessToastCommandHandler`
+- `ShowWarningToastCommandHandler`
+- `ShowErrorToastCommandHandler`
+- `ShowInfoToastCommandHandler`
+- `ClearAllToastsCommandHandler`
+- `DismissToastCommandHandler`
+
+**Query Handlers:**
+- `GetActiveToastsQueryHandler`
+- `GetToastByIdQueryHandler`
+- `GetToastsByAnchorQueryHandler`
+- `GetActiveToastCountQueryHandler`
+- `IsToastLimitReachedQueryHandler`
+
+**Interface:**
+- `IToastOperations` - Interface defining the contract for toast operations
 
 ### Scripts.UI Project (Godot-Specific Layer)
 
 #### UI Components
 - `ToastUI` - Generic toast UI component with animations and styling
 - `MaterialToastUI` - Specialized toast for material collection (backward compatibility)
-- `ToastManager` - Manages toast lifecycle, positioning, and stacking; implements `IToastManager`
+- `ToastManager` - Manages toast lifecycle, positioning, and stacking; implements `IToastOperations`
 
 #### Integration
 - `ToastCQSUsageExample` - Helper showing usage patterns
 
-## Simplified Architecture
+## Proper CQS Implementation (Like Game.Adventure)
 
-The service layer has been removed for simplicity. Commands and queries now operate directly on the `ToastManager` through the `IToastManager` interface:
+The architecture now follows the exact same pattern as Game.Adventure:
 
 ```
-CQS Commands/Queries → Handlers → IToastManager → ToastManager (Godot)
+CQS Commands/Queries → Individual Handlers → IToastOperations → ToastManager (Godot)
+```
+
+Each handler:
+- Is a separate class with a single responsibility
+- Takes `IToastOperations` as a constructor dependency
+- Follows the same pattern as `SendAdventurerToGoblinCaveCommandHandler`
+
+### Example Handler Implementation:
+
+```csharp
+public class ShowSuccessToastCommandHandler : ICommandHandler<ShowSuccessToastCommand>
+{
+    private readonly IToastOperations _toastOperations;
+
+    public ShowSuccessToastCommandHandler(IToastOperations toastOperations)
+    {
+        _toastOperations = toastOperations ?? throw new ArgumentNullException(nameof(toastOperations));
+    }
+
+    public async Task HandleAsync(ShowSuccessToastCommand command, CancellationToken cancellationToken = default)
+    {
+        var config = new ToastConfig
+        {
+            Message = command.Message,
+            Style = ToastStyle.Success,
+            Animation = ToastAnimation.Bounce,
+            DisplayDuration = 3.0f
+        };
+        await _toastOperations.ShowToastAsync(config);
+    }
+}
 ```
 
 This provides:
-- **Direct Operation**: No intermediate service layer
-- **Clear Interface**: `IToastManager` defines exactly what ToastManager must provide
-- **Simpler Setup**: Less abstraction layers to manage
-- **Better Performance**: One less indirection layer
+- **Individual Responsibility**: Each handler has one job
+- **Clear Dependencies**: Handlers depend only on what they need
+- **Easy Testing**: Each handler can be tested in isolation
+- **Consistent Pattern**: Same structure as Game.Adventure
+- **No Service Layer**: Direct operation on the actual implementation
 
 ## Usage Examples
 
@@ -77,7 +129,7 @@ This provides:
 // Simple toast
 await dispatcher.DispatchCommandAsync(new ShowSimpleToastCommand("Hello World!"));
 
-// Success notification
+// Success notification  
 await dispatcher.DispatchCommandAsync(new ShowSuccessToastCommand("Achievement unlocked!"));
 
 // Material collection

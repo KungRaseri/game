@@ -1,6 +1,7 @@
 #nullable enable
 
 using Game.Adventure.Extensions;
+using Game.UI.Extensions;
 using Game.Core.CQS;
 using Game.Core.Extensions;
 using Game.Core.Utils;
@@ -41,11 +42,11 @@ public partial class DependencyInjectionNode : Node
     {
         GD.Print("Initializing custom dependency injection...");
         GameLogger.SetBackend(new GodotLoggerBackend());
-        
+
         _services = new ServiceCollection();
         ConfigureServices(_services);
         _serviceProvider = _services.BuildServiceProvider();
-        
+
         GD.Print("Dependency injection initialized successfully!");
     }
 
@@ -62,7 +63,7 @@ public partial class DependencyInjectionNode : Node
     private static void ConfigureServices(IServiceCollection services)
     {
         GameLogger.Debug("[DI] Starting service configuration...");
-        
+
         // Add CQS infrastructure
         services.AddCQS();
 
@@ -70,11 +71,14 @@ public partial class DependencyInjectionNode : Node
         GameLogger.Debug("[DI] Registering Adventure module...");
         services.AddAdventureModule();
 
+        GameLogger.Debug("[DI] Registering UI module...");
+        services.AddUIModule();
+
         // Add other game services here as needed
         // services.AddScoped<IAdventurerService, AdventurerService>();
         // services.AddScoped<IShopService, ShopService>();
         // etc.
-        
+
         GameLogger.Debug($"[DI] Service configuration completed - Registered {services.Count} services");
         GD.Print($"Registered {services.Count} services");
     }

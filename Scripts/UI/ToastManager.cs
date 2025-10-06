@@ -10,9 +10,9 @@ namespace Scripts.UI;
 /// <summary>
 /// Manager for creating and displaying toast notifications.
 /// Handles positioning, stacking, and lifecycle of multiple toasts.
-/// Implements IToastManager for direct CQS integration.
+/// Implements IToastOperations for CQS integration.
 /// </summary>
-public partial class ToastManager : Control, IToastManager
+public partial class ToastManager : Control, IToastOperations
 {
     [Export] public PackedScene? ToastScene { get; set; }
     [Export] public int MaxVisibleToasts { get; set; } = 5;

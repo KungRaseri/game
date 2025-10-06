@@ -9,12 +9,15 @@ namespace Scripts.UI;
 
 /// <summary>
 /// Example usage of the CQS toast system.
-/// Shows how to use commands and queries instead of direct ToastManager calls.
+/// Shows how to use individual command and query handlers like Game.Adventure.
 /// </summary>
 public static class ToastCQSUsageExample
 {
     /// <summary>
     /// Example: Show different types of toasts using CQS commands.
+    /// 
+    /// Note: In a real application, you would register these handlers with your DI container
+    /// and the dispatcher would resolve them automatically. This example shows direct usage.
     /// </summary>
     public static async Task ShowExampleToasts(IDispatcher dispatcher)
     {
@@ -49,6 +52,9 @@ public static class ToastCQSUsageExample
 
     /// <summary>
     /// Example: Query toast information using CQS queries.
+    /// 
+    /// Note: In a real application, you would register these handlers with your DI container
+    /// and the dispatcher would resolve them automatically. This example shows direct usage.
     /// </summary>
     public static async Task QueryToastInformation(IDispatcher dispatcher)
     {
