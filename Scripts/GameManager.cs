@@ -15,12 +15,10 @@ namespace Game.Scripts;
 public class GameManager : IDisposable
 {
     private readonly CombatSystem _combatSystem;
-    private readonly AdventureSystem _adventureSystem;
     private readonly IDispatcher _dispatcher;
     private bool _disposed = false;
 
     public CombatSystem CombatSystem => _combatSystem;
-    public AdventureSystem AdventureSystem => _adventureSystem;
     public IDispatcher Dispatcher => _dispatcher;
 
     public GameManager(IDispatcher dispatcher)
@@ -30,8 +28,10 @@ public class GameManager : IDisposable
         try
         {
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            _combatSystem = new CombatSystem();
-            _adventureSystem = new AdventureSystem(_combatSystem);
+            
+            // Get the CombatSystem from DI instead of creating a new instance
+            // This ensures we use the same instance that the CQS handlers use
+            _combatSystem = Game.DI.DependencyInjectionNode.GetService<CombatSystem>();
 
             GameLogger.Info("GameManager initialization complete");
         }
@@ -63,9 +63,8 @@ public class GameManager : IDisposable
 
         try
         {
-            // Update the adventure system through the dispatch system if needed
-            // The AdventureSystem itself doesn't need regular updates as it's event-driven
-            // However, we can update the underlying CombatSystem if it needs periodic updates
+            // Since we're using the same CombatSystem instance from DI,
+            // we can update it directly for better performance in the game loop
             _combatSystem.Update(fixedDeltaTime);
         }
         catch (Exception ex)
@@ -89,7 +88,8 @@ public class GameManager : IDisposable
 
         try
         {
-            // Reset all systems to initial state
+            // Since we're using the same CombatSystem instance from DI,
+            // we can reset it directly for initialization
             _combatSystem.Reset();
             GameLogger.Info("Game successfully initialized to starting state");
         }
@@ -108,7 +108,7 @@ public class GameManager : IDisposable
 
         try
         {
-            _adventureSystem?.Dispose();
+            // The CombatSystem is managed by DI, no need to dispose it here
             _disposed = true;
             GameLogger.Info("GameManager disposal complete");
         }
