@@ -14,9 +14,15 @@ public partial class ToastManager : Control
     [Export] public PackedScene? ToastScene { get; set; }
     [Export] public int MaxVisibleToasts { get; set; } = 5;
     [Export] public float ToastSpacing { get; set; } = 10.0f;
+    [Export] public float RepositionAnimationDuration { get; set; } = 0.3f;
 
-    private readonly List<ToastUI> _activeToasts = new();
+    private readonly List<ToastInfo> _activeToasts = new();
     private Control? _toastContainer;
+
+    /// <summary>
+    /// Information about an active toast for positioning and animation.
+    /// </summary>
+    private record ToastInfo(ToastUI Toast, ToastAnchor Anchor, Vector2 BaseOffset, float EstimatedHeight);
 
     public override void _Ready()
     {
@@ -52,8 +58,8 @@ public partial class ToastManager : Control
         // Remove oldest toast if we're at the limit
         if (_activeToasts.Count >= MaxVisibleToasts)
         {
-            var oldestToast = _activeToasts[0];
-            oldestToast?.QueueFree();
+            var oldestToastInfo = _activeToasts[0];
+            oldestToastInfo.Toast?.QueueFree();
             _activeToasts.RemoveAt(0);
         }
 
@@ -76,16 +82,31 @@ public partial class ToastManager : Control
             return;
         }
 
-        // Adjust position for stacking
-        var adjustedConfig = AdjustConfigForStacking(config);
-        
-        // Add to container and show
+        // Add to container and setup toast
         _toastContainer.AddChild(toastInstance);
-        _activeToasts.Add(toastInstance);
+        SetupNewToast(toastInstance, config);
+    }
+
+    /// <summary>
+    /// Sets up a new toast with proper positioning and animations.
+    /// </summary>
+    private void SetupNewToast(ToastUI toastInstance, ToastConfig config)
+    {
+        // Animate existing toasts upward for the same anchor
+        AnimateExistingToastsForNewToast(config.Anchor);
         
-        // Connect to cleanup when toast is freed
+        // Create toast info with estimated height
+        var estimatedHeight = 60.0f; // Will be refined later
+        var toastInfo = new ToastInfo(toastInstance, config.Anchor, config.AnchorOffset, estimatedHeight);
+        _activeToasts.Add(toastInfo);
+        
+        // Calculate the position for the new toast (appears at bottom of stack)
+        var adjustedConfig = CalculateToastPosition(config, _activeToasts.Count - 1);
+        
+        // Connect cleanup handler
         toastInstance.TreeExiting += () => OnToastRemoved(toastInstance);
         
+        // Show the toast
         toastInstance.ShowToast(adjustedConfig);
 
         GameLogger.Info($"Toast created and shown. Active toasts: {_activeToasts.Count}");
@@ -206,20 +227,64 @@ public partial class ToastManager : Control
     /// </summary>
     public void ClearAllToasts()
     {
-        foreach (var toast in _activeToasts.ToList())
+        foreach (var toastInfo in _activeToasts.ToList())
         {
-            toast?.QueueFree();
+            toastInfo.Toast?.QueueFree();
         }
         _activeToasts.Clear();
         GameLogger.Info("All toasts cleared");
     }
 
-    private ToastConfig AdjustConfigForStacking(ToastConfig config)
+    /// <summary>
+    /// Animates existing toasts upward when a new toast is added.
+    /// </summary>
+    private void AnimateExistingToastsForNewToast(ToastAnchor newToastAnchor)
     {
-        // Calculate vertical offset based on number of active toasts
-        var stackOffset = _activeToasts.Count * (50.0f + ToastSpacing); // Assume 50px height per toast
+        var toastsToAnimate = _activeToasts.Where(t => t.Anchor == newToastAnchor).ToList();
         
-        // Adjust position based on anchor
+        foreach (var toastInfo in toastsToAnimate)
+        {
+            if (toastInfo.Toast == null) continue;
+            
+            var currentPos = toastInfo.Toast.Position;
+            var newPos = CalculateShiftedPosition(currentPos, newToastAnchor, toastInfo.EstimatedHeight + ToastSpacing);
+            
+            // Create smooth animation to shift upward
+            var tween = toastInfo.Toast.CreateTween();
+            tween.TweenProperty(toastInfo.Toast, "position", newPos, RepositionAnimationDuration)
+                .SetTrans(Tween.TransitionType.Quart)
+                .SetEase(Tween.EaseType.Out);
+        }
+        
+        GameLogger.Debug($"Animated {toastsToAnimate.Count} existing toasts upward");
+    }
+
+    /// <summary>
+    /// Calculates the shifted position for a toast when repositioning.
+    /// </summary>
+    private Vector2 CalculateShiftedPosition(Vector2 currentPos, ToastAnchor anchor, float shiftAmount)
+    {
+        return anchor switch
+        {
+            ToastAnchor.TopLeft or ToastAnchor.TopCenter or ToastAnchor.TopRight => 
+                currentPos with { Y = currentPos.Y - shiftAmount },
+            ToastAnchor.BottomLeft or ToastAnchor.BottomCenter or ToastAnchor.BottomRight => 
+                currentPos with { Y = currentPos.Y + shiftAmount },
+            _ => currentPos with { Y = currentPos.Y - shiftAmount } // Default to upward for center anchors
+        };
+    }
+
+    /// <summary>
+    /// Calculates the position for a toast at a specific stack index.
+    /// </summary>
+    private ToastConfig CalculateToastPosition(ToastConfig config, int stackIndex)
+    {
+        // Calculate how many toasts of the same anchor type exist
+        var sameAnchorCount = _activeToasts.Take(stackIndex).Count(t => t.Anchor == config.Anchor);
+        
+        // Calculate the cumulative offset
+        var stackOffset = sameAnchorCount * (60.0f + ToastSpacing); // 60px estimated height
+        
         var adjustedOffset = config.AnchorOffset;
         
         switch (config.Anchor)
@@ -237,9 +302,8 @@ public partial class ToastManager : Control
             case ToastAnchor.CenterLeft:
             case ToastAnchor.Center:
             case ToastAnchor.CenterRight:
-                // For center toasts, stack them vertically around the center
-                var centerOffset = (stackOffset - (_activeToasts.Count * (50.0f + ToastSpacing)) / 2);
-                adjustedOffset = adjustedOffset with { Y = adjustedOffset.Y + centerOffset };
+                // For center toasts, stack them upward from center
+                adjustedOffset = adjustedOffset with { Y = adjustedOffset.Y - (stackOffset / 2) };
                 break;
         }
 
@@ -248,16 +312,75 @@ public partial class ToastManager : Control
 
     private void OnToastRemoved(ToastUI toast)
     {
-        _activeToasts.Remove(toast);
-        GameLogger.Debug($"Toast removed. Active toasts: {_activeToasts.Count}");
-        
-        // Reposition remaining toasts if needed
-        RepositionToasts();
+        var toastInfo = _activeToasts.FirstOrDefault(t => t.Toast == toast);
+        if (toastInfo != null)
+        {
+            _activeToasts.Remove(toastInfo);
+            GameLogger.Debug($"Toast removed. Active toasts: {_activeToasts.Count}");
+            
+            // Reposition remaining toasts smoothly
+            RepositionToasts();
+        }
     }
 
     private void RepositionToasts()
     {
-        // TODO: Implement smooth repositioning animation for remaining toasts
-        // This would make the toast stack collapse smoothly when a toast is removed
+        // Group toasts by anchor for repositioning
+        var toastGroups = _activeToasts.GroupBy(t => t.Anchor);
+        
+        foreach (var group in toastGroups)
+        {
+            var toastsInGroup = group.ToList();
+            
+            for (int i = 0; i < toastsInGroup.Count; i++)
+            {
+                var toastInfo = toastsInGroup[i];
+                if (toastInfo.Toast == null) continue;
+                
+                // Calculate what the position should be for this index
+                var baseConfig = new ToastConfig 
+                { 
+                    Anchor = toastInfo.Anchor, 
+                    AnchorOffset = toastInfo.BaseOffset 
+                };
+                var targetConfig = CalculateToastPosition(baseConfig, i);
+                var targetPos = CalculateAbsolutePosition(targetConfig);
+                
+                // Animate to the new position
+                var tween = toastInfo.Toast.CreateTween();
+                tween.TweenProperty(toastInfo.Toast, "position", targetPos, RepositionAnimationDuration)
+                    .SetTrans(Tween.TransitionType.Quart)
+                    .SetEase(Tween.EaseType.Out);
+            }
+        }
+        
+        GameLogger.Debug("Repositioned remaining toasts");
+    }
+
+    /// <summary>
+    /// Calculates absolute position from toast config.
+    /// </summary>
+    private Vector2 CalculateAbsolutePosition(ToastConfig config)
+    {
+        if (_toastContainer == null) return Vector2.Zero;
+        
+        var containerSize = _toastContainer.Size;
+        var toastSize = new Vector2(300, 60); // Estimated size
+        
+        Vector2 anchorPos = config.Anchor switch
+        {
+            ToastAnchor.TopLeft => Vector2.Zero,
+            ToastAnchor.TopCenter => new Vector2(containerSize.X / 2 - toastSize.X / 2, 0),
+            ToastAnchor.TopRight => new Vector2(containerSize.X - toastSize.X, 0),
+            ToastAnchor.CenterLeft => new Vector2(0, containerSize.Y / 2 - toastSize.Y / 2),
+            ToastAnchor.Center => new Vector2(containerSize.X / 2 - toastSize.X / 2, containerSize.Y / 2 - toastSize.Y / 2),
+            ToastAnchor.CenterRight => new Vector2(containerSize.X - toastSize.X, containerSize.Y / 2 - toastSize.Y / 2),
+            ToastAnchor.BottomLeft => new Vector2(0, containerSize.Y - toastSize.Y),
+            ToastAnchor.BottomCenter => new Vector2(containerSize.X / 2 - toastSize.X / 2, containerSize.Y - toastSize.Y),
+            ToastAnchor.BottomRight => new Vector2(containerSize.X - toastSize.X, containerSize.Y - toastSize.Y),
+            _ => Vector2.Zero
+        };
+
+        return anchorPos + config.AnchorOffset;
     }
 }

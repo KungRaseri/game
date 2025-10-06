@@ -408,40 +408,66 @@ public partial class MainGameScene : Control
     }
 
     /// <summary>
-    /// Test method to demonstrate different toast types.
+    /// Test method to demonstrate different toast types and stacking behavior.
     /// </summary>
     public void TestToasts()
     {
         if (_toastManager == null) return;
 
-        // Test different toast styles
-        _toastManager.ShowSuccess("Combat victory!");
-        _toastManager.ShowInfo("New quest available");
-        _toastManager.ShowWarning("Low health warning");
-        _toastManager.ShowError("Failed to load save file");
+        // Test rapid-fire toasts to demonstrate stacking
+        _toastManager.ShowSuccess("First success message!");
         
-        // Test material toast (using ToastManager)
-        _toastManager.ShowMaterialToast(new List<string> { "Iron Ore x3", "Leather x2", "Magic Crystal x1" });
+        // Delay slightly to see stacking effect
+        GetTree().CreateTimer(0.5f).Timeout += () => {
+            _toastManager.ShowSuccess("Second success - should stack!");
+        };
+        
+        GetTree().CreateTimer(1.0f).Timeout += () => {
+            _toastManager.ShowSuccess("Third success - watch them shift!");
+        };
+        
+        GetTree().CreateTimer(1.5f).Timeout += () => {
+            _toastManager.ShowWarning("Warning toast - different style");
+        };
+        
+        GetTree().CreateTimer(2.0f).Timeout += () => {
+            _toastManager.ShowError("Error in center position");
+        };
+        
+        // Test material toast stacking
+        GetTree().CreateTimer(2.5f).Timeout += () => {
+            _toastManager.ShowMaterialToast(new List<string> { "Iron Ore x3", "Leather x2" });
+        };
+        
+        GetTree().CreateTimer(3.0f).Timeout += () => {
+            _toastManager.ShowMaterialToast(new List<string> { "Magic Crystal x1", "Steel x5" });
+        };
         
         // Test direct MaterialToastUI for backward compatibility
-        if (_toastContainer != null)
-        {
-            var materialToast = new MaterialToastUI();
-            _toastContainer.AddChild(materialToast);
-            materialToast.ShowToast(new List<string> { "Direct MaterialToast", "Backward Compatible x2" });
-        }
-        
-        // Test custom config
-        var customConfig = new ToastConfig
-        {
-            Title = "Achievement Unlocked",
-            Message = "Master Blacksmith",
-            Style = ToastStyle.Success,
-            Animation = ToastAnimation.Bounce,
-            Anchor = ToastAnchor.Center,
-            DisplayDuration = 5.0f
+        GetTree().CreateTimer(3.5f).Timeout += () => {
+            if (_toastContainer != null)
+            {
+                var materialToast = new MaterialToastUI();
+                _toastContainer.AddChild(materialToast);
+                materialToast.ShowToast(new List<string> { "Direct MaterialToast", "Backward Compatible x2" });
+            }
         };
-        _toastManager.ShowToast(customConfig);
+        
+        // Test custom config with different anchor
+        GetTree().CreateTimer(4.0f).Timeout += () => {
+            var customConfig = new ToastConfig
+            {
+                Title = "Achievement Unlocked",
+                Message = "Master Blacksmith - Center positioned",
+                Style = ToastStyle.Success,
+                Animation = ToastAnimation.Bounce,
+                Anchor = ToastAnchor.Center,
+                DisplayDuration = 5.0f
+            };
+            _toastManager.ShowToast(customConfig);
+        };
+        
+        GameLogger.Info("Toast stacking test sequence initiated - press T to repeat");
     }
 
     /// <summary>
