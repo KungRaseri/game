@@ -1,77 +1,61 @@
 #nullable enable
 
-using Game.Adventure.Models;
-using Game.Core.CQS;
 using Game.Core.Utils;
-using Game.Inventories.Systems;
-using Game.Items.Data;
-using Game.Items.Systems;
-using Game.Scripts.Core;
-using Game.Scripts.UI.Adventure;
-using Game.Scripts.UI.Components;
-using Game.Scripts.UI.Crafting;
 using Game.Scripts.UI.Integration;
-using Game.Scripts.UI.Inventory;
-using Game.Scripts.UI.Panels;
-using Game.Shop.Systems;
 using Godot;
 
 namespace Game.Scripts.Scenes;
 
 /// <summary>
-/// Main game scene that orchestrates the entire game experience.
-/// This script should be attached to the root Control node of MainGame.tscn.
-/// Follows Godot 4.5 C# best practices and coding conventions.
+/// Simplified main game scene focused on the core game flow:
+/// 1. Gather Materials
+/// 2. Craft Items  
+/// 3. Manage Shop
 /// </summary>
 public partial class MainGameScene : Control
 {
-    [Export] public float UpdateInterval { get; set; } = 0.1f; // Update 10 times per second for responsive combat
-    [Export] public int MaxCombatLogEntries { get; set; } = 50;
     [Export] public PackedScene? ToastScene { get; set; }
 
     [Signal]
-    public delegate void GameStateChangedEventHandler(string newState);
+    public delegate void MaterialsGatheredEventHandler(int totalMaterials);
 
     [Signal]
-    public delegate void AdventurerHealthChangedEventHandler(int currentHealth, int maxHealth);
+    public delegate void ItemsCraftedEventHandler(int totalItems);
 
     [Signal]
-    public delegate void ExpeditionCompletedEventHandler(bool success);
+    public delegate void ShopUpdatedEventHandler(int itemsForSale, int gold);
 
-    private GameManager? _gameManager;
-    private Godot.Timer? _updateTimer;
-    private InventoryManager? _inventoryManager;
-    private LootGenerator? _lootGenerator;
-    private ShopManager? _shopManager;
-    private ShopTrafficManager? _trafficManager;
+    // Game state tracking
+    private int _materialsCollected = 0;
+    private int _itemsCrafted = 0;
+    private int _itemsForSale = 0;
+    private int _gold = 100;
 
     // UI Component references
-    private AdventurerStatusUI? _adventurerStatusUI;
-    private CombatLogUI? _combatLogUI;
-    private ExpeditionPanelUI? _expeditionPanelUI;
-    private MaterialCollectionUI? _inventoryPanelUI;
-    private ShopManagementUI? _shopManagementUI;
-    private Button? _inventoryButton;
+    private Button? _gatherButton;
+    private Button? _craftButton;
     private Button? _shopButton;
+    private Label? _gatherStatus;
+    private Label? _craftStatus;
+    private Label? _shopStatus;
     private VBoxContainer? _toastContainer;
     private ToastManager? _toastManager;
 
     public override void _Ready()
     {
-        // Set up Godot logging backend for proper GD.Print integration
-        GameLogger.Info("MainGameScene initializing");
+        GameLogger.Info("MainGameScene initializing - Barebones UI");
 
         CacheUIReferences();
-        InitializeGameSystems();
-        SetupUpdateTimer();
+        InitializeToastSystem();
         ConnectUIEvents();
+        UpdateUI();
 
-        GameLogger.Info("MainGameScene ready");
+        GameLogger.Info("MainGameScene ready - Simple 3-step flow active");
     }
 
     public override void _Input(InputEvent inputEvent)
     {
-        // Handle test input for toasts (T key to test toasts)
+        // Handle test input for toasts (T key)
         if (inputEvent is InputEventKey keyEvent && keyEvent.Pressed)
         {
             if (keyEvent.Keycode == Key.T)
@@ -83,127 +67,40 @@ public partial class MainGameScene : Control
 
     public override void _ExitTree()
     {
-        // Clean up resources to prevent memory leaks
-        _updateTimer?.QueueFree();
-
         DisconnectUIEvents();
-        _gameManager?.Dispose();
-
         GameLogger.Info("MainGameScene disposed");
     }
 
     private void CacheUIReferences()
     {
-        _adventurerStatusUI = GetNode<AdventurerStatusUI>("MainContainer/LeftPanel/AdventurerStatus");
-        _combatLogUI = GetNode<CombatLogUI>("MainContainer/CombatLog");
-        _expeditionPanelUI = GetNode<ExpeditionPanelUI>("MainContainer/LeftPanel/ExpeditionPanel");
-        _inventoryPanelUI = GetNode<MaterialCollectionUI>("UIOverlay/InventoryPanel");
-        _shopManagementUI = GetNode<ShopManagementUI>("UIOverlay/ShopManagementPanel");
-        _inventoryButton = GetNode<Button>("MainContainer/LeftPanel/InventoryButton");
-        _shopButton = GetNode<Button>("MainContainer/LeftPanel/ShopButton");
+        _gatherButton = GetNode<Button>("MainContainer/GameFlow/GatherSection/GatherButton");
+        _craftButton = GetNode<Button>("MainContainer/GameFlow/CraftSection/CraftButton");
+        _shopButton = GetNode<Button>("MainContainer/GameFlow/ShopSection/ShopButton");
+        
+        _gatherStatus = GetNode<Label>("MainContainer/GameFlow/GatherSection/GatherStatus");
+        _craftStatus = GetNode<Label>("MainContainer/GameFlow/CraftSection/CraftStatus");
+        _shopStatus = GetNode<Label>("MainContainer/GameFlow/ShopSection/ShopStatus");
+        
         _toastContainer = GetNode<VBoxContainer>("UIOverlay/ToastContainer");
+    }
 
-        // Initialize ToastManager
+    private void InitializeToastSystem()
+    {
         _toastManager = new ToastManager();
         _toastManager.ToastScene = ToastScene;
-        _toastContainer.AddChild(_toastManager);
-
-        // Set global reference for MaterialToastUI backward compatibility
-        MaterialToastUI.SetGlobalToastManager(_toastManager);
-    }
-
-    private void InitializeGameSystems()
-    {
-        // Get the dispatcher from DI
-        var dispatcher = Game.DI.DependencyInjectionNode.GetService<IDispatcher>();
-        _gameManager = new GameManager(dispatcher);
-
-        // Initialize inventory and loot systems
-        _inventoryManager = new InventoryManager(20); // Start with 20 slot capacity
-        _lootGenerator = CreateLootGenerator();
-
-        // Initialize shop management systems
-        _shopManager = new ShopManager(); // Use default layout
-        _trafficManager = new ShopTrafficManager(_shopManager);
-
-        // Connect UI components to use CQS pattern
-        _adventurerStatusUI?.SetDispatcher(dispatcher);
-        _combatLogUI?.SetDispatcher(dispatcher);
-        _expeditionPanelUI?.SetDispatcher(dispatcher);
-
-        // Connect Material Collection UI to inventory system
-        _inventoryPanelUI?.SetInventoryManager(_inventoryManager);
-        GameLogger.Info(
-            $"Connected inventory manager with {_inventoryManager.GetInventoryStats().UsedSlots} materials");
-
-        // Connect Shop Management UI to shop systems
-        _shopManagementUI?.Initialize(_shopManager, _trafficManager, _inventoryManager);
-        GameLogger.Info("Connected shop management systems");
-
-        // Connect shop management events
-        if (_shopManagementUI != null)
-        {
-            _shopManagementUI.BackToGameRequested += OnBackToGameRequested;
-        }
-
-        // Subscribe to additional events from the combat system
-        SubscribeToGameEvents();
-    }
-
-    private void SubscribeToGameEvents()
-    {
-        // Subscribe to combat system events for real-time updates
-        if (_gameManager?.AdventureSystem.CombatSystem != null && _combatLogUI != null)
-        {
-            _gameManager.AdventureSystem.CombatSystem.CombatLogUpdated += OnCombatLogUpdated;
-            _gameManager.AdventureSystem.CombatSystem.MonsterDefeated += OnMonsterDefeated;
-            _gameManager.AdventureSystem.CombatSystem.ExpeditionCompleted += OnExpeditionCompleted;
-            GameLogger.Info("Subscribed to combat system events for UI updates");
-        }
-
-        // With CQS pattern, most state monitoring is handled by the UI components themselves
-        // We only need to handle high-level game events here
-        GameLogger.Info("Game events subscription completed - CQS pattern handles most state monitoring");
-    }
-
-    private void UnsubscribeFromGameEvents()
-    {
-        // Unsubscribe from combat system events
-        if (_gameManager?.AdventureSystem.CombatSystem != null)
-        {
-            _gameManager.AdventureSystem.CombatSystem.CombatLogUpdated -= OnCombatLogUpdated;
-            _gameManager.AdventureSystem.CombatSystem.MonsterDefeated -= OnMonsterDefeated;
-            _gameManager.AdventureSystem.CombatSystem.ExpeditionCompleted -= OnExpeditionCompleted;
-            GameLogger.Info("Unsubscribed from combat system events");
-        }
-
-        // With CQS pattern, UI components handle their own cleanup
-        GameLogger.Info("Game events unsubscription completed");
-    }
-
-    private void SetupUpdateTimer()
-    {
-        _updateTimer = new Godot.Timer
-        {
-            WaitTime = UpdateInterval,
-            Autostart = true
-        };
-
-        _updateTimer.Timeout += OnUpdateTimer;
-        AddChild(_updateTimer);
+        _toastContainer?.AddChild(_toastManager);
     }
 
     private void ConnectUIEvents()
     {
-        if (_adventurerStatusUI != null)
+        if (_gatherButton != null)
         {
-            _adventurerStatusUI.SendExpeditionRequested += OnSendExpeditionRequested;
-            _adventurerStatusUI.RetreatRequested += OnRetreatRequested;
+            _gatherButton.Pressed += OnGatherButtonPressed;
         }
 
-        if (_inventoryButton != null)
+        if (_craftButton != null)
         {
-            _inventoryButton.Pressed += OnInventoryButtonPressed;
+            _craftButton.Pressed += OnCraftButtonPressed;
         }
 
         if (_shopButton != null)
@@ -214,324 +111,160 @@ public partial class MainGameScene : Control
 
     private void DisconnectUIEvents()
     {
-        UnsubscribeFromGameEvents();
-
-        if (_adventurerStatusUI != null)
+        if (_gatherButton != null)
         {
-            _adventurerStatusUI.SendExpeditionRequested -= OnSendExpeditionRequested;
-            _adventurerStatusUI.RetreatRequested -= OnRetreatRequested;
+            _gatherButton.Pressed -= OnGatherButtonPressed;
         }
 
-        if (_inventoryButton != null)
+        if (_craftButton != null)
         {
-            _inventoryButton.Pressed -= OnInventoryButtonPressed;
+            _craftButton.Pressed -= OnCraftButtonPressed;
         }
 
         if (_shopButton != null)
         {
             _shopButton.Pressed -= OnShopButtonPressed;
         }
+    }
 
-        if (_shopManagementUI != null)
+    private void OnGatherButtonPressed()
+    {
+        // Simulate gathering materials
+        int materialsGained = GD.RandRange(1, 3);
+        _materialsCollected += materialsGained;
+
+        // Show toast notification
+        _toastManager?.ShowSuccess($"Gathered {materialsGained} materials!");
+
+        // Emit signal
+        EmitSignal(SignalName.MaterialsGathered, _materialsCollected);
+
+        // Update UI and enable next step
+        UpdateUI();
+        EnableNextSteps();
+
+        GameLogger.Info($"Gathered {materialsGained} materials. Total: {_materialsCollected}");
+    }
+
+    private void OnCraftButtonPressed()
+    {
+        if (_materialsCollected < 2)
         {
-            _shopManagementUI.BackToGameRequested -= OnBackToGameRequested;
-        }
-    }
-
-    private void OnUpdateTimer()
-    {
-        _gameManager?.Update(UpdateInterval);
-    }
-
-    private void OnSendExpeditionRequested()
-    {
-        // With CQS pattern, the UI components handle their own command dispatching
-        // The MainGameScene just responds to the signal for game-level effects
-        EmitSignal(SignalName.GameStateChanged, "expedition_started");
-        GameLogger.Info("Expedition started via UI");
-    }
-
-    private void OnRetreatRequested()
-    {
-        // With CQS pattern, the UI components handle their own command dispatching
-        // The MainGameScene just responds to the signal for game-level effects
-        EmitSignal(SignalName.GameStateChanged, "retreating");
-        GameLogger.Info("Retreat ordered via UI");
-    }
-
-    // These event handlers are simplified in the CQS pattern
-    // Most UI state management is handled by the UI components themselves through queries
-
-    /// <summary>
-    /// Handles combat log messages from the combat system.
-    /// </summary>
-    private void OnCombatLogUpdated(string message)
-    {
-        var color = DetermineCombatLogColor(message);
-        _combatLogUI?.AddLogEntry(message, color);
-    }
-
-    /// <summary>
-    /// Handles monster defeated events from the combat system.
-    /// </summary>
-    private void OnMonsterDefeated(CombatEntityStats monster)
-    {
-        _combatLogUI?.AddLogEntry($"Victory! {monster.Name} has been defeated!", "green");
-
-        // Generate and collect loot when a monster is defeated
-        GenerateAndCollectLoot(monster);
-    }
-
-    /// <summary>
-    /// Handles expedition completed events from the combat system.
-    /// </summary>
-    private void OnExpeditionCompleted()
-    {
-        _combatLogUI?.AddLogEntry("Expedition completed! Adventurer is returning to town.", "cyan");
-        EmitSignal(SignalName.ExpeditionCompleted, true);
-    }
-
-    /// <summary>
-    /// Determines the appropriate color for combat log messages.
-    /// </summary>
-    private string DetermineCombatLogColor(string message)
-    {
-        var lowerMessage = message.ToLowerInvariant();
-
-        if (lowerMessage.Contains("defeated") || lowerMessage.Contains("victory"))
-            return "green";
-
-        if (lowerMessage.Contains("damage") || lowerMessage.Contains("takes"))
-            return "red";
-
-        if (lowerMessage.Contains("retreat") || lowerMessage.Contains("fleeing"))
-            return "orange";
-
-        if (lowerMessage.Contains("expedition") || lowerMessage.Contains("begins"))
-            return "cyan";
-
-        if (lowerMessage.Contains("health") || lowerMessage.Contains("regenerate"))
-            return "lime";
-
-        if (lowerMessage.Contains("combat") || lowerMessage.Contains("fighting"))
-            return "yellow";
-
-        return "white";
-    }
-
-    /// <summary>
-    /// Gets the current game status for debugging or UI display.
-    /// </summary>
-    public async Task<string> GetGameStatus()
-    {
-        try
-        {
-            var dispatcher = Game.DI.DependencyInjectionNode.GetService<IDispatcher>();
-            var statusQuery = new Game.Adventure.Queries.GetAdventurerStatusQuery();
-            return await dispatcher.DispatchQueryAsync<Game.Adventure.Queries.GetAdventurerStatusQuery, string>(
-                statusQuery);
-        }
-        catch (Exception ex)
-        {
-            GameLogger.Error(ex, "Failed to get game status");
-            return "Unable to get game status";
-        }
-    }
-
-    /// <summary>
-    /// Creates a loot generator with predefined loot tables for different monster types.
-    /// </summary>
-    private LootGenerator CreateLootGenerator()
-    {
-        return LootConfiguration.CreateLootGenerator();
-    }
-
-    /// <summary>
-    /// Generates loot from a defeated monster and adds it to inventory.
-    /// Shows MaterialCollection UI if materials were obtained.
-    /// </summary>
-    private void GenerateAndCollectLoot(CombatEntityStats monster)
-    {
-        if (_lootGenerator == null || _inventoryManager == null)
-        {
-            GameLogger.Warning("Loot generation failed - systems not initialized");
+            _toastManager?.ShowWarning("Need at least 2 materials to craft!");
             return;
         }
 
-        try
-        {
-            // Generate loot drops based on monster type
-            var drops = _lootGenerator.GenerateDrops(monster.Name.ToLower());
+        // Simulate crafting - consume materials, create items
+        int materialsUsed = Math.Min(2, _materialsCollected);
+        int itemsCreated = 1;
 
-            if (drops.Count == 0)
-            {
-                GameLogger.Info($"No materials dropped from {monster.Name}");
-                return;
-            }
+        _materialsCollected -= materialsUsed;
+        _itemsCrafted += itemsCreated;
 
-            // Add each material drop to inventory using the batch method
-            var result = _inventoryManager.AddMaterials(drops);
+        // Show toast notification
+        _toastManager?.ShowSuccess($"Crafted {itemsCreated} item using {materialsUsed} materials!");
 
-            // Report results to the player
-            var materialsAdded = new List<string>();
-            foreach (var drop in result.SuccessfulAdds)
-            {
-                materialsAdded.Add($"{drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
-                GameLogger.Debug(
-                    $"Added to inventory: {drop.Material.Name} x{drop.Quantity} ({drop.Material.Quality})");
-            }
+        // Emit signal
+        EmitSignal(SignalName.ItemsCrafted, _itemsCrafted);
 
-            // Report any failures
-            foreach (var drop in result.FailedAdds)
-            {
-                GameLogger.Warning($"Failed to add {drop.Material.Name} to inventory - possibly full");
-                _combatLogUI?.AddLogEntry($"Inventory full! Lost {drop.Material.Name} x{drop.Quantity}", "orange");
-            }
+        // Update UI and enable next step
+        UpdateUI();
+        EnableNextSteps();
 
-            // Show materials collected in chat and potentially show MaterialCollection UI
-            if (materialsAdded.Count > 0)
-            {
-                var materialList = string.Join(", ", materialsAdded);
-                _combatLogUI?.AddLogEntry($"Materials collected: {materialList}", "cyan");
-
-                // Show toast notification for materials collected
-                ShowMaterialToast(materialsAdded);
-
-                GameLogger.Info($"Successfully collected {materialsAdded.Count} material types from {monster.Name}");
-            }
-        }
-        catch (Exception ex)
-        {
-            GameLogger.Error(ex, $"Error generating loot for {monster.Name}");
-        }
+        GameLogger.Info($"Crafted {itemsCreated} item. Total items: {_itemsCrafted}");
     }
 
-    /// <summary>
-    /// Shows a toast notification for collected materials.
-    /// </summary>
-    private void ShowMaterialToast(List<string> materials)
+    private void OnShopButtonPressed()
     {
-        if (materials.Count == 0 || _toastManager == null) return;
+        if (_itemsCrafted == 0)
+        {
+            _toastManager?.ShowWarning("Need at least 1 crafted item to manage shop!");
+            return;
+        }
 
-        // Use the new ToastManager to show material collection
-        _toastManager.ShowMaterialToast(materials);
+        // Simulate putting item up for sale
+        int itemsToSell = Math.Min(1, _itemsCrafted);
+        _itemsCrafted -= itemsToSell;
+        _itemsForSale += itemsToSell;
+
+        // Show toast notification
+        _toastManager?.ShowSuccess($"Put {itemsToSell} item up for sale!");
+
+        // Simulate some sales and gold earning
+        if (GD.Randf() > 0.5f) // 50% chance of immediate sale
+        {
+            int goldEarned = GD.RandRange(10, 25);
+            _gold += goldEarned;
+            _itemsForSale -= itemsToSell;
+            
+            GetTree().CreateTimer(1.0f).Timeout += () =>
+            {
+                _toastManager?.ShowSuccess($"Sold item for {goldEarned} gold!");
+                UpdateUI();
+            };
+        }
+
+        // Emit signal
+        EmitSignal(SignalName.ShopUpdated, _itemsForSale, _gold);
+
+        // Update UI
+        UpdateUI();
+
+        GameLogger.Info($"Managing shop. Items for sale: {_itemsForSale}, Gold: {_gold}");
+    }
+
+    private void UpdateUI()
+    {
+        if (_gatherStatus != null)
+        {
+            _gatherStatus.Text = $"Materials collected: {_materialsCollected}";
+        }
+
+        if (_craftStatus != null)
+        {
+            _craftStatus.Text = $"Items crafted: {_itemsCrafted}";
+        }
+
+        if (_shopStatus != null)
+        {
+            _shopStatus.Text = $"Items for sale: {_itemsForSale} | Gold: {_gold}";
+        }
+    }
+
+    private void EnableNextSteps()
+    {
+        // Enable crafting if we have materials
+        if (_craftButton != null)
+        {
+            _craftButton.Disabled = _materialsCollected < 2;
+        }
+
+        // Enable shop if we have crafted items
+        if (_shopButton != null)
+        {
+            _shopButton.Disabled = _itemsCrafted == 0;
+        }
     }
 
     /// <summary>
-    /// Test method to demonstrate different toast types and stacking behavior.
+    /// Test method to demonstrate toast system.
     /// </summary>
     public void TestToasts()
     {
         if (_toastManager == null) return;
 
-        // Test rapid-fire toasts to demonstrate stacking
-        _toastManager.ShowSuccess("First success message!");
-
-        // Delay slightly to see stacking effect
-        GetTree().CreateTimer(0.5f).Timeout += () => { _toastManager.ShowSuccess("Second success - should stack!"); };
-
+        _toastManager.ShowSuccess("Test success toast!");
+        
+        GetTree().CreateTimer(0.5f).Timeout += () =>
+        {
+            _toastManager.ShowWarning("Test warning toast!");
+        };
+        
         GetTree().CreateTimer(1.0f).Timeout += () =>
         {
-            _toastManager.ShowSuccess("Third success - watch them shift!");
+            _toastManager.ShowError("Test error toast!");
         };
 
-        GetTree().CreateTimer(1.5f).Timeout += () => { _toastManager.ShowWarning("Warning toast - different style"); };
-
-        GetTree().CreateTimer(2.0f).Timeout += () => { _toastManager.ShowError("Error in center position"); };
-
-        // Test material toast stacking
-        GetTree().CreateTimer(2.5f).Timeout += () =>
-        {
-            _toastManager.ShowMaterialToast(new List<string> { "Iron Ore x3", "Leather x2" });
-        };
-
-        GetTree().CreateTimer(3.0f).Timeout += () =>
-        {
-            _toastManager.ShowMaterialToast(new List<string> { "Magic Crystal x1", "Steel x5" });
-        };
-
-        // Test direct MaterialToastUI - should automatically redirect to ToastManager
-        GetTree().CreateTimer(3.5f).Timeout += () =>
-        {
-            if (_toastContainer != null)
-            {
-                GameLogger.Info("Testing MaterialToastUI direct instantiation (should redirect to ToastManager)");
-                var materialToast = new MaterialToastUI();
-                _toastContainer.AddChild(materialToast);
-                materialToast.ShowToast(new List<string> { "Direct MaterialToast", "Auto-redirected to stack!" });
-            }
-        };
-
-        // Test custom config with different anchor
-        GetTree().CreateTimer(4.0f).Timeout += () =>
-        {
-            var customConfig = new Game.UI.Models.ToastConfig
-            {
-                Title = "Achievement Unlocked",
-                Message = "Master Blacksmith - Center positioned",
-                Style = Game.UI.Models.ToastStyle.Success,
-                Animation = Game.UI.Models.ToastAnimation.Bounce,
-                Anchor = Game.UI.Models.ToastAnchor.Center,
-                DisplayDuration = 5.0f
-            };
-            _toastManager.ShowToast(customConfig);
-        };
-
-        GameLogger.Info("Toast stacking test sequence initiated - press T to repeat");
-    }
-
-    /// <summary>
-    /// Handles inventory button press to show/hide the inventory panel.
-    /// </summary>
-    private void OnInventoryButtonPressed()
-    {
-        if (_inventoryPanelUI == null) return;
-
-        // Toggle inventory panel visibility
-        _inventoryPanelUI.Visible = !_inventoryPanelUI.Visible;
-
-        if (_inventoryPanelUI.Visible)
-        {
-            _inventoryPanelUI.RefreshAllComponents();
-            GameLogger.Info("Inventory panel opened");
-        }
-        else
-        {
-            GameLogger.Info("Inventory panel closed");
-        }
-    }
-
-    /// <summary>
-    /// Handles shop button press to show/hide the shop management panel.
-    /// </summary>
-    private void OnShopButtonPressed()
-    {
-        if (_shopManagementUI == null) return;
-
-        // Toggle shop management panel visibility
-        _shopManagementUI.Visible = !_shopManagementUI.Visible;
-
-        if (_shopManagementUI.Visible)
-        {
-            // Refresh the shop UI components when opening
-            _shopManagementUI.RefreshAllComponents();
-            GameLogger.Info("Shop management panel opened and refreshed");
-        }
-        else
-        {
-            GameLogger.Info("Shop management panel closed");
-        }
-    }
-
-    /// <summary>
-    /// Handles back to game request from shop management UI.
-    /// </summary>
-    private void OnBackToGameRequested()
-    {
-        if (_shopManagementUI != null)
-        {
-            _shopManagementUI.Visible = false;
-            GameLogger.Info("Returned to main game from shop management");
-        }
+        GameLogger.Info("Toast test sequence initiated - press T to repeat");
     }
 }

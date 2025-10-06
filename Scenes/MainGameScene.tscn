@@ -1,11 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://ce3hfv7a2s1gs"]
+[gd_scene load_steps=2 format=3 uid="uid://ce3hfv7a2s1gs"]
 
 [ext_resource type="Script" uid="uid://da45ct5sa8e83" path="res://Scripts/Scenes/MainGameScene.cs" id="1_qla6v"]
-[ext_resource type="PackedScene" uid="uid://b7x3k2qm4wan1" path="res://Scenes/UI/AdventurerStatus.tscn" id="2_adventurer_status"]
-[ext_resource type="PackedScene" uid="uid://d2y4p8x1m6n7v" path="res://Scenes/UI/CombatLog.tscn" id="3_combat_log"]
-[ext_resource type="PackedScene" uid="uid://c5v7n2x4q8p1m" path="res://Scenes/UI/ExpeditionPanel.tscn" id="4_expedition_panel"]
-[ext_resource type="PackedScene" uid="uid://5vuncmhosicy" path="res://Scenes/UI/MaterialCollection.tscn" id="5_material_collection"]
-[ext_resource type="PackedScene" uid="uid://bw4x5n1k8g7h2" path="res://Scenes/UI/ShopManagement.tscn" id="7_shop_management"]
 
 [node name="MainGameScene" type="Control"]
 layout_mode = 3
@@ -16,71 +11,110 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_qla6v")
 
-[node name="MainContainer" type="HSplitContainer" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+color = Color(0.1, 0.1, 0.15, 1)
 
-[node name="LeftPanel" type="VBoxContainer" parent="MainContainer"]
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = -50.0
+offset_bottom = -50.0
+
+[node name="TitleLabel" type="Label" parent="MainContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
+text = "Fantasy Shop Keeper"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="AdventurerStatus" parent="MainContainer/LeftPanel" instance=ExtResource("2_adventurer_status")]
+[node name="HSeparator" type="HSeparator" parent="MainContainer"]
+layout_mode = 2
+
+[node name="GameFlow" type="VBoxContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ExpeditionPanel" parent="MainContainer/LeftPanel" instance=ExtResource("4_expedition_panel")]
+[node name="GatherSection" type="VBoxContainer" parent="MainContainer/GameFlow"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="InventoryButton" type="Button" parent="MainContainer/LeftPanel"]
+[node name="GatherTitle" type="Label" parent="MainContainer/GameFlow/GatherSection"]
 layout_mode = 2
-size_flags_vertical = 0
-text = "View Inventory"
+text = "1. Gather Materials"
+theme_type_variation = &"HeaderMedium"
 
-[node name="ShopButton" type="Button" parent="MainContainer/LeftPanel"]
+[node name="GatherButton" type="Button" parent="MainContainer/GameFlow/GatherSection"]
 layout_mode = 2
-size_flags_vertical = 0
-text = "Manage Shop"
+size_flags_horizontal = 4
+text = "Gather Materials"
 
-[node name="CombatLog" parent="MainContainer" instance=ExtResource("3_combat_log")]
+[node name="GatherStatus" type="Label" parent="MainContainer/GameFlow/GatherSection"]
 layout_mode = 2
-size_flags_horizontal = 3
+text = "Materials collected: 0"
+horizontal_alignment = 1
+
+[node name="CraftSection" type="VBoxContainer" parent="MainContainer/GameFlow"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CraftTitle" type="Label" parent="MainContainer/GameFlow/CraftSection"]
+layout_mode = 2
+text = "2. Craft Items"
+theme_type_variation = &"HeaderMedium"
+
+[node name="CraftButton" type="Button" parent="MainContainer/GameFlow/CraftSection"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Open Crafting"
+disabled = true
+
+[node name="CraftStatus" type="Label" parent="MainContainer/GameFlow/CraftSection"]
+layout_mode = 2
+text = "Items crafted: 0"
+horizontal_alignment = 1
+
+[node name="ShopSection" type="VBoxContainer" parent="MainContainer/GameFlow"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ShopTitle" type="Label" parent="MainContainer/GameFlow/ShopSection"]
+layout_mode = 2
+text = "3. Manage Shop"
+theme_type_variation = &"HeaderMedium"
+
+[node name="ShopButton" type="Button" parent="MainContainer/GameFlow/ShopSection"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Open Shop"
+disabled = true
+
+[node name="ShopStatus" type="Label" parent="MainContainer/GameFlow/ShopSection"]
+layout_mode = 2
+text = "Items for sale: 0 | Gold: 100"
+horizontal_alignment = 1
 
 [node name="UIOverlay" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 mouse_filter = 2
 
 [node name="ToastContainer" type="VBoxContainer" parent="UIOverlay"]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 0.0
 anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchor_bottom = 0.0
+offset_left = -320.0
+offset_bottom = 600.0
+grow_horizontal = 0
 mouse_filter = 2
-
-[node name="InventoryPanel" parent="UIOverlay" instance=ExtResource("5_material_collection")]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -400.0
-offset_top = -300.0
-offset_right = 400.0
-offset_bottom = 300.0
-
-[node name="ShopManagementPanel" parent="UIOverlay" instance=ExtResource("7_shop_management")]
-visible = false
-layout_mode = 1
