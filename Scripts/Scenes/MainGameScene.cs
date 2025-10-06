@@ -420,8 +420,16 @@ public partial class MainGameScene : Control
         _toastManager.ShowWarning("Low health warning");
         _toastManager.ShowError("Failed to load save file");
         
-        // Test material toast
+        // Test material toast (using ToastManager)
         _toastManager.ShowMaterialToast(new List<string> { "Iron Ore x3", "Leather x2", "Magic Crystal x1" });
+        
+        // Test direct MaterialToastUI for backward compatibility
+        if (_toastContainer != null)
+        {
+            var materialToast = new MaterialToastUI();
+            _toastContainer.AddChild(materialToast);
+            materialToast.ShowToast(new List<string> { "Direct MaterialToast", "Backward Compatible x2" });
+        }
         
         // Test custom config
         var customConfig = new ToastConfig

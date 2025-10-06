@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bj8q5m9r3c4k1"]
+[gd_scene load_steps=2 format=3 uid="uid://6tf8kit57jox"]
 
-[ext_resource type="Script" uid="uid://generic_toast_ui" path="res://Scripts/UI/ToastUI.cs" id="1_toast_ui"]
+[ext_resource type="Script" uid="uid://cencry1fmnpj1" path="res://Scripts/UI/ToastUI.cs" id="1_toast_ui"]
 
 [node name="Toast" type="PanelContainer"]
 offset_right = 300.0
@@ -15,10 +15,10 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Title" type="Label" parent="MarginContainer/VBox"]
+visible = false
 layout_mode = 2
 text = "Toast Title"
 horizontal_alignment = 1
-visible = false
 
 [node name="Message" type="Label" parent="MarginContainer/VBox"]
 layout_mode = 2

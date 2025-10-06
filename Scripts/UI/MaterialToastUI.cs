@@ -6,35 +6,22 @@ using Godot;
 namespace Game.Scripts.UI;
 
 /// <summary>
-/// Toast notification that appears when materials are collected.
-/// Shows a brief, non-intrusive message about collected materials.
+/// Specialized toast notification for collected materials.
+/// Built on top of the generic ToastUI system with material-specific styling and behavior.
 /// </summary>
-public partial class MaterialToastUI : PanelContainer
+public partial class MaterialToastUI : ToastUI
 {
-    [Export] public float DisplayDuration { get; set; } = 3.0f;
+    [Export] public float DisplayDuration { get; set; } = 4.0f;
     [Export] public float FadeInDuration { get; set; } = 0.5f;
     [Export] public float FadeOutDuration { get; set; } = 0.5f;
 
-    private Label? _titleLabel;
-    private Label? _materialListLabel;
-    private Tween? _animationTween;
-
     public override void _Ready()
     {
-        // Cache node references
-        _titleLabel = GetNode<Label>("VBox/Title");
-        _materialListLabel = GetNode<Label>("VBox/MaterialList");
-
-        // Start invisible
-        Modulate = new Color(1, 1, 1, 0);
-
+        // Call parent _Ready to initialize the base ToastUI
+        base._Ready();
+        
         GameLogger.SetBackend(new GodotLoggerBackend());
         GameLogger.Debug("MaterialToastUI initialized");
-    }
-
-    public override void _ExitTree()
-    {
-        _animationTween?.Kill();
     }
 
     /// <summary>
@@ -45,14 +32,11 @@ public partial class MaterialToastUI : PanelContainer
     {
         if (materials.Count == 0) return;
 
-        // Update content
-        if (_materialListLabel != null)
-        {
-            _materialListLabel.Text = string.Join(", ", materials);
-        }
-
-        // Animate the toast appearance
-        AnimateToast();
+        var message = string.Join(", ", materials);
+        var config = CreateMaterialToastConfig(message);
+        
+        // Use the base ToastUI ShowToast method
+        ShowToast(config);
 
         GameLogger.Info($"Material toast shown with {materials.Count} items");
     }
@@ -63,56 +47,36 @@ public partial class MaterialToastUI : PanelContainer
     /// <param name="message">The message to display</param>
     public void ShowToast(string message)
     {
-        if (_materialListLabel != null)
-        {
-            _materialListLabel.Text = message;
-        }
-
-        AnimateToast();
+        var config = CreateMaterialToastConfig(message);
+        
+        // Use the base ToastUI ShowToast method
+        ShowToast(config);
 
         GameLogger.Info($"Material toast shown: {message}");
     }
 
-    private void AnimateToast()
+    /// <summary>
+    /// Creates the standard configuration for material collection toasts.
+    /// </summary>
+    /// <param name="message">The material message to display</param>
+    /// <returns>Configured ToastConfig for material collection</returns>
+    private ToastConfig CreateMaterialToastConfig(string message)
     {
-        // Kill any existing animation
-        _animationTween?.Kill();
-
-        // Create new tween
-        _animationTween = CreateTween();
-        _animationTween.SetParallel(true);
-
-        // Fade in
-        _animationTween.TweenProperty(this, "modulate:a", 1.0f, FadeInDuration);
-
-        // Move in from right (slide effect)
-        var startPos = Position;
-        Position = new Vector2(startPos.X + 50, startPos.Y);
-        _animationTween.TweenProperty(this, "position:x", startPos.X, FadeInDuration)
-            .SetTrans(Tween.TransitionType.Back)
-            .SetEase(Tween.EaseType.Out);
-
-        // Wait for display duration, then fade out
-        _animationTween.TweenCallback(Callable.From(StartFadeOut)).SetDelay(FadeInDuration + DisplayDuration);
-    }
-
-    private void StartFadeOut()
-    {
-        // Kill existing animation and create new one for fade out
-        _animationTween?.Kill();
-        _animationTween = CreateTween();
-        _animationTween.SetParallel(true);
-
-        // Fade out
-        _animationTween.TweenProperty(this, "modulate:a", 0.0f, FadeOutDuration);
-
-        // Slide out to right
-        var currentPos = Position;
-        _animationTween.TweenProperty(this, "position:x", currentPos.X + 50, FadeOutDuration)
-            .SetTrans(Tween.TransitionType.Back)
-            .SetEase(Tween.EaseType.In);
-
-        // Remove when done
-        _animationTween.TweenCallback(Callable.From(QueueFree)).SetDelay(FadeOutDuration);
+        return new ToastConfig
+        {
+            Title = "Materials Collected",
+            Message = message,
+            Style = ToastStyle.Material,
+            Animation = ToastAnimation.SlideFromRight,
+            Anchor = ToastAnchor.TopRight,
+            DisplayDuration = DisplayDuration,
+            FadeInDuration = FadeInDuration,
+            FadeOutDuration = FadeOutDuration,
+            AnchorOffset = new Vector2(10, 10),
+            MaxWidth = 300.0f,
+            ClickToDismiss = true,
+            BackgroundTint = new Color(1.0f, 1.0f, 1.0f, 0.95f), // Slightly more opaque for materials
+            TextColor = Colors.White
+        };
     }
 }
