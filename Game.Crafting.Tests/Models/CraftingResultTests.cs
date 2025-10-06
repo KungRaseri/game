@@ -2,7 +2,7 @@ using FluentAssertions;
 using Game.Items.Models;
 using Game.Crafting.Models;
 
-namespace Game.Crafting.Tests;
+namespace Game.Crafting.Tests.Models;
 
 /// <summary>
 /// Tests for the CraftingResult class.

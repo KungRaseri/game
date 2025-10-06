@@ -3,7 +3,7 @@ using Game.Items.Models;
 using Game.Items.Models.Materials;
 using Game.Crafting.Models;
 
-namespace Game.Crafting.Tests;
+namespace Game.Crafting.Tests.Models;
 
 /// <summary>
 /// Tests for the Recipe class.
