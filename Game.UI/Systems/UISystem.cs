@@ -1,93 +1,82 @@
 #nullable enable
 
-using System;
+using Game.UI.Models;
 
 namespace Game.UI.Systems;
 
 /// <summary>
-/// Adventure management system that coordinates combat and adventurer activities.
-/// Replaces the controller pattern with a system that can work with CQS.
-/// Contains events for UI integration and manages the overall adventure lifecycle.
+/// Main UI coordination system that manages all UI-related operations and events
 /// </summary>
 public class UISystem : IDisposable
 {
     private readonly ToastSystem _toastSystem;
     private bool _disposed;
 
+    public UISystem(ToastSystem toastSystem)
+    {
+        _toastSystem = toastSystem ?? throw new ArgumentNullException(nameof(toastSystem));
+
+        // Subscribe to toast events for UI integration
+        _toastSystem.ToastShown += OnToastShown;
+        _toastSystem.ToastDismissed += OnToastDismissed;
+        _toastSystem.AllToastsDismissed += OnAllToastsDismissed;
+    }
+
     public ToastSystem ToastSystem => _toastSystem;
 
-    // Events for UI and external system integration
-    public event Action<string>? StatusUpdated;
-    public event Action<AdventurerState>? StateChanged;
-    public event Action<CombatEntityStats>? MonsterDefeated;
-    public event Action? ExpeditionCompleted;
+    /// <summary>
+    /// Event fired when a toast should be displayed in the UI
+    /// </summary>
+    public event Action<ToastInfo>? ShowToastRequested;
 
-    public AdventureSystem(CombatSystem combatSystem)
+    /// <summary>
+    /// Event fired when a toast should be hidden from the UI
+    /// </summary>
+    public event Action<string>? HideToastRequested;
+
+    /// <summary>
+    /// Event fired when all toasts should be hidden from the UI
+    /// </summary>
+    public event Action? HideAllToastsRequested;
+
+    /// <summary>
+    /// Updates UI systems (call this regularly to handle cleanup, animations, etc.)
+    /// </summary>
+    public void Update()
     {
-        _combatSystem = combatSystem ?? throw new ArgumentNullException(nameof(combatSystem));
+        // Clean up expired toasts
+        _toastSystem.CleanupExpiredToasts();
+    }
 
-        // Subscribe to combat system events and forward them
-        _combatSystem.StateChanged += OnStateChanged;
-        _combatSystem.CombatLogUpdated += OnCombatLogUpdated;
-        _combatSystem.MonsterDefeated += OnMonsterDefeated;
-        _combatSystem.ExpeditionCompleted += OnExpeditionCompleted;
+    private void OnToastShown(ToastInfo toast)
+    {
+        // Forward toast events to UI components
+        ShowToastRequested?.Invoke(toast);
+    }
+
+    private void OnToastDismissed(string toastId)
+    {
+        // Forward dismiss events to UI components
+        HideToastRequested?.Invoke(toastId);
+    }
+
+    private void OnAllToastsDismissed()
+    {
+        // Forward dismiss all events to UI components
+        HideAllToastsRequested?.Invoke();
     }
 
     /// <summary>
-    /// Creates a static factory method for easy instantiation with a new combat system.
+    /// Disposes of the UI system and cleans up event subscriptions
     /// </summary>
-    public static AdventureSystem Create()
-    {
-        var combatSystem = new CombatSystem();
-        return new AdventureSystem(combatSystem);
-    }
-
-    private void OnStateChanged(AdventurerState newState)
-    {
-        var message = $"Adventurer state changed to: {newState}";
-        UpdateStatus(message);
-        StateChanged?.Invoke(newState);
-    }
-
-    private void OnCombatLogUpdated(string logMessage)
-    {
-        UpdateStatus(logMessage);
-    }
-
-    private void OnMonsterDefeated(CombatEntityStats monster)
-    {
-        var message = $"Victory! {monster.Name} has been defeated!";
-        UpdateStatus(message);
-        MonsterDefeated?.Invoke(monster);
-    }
-
-    private void OnExpeditionCompleted()
-    {
-        var state = _combatSystem.State;
-        var message = state switch
-        {
-            AdventurerState.Retreating => "Expedition ended - adventurer retreated safely",
-            AdventurerState.Regenerating => "Expedition completed successfully!",
-            _ => "Expedition ended"
-        };
-        UpdateStatus(message);
-        ExpeditionCompleted?.Invoke();
-    }
-
-    private void UpdateStatus(string message)
-    {
-        StatusUpdated?.Invoke(message);
-    }
-
     public void Dispose()
     {
         if (_disposed)
             return;
 
-        _combatSystem.StateChanged -= OnStateChanged;
-        _combatSystem.CombatLogUpdated -= OnCombatLogUpdated;
-        _combatSystem.MonsterDefeated -= OnMonsterDefeated;
-        _combatSystem.ExpeditionCompleted -= OnExpeditionCompleted;
+        _toastSystem.ToastShown -= OnToastShown;
+        _toastSystem.ToastDismissed -= OnToastDismissed;
+        _toastSystem.AllToastsDismissed -= OnAllToastsDismissed;
 
         _disposed = true;
     }

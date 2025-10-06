@@ -1,7 +1,6 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.UI.Handlers;
 using Game.UI.Models;
 using Godot;
 
@@ -280,6 +279,7 @@ public partial class ToastManager : Control, IToastOperations
         {
             toastInfo.Toast?.QueueFree();
         }
+
         _activeToasts.Clear();
         GameLogger.Info("All toasts cleared");
     }
@@ -358,6 +358,16 @@ public partial class ToastManager : Control, IToastOperations
     }
 
     /// <summary>
+    /// Checks if a toast with the specified ID exists.
+    /// </summary>
+    /// <param name="toastId">The unique identifier of the toast</param>
+    /// <returns>True if the toast exists, otherwise false</returns>
+    public bool ToastExists(string toastId)
+    {
+        return _activeToasts.Any(t => t.Info.Id == toastId);
+    }
+
+    /// <summary>
     /// Animates existing toasts upward when a new toast is added.
     /// </summary>
     private void AnimateExistingToastsForNewToast(ToastAnchor newToastAnchor)
@@ -369,7 +379,8 @@ public partial class ToastManager : Control, IToastOperations
             if (toastInfo.Toast == null) continue;
 
             var currentPos = toastInfo.Toast.Position;
-            var newPos = CalculateShiftedPosition(currentPos, newToastAnchor, toastInfo.Info.EstimatedHeight + ToastSpacing);
+            var newPos = CalculateShiftedPosition(currentPos, newToastAnchor,
+                toastInfo.Info.EstimatedHeight + ToastSpacing);
 
             // Create smooth animation to shift upward
             var tween = toastInfo.Toast.CreateTween();
@@ -495,10 +506,13 @@ public partial class ToastManager : Control, IToastOperations
             ToastAnchor.TopCenter => new Vector2(containerSize.X / 2 - toastSize.X / 2, 0),
             ToastAnchor.TopRight => new Vector2(containerSize.X - toastSize.X, 0),
             ToastAnchor.CenterLeft => new Vector2(0, containerSize.Y / 2 - toastSize.Y / 2),
-            ToastAnchor.Center => new Vector2(containerSize.X / 2 - toastSize.X / 2, containerSize.Y / 2 - toastSize.Y / 2),
-            ToastAnchor.CenterRight => new Vector2(containerSize.X - toastSize.X, containerSize.Y / 2 - toastSize.Y / 2),
+            ToastAnchor.Center => new Vector2(containerSize.X / 2 - toastSize.X / 2,
+                containerSize.Y / 2 - toastSize.Y / 2),
+            ToastAnchor.CenterRight => new Vector2(containerSize.X - toastSize.X,
+                containerSize.Y / 2 - toastSize.Y / 2),
             ToastAnchor.BottomLeft => new Vector2(0, containerSize.Y - toastSize.Y),
-            ToastAnchor.BottomCenter => new Vector2(containerSize.X / 2 - toastSize.X / 2, containerSize.Y - toastSize.Y),
+            ToastAnchor.BottomCenter => new Vector2(containerSize.X / 2 - toastSize.X / 2,
+                containerSize.Y - toastSize.Y),
             ToastAnchor.BottomRight => new Vector2(containerSize.X - toastSize.X, containerSize.Y - toastSize.Y),
             _ => Vector2.Zero
         };

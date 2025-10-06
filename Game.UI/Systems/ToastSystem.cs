@@ -1,309 +1,193 @@
+using Game.UI.Models;
+
 namespace Game.UI.Systems;
 
 /// <summary>
-/// Manages combat between adventurers and monsters with health-based auto-combat
+/// Manages toast notifications and their lifecycle
 /// </summary>
-public class ToastSystem
+public class ToastSystem : IToastOperations
 {
-    private readonly Queue<CombatEntityStats> _monsters;
-    private CombatEntityStats? _currentAdventurer;
-    private CombatEntityStats? _currentMonster;
-    private AdventurerState _state;
+    private readonly List<ToastInfo> _activeToasts;
+    private readonly object _lock = new();
 
-    /// <summary>
-    /// Accumulates fractional damage dealt by the adventurer to the monster.
-    /// <para>
-    /// Fractional accumulation is necessary to prevent rounding errors in scenarios where
-    /// the adventurer's damage per tick is less than 1. By accumulating the fractional
-    /// damage over multiple ticks, we ensure that all intended damage is eventually applied,
-    /// preventing the loss of damage that would occur if values were truncated or rounded
-    /// each tick. This is especially important in low DPS scenarios.
-    /// </para>
-    /// </summary>
-    private float _accumulatedAdventurerDamage = 0f;
-
-    /// <summary>
-    /// Accumulates fractional damage dealt by the monster to the adventurer.
-    /// <para>
-    /// Fractional accumulation is necessary to prevent rounding errors in scenarios where
-    /// the monster's damage per tick is less than 1. By accumulating the fractional
-    /// damage over multiple ticks, we ensure that all intended damage is eventually applied,
-    /// preventing the loss of damage that would occur if values were truncated or rounded
-    /// each tick. This is especially important in low DPS scenarios.
-    /// </para>
-    /// </summary>
-    private float _accumulatedMonsterDamage = 0f;
-
-    /// <summary>
-    /// Accumulates fractional health regeneration for the adventurer.
-    /// <para>
-    /// Ensures consistent 1 HP per second regeneration rate regardless of update frequency.
-    /// </para>
-    /// </summary>
-    private float _accumulatedAdventurerRegen = 0f;
-
-    public AdventurerState State
+    public ToastSystem()
     {
-        get => _state;
-        private set
+        _activeToasts = new List<ToastInfo>();
+    }
+
+    /// <summary>
+    /// Event fired when a new toast is shown
+    /// </summary>
+    public event Action<ToastInfo>? ToastShown;
+
+    /// <summary>
+    /// Event fired when a toast is dismissed
+    /// </summary>
+    public event Action<string>? ToastDismissed;
+
+    /// <summary>
+    /// Event fired when all toasts are dismissed
+    /// </summary>
+    public event Action? AllToastsDismissed;
+
+    /// <summary>
+    /// Shows a toast with the specified configuration
+    /// </summary>
+    public Task ShowToastAsync(ToastConfig config)
+    {
+        var toast = new ToastInfo
         {
-            _state = value;
-            StateChanged?.Invoke(_state);
+            Id = Guid.NewGuid().ToString(),
+            Config = config,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        lock (_lock)
+        {
+            _activeToasts.Add(toast);
+        }
+
+        ToastShown?.Invoke(toast);
+
+        // Auto-dismiss non-persistent toasts after duration
+        if (config.DisplayDuration > 0)
+        {
+            _ = Task.Delay(TimeSpan.FromSeconds(config.DisplayDuration))
+                .ContinueWith(_ => DismissToastAsync(toast.Id));
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Dismisses a specific toast by ID
+    /// </summary>
+    public Task DismissToastAsync(string toastId)
+    {
+        bool wasRemoved;
+        lock (_lock)
+        {
+            wasRemoved = _activeToasts.RemoveAll(t => t.Id == toastId) > 0;
+        }
+
+        if (wasRemoved)
+        {
+            ToastDismissed?.Invoke(toastId);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Dismisses all currently active toasts
+    /// </summary>
+    public Task ClearAllToastsAsync()
+    {
+        lock (_lock)
+        {
+            _activeToasts.Clear();
+        }
+
+        AllToastsDismissed?.Invoke();
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Gets all currently active toasts
+    /// </summary>
+    public List<ToastInfo> GetActiveToasts()
+    {
+        lock (_lock)
+        {
+            return _activeToasts.ToList(); // Return a copy to avoid concurrent modification
         }
     }
 
-    public CombatEntityStats? CurrentAdventurer => _currentAdventurer;
-    public CombatEntityStats? CurrentMonster => _currentMonster;
-    public bool IsInCombat => State == AdventurerState.Fighting;
-    public bool HasMonstersRemaining => _monsters.Count > 0 || _currentMonster?.IsAlive == true;
-
-    public event Action<AdventurerState>? StateChanged;
-    public event Action<string>? CombatLogUpdated;
-    public event Action<CombatEntityStats>? MonsterDefeated;
-    public event Action? ExpeditionCompleted;
-
-    public CombatSystem()
+    /// <summary>
+    /// Gets a specific toast by ID
+    /// </summary>
+    public ToastInfo? GetToastById(string toastId)
     {
-        _monsters = new Queue<CombatEntityStats>();
-        State = AdventurerState.Idle;
+        lock (_lock)
+        {
+            return _activeToasts.FirstOrDefault(t => t.Id == toastId);
+        }
     }
 
     /// <summary>
-    /// Starts an expedition with the given adventurer against a list of monsters
+    /// Gets the total count of active toasts
     /// </summary>
-    public void StartExpedition(CombatEntityStats adventurer, IEnumerable<CombatEntityStats> monsters)
+    public int GetActiveToastCount()
     {
-        if (State != AdventurerState.Idle)
-            throw new InvalidOperationException("Cannot start expedition while adventurer is busy");
-
-        _currentAdventurer = adventurer ?? throw new ArgumentNullException(nameof(adventurer));
-
-        _monsters.Clear();
-        foreach (var monster in monsters)
+        lock (_lock)
         {
-            _monsters.Enqueue(monster);
+            return _activeToasts.Count;
         }
-
-        // Reset accumulated damage for new expedition
-        _accumulatedAdventurerDamage = 0f;
-        _accumulatedMonsterDamage = 0f;
-        _accumulatedAdventurerRegen = 0f;
-
-        State = AdventurerState.Traveling;
-        LogMessage($"Adventurer begins expedition with {_monsters.Count} monsters to face");
-
-        // Start combat with first monster
-        StartNextFight();
     }
 
     /// <summary>
-    /// Updates combat state and processes damage over time
+    /// Checks if a toast with the specified ID exists
     /// </summary>
-    public void Update()
+    public bool ToastExists(string toastId)
     {
-        Update(1.0f); // Default to 1 second for backward compatibility
+        lock (_lock)
+        {
+            return _activeToasts.Any(t => t.Id == toastId);
+        }
     }
 
     /// <summary>
-    /// Updates combat state and processes damage over time with fixed time step
+    /// Gets toasts by anchor position
     /// </summary>
-    public void Update(float fixedDeltaTime)
+    public List<ToastInfo> GetToastsByAnchor(ToastAnchor anchor)
     {
-        switch (State)
+        lock (_lock)
         {
-            case AdventurerState.Fighting:
-                ProcessCombat(fixedDeltaTime);
-                break;
-            case AdventurerState.Retreating:
-                ProcessRetreat(fixedDeltaTime);
-                break;
-            case AdventurerState.Regenerating:
-                ProcessRegeneration(fixedDeltaTime);
-                break;
+            return _activeToasts.Where(t => t.Config.Anchor == anchor).ToList();
         }
     }
 
-    private void StartNextFight()
+    /// <summary>
+    /// Checks if the toast limit has been reached
+    /// </summary>
+    public bool IsToastLimitReached()
     {
-        if (_currentAdventurer == null) return;
-
-        if (_monsters.Count > 0)
+        const int maxToasts = 10; // Configurable limit
+        lock (_lock)
         {
-            _currentMonster = _monsters.Dequeue();
-            _currentMonster.Died += OnMonsterDied;
-            State = AdventurerState.Fighting;
-
-            // Reset accumulated damage for new fight
-            _accumulatedAdventurerDamage = 0f;
-            _accumulatedMonsterDamage = 0f;
-            _accumulatedAdventurerRegen = 0f;
-
-            LogMessage($"Combat begins against {_currentMonster.Name}!");
-        }
-        else
-        {
-            // All monsters defeated
-            State = AdventurerState.Regenerating;
-            LogMessage("All monsters defeated! Adventurer returns victorious!");
-            ExpeditionCompleted?.Invoke();
+            return _activeToasts.Count >= maxToasts;
         }
     }
 
-    private void ProcessCombat(float deltaTime)
+    /// <summary>
+    /// Removes expired toasts (for non-persistent toasts that may have missed auto-dismiss)
+    /// </summary>
+    public void CleanupExpiredToasts()
     {
-        if (_currentAdventurer == null || _currentMonster == null)
+        var now = DateTime.UtcNow;
+        var expiredIds = new List<string>();
+
+        lock (_lock)
         {
-            // If we're missing entities but still in fighting state, transition appropriately
-            if (State == AdventurerState.Fighting)
+            foreach (var toast in _activeToasts.ToList())
             {
-                if (_monsters.Count > 0)
+                if (toast.Config.DisplayDuration > 0 && 
+                    (now - toast.CreatedAt).TotalSeconds > toast.Config.DisplayDuration)
                 {
-                    StartNextFight();
-                }
-                else
-                {
-                    State = AdventurerState.Regenerating;
-                    LogMessage("Combat ended - adventurer returns!");
-                    ExpeditionCompleted?.Invoke();
+                    expiredIds.Add(toast.Id);
                 }
             }
 
-            return;
-        }
-
-        // Check if adventurer should retreat
-        if (_currentAdventurer.ShouldRetreat)
-        {
-            State = AdventurerState.Retreating;
-            LogMessage($"Adventurer retreats at {_currentAdventurer.HealthPercentage:P0} health!");
-            ExpeditionCompleted?.Invoke();
-            return;
-        }
-
-        // Store local references to prevent race conditions
-        var currentAdventurer = _currentAdventurer;
-        var currentMonster = _currentMonster;
-
-        // Double-check that they're still valid after storing references
-        if (currentAdventurer == null || currentMonster == null)
-        {
-            return;
-        }
-
-        // Apply damage over time with proper fractional damage accumulation
-        _accumulatedAdventurerDamage += currentAdventurer.DamagePerSecond * deltaTime;
-        _accumulatedMonsterDamage += currentMonster.DamagePerSecond * deltaTime;
-
-        // Apply accumulated damage when it reaches at least 1 point
-        var adventurerDamage = (int)_accumulatedAdventurerDamage;
-        var monsterDamage = (int)_accumulatedMonsterDamage;
-
-        if (adventurerDamage > 0)
-        {
-            _accumulatedAdventurerDamage -= adventurerDamage;
-            currentMonster.TakeDamage(adventurerDamage);
-        }
-
-        // Check if monster was alive before damage and apply counter-damage
-        var monsterWasAlive = currentMonster.IsAlive;
-
-        if (monsterWasAlive && monsterDamage > 0 && currentAdventurer.IsAlive)
-        {
-            _accumulatedMonsterDamage -= monsterDamage;
-            currentAdventurer.TakeDamage(monsterDamage);
-
-            // Check if adventurer died
-            if (!currentAdventurer.IsAlive)
+            foreach (var id in expiredIds)
             {
-                State = AdventurerState.Retreating;
-                LogMessage("Adventurer has fallen! Emergency retreat!");
-                ExpeditionCompleted?.Invoke();
+                _activeToasts.RemoveAll(t => t.Id == id);
             }
         }
-    }
 
-    private void ProcessRetreat(float deltaTime)
-    {
-        if (_currentAdventurer == null) return;
-
-        // Clear current monster and remaining monsters from the expedition
-        if (_currentMonster != null)
+        // Notify about dismissed toasts
+        foreach (var id in expiredIds)
         {
-            _currentMonster.Died -= OnMonsterDied;
-            _currentMonster = null;
+            ToastDismissed?.Invoke(id);
         }
-
-        _monsters.Clear();
-
-        // Transition to regenerating to begin healing
-        State = AdventurerState.Regenerating;
-        LogMessage("Adventurer reaches safety and begins recovering");
-    }
-
-    private void ProcessRegeneration(float deltaTime)
-    {
-        if (_currentAdventurer == null) return;
-
-        // Regenerate 1 health per second (scaled by deltaTime)
-        // This prevents rapid regeneration when update frequency is high
-        _accumulatedAdventurerRegen += deltaTime; // deltaTime represents seconds
-
-        var regenAmount = (int)_accumulatedAdventurerRegen;
-        if (regenAmount > 0)
-        {
-            _accumulatedAdventurerRegen -= regenAmount;
-            _currentAdventurer.RegenerateHealth(regenAmount);
-        }
-
-        // Check if fully healed
-        if (_currentAdventurer.CurrentHealth >= _currentAdventurer.MaxHealth)
-        {
-            State = AdventurerState.Idle;
-            LogMessage("Adventurer has fully recovered and is ready for another expedition");
-        }
-    }
-
-    private void OnMonsterDied(CombatEntityStats monster)
-    {
-        LogMessage($"{monster.Name} defeated!");
-        MonsterDefeated?.Invoke(monster);
-
-        if (monster == _currentMonster)
-        {
-            _currentMonster.Died -= OnMonsterDied;
-            _currentMonster = null;
-
-            // Immediately start next fight to avoid state inconsistencies
-            StartNextFight();
-        }
-    }
-
-    private void LogMessage(string message)
-    {
-        CombatLogUpdated?.Invoke($"[{DateTime.Now:HH:mm:ss}] {message}");
-    }
-
-    /// <summary>
-    /// Forces the adventurer to retreat immediately
-    /// </summary>
-    public void ForceRetreat()
-    {
-        if (State == AdventurerState.Fighting || State == AdventurerState.Traveling)
-        {
-            State = AdventurerState.Retreating;
-            LogMessage("Forced retreat initiated!");
-            ExpeditionCompleted?.Invoke();
-        }
-    }
-
-    /// <summary>
-    /// Resets the combat system to idle state
-    /// </summary>
-    public void Reset()
-    {
-        _monsters.Clear();
-        _currentMonster = null;
-        _currentAdventurer = null;
-        State = AdventurerState.Idle;
     }
 }

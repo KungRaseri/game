@@ -4,6 +4,7 @@ using Game.Adventure.Commands;
 using Game.Adventure.Queries;
 using Game.Adventure.Models;
 using Game.Core.Utils;
+using Game.UI.Systems;
 
 namespace Game.Scripts;
 
@@ -15,10 +16,12 @@ namespace Game.Scripts;
 public class GameManager : IDisposable
 {
     private readonly AdventureSystem _adventureSystem;
+    private readonly UISystem _uiSystem;
     private readonly IDispatcher _dispatcher;
     private bool _disposed = false;
 
     public AdventureSystem AdventureSystem => _adventureSystem;
+    public UISystem UISystem => _uiSystem;
     public IDispatcher Dispatcher => _dispatcher;
 
     public GameManager(IDispatcher dispatcher)
@@ -32,6 +35,9 @@ public class GameManager : IDisposable
             // Get the AdventureSystem from DI instead of creating a new instance
             // This ensures we use the same instance that the CQS handlers use
             _adventureSystem = Game.DI.DependencyInjectionNode.GetService<AdventureSystem>();
+
+            // Get the UISystem from DI
+            _uiSystem = Game.DI.DependencyInjectionNode.GetService<UISystem>();
 
             GameLogger.Info("GameManager initialization complete");
         }
@@ -64,6 +70,7 @@ public class GameManager : IDisposable
         try
         {
             _adventureSystem.CombatSystem.Update(fixedDeltaTime);
+            _uiSystem.Update(); // Update UI system for toast cleanup
         }
         catch (Exception ex)
         {
@@ -104,6 +111,9 @@ public class GameManager : IDisposable
 
         try
         {
+            // Dispose UI system
+            _uiSystem?.Dispose();
+            
             // The CombatSystem is managed by DI, no need to dispose it here
             _disposed = true;
             GameLogger.Info("GameManager disposal complete");
