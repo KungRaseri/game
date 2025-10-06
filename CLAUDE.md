@@ -2,12 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Important**: This file works in conjunction with `.github/copilot-instructions.md`. Both files are essential:
+- `CLAUDE.md` (this file) - Project overview, build commands, architecture details, and development workflow
+- `.github/copilot-instructions.md` - Comprehensive coding standards, patterns, and best practices
+
 ## Project Overview
 
 Fantasy Shop Keeper is an idle dungeon crawler and shop management game built with **Godot 4.5** and **C# .NET 8.0**. The game features adventurers exploring dungeons, collecting materials, and managing a fantasy shop.
 
-**Current Phase**: Milestone 1 - Core Combat & Adventurer System
-**Test Coverage**: 100% (86 comprehensive unit tests)
 
 ## Build and Test Commands
 
@@ -15,15 +17,11 @@ Fantasy Shop Keeper is an idle dungeon crawler and shop management game built wi
 # Build the C# projects
 dotnet build Game.sln
 
-# Build specific projects
-dotnet build Game.Main/Game.Main.csproj
-dotnet build Game.Main.Tests/Game.Main.Tests.csproj
-
 # Run all tests
-dotnet test Game.Main.Tests/Game.Main.Tests.csproj
+dotnet test
 
 # Run tests with coverage
-dotnet test Game.Main.Tests/ --collect:"XPlat Code Coverage"
+dotnet test --collect:"XPlat Code Coverage"
 
 # Run specific test categories
 dotnet test --filter "Category=Combat"
@@ -34,39 +32,54 @@ dotnet test --filter "Category=EntityFactory"
 
 ### Project Structure
 
-The codebase is split between **C# game logic** (Game.Main) and **Godot scenes/UI** (Scenes, Scripts):
+The codebase is organized into multiple C# projects following modular architecture:
 
 ```
-Game.Main/              # C# class library - Core game logic (100% test coverage)
-├── Controllers/        # High-level business logic (AdventurerController)
-├── Systems/           # Core game systems (CombatSystem)
-├── Managers/          # Singleton lifecycle management (GameManager)
-├── Models/            # Data classes and game state (CombatEntityStats)
-├── Data/              # Entity factories and configurations (EntityFactory)
-└── Utils/             # Helper classes (GameLogger)
-
-Game.Main.Tests/       # Comprehensive unit tests (xUnit)
+Game.Adventure/         # Adventure and combat systems with CQS
+Game.Adventure.Tests/   # Unit tests for adventure systems
+Game.Core/             # Core utilities and CQS infrastructure
+Game.Core.Tests/       # Core utility tests
+Game.Crafting/         # Crafting and recipe systems
+Game.Crafting.Tests/   # Crafting system tests
+Game.Economy/          # Economic and trading systems
+Game.Economy.Tests/    # Economy system tests
+Game.Inventories/      # Inventory management systems
+Game.Inventories.Tests/ # Inventory tests
+Game.Items/            # Item and loot systems
+Game.Items.Tests/      # Item system tests
+Game.Shop/             # Shop management and customer AI
+Game.Shop.Tests/       # Shop system tests
+Game.UI/               # UI command/query systems (CQS)
 
 Scenes/                # Godot .tscn scene files
-├── MainGameScene.tscn
-└── UI/                # UI component scenes
-
-Scripts/               # Godot C# scripts attached to scenes
-├── Scenes/MainGameScene.cs
-└── UI/                # UI scripts (AdventurerStatusUI, CombatLogUI, ExpeditionPanelUI)
+Scripts/               # Godot C# scene scripts
+├── Scenes/            # Main game scene scripts
+├── UI/                # UI component scripts
+├── Managers/          # System integration managers
+└── DI/                # Dependency injection setup
 
 docs/                  # Documentation submodule
 ```
 
 ### Key Architecture Patterns
 
+**Command Query Separation (CQS)**: The game uses a comprehensive CQS architecture for decoupling business logic from UI:
+- Commands for state-changing operations (StartExpedition, ShowToast, etc.)
+- Queries for data retrieval (GetAdventurerStatus, GetActiveToasts, etc.)
+- Individual handlers for each command/query following single responsibility principle
+- Event-driven communication between systems
+
 **Generic Entity System**: The combat system uses a generic `CombatEntityStats` class for both adventurers and monsters. This avoids code duplication and enables consistent behavior across all combat entities.
 
 **Event-Driven Communication**: C# systems use events for loose coupling:
-- `CombatSystem` fires events (health changes, state changes)
-- `AdventurerController` manages high-level state and coordinates systems
-- Godot UI scripts subscribe to events and update UI accordingly
+- Business systems fire domain events (health changes, state changes)
+- UI systems subscribe to events and update accordingly
 - All event subscriptions must be cleaned up in `_ExitTree()` or `Dispose()`
+
+**Dependency Injection**: Custom DI container integrates with Godot for testable systems:
+- Services registered per module (Adventure, UI, Crafting, etc.)
+- Handlers and systems resolved via DI
+- Separation of concerns between registration and consumption
 
 **State Machine**: Adventurers follow a state flow:
 ```
@@ -75,19 +88,21 @@ Idle → Traveling → Fighting → (Retreating | Regenerating) → Idle
 Combat uses health-based auto-combat with real-time damage accumulation.
 
 **Separation of Concerns**:
-- **Game.Main** (C#): Pure game logic, fully unit tested, no Godot dependencies
+- **Game.* Projects** (C#): Pure game logic, fully unit tested, no Godot dependencies
 - **Godot Scripts**: UI integration, scene management, Godot-specific code
 - Use `GameLogger.SetBackend(new GodotLoggerBackend())` in `_Ready()` to enable Godot logging
 
 ### Critical Components
 
-**CombatSystem** (`Game.Main/Systems/CombatSystem.cs`): Real-time health-based auto-combat engine with fractional damage accumulation and retreat mechanics.
+**CombatSystem** (`Game.Adventure/Systems/CombatSystem.cs`): Real-time health-based auto-combat engine with fractional damage accumulation and retreat mechanics.
 
-**AdventurerController** (`Game.Main/Controllers/AdventurerController.cs`): High-level adventurer management, state coordination, and event orchestration.
+**AdventureSystem** (`Game.Adventure/Systems/AdventureSystem.cs`): High-level adventurer management, state coordination, and event orchestration using CQS pattern.
 
-**EntityFactory** (`Game.Main/Data/EntityFactory.cs`): Configuration-driven creation of adventurers and monsters with predefined stats.
+**UISystem** (`Game.UI/Systems/UISystem.cs`): Coordinates UI operations and events, bridges CQS commands to UI components.
 
-**GameManager** (`Game.Main/Managers/GameManager.cs`): Singleton coordinator for system lifecycle and inter-system communication.
+**EntityFactory** (`Game.Adventure/Data/EntityFactory.cs`): Configuration-driven creation of adventurers and monsters with predefined stats.
+
+**GameManager** (`Scripts/GameManager.cs`): Main coordinator integrating all game systems with proper dependency injection.
 
 ## Godot C# Integration
 
@@ -193,7 +208,7 @@ Tests use xUnit and mock Godot dependencies. `GameLogger` automatically uses con
 **Before Committing**:
 ```bash
 dotnet build Game.sln      # Ensure builds succeed
-dotnet test Game.Main.Tests/  # Ensure all tests pass
+dotnet test                # Ensure all tests pass
 ```
 
 **Godot Editor**: Open project by launching Godot 4.5 and importing `project.godot`.
@@ -205,4 +220,4 @@ See `docs/` submodule for:
 - `milestone-1/README.md`: Current milestone details
 - `IDEAS.md`: Future feature ideas
 
-See `.github/copilot-instructions.md` for comprehensive coding standards and patterns.
+**Essential Reference**: `.github/copilot-instructions.md` for comprehensive coding standards, architectural patterns, and development best practices.

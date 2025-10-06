@@ -107,25 +107,50 @@ public partial class ToastUI : PanelContainer
 
     private void TryGetExistingNodes()
     {
+        // Initialize to null first
+        _titleLabel = null;
+        _messageLabel = null;
+        
+        // Only try to get nodes if this ToastUI has child nodes
+        if (GetChildCount() == 0)
+        {
+            return; // No children, will create nodes dynamically
+        }
+        
         // Try to get nodes from the scene structure (if using scene file)
         try
         {
-            _titleLabel = GetNode<Label>("MarginContainer/VBox/Title");
-            _messageLabel = GetNode<Label>("MarginContainer/VBox/Message");
+            if (HasNode("MarginContainer/VBox/Title"))
+            {
+                _titleLabel = GetNode<Label>("MarginContainer/VBox/Title");
+            }
+            if (HasNode("MarginContainer/VBox/Message"))
+            {
+                _messageLabel = GetNode<Label>("MarginContainer/VBox/Message");
+            }
         }
-        catch
+        catch (Exception ex)
         {
-            // If scene structure is different, try alternative paths
+            GameLogger.Debug($"Could not find MarginContainer structure: {ex.Message}");
+        }
+        
+        // If that didn't work, try alternative paths
+        if (_titleLabel == null || _messageLabel == null)
+        {
             try
             {
-                _titleLabel = GetNode<Label>("VBox/Title");
-                _messageLabel = GetNode<Label>("VBox/Message");
+                if (HasNode("VBox/Title"))
+                {
+                    _titleLabel = GetNode<Label>("VBox/Title");
+                }
+                if (HasNode("VBox/Message"))
+                {
+                    _messageLabel = GetNode<Label>("VBox/Message");
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                // Will create nodes dynamically in SetupNodes()
-                _titleLabel = null;
-                _messageLabel = null;
+                GameLogger.Debug($"Could not find VBox structure: {ex.Message}");
             }
         }
     }

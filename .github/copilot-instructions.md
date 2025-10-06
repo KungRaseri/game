@@ -6,6 +6,10 @@ This is an idle dungeon crawler and shop keeper game built with:
 - **Godot 4.5** - Game engine and UI framework
 - **Target Platform**: PC (Windows primary)
 
+**Important**: This file works in conjunction with `CLAUDE.md` in the repository root. Both files are essential:
+- `copilot-instructions.md` (this file) - Comprehensive coding standards and architectural patterns
+- `CLAUDE.md` - Project overview, build commands, and development workflow guidance
+
 ## Development Best Practices
 
 ### C# .NET 8.0 Guidelines (Godot 4.5 Requirement)
@@ -108,36 +112,56 @@ Position = newPosition;
 ```
 
 ### Architecture Patterns
+- **Command Query Separation (CQS)** - Separate commands (state changes) from queries (data retrieval)
 - **MVC/MVP** - Separate game logic from UI presentation
 - **Observer Pattern** - Use C# events and Godot signals for notifications
 - **State Machine** - For combat, adventurer states, and game phases
-- **Command Pattern** - For user actions and undo functionality
+- **Command Pattern** - For user actions and CQS command operations
 - **Factory Pattern** - For creating items, monsters, and recipes
 - **Repository Pattern** - For data persistence and save/load systems
-- **Dependency Injection** - For testable systems (like logging)
+- **Dependency Injection** - For testable systems and loose coupling
+- **Repository Pattern** - For data persistence and save/load systems
+- **Dependency Injection** - For testable systems and loose coupling
 
 ### Code Organization
 ```
-Game.Main/ (C# Class Library Project)
-├── Systems/           # Core game systems (Combat, Crafting, Shop)
-├── Models/           # Data classes and game state
-├── Controllers/      # Business logic controllers
-├── UI/              # UI component base classes
-├── Data/            # Static data (recipes, monsters, items)
-├── Utils/           # Helper classes and extensions
-└── Managers/        # Singleton managers (SaveManager, etc.)
+C# Game Logic Projects (Modular Architecture):
+├── Game.Adventure/        # Adventure and combat systems
+│   ├── Commands/          # CQS commands for adventure operations
+│   ├── Queries/           # CQS queries for adventure data
+│   ├── Handlers/          # Individual command/query handlers
+│   ├── Systems/           # Core combat and adventure systems
+│   ├── Models/            # Adventure-specific data models
+│   ├── Data/              # Entity factories and configurations
+│   └── Extensions/        # DI registration for adventure module
+├── Game.UI/               # UI command/query systems
+│   ├── Commands/          # UI operation commands (toasts, dialogs)
+│   ├── Queries/           # UI data queries
+│   ├── Handlers/          # UI command/query handlers
+│   ├── Systems/           # UI coordination systems
+│   ├── Models/            # UI data models and configurations
+│   └── Extensions/        # DI registration for UI module
+├── Game.Core/             # Core utilities and CQS infrastructure
+│   ├── CQS/               # Command/Query/Handler abstractions
+│   └── Utils/             # Logging, extensions, helpers
+├── Game.Items/            # Item and loot systems
+├── Game.Inventories/      # Inventory management
+├── Game.Economy/          # Trading and market systems
+├── Game.Crafting/         # Crafting and recipe systems
+├── Game.Shop/             # Shop management and customer AI
+└── [Project].Tests/       # Unit tests for each module
 
-Godot Project Root/
-├── scenes/          # .tscn scene files
-│   ├── main/        # Main game scenes
-│   ├── ui/          # UI scenes and components  
-│   └── prefabs/     # Reusable scene components
-├── scripts/         # Godot C# scene scripts (.cs files attached to scenes)
-│   ├── MainGameScene.cs
-│   ├── AdventurerStatusUI.cs
-│   └── CombatLogUI.cs
-├── assets/          # Textures, audio, fonts
-└── project.godot    # Project configuration
+Godot Integration:
+├── Scenes/                # .tscn scene files
+│   ├── MainGameScene.tscn # Primary game scene
+│   └── UI/                # UI component scenes
+├── Scripts/               # Godot C# scene scripts
+│   ├── Scenes/            # Main scene scripts (MainGameScene.cs)
+│   ├── UI/                # UI component scripts
+│   ├── Managers/          # System integration managers
+│   └── DI/                # Dependency injection setup
+├── assets/                # Textures, audio, fonts (if any)
+└── project.godot          # Godot project configuration
 ```
 
 ### Error Handling
@@ -174,29 +198,33 @@ GameLogger.Debug("Processing frame data");
 
 ## Game-Specific Guidelines
 
+### CQS Architecture
+- Use commands for state-changing operations (StartExpedition, ShowToast, CraftItem)
+- Use queries for data retrieval (GetAdventurerStatus, GetActiveToasts, GetInventory)
+- Implement individual handlers for each command/query following single responsibility
+- Use dependency injection to resolve handlers and services
+- Ensure commands are idempotent where possible
+- Keep handlers focused and lightweight
+
 ### Combat System
 - Use state machines for adventurer and monster states
-- Implement combat as coroutines for smooth animation
+- Implement real-time combat with fractional damage accumulation
 - Separate combat logic from UI updates using events
-- Use events to notify UI of health/state changes
+- Use CQS commands for combat actions (StartExpedition, ForceRetreat)
+- Use CQS queries for combat status (GetCombatState, GetAdventurerHealth)
 
 ### Inventory Management
 - Implement generic inventory system for reusability
 - Use observer pattern for inventory changes
+- Use CQS commands for inventory operations (AddItem, RemoveItem, TransferItem)
+- Use CQS queries for inventory data (GetInventoryContents, GetItemCount)
 - Cache item data to avoid repeated database lookups
-- Implement proper drag-and-drop validation
 
-### Save System
-- Use JSON for human-readable save files
-- Implement versioning for save file compatibility
-- Auto-save on significant state changes
-- Provide manual save/load options for players
-
-### UI Development
-- Use Godot's Control nodes for responsive layouts
-- Implement proper focus management for keyboard navigation
-- Use themes for consistent styling
+### UI System
+- Use CQS commands for UI operations (ShowToast, ShowDialog, UpdateDisplay)
+- Use CQS queries for UI data (GetActiveToasts, GetUIState)
 - Separate UI logic from game logic using events/signals
+- Bridge CQS events to Godot UI components via manager classes
 
 ## Common Patterns to Follow
 
@@ -265,6 +293,44 @@ public partial class AdventurerUI : Control
         GameManager.Instance?.AdventurerController?.Heal(25);
         GameLogger.Info("Heal button pressed");
     }
+}
+```
+
+### CQS Pattern Implementation
+```csharp
+// Command definition
+public record ShowToastCommand : ICommand
+{
+    public string Message { get; init; } = string.Empty;
+    public string Type { get; init; } = "info";
+    public float Duration { get; init; } = 3.0f;
+}
+
+// Command handler
+public class ShowToastCommandHandler : ICommandHandler<ShowToastCommand>
+{
+    private readonly IToastOperations _toastOperations;
+
+    public ShowToastCommandHandler(IToastOperations toastOperations)
+    {
+        _toastOperations = toastOperations ?? throw new ArgumentNullException(nameof(toastOperations));
+    }
+
+    public async Task HandleAsync(ShowToastCommand command, CancellationToken cancellationToken = default)
+    {
+        await _toastOperations.ShowToastAsync(command.Message, command.Type, command.Duration);
+    }
+}
+
+// Usage in Godot scene
+public async void OnShowToastButtonPressed()
+{
+    var command = new ShowToastCommand 
+    { 
+        Message = "Adventure completed!", 
+        Type = "success" 
+    };
+    await _dispatcher.DispatchAsync(command);
 }
 ```
 
@@ -351,3 +417,8 @@ adventurer?.TakeDamage(damage);
 - Use conventional commit format: `feat:`, `fix:`, `docs:`, etc.
 - Review code before merging to main branch
 - Ensure builds pass and tests are green before merging
+
+## Additional Resources
+- **CLAUDE.md** (repository root) - Essential companion file with project overview, architecture details, build commands, and development workflow
+- **docs/** folder - Development milestones and feature specifications
+- **README.md** - Basic project information
