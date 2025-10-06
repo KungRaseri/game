@@ -4,45 +4,53 @@
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Remove="Game.Adventure.Tests\**" />
-		<Compile Remove="Game.Adventure\**" />
-		<Compile Remove="Game.Core.Tests\**" />
-		<Compile Remove="Game.Core\**" />
-		<Compile Remove="Game.Crafting.Tests\**" />
-		<Compile Remove="Game.Crafting\**" />
-		<Compile Remove="Game.Economy.Tests\**" />
-		<Compile Remove="Game.Economy\**" />
-		<Compile Remove="Game.Inventory.Tests\**" />
-		<Compile Remove="Game.Inventory\**" />
-		<Compile Remove="Game.Items.Tests\**" />
-		<Compile Remove="Game.Items\**" />
-		<Compile Remove="Game.Shop.Tests\**" />
-		<Compile Remove="Game.Shop\**" />
-		<EmbeddedResource Remove="Game.Adventure.Tests\**" />
-		<EmbeddedResource Remove="Game.Adventure\**" />
-		<EmbeddedResource Remove="Game.Core.Tests\**" />
-		<EmbeddedResource Remove="Game.Core\**" />
-		<EmbeddedResource Remove="Game.Crafting.Tests\**" />
-		<EmbeddedResource Remove="Game.Crafting\**" />
-		<EmbeddedResource Remove="Game.Economy.Tests\**" />
-		<EmbeddedResource Remove="Game.Economy\**" />
-		<EmbeddedResource Remove="Game.Inventory.Tests\**" />
-		<EmbeddedResource Remove="Game.Inventory\**" />
-		<EmbeddedResource Remove="Game.Items.Tests\**" />
-		<EmbeddedResource Remove="Game.Items\**" />
-		<EmbeddedResource Remove="Game.Shop.Tests\**" />
-		<EmbeddedResource Remove="Game.Shop\**" />
-		<Compile Remove="Game.Inventories\**" />
-		<EmbeddedResource Remove="Game.Inventories\**" />
-		<Compile Remove="Game.Inventories.Tests\**" />
-		<EmbeddedResource Remove="Game.Inventories.Tests\**" />
+	  <Compile Remove="Game.Adventure\**" />
+	  <Compile Remove="Game.Adventure.Tests\**" />
+	  <Compile Remove="Game.Core\**" />
+	  <Compile Remove="Game.Core.Tests\**" />
+	  <Compile Remove="Game.Crafting\**" />
+	  <Compile Remove="Game.Crafting.Tests\**" />
+	  <Compile Remove="Game.Economy\**" />
+	  <Compile Remove="Game.Economy.Tests\**" />
+	  <Compile Remove="Game.Inventories\**" />
+	  <Compile Remove="Game.Inventories.Tests\**" />
+	  <Compile Remove="Game.Inventory\**" />
+	  <Compile Remove="Game.Inventory.Tests\**" />
+	  <Compile Remove="Game.Items\**" />
+	  <Compile Remove="Game.Items.Tests\**" />
+	  <Compile Remove="Game.Shop\**" />
+	  <Compile Remove="Game.Shop.Tests\**" />
+	  <Compile Remove="Game.UI\**" />
+	  <Compile Remove="Game.UI.Tests\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="Game.Core\Game.Core.csproj" />
+	  <EmbeddedResource Remove="Game.Adventure\**" />
+	  <EmbeddedResource Remove="Game.Adventure.Tests\**" />
+	  <EmbeddedResource Remove="Game.Core\**" />
+	  <EmbeddedResource Remove="Game.Core.Tests\**" />
+	  <EmbeddedResource Remove="Game.Crafting\**" />
+	  <EmbeddedResource Remove="Game.Crafting.Tests\**" />
+	  <EmbeddedResource Remove="Game.Economy\**" />
+	  <EmbeddedResource Remove="Game.Economy.Tests\**" />
+	  <EmbeddedResource Remove="Game.Inventories\**" />
+	  <EmbeddedResource Remove="Game.Inventories.Tests\**" />
+	  <EmbeddedResource Remove="Game.Inventory\**" />
+	  <EmbeddedResource Remove="Game.Inventory.Tests\**" />
+	  <EmbeddedResource Remove="Game.Items\**" />
+	  <EmbeddedResource Remove="Game.Items.Tests\**" />
+	  <EmbeddedResource Remove="Game.Shop\**" />
+	  <EmbeddedResource Remove="Game.Shop.Tests\**" />
+	  <EmbeddedResource Remove="Game.UI\**" />
+	  <EmbeddedResource Remove="Game.UI.Tests\**" />
+	</ItemGroup>
+	<ItemGroup>
 	  <ProjectReference Include="Game.Adventure\Game.Adventure.csproj" />
-	  <ProjectReference Include="Game.Inventories\Game.Inventories.csproj" />
-	  <ProjectReference Include="Game.Shop\Game.Shop.csproj" />
-	  <ProjectReference Include="Game.Economy\Game.Economy.csproj" />
+	  <ProjectReference Include="Game.Core\Game.Core.csproj" />
 	  <ProjectReference Include="Game.Crafting\Game.Crafting.csproj" />
+	  <ProjectReference Include="Game.Economy\Game.Economy.csproj" />
+	  <ProjectReference Include="Game.Inventories\Game.Inventories.csproj" />
+	  <ProjectReference Include="Game.Items\Game.Items.csproj" />
+	  <ProjectReference Include="Game.Shop\Game.Shop.csproj" />
+	  <ProjectReference Include="Game.UI\Game.UI.csproj" />
 	</ItemGroup>
 </Project>

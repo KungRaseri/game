@@ -15,7 +15,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_qla6v")
-UpdateInterval = 1.0
 
 [node name="MainContainer" type="HSplitContainer" parent="."]
 layout_mode = 1
@@ -62,15 +61,12 @@ mouse_filter = 2
 
 [node name="ToastContainer" type="VBoxContainer" parent="UIOverlay"]
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -300.0
-offset_top = -100.0
-grow_horizontal = 0
-grow_vertical = 0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="InventoryPanel" parent="UIOverlay" instance=ExtResource("5_material_collection")]
 visible = false

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c5v7n2x4q8p1m"]
 
-[ext_resource type="Script" uid="uid://d36ec5wwsnoum" path="res://Scripts/UI/ExpeditionPanelUI.cs" id="1_expedition_script"]
+[ext_resource type="Script" uid="uid://d36ec5wwsnoum" path="res://Scripts/UI/Adventure/ExpeditionPanelUI.cs" id="1_expedition_script"]
 
 [node name="ExpeditionPanel" type="Panel"]
 anchors_preset = 10

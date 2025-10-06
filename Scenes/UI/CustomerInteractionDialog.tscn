@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dfowfpk68a8cp"]
 
-[ext_resource type="Script" uid="uid://4v7qqm2cqm8a" path="res://Scripts/UI/CustomerInteractionDialogUI.cs" id="1_customer_interaction_script"]
+[ext_resource type="Script" uid="uid://4v7qqm2cqm8a" path="res://Scripts/UI/Panels/CustomerInteractionDialogUI.cs" id="1_customer_interaction_script"]
 
 [node name="CustomerInteractionDialog" type="AcceptDialog"]
 title = "Customer Interaction"

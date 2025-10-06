@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://c8kak1l2m3n4o"]
+[gd_scene load_steps=3 format=3 uid="uid://5ocs1ouomnnl"]
 
-[ext_resource type="Script" path="res://Scripts/UI/RecipeBookUI.cs" id="1_0r3k6"]
+[ext_resource type="Script" uid="uid://bw72lwqjo8ibs" path="res://Scripts/UI/Panels/RecipeBookUI.cs" id="1_0r3k6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2tufh"]
 bg_color = Color(0.15, 0.2, 0.25, 0.95)
@@ -19,6 +19,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_0r3k6")
 
 [node name="Background" type="Panel" parent="."]
@@ -26,6 +28,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_2tufh")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
@@ -37,6 +41,8 @@ offset_left = 30.0
 offset_top = 30.0
 offset_right = -30.0
 offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Header" type="HBoxContainer" parent="MainContainer"]
 layout_mode = 2
@@ -71,15 +77,12 @@ placeholder_text = "Search recipes by name or ingredient..."
 
 [node name="CategoryFilter" type="OptionButton" parent="MainContainer/FilterContainer"]
 layout_mode = 2
-text = "All Categories"
 
 [node name="StatusFilter" type="OptionButton" parent="MainContainer/FilterContainer"]
 layout_mode = 2
-text = "All Recipes"
 
 [node name="SortByFilter" type="OptionButton" parent="MainContainer/FilterContainer"]
 layout_mode = 2
-text = "Sort by Name"
 
 [node name="ContentContainer" type="HSplitContainer" parent="MainContainer"]
 layout_mode = 2
@@ -120,8 +123,8 @@ layout_mode = 2
 text = "Select a Recipe"
 
 [node name="RecipeImage" type="TextureRect" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
 
 [node name="RecipeStatusLabel" type="Label" parent="MainContainer/ContentContainer/RecipeDetailsPanel/RecipeDetailsScroll/RecipeDetailsContainer"]
 layout_mode = 2

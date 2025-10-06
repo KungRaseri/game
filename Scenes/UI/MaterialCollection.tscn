@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://5vuncmhosicy"]
 
-[ext_resource type="Script" uid="uid://d2ugl7sc2cfj3" path="res://Scripts/UI/MaterialCollectionUI.cs" id="1_material_collection_script"]
+[ext_resource type="Script" uid="uid://d2ugl7sc2cfj3" path="res://Scripts/UI/Inventory/MaterialCollectionUI.cs" id="1_material_collection_script"]
 [ext_resource type="PackedScene" uid="uid://bcs7go00s7rgn" path="res://Scenes/UI/AdventurerInventory.tscn" id="2_adventurer_inventory"]
 
 [node name="MaterialCollection" type="Panel"]

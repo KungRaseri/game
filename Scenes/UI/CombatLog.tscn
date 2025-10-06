@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://d2y4p8x1m6n7v"]
 
-[ext_resource type="Script" uid="uid://fxrc1rghdtpw" path="res://Scripts/UI/CombatLogUI.cs" id="1_combat_log_script"]
+[ext_resource type="Script" uid="uid://fxrc1rghdtpw" path="res://Scripts/UI/Adventure/CombatLogUI.cs" id="1_combat_log_script"]
 
 [node name="CombatLog" type="Panel"]
 anchors_preset = 10

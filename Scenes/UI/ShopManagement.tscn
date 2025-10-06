@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bw4x5n1k8g7h2"]
 
-[ext_resource type="Script" uid="uid://ct7r5fx2go3jv" path="res://Scripts/UI/ShopManagementUI.cs" id="1_shop_management_script"]
+[ext_resource type="Script" uid="uid://ct7r5fx2go3jv" path="res://Scripts/UI/Panels/ShopManagementUI.cs" id="1_shop_management_script"]
 
 [node name="ShopManagement" type="Panel"]
 anchors_preset = 15

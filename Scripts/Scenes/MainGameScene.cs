@@ -6,7 +6,13 @@ using Game.Core.Utils;
 using Game.Inventories.Systems;
 using Game.Items.Data;
 using Game.Items.Systems;
-using Game.Scripts.UI;
+using Game.Scripts.Core;
+using Game.Scripts.UI.Adventure;
+using Game.Scripts.UI.Components;
+using Game.Scripts.UI.Crafting;
+using Game.Scripts.UI.Integration;
+using Game.Scripts.UI.Inventory;
+using Game.Scripts.UI.Panels;
 using Game.Shop.Systems;
 using Godot;
 
@@ -19,9 +25,9 @@ namespace Game.Scripts.Scenes;
 /// </summary>
 public partial class MainGameScene : Control
 {
-    [Export] public float UpdateInterval { get; set; } = 1.0f;
+    [Export] public float UpdateInterval { get; set; } = 0.1f; // Update 10 times per second for responsive combat
     [Export] public int MaxCombatLogEntries { get; set; } = 50;
-    [Export] public PackedScene? MaterialToastScene { get; set; }
+    [Export] public PackedScene? ToastScene { get; set; }
 
     [Signal]
     public delegate void GameStateChangedEventHandler(string newState);
@@ -48,6 +54,7 @@ public partial class MainGameScene : Control
     private Button? _inventoryButton;
     private Button? _shopButton;
     private VBoxContainer? _toastContainer;
+    private ToastManager? _toastManager;
 
     public override void _Ready()
     {
@@ -60,6 +67,18 @@ public partial class MainGameScene : Control
         ConnectUIEvents();
 
         GameLogger.Info("MainGameScene ready");
+    }
+
+    public override void _Input(InputEvent inputEvent)
+    {
+        // Handle test input for toasts (T key to test toasts)
+        if (inputEvent is InputEventKey keyEvent && keyEvent.Pressed)
+        {
+            if (keyEvent.Keycode == Key.T)
+            {
+                TestToasts();
+            }
+        }
     }
 
     public override void _ExitTree()
@@ -83,6 +102,14 @@ public partial class MainGameScene : Control
         _inventoryButton = GetNode<Button>("MainContainer/LeftPanel/InventoryButton");
         _shopButton = GetNode<Button>("MainContainer/LeftPanel/ShopButton");
         _toastContainer = GetNode<VBoxContainer>("UIOverlay/ToastContainer");
+
+        // Initialize ToastManager
+        _toastManager = new ToastManager();
+        _toastManager.ToastScene = ToastScene;
+        _toastContainer.AddChild(_toastManager);
+
+        // Set global reference for MaterialToastUI backward compatibility
+        MaterialToastUI.SetGlobalToastManager(_toastManager);
     }
 
     private void InitializeGameSystems()
@@ -125,6 +152,15 @@ public partial class MainGameScene : Control
 
     private void SubscribeToGameEvents()
     {
+        // Subscribe to combat system events for real-time updates
+        if (_gameManager?.AdventureSystem.CombatSystem != null && _combatLogUI != null)
+        {
+            _gameManager.AdventureSystem.CombatSystem.CombatLogUpdated += OnCombatLogUpdated;
+            _gameManager.AdventureSystem.CombatSystem.MonsterDefeated += OnMonsterDefeated;
+            _gameManager.AdventureSystem.CombatSystem.ExpeditionCompleted += OnExpeditionCompleted;
+            GameLogger.Info("Subscribed to combat system events for UI updates");
+        }
+
         // With CQS pattern, most state monitoring is handled by the UI components themselves
         // We only need to handle high-level game events here
         GameLogger.Info("Game events subscription completed - CQS pattern handles most state monitoring");
@@ -132,6 +168,15 @@ public partial class MainGameScene : Control
 
     private void UnsubscribeFromGameEvents()
     {
+        // Unsubscribe from combat system events
+        if (_gameManager?.AdventureSystem.CombatSystem != null)
+        {
+            _gameManager.AdventureSystem.CombatSystem.CombatLogUpdated -= OnCombatLogUpdated;
+            _gameManager.AdventureSystem.CombatSystem.MonsterDefeated -= OnMonsterDefeated;
+            _gameManager.AdventureSystem.CombatSystem.ExpeditionCompleted -= OnExpeditionCompleted;
+            GameLogger.Info("Unsubscribed from combat system events");
+        }
+
         // With CQS pattern, UI components handle their own cleanup
         GameLogger.Info("Game events unsubscription completed");
     }
@@ -218,6 +263,63 @@ public partial class MainGameScene : Control
     // Most UI state management is handled by the UI components themselves through queries
 
     /// <summary>
+    /// Handles combat log messages from the combat system.
+    /// </summary>
+    private void OnCombatLogUpdated(string message)
+    {
+        var color = DetermineCombatLogColor(message);
+        _combatLogUI?.AddLogEntry(message, color);
+    }
+
+    /// <summary>
+    /// Handles monster defeated events from the combat system.
+    /// </summary>
+    private void OnMonsterDefeated(CombatEntityStats monster)
+    {
+        _combatLogUI?.AddLogEntry($"Victory! {monster.Name} has been defeated!", "green");
+
+        // Generate and collect loot when a monster is defeated
+        GenerateAndCollectLoot(monster);
+    }
+
+    /// <summary>
+    /// Handles expedition completed events from the combat system.
+    /// </summary>
+    private void OnExpeditionCompleted()
+    {
+        _combatLogUI?.AddLogEntry("Expedition completed! Adventurer is returning to town.", "cyan");
+        EmitSignal(SignalName.ExpeditionCompleted, true);
+    }
+
+    /// <summary>
+    /// Determines the appropriate color for combat log messages.
+    /// </summary>
+    private string DetermineCombatLogColor(string message)
+    {
+        var lowerMessage = message.ToLowerInvariant();
+
+        if (lowerMessage.Contains("defeated") || lowerMessage.Contains("victory"))
+            return "green";
+
+        if (lowerMessage.Contains("damage") || lowerMessage.Contains("takes"))
+            return "red";
+
+        if (lowerMessage.Contains("retreat") || lowerMessage.Contains("fleeing"))
+            return "orange";
+
+        if (lowerMessage.Contains("expedition") || lowerMessage.Contains("begins"))
+            return "cyan";
+
+        if (lowerMessage.Contains("health") || lowerMessage.Contains("regenerate"))
+            return "lime";
+
+        if (lowerMessage.Contains("combat") || lowerMessage.Contains("fighting"))
+            return "yellow";
+
+        return "white";
+    }
+
+    /// <summary>
     /// Gets the current game status for debugging or UI display.
     /// </summary>
     public async Task<string> GetGameStatus()
@@ -226,7 +328,8 @@ public partial class MainGameScene : Control
         {
             var dispatcher = Game.DI.DependencyInjectionNode.GetService<IDispatcher>();
             var statusQuery = new Game.Adventure.Queries.GetAdventurerStatusQuery();
-            return await dispatcher.DispatchQueryAsync<Game.Adventure.Queries.GetAdventurerStatusQuery, string>(statusQuery);
+            return await dispatcher.DispatchQueryAsync<Game.Adventure.Queries.GetAdventurerStatusQuery, string>(
+                statusQuery);
         }
         catch (Exception ex)
         {
@@ -308,19 +411,73 @@ public partial class MainGameScene : Control
     /// </summary>
     private void ShowMaterialToast(List<string> materials)
     {
-        if (materials.Count == 0 || _toastContainer == null) return;
+        if (materials.Count == 0 || _toastManager == null) return;
 
-        // Load the toast scene if available
-        if (MaterialToastScene != null)
+        // Use the new ToastManager to show material collection
+        _toastManager.ShowMaterialToast(materials);
+    }
+
+    /// <summary>
+    /// Test method to demonstrate different toast types and stacking behavior.
+    /// </summary>
+    public void TestToasts()
+    {
+        if (_toastManager == null) return;
+
+        // Test rapid-fire toasts to demonstrate stacking
+        _toastManager.ShowSuccess("First success message!");
+
+        // Delay slightly to see stacking effect
+        GetTree().CreateTimer(0.5f).Timeout += () => { _toastManager.ShowSuccess("Second success - should stack!"); };
+
+        GetTree().CreateTimer(1.0f).Timeout += () =>
         {
-            var toastInstance = MaterialToastScene.Instantiate<MaterialToastUI>();
-            _toastContainer.AddChild(toastInstance);
-            toastInstance.ShowToast(materials);
-        }
-        else
+            _toastManager.ShowSuccess("Third success - watch them shift!");
+        };
+
+        GetTree().CreateTimer(1.5f).Timeout += () => { _toastManager.ShowWarning("Warning toast - different style"); };
+
+        GetTree().CreateTimer(2.0f).Timeout += () => { _toastManager.ShowError("Error in center position"); };
+
+        // Test material toast stacking
+        GetTree().CreateTimer(2.5f).Timeout += () =>
         {
-            GameLogger.Warning("MaterialToastScene not assigned - cannot show toast");
-        }
+            _toastManager.ShowMaterialToast(new List<string> { "Iron Ore x3", "Leather x2" });
+        };
+
+        GetTree().CreateTimer(3.0f).Timeout += () =>
+        {
+            _toastManager.ShowMaterialToast(new List<string> { "Magic Crystal x1", "Steel x5" });
+        };
+
+        // Test direct MaterialToastUI - should automatically redirect to ToastManager
+        GetTree().CreateTimer(3.5f).Timeout += () =>
+        {
+            if (_toastContainer != null)
+            {
+                GameLogger.Info("Testing MaterialToastUI direct instantiation (should redirect to ToastManager)");
+                var materialToast = new MaterialToastUI();
+                _toastContainer.AddChild(materialToast);
+                materialToast.ShowToast(new List<string> { "Direct MaterialToast", "Auto-redirected to stack!" });
+            }
+        };
+
+        // Test custom config with different anchor
+        GetTree().CreateTimer(4.0f).Timeout += () =>
+        {
+            var customConfig = new Game.UI.Models.ToastConfig
+            {
+                Title = "Achievement Unlocked",
+                Message = "Master Blacksmith - Center positioned",
+                Style = Game.UI.Models.ToastStyle.Success,
+                Animation = Game.UI.Models.ToastAnimation.Bounce,
+                Anchor = Game.UI.Models.ToastAnchor.Center,
+                DisplayDuration = 5.0f
+            };
+            _toastManager.ShowToast(customConfig);
+        };
+
+        GameLogger.Info("Toast stacking test sequence initiated - press T to repeat");
     }
 
     /// <summary>

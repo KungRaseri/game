@@ -1,22 +1,26 @@
 [gd_scene load_steps=2 format=3 uid="uid://bbax4m7n2q5k8"]
 
-[ext_resource type="Script" uid="uid://fhjin0botq7t" path="res://Scripts/UI/MaterialToastUI.cs" id="1_material_toast"]
+[ext_resource type="Script" uid="uid://fhjin0botq7t" path="res://Scripts/UI/Crafting/MaterialToastUI.cs" id="1_material_toast"]
 
 [node name="MaterialToast" type="PanelContainer"]
-offset_right = 280.0
-offset_bottom = 80.0
+offset_right = 300.0
+offset_bottom = 40.0
 mouse_filter = 2
 script = ExtResource("1_material_toast")
 
-[node name="VBox" type="VBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="VBox"]
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-text = "Materials Collected!"
+
+[node name="Title" type="Label" parent="MarginContainer/VBox"]
+visible = false
+layout_mode = 2
+text = "Materials Collected"
 horizontal_alignment = 1
 
-[node name="MaterialList" type="Label" parent="VBox"]
+[node name="Message" type="Label" parent="MarginContainer/VBox"]
 layout_mode = 2
 text = "Iron Ore x2, Leather x1"
 horizontal_alignment = 1
