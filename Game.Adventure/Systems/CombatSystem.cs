@@ -36,6 +36,14 @@ public class CombatSystem
     /// </summary>
     private float _accumulatedMonsterDamage = 0f;
 
+    /// <summary>
+    /// Accumulates fractional health regeneration for the adventurer.
+    /// <para>
+    /// Ensures consistent 1 HP per second regeneration rate regardless of update frequency.
+    /// </para>
+    /// </summary>
+    private float _accumulatedAdventurerRegen = 0f;
+
     public AdventurerState State
     {
         get => _state;
@@ -81,6 +89,7 @@ public class CombatSystem
         // Reset accumulated damage for new expedition
         _accumulatedAdventurerDamage = 0f;
         _accumulatedMonsterDamage = 0f;
+        _accumulatedAdventurerRegen = 0f;
 
         State = AdventurerState.Traveling;
         LogMessage($"Adventurer begins expedition with {_monsters.Count} monsters to face");
@@ -129,6 +138,7 @@ public class CombatSystem
             // Reset accumulated damage for new fight
             _accumulatedAdventurerDamage = 0f;
             _accumulatedMonsterDamage = 0f;
+            _accumulatedAdventurerRegen = 0f;
 
             LogMessage($"Combat begins against {_currentMonster.Name}!");
         }
@@ -236,10 +246,19 @@ public class CombatSystem
     {
         if (_currentAdventurer == null) return;
 
-        _currentAdventurer.RegenerateHealth();
+        // Regenerate 1 health per second (scaled by deltaTime)
+        // This prevents rapid regeneration when update frequency is high
+        _accumulatedAdventurerRegen += deltaTime; // deltaTime represents seconds
+        
+        var regenAmount = (int)_accumulatedAdventurerRegen;
+        if (regenAmount > 0)
+        {
+            _accumulatedAdventurerRegen -= regenAmount;
+            _currentAdventurer.RegenerateHealth(regenAmount);
+        }
 
-        // Check if fully healed or enough time has passed
-        if (_currentAdventurer.CurrentHealth == _currentAdventurer.MaxHealth)
+        // Check if fully healed
+        if (_currentAdventurer.CurrentHealth >= _currentAdventurer.MaxHealth)
         {
             State = AdventurerState.Idle;
             LogMessage("Adventurer has fully recovered and is ready for another expedition");

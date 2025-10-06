@@ -53,7 +53,7 @@ public partial class PlayerController : CharacterBody2D
     [Signal]
     public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
     
-    private Timer? _shootTimer;
+    private Godot.Timer? _shootTimer;
     
     public override void _Ready()
     {
