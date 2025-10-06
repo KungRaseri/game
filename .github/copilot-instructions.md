@@ -418,6 +418,37 @@ adventurer?.TakeDamage(damage);
 - Review code before merging to main branch
 - Ensure builds pass and tests are green before merging
 
+## Examples and Documentation
+
+All code examples, implementation patterns, and architectural demonstrations should be:
+- **Defined in documentation files** within the `docs/` folder/repository
+- **Explained with context** including when to use each pattern
+- **Maintained and updated** as the codebase evolves
+- **Referenced by name** rather than copied inline in code comments
+
+### Example Documentation Structure
+```
+docs/
+├── examples/
+│   ├── cqs-patterns.md          # Command/Query/Handler examples
+│   ├── godot-integration.md     # Scene script patterns
+│   ├── dependency-injection.md  # DI setup and usage
+│   ├── combat-system.md         # Combat implementation examples
+│   └── ui-patterns.md           # UI component patterns
+├── technical/
+│   ├── architecture.md          # High-level system design
+│   ├── testing-strategy.md      # Test patterns and guidelines
+│   └── performance-guide.md     # Optimization techniques
+└── milestones/                  # Feature specifications
+```
+
+**Documentation Guidelines**:
+- Keep examples current with the actual codebase implementation
+- Include both "what to do" and "what not to do" examples
+- Provide rationale for architectural decisions
+- Reference specific files in the codebase when demonstrating patterns
+- Update documentation when refactoring or changing patterns
+
 ## Additional Resources
 - **CLAUDE.md** (repository root) - Essential companion file with project overview, architecture details, build commands, and development workflow
 - **docs/** folder - Development milestones and feature specifications
