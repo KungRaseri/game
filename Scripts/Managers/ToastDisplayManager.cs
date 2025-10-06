@@ -16,14 +16,13 @@ namespace Scripts.Managers;
 public partial class ToastDisplayManager : Node
 {
     [Export] public ToastManager? ToastManager { get; set; }
-    
+
     private UISystem? _uiSystem;
-    private GameManager? _gameManager;
 
     public override void _Ready()
     {
         GameLogger.Info("ToastDisplayManager initializing...");
-        
+
         // Wait for dependency injection to be available
         CallDeferred(nameof(InitializeWithDI));
     }
@@ -34,12 +33,12 @@ public partial class ToastDisplayManager : Node
         {
             // Get UISystem from DI
             _uiSystem = Game.DI.DependencyInjectionNode.GetService<UISystem>();
-            
+
             // Connect to UISystem events
             _uiSystem.ShowToastRequested += OnShowToastRequested;
             _uiSystem.HideToastRequested += OnHideToastRequested;
             _uiSystem.HideAllToastsRequested += OnHideAllToastsRequested;
-            
+
             GameLogger.Info("ToastDisplayManager connected to UISystem events");
         }
         catch (Exception ex)
@@ -51,7 +50,7 @@ public partial class ToastDisplayManager : Node
     private void OnShowToastRequested(ToastInfo toast)
     {
         GameLogger.Debug($"Toast display requested: {toast.Config.Message}");
-        
+
         if (ToastManager == null)
         {
             GameLogger.Warning("ToastManager not assigned - cannot display toast");
@@ -72,7 +71,7 @@ public partial class ToastDisplayManager : Node
     private void OnHideToastRequested(string toastId)
     {
         GameLogger.Debug($"Toast hide requested: {toastId}");
-        
+
         if (ToastManager == null)
         {
             GameLogger.Warning("ToastManager not assigned - cannot hide toast");
@@ -92,7 +91,7 @@ public partial class ToastDisplayManager : Node
     private void OnHideAllToastsRequested()
     {
         GameLogger.Debug("Hide all toasts requested");
-        
+
         if (ToastManager == null)
         {
             GameLogger.Warning("ToastManager not assigned - cannot hide all toasts");
