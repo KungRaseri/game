@@ -1,28 +1,31 @@
 #nullable enable
 
 using Game.Core.Utils;
+using Game.UI.Handlers;
+using Game.UI.Models;
 using Godot;
 
-namespace Game.Scripts.UI;
+namespace Scripts.UI;
 
 /// <summary>
 /// Manager for creating and displaying toast notifications.
 /// Handles positioning, stacking, and lifecycle of multiple toasts.
+/// Implements IToastManager for direct CQS integration.
 /// </summary>
-public partial class ToastManager : Control
+public partial class ToastManager : Control, IToastManager
 {
     [Export] public PackedScene? ToastScene { get; set; }
     [Export] public int MaxVisibleToasts { get; set; } = 5;
     [Export] public float ToastSpacing { get; set; } = 5.0f; // Reduced from 10px to 5px for tighter stacking
     [Export] public float RepositionAnimationDuration { get; set; } = 0.3f;
 
-    private readonly List<ToastInfo> _activeToasts = new();
+    private readonly List<ActiveToastInfo> _activeToasts = new();
     private Control? _toastContainer;
 
     /// <summary>
-    /// Information about an active toast for positioning and animation.
+    /// Godot-specific toast information that links UI instances with configuration.
     /// </summary>
-    private record ToastInfo(ToastUI Toast, ToastAnchor Anchor, Vector2 BaseOffset, float EstimatedHeight);
+    private record ActiveToastInfo(ToastUI Toast, ToastInfo Info);
 
     public override void _Ready()
     {
@@ -43,6 +46,16 @@ public partial class ToastManager : Control
 
         GameLogger.SetBackend(new GodotLoggerBackend());
         GameLogger.Debug("ToastManager initialized");
+    }
+
+    /// <summary>
+    /// Shows a toast with the specified configuration (async version).
+    /// </summary>
+    /// <param name="config">Configuration for the toast</param>
+    public async Task ShowToastAsync(ToastConfig config)
+    {
+        ShowToast(config);
+        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -97,10 +110,17 @@ public partial class ToastManager : Control
         // Animate existing toasts upward for the same anchor
         AnimateExistingToastsForNewToast(config.Anchor);
 
-        // Create toast info with estimated height
+        // Create toast info records
         var estimatedHeight = 35.0f; // Reduced from 60px for more compact stacking
-        var toastInfo = new ToastInfo(toastInstance, config.Anchor, config.AnchorOffset, estimatedHeight);
-        _activeToasts.Add(toastInfo);
+        var toastInfo = new ToastInfo
+        {
+            Config = config,
+            Anchor = config.Anchor,
+            BaseOffset = config.AnchorOffset,
+            EstimatedHeight = estimatedHeight
+        };
+        var activeToastInfo = new ActiveToastInfo(toastInstance, toastInfo);
+        _activeToasts.Add(activeToastInfo);
 
         // Calculate the position for the new toast (appears at bottom of stack)
         var adjustedConfig = CalculateToastPosition(config, _activeToasts.Count - 1);
@@ -243,6 +263,15 @@ public partial class ToastManager : Control
     }
 
     /// <summary>
+    /// Clears all active toasts (async version).
+    /// </summary>
+    public async Task ClearAllToastsAsync()
+    {
+        ClearAllToasts();
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
     /// Clears all active toasts.
     /// </summary>
     public void ClearAllToasts()
@@ -256,18 +285,91 @@ public partial class ToastManager : Control
     }
 
     /// <summary>
+    /// Dismisses a specific toast by ID (async version).
+    /// </summary>
+    /// <param name="toastId">The ID of the toast to dismiss</param>
+    public async Task DismissToastAsync(string toastId)
+    {
+        DismissToast(toastId);
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Dismisses a specific toast by ID.
+    /// </summary>
+    /// <param name="toastId">The ID of the toast to dismiss</param>
+    public void DismissToast(string toastId)
+    {
+        var activeToastInfo = _activeToasts.FirstOrDefault(t => t.Info.Id == toastId);
+        if (activeToastInfo != null)
+        {
+            activeToastInfo.Toast?.QueueFree();
+            _activeToasts.Remove(activeToastInfo);
+            GameLogger.Debug($"Toast {toastId} dismissed. Active toasts: {_activeToasts.Count}");
+            RepositionToasts();
+        }
+    }
+
+    /// <summary>
+    /// Gets all currently active toasts.
+    /// </summary>
+    /// <returns>List of active toast information</returns>
+    public List<ToastInfo> GetActiveToasts()
+    {
+        return _activeToasts.Select(t => t.Info).ToList();
+    }
+
+    /// <summary>
+    /// Gets a specific toast by its ID.
+    /// </summary>
+    /// <param name="toastId">The unique identifier of the toast</param>
+    /// <returns>Toast information if found, null otherwise</returns>
+    public ToastInfo? GetToastById(string toastId)
+    {
+        return _activeToasts.FirstOrDefault(t => t.Info.Id == toastId)?.Info;
+    }
+
+    /// <summary>
+    /// Gets all toasts at a specific anchor position.
+    /// </summary>
+    /// <param name="anchor">The anchor position to filter by</param>
+    /// <returns>List of toasts at the specified anchor</returns>
+    public List<ToastInfo> GetToastsByAnchor(ToastAnchor anchor)
+    {
+        return _activeToasts.Where(t => t.Info.Anchor == anchor).Select(t => t.Info).ToList();
+    }
+
+    /// <summary>
+    /// Gets the current number of active toasts.
+    /// </summary>
+    /// <returns>Count of active toasts</returns>
+    public int GetActiveToastCount()
+    {
+        return _activeToasts.Count;
+    }
+
+    /// <summary>
+    /// Checks if the toast limit has been reached.
+    /// </summary>
+    /// <returns>True if at maximum toast limit</returns>
+    public bool IsToastLimitReached()
+    {
+        return _activeToasts.Count >= MaxVisibleToasts;
+    }
+
+    /// <summary>
     /// Animates existing toasts upward when a new toast is added.
     /// </summary>
     private void AnimateExistingToastsForNewToast(ToastAnchor newToastAnchor)
     {
-        var toastsToAnimate = _activeToasts.Where(t => t.Anchor == newToastAnchor).ToList();
+        var toastsToAnimate = _activeToasts.Where(t => t.Info.Anchor == newToastAnchor).ToList();
 
         foreach (var toastInfo in toastsToAnimate)
         {
             if (toastInfo.Toast == null) continue;
 
             var currentPos = toastInfo.Toast.Position;
-            var newPos = CalculateShiftedPosition(currentPos, newToastAnchor, toastInfo.EstimatedHeight + ToastSpacing);
+            var newPos = CalculateShiftedPosition(currentPos, newToastAnchor, toastInfo.Info.EstimatedHeight + ToastSpacing);
 
             // Create smooth animation to shift upward
             var tween = toastInfo.Toast.CreateTween();
@@ -300,7 +402,7 @@ public partial class ToastManager : Control
     private ToastConfig CalculateToastPosition(ToastConfig config, int stackIndex)
     {
         // Calculate how many toasts of the same anchor type exist
-        var sameAnchorCount = _activeToasts.Take(stackIndex).Count(t => t.Anchor == config.Anchor);
+        var sameAnchorCount = _activeToasts.Take(stackIndex).Count(t => t.Info.Anchor == config.Anchor);
 
         // Calculate the cumulative offset
         var stackOffset = sameAnchorCount * (35.0f + ToastSpacing); // Reduced from 60px to 35px for compact stacking
@@ -346,7 +448,7 @@ public partial class ToastManager : Control
     private void RepositionToasts()
     {
         // Group toasts by anchor for repositioning
-        var toastGroups = _activeToasts.GroupBy(t => t.Anchor);
+        var toastGroups = _activeToasts.GroupBy(t => t.Info.Anchor);
 
         foreach (var group in toastGroups)
         {
@@ -360,8 +462,8 @@ public partial class ToastManager : Control
                 // Calculate what the position should be for this index
                 var baseConfig = new ToastConfig
                 {
-                    Anchor = toastInfo.Anchor,
-                    AnchorOffset = toastInfo.BaseOffset
+                    Anchor = toastInfo.Info.Anchor,
+                    AnchorOffset = toastInfo.Info.BaseOffset
                 };
                 var targetConfig = CalculateToastPosition(baseConfig, i);
                 var targetPos = CalculateAbsolutePosition(targetConfig);

@@ -1,9 +1,10 @@
 #nullable enable
 
 using Game.Core.Utils;
+using Game.UI.Models;
 using Godot;
 
-namespace Game.Scripts.UI;
+namespace Scripts.UI;
 
 /// <summary>
 /// Generic toast notification system that can be configured for various use cases.

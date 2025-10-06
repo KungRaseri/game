@@ -7,6 +7,7 @@ using Game.Inventories.Systems;
 using Game.Items.Data;
 using Game.Items.Systems;
 using Game.Scripts.UI;
+using Scripts.UI;
 using Game.Shop.Systems;
 using Godot;
 
@@ -459,13 +460,13 @@ public partial class MainGameScene : Control
         
         // Test custom config with different anchor
         GetTree().CreateTimer(4.0f).Timeout += () => {
-            var customConfig = new ToastConfig
+            var customConfig = new Game.UI.Models.ToastConfig
             {
                 Title = "Achievement Unlocked",
                 Message = "Master Blacksmith - Center positioned",
-                Style = ToastStyle.Success,
-                Animation = ToastAnimation.Bounce,
-                Anchor = ToastAnchor.Center,
+                Style = Game.UI.Models.ToastStyle.Success,
+                Animation = Game.UI.Models.ToastAnimation.Bounce,
+                Anchor = Game.UI.Models.ToastAnchor.Center,
                 DisplayDuration = 5.0f
             };
             _toastManager.ShowToast(customConfig);

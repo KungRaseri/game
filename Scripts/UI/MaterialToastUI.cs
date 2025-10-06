@@ -1,9 +1,10 @@
 #nullable enable
 
 using Game.Core.Utils;
+using Game.UI.Models;
 using Godot;
 
-namespace Game.Scripts.UI;
+namespace Scripts.UI;
 
 /// <summary>
 /// Specialized toast notification for collected materials.
