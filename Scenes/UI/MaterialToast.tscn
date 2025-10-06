@@ -4,7 +4,7 @@
 
 [node name="MaterialToast" type="PanelContainer"]
 offset_right = 300.0
-offset_bottom = 80.0
+offset_bottom = 40.0
 mouse_filter = 2
 script = ExtResource("1_material_toast")
 

@@ -101,6 +101,9 @@ public partial class MainGameScene : Control
         _toastManager = new ToastManager();
         _toastManager.ToastScene = ToastScene;
         _toastContainer.AddChild(_toastManager);
+        
+        // Set global reference for MaterialToastUI backward compatibility
+        MaterialToastUI.SetGlobalToastManager(_toastManager);
     }
 
     private void InitializeGameSystems()
@@ -443,13 +446,14 @@ public partial class MainGameScene : Control
             _toastManager.ShowMaterialToast(new List<string> { "Magic Crystal x1", "Steel x5" });
         };
         
-        // Test direct MaterialToastUI for backward compatibility
+        // Test direct MaterialToastUI - should automatically redirect to ToastManager
         GetTree().CreateTimer(3.5f).Timeout += () => {
             if (_toastContainer != null)
             {
+                GameLogger.Info("Testing MaterialToastUI direct instantiation (should redirect to ToastManager)");
                 var materialToast = new MaterialToastUI();
                 _toastContainer.AddChild(materialToast);
-                materialToast.ShowToast(new List<string> { "Direct MaterialToast", "Backward Compatible x2" });
+                materialToast.ShowToast(new List<string> { "Direct MaterialToast", "Auto-redirected to stack!" });
             }
         };
         
