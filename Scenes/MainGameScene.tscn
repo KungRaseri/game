@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://ce3hfv7a2s1gs"]
 
-[ext_resource type="Script" uid="uid://da45ct5sa8e83" path="res://Scripts/Scenes/MainGameScene.cs" id="1_qla6v"]
+[ext_resource type="Script" uid="uid://dbehulbglkkie" path="res://Scripts/Core/GameManager.cs" id="1_qlmn3"]
 [ext_resource type="PackedScene" uid="uid://b7x3k2qm4wan1" path="res://Scenes/UI/AdventurerStatus.tscn" id="2_adventurer_status"]
 [ext_resource type="PackedScene" uid="uid://d2y4p8x1m6n7v" path="res://Scenes/UI/CombatLog.tscn" id="3_combat_log"]
 [ext_resource type="PackedScene" uid="uid://c5v7n2x4q8p1m" path="res://Scenes/UI/ExpeditionPanel.tscn" id="4_expedition_panel"]
@@ -14,7 +14,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_qla6v")
+script = ExtResource("1_qlmn3")
 
 [node name="MainContainer" type="HSplitContainer" parent="."]
 layout_mode = 1
@@ -31,6 +31,7 @@ size_flags_horizontal = 3
 [node name="AdventurerStatus" parent="MainContainer/LeftPanel" instance=ExtResource("2_adventurer_status")]
 layout_mode = 2
 size_flags_vertical = 3
+HealthBarMax = null
 
 [node name="ExpeditionPanel" parent="MainContainer/LeftPanel" instance=ExtResource("4_expedition_panel")]
 layout_mode = 2
@@ -49,6 +50,8 @@ text = "Manage Shop"
 [node name="CombatLog" parent="MainContainer" instance=ExtResource("3_combat_log")]
 layout_mode = 2
 size_flags_horizontal = 3
+MaxLogEntries = null
+AutoScroll = null
 
 [node name="UIOverlay" type="Control" parent="."]
 layout_mode = 1
@@ -80,6 +83,8 @@ offset_left = -400.0
 offset_top = -300.0
 offset_right = 400.0
 offset_bottom = 300.0
+AutoRefreshStats = null
+AutoRefreshInterval = null
 
 [node name="ShopManagementPanel" parent="UIOverlay" instance=ExtResource("7_shop_management")]
 visible = false

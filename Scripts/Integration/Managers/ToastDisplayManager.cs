@@ -3,11 +3,11 @@
 using Game.Core.Utils;
 using Game.UI.Models;
 using Game.UI.Systems;
-using Game.Scripts;
-using Scripts.UI;
+using Game.Scripts.Core;
+using Game.Scripts.UI.Integration;
 using Godot;
 
-namespace Scripts.Managers;
+namespace Game.Scripts.Integration.Managers;
 
 /// <summary>
 /// Manages the display of toast notifications by connecting UISystem events to Godot UI components.

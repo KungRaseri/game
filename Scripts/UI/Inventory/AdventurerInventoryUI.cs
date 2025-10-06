@@ -2,10 +2,11 @@
 
 using Game.Core.Utils;
 using Game.Inventories.Models;
+using Game.Scripts.UI.Components;
 using Godot;
 using GodotPlugins.Game;
 
-namespace Game.Scripts.UI;
+namespace Game.Scripts.UI.Inventory;
 
 /// <summary>
 /// UI component that displays the adventurer's material inventory as a list.

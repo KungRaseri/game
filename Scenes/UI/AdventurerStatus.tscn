@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b7x3k2qm4wan1"]
 
-[ext_resource type="Script" uid="uid://ugx0dmymfcvp" path="res://Scripts/UI/AdventurerStatusUI.cs" id="1_adventurer_script"]
+[ext_resource type="Script" uid="uid://ugx0dmymfcvp" path="res://Scripts/UI/Panels/AdventurerStatusUI.cs" id="1_adventurer_script"]
 
 [node name="AdventurerStatus" type="Panel"]
 anchors_preset = 10

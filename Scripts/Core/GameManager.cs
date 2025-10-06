@@ -6,7 +6,7 @@ using Game.Adventure.Models;
 using Game.Core.Utils;
 using Game.UI.Systems;
 
-namespace Game.Scripts;
+namespace Game.Scripts.Core;
 
 /// <summary>
 /// Main game manager that coordinates all systems for Milestone 1

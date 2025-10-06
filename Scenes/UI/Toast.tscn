@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://6tf8kit57jox"]
 
-[ext_resource type="Script" uid="uid://cencry1fmnpj1" path="res://Scripts/UI/ToastUI.cs" id="1_toast_ui"]
+[ext_resource type="Script" uid="uid://cencry1fmnpj1" path="res://Scripts/UI/Components/ToastUI.cs" id="1_toast_ui"]
 
 [node name="Toast" type="PanelContainer"]
 offset_right = 300.0

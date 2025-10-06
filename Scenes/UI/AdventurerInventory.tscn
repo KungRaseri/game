@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bcs7go00s7rgn"]
 
-[ext_resource type="Script" uid="uid://dt1o78wfdessy" path="res://Scripts/UI/AdventurerInventoryUI.cs" id="1_inventory_script"]
+[ext_resource type="Script" uid="uid://dt1o78wfdessy" path="res://Scripts/UI/Inventory/AdventurerInventoryUI.cs" id="1_inventory_script"]
 [ext_resource type="PackedScene" uid="uid://cm5m6c4ywh8xo" path="res://Scenes/UI/MaterialStack.tscn" id="2_material_stack"]
 
 [node name="AdventurerInventory" type="Panel"]

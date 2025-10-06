@@ -1,7 +1,7 @@
 using Game.Shop.Models;
 using Godot;
 
-namespace Game.Scripts.UI;
+namespace Game.Scripts.UI.Components;
 
 /// <summary>
 /// Helper class to manage individual display slot UI elements.

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bbax4m7n2q5k8"]
 
-[ext_resource type="Script" uid="uid://fhjin0botq7t" path="res://Scripts/UI/MaterialToastUI.cs" id="1_material_toast"]
+[ext_resource type="Script" uid="uid://fhjin0botq7t" path="res://Scripts/UI/Crafting/MaterialToastUI.cs" id="1_material_toast"]
 
 [node name="MaterialToast" type="PanelContainer"]
 offset_right = 300.0

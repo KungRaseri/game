@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Material = Game.Items.Models.Materials.Material;
 
-namespace Game.UI;
+namespace Game.Scripts.UI.Panels;
 
 /// <summary>
 /// UI controller for the main crafting workshop interface.

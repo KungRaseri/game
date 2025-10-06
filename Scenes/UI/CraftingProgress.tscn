@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cql2mpsfu4o38"]
 
-[ext_resource type="Script" uid="uid://dcnhfm1djvnrj" path="res://Scripts/UI/CraftingProgressUI.cs" id="1_0r4l7"]
+[ext_resource type="Script" uid="uid://dcnhfm1djvnrj" path="res://Scripts/UI/Crafting/CraftingProgressUI.cs" id="1_0r4l7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3vwgi"]
 bg_color = Color(0.25, 0.15, 0.2, 0.95)

@@ -7,7 +7,7 @@ using Game.Shop.Systems;
 using Godot;
 using GodotPlugins.Game;
 
-namespace Game.Scripts.UI;
+namespace Game.Scripts.UI.Panels;
 
 /// <summary>
 /// UI for detailed customer interactions including negotiation, preferences, and purchase decisions.

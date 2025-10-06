@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://5ocs1ouomnnl"]
 
-[ext_resource type="Script" uid="uid://bw72lwqjo8ibs" path="res://Scripts/UI/RecipeBookUI.cs" id="1_0r3k6"]
+[ext_resource type="Script" uid="uid://bw72lwqjo8ibs" path="res://Scripts/UI/Panels/RecipeBookUI.cs" id="1_0r3k6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2tufh"]
 bg_color = Color(0.15, 0.2, 0.25, 0.95)

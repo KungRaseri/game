@@ -6,8 +6,13 @@ using Game.Core.Utils;
 using Game.Inventories.Systems;
 using Game.Items.Data;
 using Game.Items.Systems;
-using Game.Scripts.UI;
-using Scripts.UI;
+using Game.Scripts.Core;
+using Game.Scripts.UI.Adventure;
+using Game.Scripts.UI.Components;
+using Game.Scripts.UI.Crafting;
+using Game.Scripts.UI.Integration;
+using Game.Scripts.UI.Inventory;
+using Game.Scripts.UI.Panels;
 using Game.Shop.Systems;
 using Godot;
 

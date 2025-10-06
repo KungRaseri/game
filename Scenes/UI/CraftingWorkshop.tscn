@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c4hy6pwdxkvfi"]
 
-[ext_resource type="Script" uid="uid://dn4urae0r20gw" path="res://Scripts/UI/CraftingWorkshopUI.cs" id="1_0r2j5"]
+[ext_resource type="Script" uid="uid://dn4urae0r20gw" path="res://Scripts/UI/Panels/CraftingWorkshopUI.cs" id="1_0r2j5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1sdfg"]
 bg_color = Color(0.2, 0.2, 0.3, 0.9)

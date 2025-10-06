@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cm5m6c4ywh8xo"]
 
-[ext_resource type="Script" uid="uid://v2gatejb8riy" path="res://Scripts/UI/MaterialStackUI.cs" id="1_material_stack_script"]
+[ext_resource type="Script" uid="uid://v2gatejb8riy" path="res://Scripts/UI/Components/MaterialStackUI.cs" id="1_material_stack_script"]
 
 [node name="MaterialStack" type="Panel"]
 custom_minimum_size = Vector2(0, 60)

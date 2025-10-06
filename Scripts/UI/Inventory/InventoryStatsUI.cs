@@ -6,7 +6,7 @@ using Game.Items.Models;
 using Godot;
 using GodotPlugins.Game;
 
-namespace Game.Scripts.UI;
+namespace Game.Scripts.UI.Inventory;
 
 /// <summary>
 /// UI component for displaying inventory statistics and material categorization.

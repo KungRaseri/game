@@ -8,7 +8,7 @@ using Game.Core.Utils;
 using Godot;
 using GodotPlugins.Game;
 
-namespace Game.Scripts.UI;
+namespace Game.Scripts.UI.Panels;
 
 /// <summary>
 /// UI component that displays adventurer status and provides expedition controls.

@@ -6,7 +6,7 @@ using Game.Inventories.Systems;
 using Godot;
 using GodotPlugins.Game;
 
-namespace Game.Scripts.UI;
+namespace Game.Scripts.UI.Inventory;
 
 /// <summary>
 /// Main container that integrates all Material Collection UI components.

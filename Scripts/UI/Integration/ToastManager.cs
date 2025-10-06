@@ -1,10 +1,12 @@
 #nullable enable
 
 using Game.Core.Utils;
+using Game.Scripts.UI.Components;
+using Game.Scripts.UI.Crafting;
 using Game.UI.Models;
 using Godot;
 
-namespace Scripts.UI;
+namespace Game.Scripts.UI.Integration;
 
 /// <summary>
 /// Manager for creating and displaying toast notifications.

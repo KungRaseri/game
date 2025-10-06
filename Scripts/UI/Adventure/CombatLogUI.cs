@@ -5,7 +5,7 @@ using Game.Core.CQS;
 using Game.Core.Utils;
 using Godot;
 
-namespace Game.Scripts.UI;
+namespace Game.Scripts.UI.Adventure;
 
 /// <summary>
 /// UI component that displays combat events and status messages.

@@ -4,12 +4,13 @@ using Game.Core.Utils;
 using Game.Inventories.Systems;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
+using Game.Scripts.UI.Components;
 using Game.Shop.Models;
 using Game.Shop.Systems;
 using Godot;
 using Material = Game.Items.Models.Materials.Material;
 
-namespace Game.Scripts.UI;
+namespace Game.Scripts.UI.Panels;
 
 /// <summary>
 /// Main shop management UI that provides a visual interface for managing the shop.

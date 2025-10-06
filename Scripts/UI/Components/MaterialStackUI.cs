@@ -5,7 +5,7 @@ using Game.Inventories.Models;
 using Game.Items.Models;
 using Godot;
 
-namespace Game.Scripts.UI;
+namespace Game.Scripts.UI.Components;
 
 /// <summary>
 /// UI component that displays a single material stack with icon, quantity, rarity indicators, and tooltip.

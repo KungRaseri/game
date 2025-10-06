@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Game.UI;
+namespace Game.Scripts.UI.Panels;
 
 /// <summary>
 /// UI controller for the recipe book interface.

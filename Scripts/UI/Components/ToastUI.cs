@@ -4,7 +4,7 @@ using Game.Core.Utils;
 using Game.UI.Models;
 using Godot;
 
-namespace Scripts.UI;
+namespace Game.Scripts.UI.Components;
 
 /// <summary>
 /// Generic toast notification system that can be configured for various use cases.

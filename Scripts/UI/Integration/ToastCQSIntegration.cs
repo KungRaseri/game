@@ -5,7 +5,7 @@ using Game.UI.Commands;
 using Game.UI.Models;
 using Game.UI.Queries;
 
-namespace Scripts.UI;
+namespace Game.Scripts.UI.Integration;
 
 /// <summary>
 /// Example usage of the CQS toast system.
