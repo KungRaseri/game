@@ -21,7 +21,7 @@ public partial class MainGameScene : Control
 {
     [Export] public float UpdateInterval { get; set; } = 0.1f; // Update 10 times per second for responsive combat
     [Export] public int MaxCombatLogEntries { get; set; } = 50;
-    [Export] public PackedScene? MaterialToastScene { get; set; }
+    [Export] public PackedScene? ToastScene { get; set; }
 
     [Signal]
     public delegate void GameStateChangedEventHandler(string newState);
@@ -48,6 +48,7 @@ public partial class MainGameScene : Control
     private Button? _inventoryButton;
     private Button? _shopButton;
     private VBoxContainer? _toastContainer;
+    private ToastManager? _toastManager;
 
     public override void _Ready()
     {
@@ -60,6 +61,18 @@ public partial class MainGameScene : Control
         ConnectUIEvents();
 
         GameLogger.Info("MainGameScene ready");
+    }
+
+    public override void _Input(InputEvent inputEvent)
+    {
+        // Handle test input for toasts (T key to test toasts)
+        if (inputEvent is InputEventKey keyEvent && keyEvent.Pressed)
+        {
+            if (keyEvent.Keycode == Key.T)
+            {
+                TestToasts();
+            }
+        }
     }
 
     public override void _ExitTree()
@@ -83,6 +96,11 @@ public partial class MainGameScene : Control
         _inventoryButton = GetNode<Button>("MainContainer/LeftPanel/InventoryButton");
         _shopButton = GetNode<Button>("MainContainer/LeftPanel/ShopButton");
         _toastContainer = GetNode<VBoxContainer>("UIOverlay/ToastContainer");
+        
+        // Initialize ToastManager
+        _toastManager = new ToastManager();
+        _toastManager.ToastScene = ToastScene;
+        _toastContainer.AddChild(_toastManager);
     }
 
     private void InitializeGameSystems()
@@ -383,19 +401,39 @@ public partial class MainGameScene : Control
     /// </summary>
     private void ShowMaterialToast(List<string> materials)
     {
-        if (materials.Count == 0 || _toastContainer == null) return;
+        if (materials.Count == 0 || _toastManager == null) return;
 
-        // Load the toast scene if available
-        if (MaterialToastScene != null)
+        // Use the new ToastManager to show material collection
+        _toastManager.ShowMaterialToast(materials);
+    }
+
+    /// <summary>
+    /// Test method to demonstrate different toast types.
+    /// </summary>
+    public void TestToasts()
+    {
+        if (_toastManager == null) return;
+
+        // Test different toast styles
+        _toastManager.ShowSuccess("Combat victory!");
+        _toastManager.ShowInfo("New quest available");
+        _toastManager.ShowWarning("Low health warning");
+        _toastManager.ShowError("Failed to load save file");
+        
+        // Test material toast
+        _toastManager.ShowMaterialToast(new List<string> { "Iron Ore x3", "Leather x2", "Magic Crystal x1" });
+        
+        // Test custom config
+        var customConfig = new ToastConfig
         {
-            var toastInstance = MaterialToastScene.Instantiate<MaterialToastUI>();
-            _toastContainer.AddChild(toastInstance);
-            toastInstance.ShowToast(materials);
-        }
-        else
-        {
-            GameLogger.Warning("MaterialToastScene not assigned - cannot show toast");
-        }
+            Title = "Achievement Unlocked",
+            Message = "Master Blacksmith",
+            Style = ToastStyle.Success,
+            Animation = ToastAnimation.Bounce,
+            Anchor = ToastAnchor.Center,
+            DisplayDuration = 5.0f
+        };
+        _toastManager.ShowToast(customConfig);
     }
 
     /// <summary>
