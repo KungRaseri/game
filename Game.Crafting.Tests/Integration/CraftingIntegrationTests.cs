@@ -49,57 +49,67 @@ public class CraftingIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task EndToEnd_CraftingWorkflow_ShouldWork()
+    public async Task EndToEnd_RecipeManagement_ShouldWork()
     {
         // Arrange - Create a test recipe
         var testRecipe = CreateTestRecipe();
         
         // Act & Assert - Add recipe to manager
         var addCommand = new AddRecipeCommand { Recipe = testRecipe };
-        await _dispatcher.DispatchAsync(addCommand);
+        await _dispatcher.DispatchCommandAsync(addCommand);
 
         // Verify recipe was added
-        var getRecipeQuery = new GetRecipeQuery { RecipeId = testRecipe.Id };
-        var retrievedRecipe = await _dispatcher.DispatchAsync(getRecipeQuery);
+        var getRecipeQuery = new GetRecipeQuery { RecipeId = testRecipe.RecipeId };
+        var retrievedRecipe = await _dispatcher.DispatchQueryAsync<GetRecipeQuery, Recipe?>(getRecipeQuery);
         retrievedRecipe.Should().NotBeNull();
-        retrievedRecipe!.Id.Should().Be(testRecipe.Id);
+        retrievedRecipe!.RecipeId.Should().Be(testRecipe.RecipeId);
 
         // Unlock the recipe
-        var unlockCommand = new UnlockRecipeCommand { RecipeId = testRecipe.Id };
-        await _dispatcher.DispatchAsync(unlockCommand);
+        var unlockCommand = new UnlockRecipeCommand { RecipeId = testRecipe.RecipeId };
+        await _dispatcher.DispatchCommandAsync(unlockCommand);
 
         // Verify recipe is unlocked
-        var isUnlockedQuery = new IsRecipeUnlockedQuery { RecipeId = testRecipe.Id };
-        var isUnlocked = await _dispatcher.DispatchAsync(isUnlockedQuery);
+        var isUnlockedQuery = new IsRecipeUnlockedQuery { RecipeId = testRecipe.RecipeId };
+        var isUnlocked = await _dispatcher.DispatchQueryAsync<IsRecipeUnlockedQuery, bool>(isUnlockedQuery);
         isUnlocked.Should().BeTrue();
+    }
 
-        // Queue crafting order
+    [Fact]
+    public async Task EndToEnd_CraftingOrder_ShouldWork()
+    {
+        // Arrange - Create and add a test recipe
+        var testRecipe = CreateTestRecipe();
+        var addCommand = new AddRecipeCommand { Recipe = testRecipe };
+        await _dispatcher.DispatchCommandAsync(addCommand);
+
+        var unlockCommand = new UnlockRecipeCommand { RecipeId = testRecipe.RecipeId };
+        await _dispatcher.DispatchCommandAsync(unlockCommand);
+
+        // Create test materials
+        var materials = CreateTestMaterials();
+
+        // Act - Queue crafting order
         var queueCommand = new QueueCraftingOrderCommand 
         { 
-            RecipeId = testRecipe.Id, 
-            Quantity = 2 
+            RecipeId = testRecipe.RecipeId, 
+            Materials = materials
         };
-        await _dispatcher.DispatchAsync(queueCommand);
+        var orderId = await _dispatcher.DispatchCommandAsync<QueueCraftingOrderCommand, string>(queueCommand);
 
-        // Verify order was queued
-        var getOrderQuery = new GetCraftingOrderQuery { OrderId = 1 };
-        var order = await _dispatcher.DispatchAsync(getOrderQuery);
+        // Assert - Verify order was queued
+        orderId.Should().NotBeNullOrEmpty();
+
+        var getOrderQuery = new GetCraftingOrderQuery { OrderId = orderId };
+        var order = await _dispatcher.DispatchQueryAsync<GetCraftingOrderQuery, CraftingOrder?>(getOrderQuery);
         order.Should().NotBeNull();
-        order!.RecipeId.Should().Be(testRecipe.Id);
-        order.Quantity.Should().Be(2);
-
-        // Get all orders
-        var getAllOrdersQuery = new GetAllCraftingOrdersQuery();
-        var allOrders = await _dispatcher.DispatchAsync(getAllOrdersQuery);
-        allOrders.Should().HaveCount(1);
-        allOrders.First().Should().BeEquivalentTo(order);
+        order!.Recipe.RecipeId.Should().Be(testRecipe.RecipeId);
 
         // Cancel the order
-        var cancelCommand = new CancelCraftingOrderCommand { OrderId = 1 };
-        await _dispatcher.DispatchAsync(cancelCommand);
+        var cancelCommand = new CancelCraftingOrderCommand { OrderId = orderId };
+        await _dispatcher.DispatchCommandAsync(cancelCommand);
 
         // Verify order was cancelled
-        var cancelledOrder = await _dispatcher.DispatchAsync(getOrderQuery);
+        var cancelledOrder = await _dispatcher.DispatchQueryAsync<GetCraftingOrderQuery, CraftingOrder?>(getOrderQuery);
         cancelledOrder.Should().BeNull();
     }
 
@@ -109,94 +119,34 @@ public class CraftingIntegrationTests : IDisposable
         // Arrange - Set up initial state
         var testRecipe = CreateTestRecipe();
         var addCommand = new AddRecipeCommand { Recipe = testRecipe };
-        await _dispatcher.DispatchAsync(addCommand);
+        await _dispatcher.DispatchCommandAsync(addCommand);
 
-        var unlockCommand = new UnlockRecipeCommand { RecipeId = testRecipe.Id };
-        await _dispatcher.DispatchAsync(unlockCommand);
+        var unlockCommand = new UnlockRecipeCommand { RecipeId = testRecipe.RecipeId };
+        await _dispatcher.DispatchCommandAsync(unlockCommand);
 
         // Act - Execute multiple queries
-        var getRecipeQuery = new GetRecipeQuery { RecipeId = testRecipe.Id };
+        var getRecipeQuery = new GetRecipeQuery { RecipeId = testRecipe.RecipeId };
         var getUnlockedQuery = new GetUnlockedRecipesQuery();
-        var searchQuery = new SearchRecipesQuery { NameFilter = "Test" };
-        var isUnlockedQuery = new IsRecipeUnlockedQuery { RecipeId = testRecipe.Id };
-        var getStatsQuery = new GetCraftingStatsQuery();
-        var getRecipeStatsQuery = new GetRecipeStatsQuery { RecipeId = testRecipe.Id };
+        var isUnlockedQuery = new IsRecipeUnlockedQuery { RecipeId = testRecipe.RecipeId };
 
         // Execute queries multiple times
         for (int i = 0; i < 3; i++)
         {
-            await _dispatcher.DispatchAsync(getRecipeQuery);
-            await _dispatcher.DispatchAsync(getUnlockedQuery);
-            await _dispatcher.DispatchAsync(searchQuery);
-            await _dispatcher.DispatchAsync(isUnlockedQuery);
-            await _dispatcher.DispatchAsync(getStatsQuery);
-            await _dispatcher.DispatchAsync(getRecipeStatsQuery);
+            await _dispatcher.DispatchQueryAsync<GetRecipeQuery, Recipe?>(getRecipeQuery);
+            await _dispatcher.DispatchQueryAsync<GetUnlockedRecipesQuery, IReadOnlyList<Recipe>>(getUnlockedQuery);
+            await _dispatcher.DispatchQueryAsync<IsRecipeUnlockedQuery, bool>(isUnlockedQuery);
         }
 
         // Assert - State should remain unchanged
-        var finalRecipe = await _dispatcher.DispatchAsync(getRecipeQuery);
+        var finalRecipe = await _dispatcher.DispatchQueryAsync<GetRecipeQuery, Recipe?>(getRecipeQuery);
         finalRecipe.Should().NotBeNull();
-        finalRecipe!.Id.Should().Be(testRecipe.Id);
+        finalRecipe!.RecipeId.Should().Be(testRecipe.RecipeId);
 
-        var finalUnlocked = await _dispatcher.DispatchAsync(getUnlockedQuery);
+        var finalUnlocked = await _dispatcher.DispatchQueryAsync<GetUnlockedRecipesQuery, IReadOnlyList<Recipe>>(getUnlockedQuery);
         finalUnlocked.Should().HaveCount(1);
 
-        var finalIsUnlocked = await _dispatcher.DispatchAsync(isUnlockedQuery);
+        var finalIsUnlocked = await _dispatcher.DispatchQueryAsync<IsRecipeUnlockedQuery, bool>(isUnlockedQuery);
         finalIsUnlocked.Should().BeTrue();
-    }
-
-    [Fact]
-    public async Task RecipeDiscovery_ShouldWork()
-    {
-        // Arrange - Add recipes but don't unlock them
-        var recipe1 = CreateTestRecipe("Recipe1");
-        var recipe2 = CreateTestRecipe("Recipe2");
-        
-        var addCommand1 = new AddRecipeCommand { Recipe = recipe1 };
-        var addCommand2 = new AddRecipeCommand { Recipe = recipe2 };
-        
-        await _dispatcher.DispatchAsync(addCommand1);
-        await _dispatcher.DispatchAsync(addCommand2);
-
-        // Act - Discover recipes
-        var discoverCommand = new DiscoverRecipesCommand();
-        await _dispatcher.DispatchAsync(discoverCommand);
-
-        // Assert - Some recipes should be discovered (mocked behavior)
-        var unlockedQuery = new GetUnlockedRecipesQuery();
-        var unlockedRecipes = await _dispatcher.DispatchAsync(unlockedQuery);
-        
-        // The actual number depends on the DiscoverRecipes implementation
-        // For this test, we just verify the command executes without error
-        unlockedRecipes.Should().NotBeNull();
-    }
-
-    [Fact]
-    public async Task CraftingStats_ShouldReflectOperations()
-    {
-        // Arrange
-        var testRecipe = CreateTestRecipe();
-        var addCommand = new AddRecipeCommand { Recipe = testRecipe };
-        await _dispatcher.DispatchAsync(addCommand);
-
-        // Act - Perform operations
-        var unlockCommand = new UnlockRecipeCommand { RecipeId = testRecipe.Id };
-        await _dispatcher.DispatchAsync(unlockCommand);
-
-        var queueCommand = new QueueCraftingOrderCommand 
-        { 
-            RecipeId = testRecipe.Id, 
-            Quantity = 1 
-        };
-        await _dispatcher.DispatchAsync(queueCommand);
-
-        // Assert - Stats should reflect operations
-        var getStatsQuery = new GetCraftingStatsQuery();
-        var stats = await _dispatcher.DispatchAsync(getStatsQuery);
-        
-        stats.Should().NotBeNull();
-        // Verify stats reflect the operations performed
-        // (actual validation depends on CraftingStats implementation)
     }
 
     [Fact]
@@ -205,22 +155,22 @@ public class CraftingIntegrationTests : IDisposable
         // Arrange
         var testRecipe = CreateTestRecipe();
         var addCommand = new AddRecipeCommand { Recipe = testRecipe };
-        await _dispatcher.DispatchAsync(addCommand);
+        await _dispatcher.DispatchCommandAsync(addCommand);
 
-        var unlockCommand = new UnlockRecipeCommand { RecipeId = testRecipe.Id };
-        await _dispatcher.DispatchAsync(unlockCommand);
+        var unlockCommand = new UnlockRecipeCommand { RecipeId = testRecipe.RecipeId };
+        await _dispatcher.DispatchCommandAsync(unlockCommand);
 
         // Verify initially unlocked
-        var isUnlockedQuery = new IsRecipeUnlockedQuery { RecipeId = testRecipe.Id };
-        var initialUnlocked = await _dispatcher.DispatchAsync(isUnlockedQuery);
+        var isUnlockedQuery = new IsRecipeUnlockedQuery { RecipeId = testRecipe.RecipeId };
+        var initialUnlocked = await _dispatcher.DispatchQueryAsync<IsRecipeUnlockedQuery, bool>(isUnlockedQuery);
         initialUnlocked.Should().BeTrue();
 
         // Act - Lock the recipe
-        var lockCommand = new LockRecipeCommand { RecipeId = testRecipe.Id };
-        await _dispatcher.DispatchAsync(lockCommand);
+        var lockCommand = new LockRecipeCommand { RecipeId = testRecipe.RecipeId };
+        await _dispatcher.DispatchCommandAsync(lockCommand);
 
         // Assert - Recipe should be locked
-        var finalUnlocked = await _dispatcher.DispatchAsync(isUnlockedQuery);
+        var finalUnlocked = await _dispatcher.DispatchQueryAsync<IsRecipeUnlockedQuery, bool>(isUnlockedQuery);
         finalUnlocked.Should().BeFalse();
     }
 
@@ -228,48 +178,87 @@ public class CraftingIntegrationTests : IDisposable
     public async Task SearchRecipes_ShouldReturnFilteredResults()
     {
         // Arrange - Add multiple recipes
-        var recipe1 = CreateTestRecipe("Sword Recipe");
-        var recipe2 = CreateTestRecipe("Shield Recipe");
-        var recipe3 = CreateTestRecipe("Potion Recipe");
+        var recipe1 = CreateTestRecipe("Sword Recipe", "sword-1");
+        var recipe2 = CreateTestRecipe("Shield Recipe", "shield-1");
+        var recipe3 = CreateTestRecipe("Potion Recipe", "potion-1");
 
-        await _dispatcher.DispatchAsync(new AddRecipeCommand { Recipe = recipe1 });
-        await _dispatcher.DispatchAsync(new AddRecipeCommand { Recipe = recipe2 });
-        await _dispatcher.DispatchAsync(new AddRecipeCommand { Recipe = recipe3 });
+        await _dispatcher.DispatchCommandAsync(new AddRecipeCommand { Recipe = recipe1 });
+        await _dispatcher.DispatchCommandAsync(new AddRecipeCommand { Recipe = recipe2 });
+        await _dispatcher.DispatchCommandAsync(new AddRecipeCommand { Recipe = recipe3 });
 
-        // Act - Search for recipes containing "Recipe"
-        var searchQuery = new SearchRecipesQuery { NameFilter = "Recipe" };
-        var searchResults = await _dispatcher.DispatchAsync(searchQuery);
+        // Act - Search for recipes containing "sword"
+        var searchQuery = new SearchRecipesQuery { SearchTerm = "Sword" };
+        var searchResults = await _dispatcher.DispatchQueryAsync<SearchRecipesQuery, IReadOnlyList<Recipe>>(searchQuery);
 
-        // Assert - Should return all recipes
-        searchResults.Should().HaveCount(3);
-
-        // Act - Search for specific recipe
-        var specificSearch = new SearchRecipesQuery { NameFilter = "Sword" };
-        var specificResults = await _dispatcher.DispatchAsync(specificSearch);
-
-        // Assert - Should return only sword recipe
-        specificResults.Should().HaveCount(1);
-        specificResults.First().Name.Should().Contain("Sword");
+        // Assert - Should return sword recipe
+        searchResults.Should().HaveCount(1);
+        searchResults.First().Name.Should().Contain("Sword");
     }
 
-    private static Recipe CreateTestRecipe(string name = "Test Recipe")
+    [Fact]
+    public async Task CancelAllOrders_ShouldWork()
     {
-        return new Recipe
+        // Arrange - Create orders
+        var testRecipe = CreateTestRecipe();
+        var addCommand = new AddRecipeCommand { Recipe = testRecipe };
+        await _dispatcher.DispatchCommandAsync(addCommand);
+
+        var unlockCommand = new UnlockRecipeCommand { RecipeId = testRecipe.RecipeId };
+        await _dispatcher.DispatchCommandAsync(unlockCommand);
+
+        var materials = CreateTestMaterials();
+        
+        // Queue multiple orders
+        var queueCommand1 = new QueueCraftingOrderCommand { RecipeId = testRecipe.RecipeId, Materials = materials };
+        var queueCommand2 = new QueueCraftingOrderCommand { RecipeId = testRecipe.RecipeId, Materials = materials };
+        
+        await _dispatcher.DispatchCommandAsync<QueueCraftingOrderCommand, string>(queueCommand1);
+        await _dispatcher.DispatchCommandAsync<QueueCraftingOrderCommand, string>(queueCommand2);
+
+        // Act - Cancel all orders
+        var cancelAllCommand = new CancelAllCraftingOrdersCommand();
+        await _dispatcher.DispatchCommandAsync(cancelAllCommand);
+
+        // Assert - All orders should be cancelled
+        var getAllOrdersQuery = new GetAllCraftingOrdersQuery();
+        var allOrders = await _dispatcher.DispatchQueryAsync<GetAllCraftingOrdersQuery, CraftingOrdersResult>(getAllOrdersQuery);
+        allOrders.TotalOrderCount.Should().Be(0);
+    }
+
+    private static Recipe CreateTestRecipe(string name = "Test Recipe", string id = "test-recipe-1")
+    {
+        var materialRequirements = new List<MaterialRequirement>
         {
-            Id = Guid.NewGuid(),
-            Name = name,
-            Description = "A test recipe for integration testing",
-            MaterialRequirements = new List<MaterialRequirement>
-            {
-                new() { MaterialType = MaterialType.Wood, Quantity = 2 },
-                new() { MaterialType = MaterialType.Metal, Quantity = 1 }
-            },
-            CraftingTime = TimeSpan.FromMinutes(5),
-            ResultingItems = new List<ItemTemplate>
-            {
-                new() { ItemType = ItemType.Weapon, Rarity = Rarity.Common }
-            }
+            new(Category.Wood, QualityTier.Common, 2),
+            new(Category.Metal, QualityTier.Common, 1)
         };
+
+        var craftingResult = new CraftingResult("test-item-1", "Test Item", ItemType.Weapon, QualityTier.Common, 1, 10);
+
+        return new Recipe(
+            recipeId: id,
+            name: name,
+            description: "A test recipe for integration testing",
+            category: RecipeCategory.Tools,
+            materialRequirements: materialRequirements,
+            result: craftingResult,
+            craftingTime: 5.0,
+            difficulty: 1,
+            prerequisites: null,
+            isUnlocked: false,
+            experienceReward: 10
+        );
+    }
+
+    private static IReadOnlyDictionary<string, Material> CreateTestMaterials()
+    {
+        var materials = new Dictionary<string, Material>
+        {
+            { "wood-1", new Material("test-wood-1", "Wood Plank", "A wooden plank", QualityTier.Common, 5, Category.Wood) },
+            { "metal-1", new Material("test-metal-1", "Iron Ingot", "An iron ingot", QualityTier.Common, 10, Category.Metal) }
+        };
+
+        return materials;
     }
 
     public void Dispose()

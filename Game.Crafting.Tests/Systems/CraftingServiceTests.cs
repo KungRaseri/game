@@ -128,9 +128,11 @@ public class CraftingServiceTests
     public async Task GetAllCraftingOrdersAsync_DispatchesQueryAndReturnsResult()
     {
         // Arrange
-        var expectedResult = new CraftingOrdersResult(
-            TestHelpers.CreateTestOrder("current"),
-            new List<CraftingOrder> { TestHelpers.CreateTestOrder("queued") });
+        var expectedResult = new CraftingOrdersResult
+        {
+            CurrentOrder = TestHelpers.CreateTestOrder("current"),
+            QueuedOrders = new List<CraftingOrder> { TestHelpers.CreateTestOrder("queued") }
+        };
 
         _mockDispatcher.RegisterQueryHandler<GetAllCraftingOrdersQuery, CraftingOrdersResult>(query =>
             Task.FromResult(expectedResult));
@@ -403,7 +405,11 @@ public class CraftingServiceTests
 
         _mockDispatcher.RegisterQueryHandler<GetCraftingOrderQuery, CraftingOrder?>(query => Task.FromResult<CraftingOrder?>(null));
         _mockDispatcher.RegisterQueryHandler<GetAllCraftingOrdersQuery, CraftingOrdersResult>(query => 
-            Task.FromResult(new CraftingOrdersResult(null, new List<CraftingOrder>())));
+            Task.FromResult(new CraftingOrdersResult
+            {
+                CurrentOrder = null,
+                QueuedOrders = new List<CraftingOrder>()
+            }));
         _mockDispatcher.RegisterQueryHandler<GetCraftingStationStatsQuery, Dictionary<string, object>>(query => 
             Task.FromResult(new Dictionary<string, object>()));
         _mockDispatcher.RegisterQueryHandler<GetRecipeQuery, Recipe?>(query => Task.FromResult<Recipe?>(null));
