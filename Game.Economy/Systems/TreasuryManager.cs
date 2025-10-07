@@ -2,6 +2,7 @@
 
 using Game.Core.Utils;
 using Game.Economy.Models;
+using Game.Economy.Data;
 
 namespace Game.Economy.Systems;
 
@@ -9,7 +10,7 @@ namespace Game.Economy.Systems;
 /// Advanced treasury management system for comprehensive financial operations.
 /// Handles expenses, investments, budgeting, and financial analytics.
 /// </summary>
-public class TreasuryManager
+public class TreasuryManager : ITreasuryManager
 {
     private decimal _currentGold;
     private readonly List<ShopExpense> _expenseHistory;
@@ -255,69 +256,64 @@ public class TreasuryManager
             .ToList();
     }
 
+    /// <summary>
+    /// Get expense history with optional filtering.
+    /// </summary>
+    public IReadOnlyList<ShopExpense> GetExpenseHistory(ExpenseType? expenseType = null, DateTime? startDate = null, DateTime? endDate = null, bool recurringOnly = false)
+    {
+        var filtered = _expenseHistory.AsEnumerable();
+
+        if (expenseType.HasValue)
+            filtered = filtered.Where(e => e.Type == expenseType.Value);
+
+        if (startDate.HasValue)
+            filtered = filtered.Where(e => e.ExpenseDate >= startDate.Value);
+
+        if (endDate.HasValue)
+            filtered = filtered.Where(e => e.ExpenseDate <= endDate.Value);
+
+        if (recurringOnly)
+            filtered = filtered.Where(e => e.IsRecurring);
+
+        return filtered.ToList().AsReadOnly();
+    }
+
+    /// <summary>
+    /// Get available investments with optional filtering.
+    /// </summary>
+    public IReadOnlyList<InvestmentOpportunity> GetAvailableInvestments(bool affordableOnly = false, InvestmentType? investmentType = null)
+    {
+        var filtered = _availableInvestments.AsEnumerable();
+
+        if (affordableOnly)
+            filtered = filtered.Where(i => i.IsAffordable(_currentGold));
+
+        if (investmentType.HasValue)
+            filtered = filtered.Where(i => i.Type == investmentType.Value);
+
+        return filtered.ToList().AsReadOnly();
+    }
+
+    /// <summary>
+    /// Get monthly budget for a specific expense type.
+    /// </summary>
+    public decimal? GetMonthlyBudget(ExpenseType expenseType)
+    {
+        return _monthlyBudgets.TryGetValue(expenseType, out var budget) ? budget : null;
+    }
+
     private void InitializeInvestmentOpportunities()
     {
-        _availableInvestments.AddRange(new[]
-        {
-            new InvestmentOpportunity(
-                InvestmentId: "display-upgrade-1",
-                Type: InvestmentType.DisplayUpgrade,
-                Name: "Premium Display Cases",
-                Description: "Upgrade to premium display cases that showcase items better",
-                Cost: 500m,
-                ExpectedReturn: 750m,
-                PaybackPeriodDays: 30
-            ),
-            new InvestmentOpportunity(
-                InvestmentId: "shop-expansion-1",
-                Type: InvestmentType.ShopExpansion,
-                Name: "Additional Display Slots",
-                Description: "Add 2 more display slots to increase inventory capacity",
-                Cost: 800m,
-                ExpectedReturn: 1200m,
-                PaybackPeriodDays: 45
-            ),
-            new InvestmentOpportunity(
-                InvestmentId: "security-upgrade-1",
-                Type: InvestmentType.SecurityUpgrade,
-                Name: "Enhanced Security System",
-                Description: "Install better locks and alarm system to reduce theft risk",
-                Cost: 300m,
-                ExpectedReturn: 400m,
-                PaybackPeriodDays: 60
-            ),
-            new InvestmentOpportunity(
-                InvestmentId: "marketing-campaign-1",
-                Type: InvestmentType.MarketingCampaign,
-                Name: "Town Crier Campaign",
-                Description: "Hire town criers to advertise your shop across the city",
-                Cost: 200m,
-                ExpectedReturn: 350m,
-                PaybackPeriodDays: 21
-            ),
-            new InvestmentOpportunity(
-                InvestmentId: "aesthetic-upgrade-1",
-                Type: InvestmentType.AestheticUpgrade,
-                Name: "Shop Beautification",
-                Description: "Improve shop aesthetics with better lighting and decoration",
-                Cost: 400m,
-                ExpectedReturn: 600m,
-                PaybackPeriodDays: 35
-            )
-        });
+        _availableInvestments.AddRange(InvestmentFactory.CreateDefaultInvestments());
     }
 
     private void SetupDefaultBudgets()
     {
-        _monthlyBudgets[ExpenseType.Rent] = 200m;
-        _monthlyBudgets[ExpenseType.Utilities] = 50m;
-        _monthlyBudgets[ExpenseType.Security] = 30m;
-        _monthlyBudgets[ExpenseType.Staff] = 150m;
-        _monthlyBudgets[ExpenseType.Maintenance] = 75m;
-        _monthlyBudgets[ExpenseType.Marketing] = 100m;
-        _monthlyBudgets[ExpenseType.Equipment] = 200m;
-        _monthlyBudgets[ExpenseType.Insurance] = 40m;
-        _monthlyBudgets[ExpenseType.Miscellaneous] = 50m;
+        var defaultBudgets = BudgetTemplates.GetStartupBudgets();
+        foreach (var budget in defaultBudgets)
+        {
+            _monthlyBudgets[budget.Key] = budget.Value;
+        }
     }
 
     private bool CheckBudgetConstraints(ExpenseType type, decimal amount)
