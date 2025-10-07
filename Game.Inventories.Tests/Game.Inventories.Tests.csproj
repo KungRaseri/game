@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Game.Inventories\Game.Inventories.csproj" />
     <ProjectReference Include="..\Game.Core\Game.Core.csproj" />
+    <ProjectReference Include="..\Game.Core.Tests\Game.Core.Tests.csproj" />
   </ItemGroup>
 
 </Project>
