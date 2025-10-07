@@ -13,13 +13,13 @@ namespace Game.Crafting.Tests.Handlers;
 /// </summary>
 public class QueryHandlerTests
 {
-    private readonly Mock<CraftingStation> _mockCraftingStation;
-    private readonly Mock<RecipeManager> _mockRecipeManager;
+    private readonly Mock<ICraftingStation> _mockCraftingStation;
+    private readonly Mock<IRecipeManager> _mockRecipeManager;
 
     public QueryHandlerTests()
     {
-        _mockCraftingStation = new Mock<CraftingStation>();
-        _mockRecipeManager = new Mock<RecipeManager>();
+        _mockCraftingStation = new Mock<ICraftingStation>();
+        _mockRecipeManager = new Mock<IRecipeManager>();
         TestHelpers.SetupTestLogging();
     }
 
@@ -301,7 +301,7 @@ public class QueryHandlerTests
         var result = await handler.HandleAsync(query);
 
         // Assert
-        result.Should().BeSameAs(expectedRecipes);
+        result.Should().BeEquivalentTo(expectedRecipes);
         _mockRecipeManager.Verify(x => x.SearchRecipes("sword", false), Times.Once);
     }
 

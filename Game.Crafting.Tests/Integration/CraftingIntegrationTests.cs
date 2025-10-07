@@ -186,6 +186,11 @@ public class CraftingIntegrationTests : IDisposable
         await _dispatcher.DispatchCommandAsync(new AddRecipeCommand { Recipe = recipe2 });
         await _dispatcher.DispatchCommandAsync(new AddRecipeCommand { Recipe = recipe3 });
 
+        // Unlock all recipes
+        await _dispatcher.DispatchCommandAsync(new UnlockRecipeCommand { RecipeId = recipe1.RecipeId });
+        await _dispatcher.DispatchCommandAsync(new UnlockRecipeCommand { RecipeId = recipe2.RecipeId });
+        await _dispatcher.DispatchCommandAsync(new UnlockRecipeCommand { RecipeId = recipe3.RecipeId });
+
         // Act - Search for recipes containing "sword"
         var searchQuery = new SearchRecipesQuery { SearchTerm = "Sword" };
         var searchResults = await _dispatcher.DispatchQueryAsync<SearchRecipesQuery, IReadOnlyList<Recipe>>(searchQuery);
@@ -255,6 +260,7 @@ public class CraftingIntegrationTests : IDisposable
         var materials = new Dictionary<string, Material>
         {
             { "wood-1", new Material("test-wood-1", "Wood Plank", "A wooden plank", QualityTier.Common, 5, Category.Wood) },
+            { "wood-2", new Material("test-wood-2", "Wood Plank", "A wooden plank", QualityTier.Common, 5, Category.Wood) },
             { "metal-1", new Material("test-metal-1", "Iron Ingot", "An iron ingot", QualityTier.Common, 10, Category.Metal) }
         };
 

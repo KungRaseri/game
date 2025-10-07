@@ -24,7 +24,9 @@ public static class ServiceCollectionExtensions
     {
         // Register core systems
         services.AddSingleton<RecipeManager>();
+        services.AddSingleton<IRecipeManager>(provider => provider.GetRequiredService<RecipeManager>());
         services.AddSingleton<CraftingStation>();
+        services.AddSingleton<ICraftingStation>(provider => provider.GetRequiredService<CraftingStation>());
 
         // Register facade service
         services.AddScoped<CraftingService>();
@@ -59,7 +61,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCraftingCoreSystems(this IServiceCollection services)
     {
         services.AddSingleton<RecipeManager>();
+        services.AddSingleton<IRecipeManager>(provider => provider.GetRequiredService<RecipeManager>());
         services.AddSingleton<CraftingStation>();
+        services.AddSingleton<ICraftingStation>(provider => provider.GetRequiredService<CraftingStation>());
 
         return services;
     }

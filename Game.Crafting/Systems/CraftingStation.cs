@@ -35,9 +35,10 @@ public class CraftingCompletedEventArgs : CraftingEventArgs
 }
 
 /// <summary>
-/// Manages the crafting process including queuing, progress tracking, and item creation.
+/// Manages the crafting queue and processes crafting orders over time.
+/// Handles the timing and progression of crafting operations.
 /// </summary>
-public class CraftingStation
+public class CraftingStation : ICraftingStation
 {
     private readonly RecipeManager _recipeManager;
     private readonly Random _random;

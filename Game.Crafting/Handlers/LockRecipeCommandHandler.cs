@@ -12,9 +12,9 @@ namespace Game.Crafting.Handlers;
 /// </summary>
 public class LockRecipeCommandHandler : ICommandHandler<LockRecipeCommand>
 {
-    private readonly RecipeManager _recipeManager;
+    private readonly IRecipeManager _recipeManager;
 
-    public LockRecipeCommandHandler(RecipeManager recipeManager)
+    public LockRecipeCommandHandler(IRecipeManager recipeManager)
     {
         _recipeManager = recipeManager ?? throw new ArgumentNullException(nameof(recipeManager));
     }

@@ -51,10 +51,14 @@ public static class TestHelpers
     public static CraftingOrder CreateTestOrder(string id = "test_order")
     {
         var recipe = CreateTestRecipe();
+        
+        // Create materials that satisfy the recipe requirements:
+        // Recipe needs: 2x Metal (Common+), 1x Wood (Common+)
         var materials = new Dictionary<string, Material>
         {
-            ["material1"] = new Material("iron_ore", "Iron Ore", "Basic metal", QualityTier.Common, 10, Category.Metal),
-            ["material2"] = new Material("oak_wood", "Oak Wood", "Quality wood", QualityTier.Common, 5, Category.Wood)
+            ["metal1"] = new Material("iron_ore_1", "Iron Ore 1", "Basic metal", QualityTier.Common, 10, Category.Metal),
+            ["metal2"] = new Material("iron_ore_2", "Iron Ore 2", "Basic metal", QualityTier.Common, 10, Category.Metal),
+            ["wood1"] = new Material("oak_wood", "Oak Wood", "Quality wood", QualityTier.Common, 5, Category.Wood)
         };
 
         return new CraftingOrder(id, recipe, materials);

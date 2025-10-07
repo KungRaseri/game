@@ -18,9 +18,9 @@ public class RecipeEventArgs : EventArgs
 }
 
 /// <summary>
-/// Manages recipe discovery, unlocking, and availability for crafting.
+/// Manages recipes including discovery, unlocking, and storage.
 /// </summary>
-public class RecipeManager
+public class RecipeManager : IRecipeManager
 {
     private readonly Dictionary<string, Recipe> _allRecipes;
     private readonly HashSet<string> _unlockedRecipes;

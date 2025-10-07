@@ -12,9 +12,9 @@ namespace Game.Crafting.Handlers;
 /// </summary>
 public class CancelAllCraftingOrdersCommandHandler : ICommandHandler<CancelAllCraftingOrdersCommand>
 {
-    private readonly CraftingStation _craftingStation;
+    private readonly ICraftingStation _craftingStation;
 
-    public CancelAllCraftingOrdersCommandHandler(CraftingStation craftingStation)
+    public CancelAllCraftingOrdersCommandHandler(ICraftingStation craftingStation)
     {
         _craftingStation = craftingStation ?? throw new ArgumentNullException(nameof(craftingStation));
     }

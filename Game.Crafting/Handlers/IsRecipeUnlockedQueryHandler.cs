@@ -11,9 +11,9 @@ namespace Game.Crafting.Handlers;
 /// </summary>
 public class IsRecipeUnlockedQueryHandler : IQueryHandler<IsRecipeUnlockedQuery, bool>
 {
-    private readonly RecipeManager _recipeManager;
+    private readonly IRecipeManager _recipeManager;
 
-    public IsRecipeUnlockedQueryHandler(RecipeManager recipeManager)
+    public IsRecipeUnlockedQueryHandler(IRecipeManager recipeManager)
     {
         _recipeManager = recipeManager ?? throw new ArgumentNullException(nameof(recipeManager));
     }

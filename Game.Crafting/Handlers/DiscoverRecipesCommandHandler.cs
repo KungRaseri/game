@@ -12,9 +12,9 @@ namespace Game.Crafting.Handlers;
 /// </summary>
 public class DiscoverRecipesCommandHandler : ICommandHandler<DiscoverRecipesCommand, int>
 {
-    private readonly RecipeManager _recipeManager;
+    private readonly IRecipeManager _recipeManager;
 
-    public DiscoverRecipesCommandHandler(RecipeManager recipeManager)
+    public DiscoverRecipesCommandHandler(IRecipeManager recipeManager)
     {
         _recipeManager = recipeManager ?? throw new ArgumentNullException(nameof(recipeManager));
     }

@@ -2,6 +2,7 @@
 
 using FluentAssertions;
 using Game.Core.CQS;
+using Game.Core.Extensions;
 using Game.Core.Tests;
 using Game.Crafting.Commands;
 using Game.Crafting.Extensions;
@@ -34,6 +35,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
+        services.AddCQS(); // Add CQS infrastructure first
 
         // Act
         services.AddCraftingServices();
@@ -212,6 +214,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
+        services.AddCQS(); // Add CQS infrastructure first
 
         // Act & Assert - Should allow method chaining
         var result = services
@@ -276,6 +279,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
+        services.AddCQS(); // Add CQS infrastructure first
         services.AddCraftingServices();
 
         // Act
@@ -318,6 +322,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
+        services.AddCQS(); // Add CQS infrastructure first
 
         // Act - Call multiple times
         services.AddCraftingServices();

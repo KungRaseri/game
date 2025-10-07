@@ -12,9 +12,9 @@ namespace Game.Crafting.Handlers;
 /// </summary>
 public class GetRecipeQueryHandler : IQueryHandler<GetRecipeQuery, Recipe?>
 {
-    private readonly RecipeManager _recipeManager;
+    private readonly IRecipeManager _recipeManager;
 
-    public GetRecipeQueryHandler(RecipeManager recipeManager)
+    public GetRecipeQueryHandler(IRecipeManager recipeManager)
     {
         _recipeManager = recipeManager ?? throw new ArgumentNullException(nameof(recipeManager));
     }

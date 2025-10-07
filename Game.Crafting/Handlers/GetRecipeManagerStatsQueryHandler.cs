@@ -11,9 +11,9 @@ namespace Game.Crafting.Handlers;
 /// </summary>
 public class GetRecipeManagerStatsQueryHandler : IQueryHandler<GetRecipeManagerStatsQuery, Dictionary<string, object>>
 {
-    private readonly RecipeManager _recipeManager;
+    private readonly IRecipeManager _recipeManager;
 
-    public GetRecipeManagerStatsQueryHandler(RecipeManager recipeManager)
+    public GetRecipeManagerStatsQueryHandler(IRecipeManager recipeManager)
     {
         _recipeManager = recipeManager ?? throw new ArgumentNullException(nameof(recipeManager));
     }

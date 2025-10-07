@@ -11,9 +11,9 @@ namespace Game.Crafting.Handlers;
 /// </summary>
 public class GetCraftingStationStatsQueryHandler : IQueryHandler<GetCraftingStationStatsQuery, Dictionary<string, object>>
 {
-    private readonly CraftingStation _craftingStation;
+    private readonly ICraftingStation _craftingStation;
 
-    public GetCraftingStationStatsQueryHandler(CraftingStation craftingStation)
+    public GetCraftingStationStatsQueryHandler(ICraftingStation craftingStation)
     {
         _craftingStation = craftingStation ?? throw new ArgumentNullException(nameof(craftingStation));
     }

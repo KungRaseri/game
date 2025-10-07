@@ -12,9 +12,9 @@ namespace Game.Crafting.Handlers;
 /// </summary>
 public class GetAllCraftingOrdersQueryHandler : IQueryHandler<GetAllCraftingOrdersQuery, CraftingOrdersResult>
 {
-    private readonly CraftingStation _craftingStation;
+    private readonly ICraftingStation _craftingStation;
 
-    public GetAllCraftingOrdersQueryHandler(CraftingStation craftingStation)
+    public GetAllCraftingOrdersQueryHandler(ICraftingStation craftingStation)
     {
         _craftingStation = craftingStation ?? throw new ArgumentNullException(nameof(craftingStation));
     }

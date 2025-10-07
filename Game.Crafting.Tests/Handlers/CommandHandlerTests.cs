@@ -6,6 +6,9 @@ using Game.Crafting.Models;
 using Game.Crafting.Systems;
 using Game.Crafting.Tests.CQS;
 using Game.Items.Models.Materials;
+using Moq;
+using FluentAssertions;
+using Xunit;
 
 namespace Game.Crafting.Tests.Handlers;
 
@@ -14,13 +17,13 @@ namespace Game.Crafting.Tests.Handlers;
 /// </summary>
 public class CommandHandlerTests
 {
-    private readonly Mock<CraftingStation> _mockCraftingStation;
-    private readonly Mock<RecipeManager> _mockRecipeManager;
+    private readonly Mock<ICraftingStation> _mockCraftingStation;
+    private readonly Mock<IRecipeManager> _mockRecipeManager;
 
     public CommandHandlerTests()
     {
-        _mockCraftingStation = new Mock<CraftingStation>();
-        _mockRecipeManager = new Mock<RecipeManager>();
+        _mockCraftingStation = new Mock<ICraftingStation>();
+        _mockRecipeManager = new Mock<IRecipeManager>();
         TestHelpers.SetupTestLogging();
     }
 
