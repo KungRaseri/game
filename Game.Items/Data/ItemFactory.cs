@@ -1,6 +1,6 @@
 using Game.Items.Models;
 using Game.Items.Models.Materials;
-using Game.Items.Utils;
+using QualityTierModifiersUtils = Game.Items.Utils.QualityTierModifiers;
 
 namespace Game.Items.Data;
 
@@ -15,8 +15,8 @@ public static class ItemFactory
     /// </summary>
     public static Weapon CreateWeapon(WeaponConfig config, QualityTier quality)
     {
-        int damageBonus = QualityTierModifiers.GetWeaponDamageBonus(quality);
-        int finalValue = QualityTierModifiers.CalculateItemValue(config.BaseValue, quality);
+        int damageBonus = QualityTierModifiersUtils.GetWeaponDamageBonus(quality);
+        int finalValue = QualityTierModifiersUtils.CalculateItemValue(config.BaseValue, quality);
 
         return new Weapon(
             itemId: $"{config.ItemId}_{quality.ToString().ToLower()}",
@@ -33,8 +33,8 @@ public static class ItemFactory
     /// </summary>
     public static Armor CreateArmor(ArmorConfig config, QualityTier quality)
     {
-        int damageReduction = QualityTierModifiers.GetArmorDamageReduction(quality);
-        int finalValue = QualityTierModifiers.CalculateItemValue(config.BaseValue, quality);
+        int damageReduction = QualityTierModifiersUtils.GetArmorDamageReduction(quality);
+        int finalValue = QualityTierModifiersUtils.CalculateItemValue(config.BaseValue, quality);
 
         return new Armor(
             itemId: $"{config.ItemId}_{quality.ToString().ToLower()}",
@@ -51,7 +51,7 @@ public static class ItemFactory
     /// </summary>
     public static Material CreateMaterial(MaterialConfig config, QualityTier quality)
     {
-        int finalValue = QualityTierModifiers.CalculateItemValue(config.BaseValue, quality);
+        int finalValue = QualityTierModifiersUtils.CalculateItemValue(config.BaseValue, quality);
 
         return new Material(
             itemId: $"{config.ItemId}_{quality.ToString().ToLower()}",
