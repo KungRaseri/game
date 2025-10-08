@@ -2,6 +2,11 @@
 
 using Game.Adventure.Extensions;
 using Game.UI.Extensions;
+using Game.Gathering.Extensions;
+using Game.Shop.Extensions;
+using Game.Inventories.Extensions;
+using Game.Crafting.Extensions;
+// using Game.Progression.Extensions; // TODO: Enable when Game.Progression is properly integrated
 using Game.Core.CQS;
 using Game.Core.Extensions;
 using Game.Core.Utils;
@@ -73,6 +78,21 @@ public partial class DependencyInjectionNode : Node
 
         GameLogger.Debug("[DI] Registering UI module...");
         services.AddUIModule();
+
+        GameLogger.Debug("[DI] Registering Gathering module...");
+        services.AddGatheringModule();
+
+        GameLogger.Debug("[DI] Registering Shop module...");
+        services.AddShopServices();
+
+        GameLogger.Debug("[DI] Registering Inventories module...");
+        services.AddInventoryServices();
+
+        GameLogger.Debug("[DI] Registering Crafting module...");
+        services.AddCraftingServices();
+
+        // GameLogger.Debug("[DI] Registering Progression module...");
+        // services.AddProgressionServices(); // TODO: Enable when Game.Progression is properly integrated
 
         // Add other game services here as needed
         // services.AddScoped<IAdventurerService, AdventurerService>();

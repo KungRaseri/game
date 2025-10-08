@@ -120,4 +120,15 @@ public static class ItemTypes
         Stackable: true,
         MaxStackSize: 20
     );
+
+    // Materials - Herbs (Phase 1 gathering)
+    public static MaterialConfig SimpleHerbs { get; } = new(
+        ItemId: "material_simple_herbs",
+        Name: "Simple Herbs",
+        Description: "Common herbs gathered from the surrounding area.",
+        BaseValue: 2,
+        Category: Category.Herb,
+        Stackable: true,
+        MaxStackSize: 99
+    );
 }
