@@ -5,22 +5,9 @@ using Game.Crafting.Models;
 namespace Game.Crafting.Systems;
 
 /// <summary>
-/// Event arguments for recipe-related events.
+/// Manages recipes including discovery, unlocking, and storage.
 /// </summary>
-public class RecipeEventArgs : EventArgs
-{
-    public Recipe Recipe { get; }
-
-    public RecipeEventArgs(Recipe recipe)
-    {
-        Recipe = recipe ?? throw new ArgumentNullException(nameof(recipe));
-    }
-}
-
-/// <summary>
-/// Manages recipe discovery, unlocking, and availability for crafting.
-/// </summary>
-public class RecipeManager
+public class RecipeManager : IRecipeManager
 {
     private readonly Dictionary<string, Recipe> _allRecipes;
     private readonly HashSet<string> _unlockedRecipes;

@@ -6,38 +6,10 @@ using Game.Crafting.Models;
 namespace Game.Crafting.Systems;
 
 /// <summary>
-/// Event arguments for crafting-related events.
+/// Manages the crafting queue and processes crafting orders over time.
+/// Handles the timing and progression of crafting operations.
 /// </summary>
-public class CraftingEventArgs : EventArgs
-{
-    public CraftingOrder Order { get; }
-
-    public CraftingEventArgs(CraftingOrder order)
-    {
-        Order = order ?? throw new ArgumentNullException(nameof(order));
-    }
-}
-
-/// <summary>
-/// Event arguments for crafting completion events.
-/// </summary>
-public class CraftingCompletedEventArgs : CraftingEventArgs
-{
-    public Item? CraftedItem { get; }
-    public bool WasSuccessful { get; }
-
-    public CraftingCompletedEventArgs(CraftingOrder order, Item? craftedItem, bool wasSuccessful)
-        : base(order)
-    {
-        CraftedItem = craftedItem;
-        WasSuccessful = wasSuccessful;
-    }
-}
-
-/// <summary>
-/// Manages the crafting process including queuing, progress tracking, and item creation.
-/// </summary>
-public class CraftingStation
+public class CraftingStation : ICraftingStation
 {
     private readonly RecipeManager _recipeManager;
     private readonly Random _random;

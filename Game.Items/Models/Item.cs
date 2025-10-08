@@ -1,4 +1,4 @@
-using Game.Items.Utils;
+using QualityTierModifiersUtils = Game.Items.Utils.QualityTierModifiers;
 
 namespace Game.Items.Models;
 
@@ -58,7 +58,7 @@ public class Item
     /// <summary>
     /// Base value before quality modifiers were applied.
     /// </summary>
-    public int BaseValue => QualityTierModifiers.CalculateBaseValue(_value, Quality);
+    public int BaseValue => QualityTierModifiersUtils.CalculateBaseValue(_value, Quality);
 
     /// <summary>
     /// Original value passed to constructor (for validation purposes).

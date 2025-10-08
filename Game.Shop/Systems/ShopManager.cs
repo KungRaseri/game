@@ -236,7 +236,6 @@ public class ShopManager
         return marketPrice;
     }
 
-    /*
     /// <summary>
     /// Get market analysis for a specific item type and quality.
     /// </summary>
@@ -248,7 +247,6 @@ public class ShopManager
         return _pricingEngine.GetMarketAnalysis(itemType, quality);
     }
 
-    */
     /// <summary>
     /// Set pricing strategy for a specific item type.
     /// </summary>

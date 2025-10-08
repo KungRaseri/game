@@ -166,30 +166,3 @@ public class ServiceCollectionExtensionsIntegrationTests : IDisposable
         _serviceProvider?.Dispose();
     }
 }
-
-/// <summary>
-/// Test dependency for testing dependency injection in handlers.
-/// </summary>
-public class TestDependency
-{
-    public bool WasCalled { get; set; }
-}
-
-/// <summary>
-/// Test handler that has a dependency to verify DI works correctly.
-/// </summary>
-public class HandlerWithDependencies : ICommandHandler<TestCommand>
-{
-    private readonly TestDependency _dependency;
-
-    public HandlerWithDependencies(TestDependency dependency)
-    {
-        _dependency = dependency ?? throw new ArgumentNullException(nameof(dependency));
-    }
-
-    public Task HandleAsync(TestCommand command, CancellationToken cancellationToken = default)
-    {
-        _dependency.WasCalled = true;
-        return Task.CompletedTask;
-    }
-}
