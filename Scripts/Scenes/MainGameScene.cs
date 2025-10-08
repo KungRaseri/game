@@ -71,7 +71,8 @@ public partial class MainGameScene : Control
 
         try
         {
-            await _dispatcher.DispatchCommandAsync(new ShowSuccessToastCommand("Gather button pressed - basic functionality working!", ToastAnchor.BottomRight));
+            await _dispatcher.DispatchCommandAsync(new ShowSuccessToastCommand("Gather button pressed - basic functionality working!",
+            ToastAnchor.BottomRight));
             GameLogger.Info("Gather button test successful");
         }
         catch (Exception ex)

@@ -59,7 +59,7 @@ public partial class ToastUI : PanelContainer
 
         SetupContent();
         SetupStyling();
-        SetupPosition();
+        CallDeferred(nameof(SetupPosition)); // Defer positioning until size is calculated
         AnimateToast();
 
         var displayText = string.IsNullOrEmpty(_config.Title) ? _config.Message : $"{_config.Title}: {_config.Message}";
@@ -98,7 +98,7 @@ public partial class ToastUI : PanelContainer
     {
         SetupContent();
         SetupStyling();
-        SetupPosition();
+        CallDeferred(nameof(SetupPosition)); // Defer positioning until size is calculated
         AnimateToast();
 
         var displayText = string.IsNullOrEmpty(_config.Title) ? _config.Message : $"{_config.Title}: {_config.Message}";
@@ -157,22 +157,32 @@ public partial class ToastUI : PanelContainer
 
     private void SetupNodes()
     {
+        // Create margin container for proper padding
+        var marginContainer = new MarginContainer();
+        marginContainer.AddThemeConstantOverride("margin_left", 12);
+        marginContainer.AddThemeConstantOverride("margin_right", 12);
+        marginContainer.AddThemeConstantOverride("margin_top", 8);
+        marginContainer.AddThemeConstantOverride("margin_bottom", 8);
+        AddChild(marginContainer);
+
         // Create VBoxContainer for layout
         var vBox = new VBoxContainer();
-        AddChild(vBox);
+        marginContainer.AddChild(vBox);
 
         // Create title label (initially hidden)
         _titleLabel = new Label();
         _titleLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
         _titleLabel.Visible = false;
+        _titleLabel.AddThemeStyleboxOverride("normal", new StyleBoxEmpty()); // Remove any background
         vBox.AddChild(_titleLabel);
 
         // Create message label
         _messageLabel = new Label();
         _messageLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        _messageLabel.AddThemeStyleboxOverride("normal", new StyleBoxEmpty()); // Remove any background
         vBox.AddChild(_messageLabel);
 
-        // Set up basic styling
+        // Set up basic styling for the panel
         AddThemeStyleboxOverride("panel", new StyleBoxFlat());
     }
 
@@ -195,11 +205,9 @@ public partial class ToastUI : PanelContainer
             _messageLabel.Text = _config.Message;
         }
 
-        // Set maximum width
-        if (_config.MaxWidth > 0)
-        {
-            CustomMinimumSize = new Vector2(_config.MaxWidth, 0);
-        }
+        // Set fixed width - let containers handle height automatically
+        var toastWidth = _config.MaxWidth > 0 ? _config.MaxWidth : 280.0f;
+        CustomMinimumSize = new Vector2(toastWidth, 0);
     }
 
     private void SetupStyling()
@@ -238,13 +246,6 @@ public partial class ToastUI : PanelContainer
 
             AddThemeStyleboxOverride("panel", styleBox);
         }
-
-        // Apply content margins
-        var marginContainer = new MarginContainer();
-        marginContainer.AddThemeConstantOverride("margin_left", 12);
-        marginContainer.AddThemeConstantOverride("margin_right", 12);
-        marginContainer.AddThemeConstantOverride("margin_top", 8);
-        marginContainer.AddThemeConstantOverride("margin_bottom", 8);
     }
 
     private Color GetStyleBackgroundColor(ToastStyle style) => style switch
@@ -260,21 +261,14 @@ public partial class ToastUI : PanelContainer
 
     private void SetupPosition()
     {
-        // Use Godot's built-in anchor system instead of manual calculations
-        SetAnchorsAndOffsetsFromAnchor();
-    }
-
-    private void SetAnchorsAndOffsetsFromAnchor()
-    {
-        // Set anchors based on the toast anchor configuration
+        // Use layout presets for proper positioning
         switch (_config.Anchor)
         {
             case ToastAnchor.TopLeft:
                 SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopLeft);
                 break;
             case ToastAnchor.TopCenter:
-                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopWide);
-                // Center horizontally
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopLeft);
                 AnchorLeft = 0.5f;
                 AnchorRight = 0.5f;
                 break;
@@ -294,8 +288,7 @@ public partial class ToastUI : PanelContainer
                 SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomLeft);
                 break;
             case ToastAnchor.BottomCenter:
-                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomWide);
-                // Center horizontally
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomLeft);
                 AnchorLeft = 0.5f;
                 AnchorRight = 0.5f;
                 break;
@@ -304,13 +297,33 @@ public partial class ToastUI : PanelContainer
                 break;
         }
 
-        // Apply any additional offset from config
-        Position += _config.AnchorOffset + _config.Position;
+        // Apply config offsets - adjust direction and magnitude based on anchor
+        var offset = _config.AnchorOffset + _config.Position;
+        
+        // For right-side anchors, move inward by full width plus padding
+        // For bottom anchors, move inward by full height plus padding
+        switch (_config.Anchor)
+        {
+            case ToastAnchor.TopRight:
+            case ToastAnchor.CenterRight:
+            case ToastAnchor.BottomRight:
+                offset.X = -(Size.X + Math.Abs(offset.X));
+                break;
+        }
+        
+        switch (_config.Anchor)
+        {
+            case ToastAnchor.BottomLeft:
+            case ToastAnchor.BottomCenter:
+            case ToastAnchor.BottomRight:
+                offset.Y = -(Size.Y + Math.Abs(offset.Y));
+                break;
+        }
 
-        // Store original position for animations
+        Position += offset;
         _originalPosition = Position;
-
-        GameLogger.Debug($"Toast anchored at {_config.Anchor} with position {Position}");
+        
+        GameLogger.Debug($"Toast positioned at {Position} (anchor: {_config.Anchor}, size: {Size})");
     }
 
     private void AnimateToast()
