@@ -3,7 +3,7 @@
 using FluentAssertions;
 using Game.Core.CQS;
 using Game.Core.Extensions;
-using Game.Core.Tests;
+using Game.Core.Utils;
 using Game.Crafting.Commands;
 using Game.Crafting.Extensions;
 using Game.Crafting.Handlers;

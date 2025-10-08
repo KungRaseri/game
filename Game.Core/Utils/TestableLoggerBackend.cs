@@ -1,12 +1,12 @@
 #nullable enable
 
 using System.Collections.Concurrent;
-using Game.Core.Utils;
 
-namespace Game.Core.Tests;
+namespace Game.Core.Utils;
 
 /// <summary>
 /// A logger backend that captures log messages for testing purposes.
+/// This class is intended for unit testing scenarios where you need to verify logging behavior.
 /// </summary>
 public class TestableLoggerBackend : ILoggerBackend
 {
@@ -17,8 +17,14 @@ public class TestableLoggerBackend : ILoggerBackend
         _logs.Enqueue(new LogEntry(level, message));
     }
 
+    /// <summary>
+    /// Gets all captured log entries.
+    /// </summary>
     public IReadOnlyList<LogEntry> GetLogs() => _logs.ToList();
 
+    /// <summary>
+    /// Clears all captured log entries.
+    /// </summary>
     public void Clear()
     {
         while (_logs.TryDequeue(out _))
@@ -26,5 +32,8 @@ public class TestableLoggerBackend : ILoggerBackend
         }
     }
 
+    /// <summary>
+    /// Represents a captured log entry for testing verification.
+    /// </summary>
     public record LogEntry(GameLogger.LogLevel Level, string Message);
 }

@@ -11,7 +11,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Game.Economy\Game.Economy.csproj" />
     <ProjectReference Include="..\Game.Core\Game.Core.csproj" />
-    <ProjectReference Include="..\Game.Core.Tests\Game.Core.Tests.csproj" />
     <ProjectReference Include="..\Game.Items\Game.Items.csproj" />
   </ItemGroup>
 </Project>

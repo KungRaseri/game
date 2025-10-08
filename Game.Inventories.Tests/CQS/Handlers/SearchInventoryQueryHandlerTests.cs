@@ -1,7 +1,6 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.Core.Tests;
 using Game.Core.Utils;
 using Game.Inventories.Handlers;
 using Game.Inventories.Models;
