@@ -8,8 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Fantasy Shop Keeper is an idle dungeon crawler and shop management game built with **Godot 4.5** and **C# .NET 8.0**. The game features adventurers exploring dungeons, collecting materials, and managing a fantasy shop.
-
+Fantasy Shop Keeper is an idle dungeon crawler and shop management game built with **Godot 4.5** and **C# .NET 8.0**. The game features adventurers exploring dungeons, collecting materials, crafting items, and managing a fantasy shop.
 
 ## Build and Test Commands
 
