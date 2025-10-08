@@ -6,38 +6,54 @@
 Fantasy Shop Keeper combines the excitement of dungeon crawling with the strategic depth of shop management. Send adventurers into dangerous dungeons to collect materials, craft powerful items, and build the most successful fantasy shop in the realm.
 
 ### Core Gameplay Loop
-1. **Send Adventurers** to explore dungeons and fight monsters
-2. **Collect Materials** from successful expeditions  
-3. **Craft Items** using collected materials and learned recipes
-4. **Manage Your Shop** by setting prices and serving customers
-5. **Upgrade & Expand** your adventurers, shop, and capabilities
+The game operates on a compelling 6-step gameplay loop:
+
+1. **Send Adventurers** - Deploy adventurers on dungeon expeditions to gather materials and loot
+2. **Collect Loot** - Retrieve materials, equipment, and treasures from successful expeditions
+3. **Craft & Process** - Transform raw materials into valuable equipment using recipes
+4. **Stock Shop** - Place crafted items and processed loot in your shop inventory
+5. **Sell Items** - Serve customers and sell equipment to visiting adventurers for gold
+6. **Earn Gold** - Reinvest profits to upgrade equipment, hire more adventurers, unlock recipes, and expand your business
 
 ## 🛠️ Technology Stack
 
 - **Game Engine**: Godot 4.5
 - **Programming Language**: C# .NET 8.0
 - **Target Platform**: PC (Windows primary)
-- **Architecture**: Event-driven MVC pattern with generic entity system
+- **Architecture**: Command Query Separation (CQS) pattern with modular domain architecture
 
 ## 🏗️ Project Structure
 
-The project uses **Vertical Slice Architecture** with domain-focused C# modules:
+The project uses **Command Query Separation (CQS) Architecture** with domain-focused C# modules:
+
+### CQS Implementation
+
+Each module implements the CQS pattern with:
+- **Commands/** - State-changing operations (StartExpedition, CraftItem, ShowToast)
+- **Queries/** - Data retrieval operations (GetAdventurerStatus, GetInventory, GetActiveToasts)
+- **Handlers/** - Individual processors for each command/query following single responsibility
+- **Extensions/** - Dependency injection registration for clean system integration
 
 ### Core Modules
 
 ```
-Game.Core/                    # Shared utilities and cross-cutting concerns
-└── Utils/                    # Logging infrastructure (GameLogger, ILoggerBackend)
+Game.Core/                    # CQS infrastructure and cross-cutting concerns
+├── CQS/                     # Command/Query/Handler abstractions and dispatcher
+└── Utils/                   # Logging infrastructure (GameLogger, ILoggerBackend)
 
-Game.Adventure/               # Adventurer management and combat system
-├── Controllers/              # High-level adventurer coordination
-├── Data/                    # Entity type configurations and factories
+Game.Adventure/              # Adventure and combat systems
+├── Commands/                # Adventure operations (StartExpedition, ForceRetreat)
+├── Queries/                 # Adventure data queries (GetAdventurerStatus, GetCombatState)
+├── Handlers/                # Command/Query handlers for adventure operations
+├── Systems/                 # Combat engine and adventure management
 ├── Models/                  # Adventurer state and combat entities
-└── Systems/                 # Combat engine and battle mechanics
+├── Data/                    # Entity factories and configurations
+└── Extensions/              # DI registration for adventure module
 
-Game.Items/                   # Item and material management
-├── Data/                    # Item and loot table definitions
+Game.Items/                  # Item and material management
+├── Commands/                # Item operations (CreateItem, UpdateItemStats)
 ├── Models/                  # Item types, quality tiers, materials
+├── Data/                    # Item and loot table definitions
 ├── Systems/                 # Loot generation and drop systems
 └── Utils/                   # Quality tier calculations
 
@@ -46,20 +62,52 @@ Game.Inventories/            # Inventory and storage management
 └── Systems/                 # Inventory operations, validation, stacking
 
 Game.Crafting/               # Crafting system and recipes
-└── (Recipe and crafting logic)
+├── Commands/                # Crafting operations (CraftItem, ProcessMaterials)
+├── Queries/                 # Crafting data queries (GetRecipes, GetCraftingStation)
+├── Handlers/                # Command/Query handlers for crafting operations
+├── Systems/                 # Recipe management and crafting execution
+├── Models/                  # Recipe definitions and crafting station states
+├── Data/                    # Starter recipes and crafting configurations
+└── Extensions/              # DI registration for crafting module
 
 Game.Shop/                   # Shop management and customer simulation
+├── Commands/                # Shop operations (SellItem, UpdatePrices, ProcessCustomer)
+├── Queries/                 # Shop data queries (GetShopInventory, GetCustomerQueue)
+├── Handlers/                # Command/Query handlers for shop operations
+├── Systems/                 # Customer behavior, purchase logic, shop operations
 ├── Models/                  # Customer types, purchase decisions, pricing
-└── Systems/                 # Customer behavior, purchase logic, shop operations
+└── Extensions/              # DI registration for shop module
 
 Game.Economy/                # Financial tracking and treasury management
-├── Models/                  # Financial summaries, expense categories
-└── Systems/                 # Treasury operations, budgeting, financial analytics
+├── Commands/               # Economic operations (ProcessTransaction, UpdateBudget)
+├── Queries/                # Economic data queries (GetTreasuryStatus, GetFinancials)
+├── Handlers/               # Command/Query handlers for economic operations
+├── Systems/                # Treasury operations, budgeting, financial analytics
+├── Models/                 # Financial summaries, expense categories
+└── Extensions/             # DI registration for economy module
+
+Game.UI/                    # User interface systems
+├── Commands/               # UI operations (ShowToast, ShowDialog, UpdateDisplay)
+├── Queries/                # UI data queries (GetActiveToasts, GetUIState)
+├── Handlers/               # Command/Query handlers for UI operations
+├── Systems/                # UI coordination and state management
+├── Models/                 # UI data models and configurations
+└── Extensions/             # DI registration for UI module
 ```
 
 ### Test Projects
 
-Each module has a corresponding test project (e.g., `Game.Core.Tests`, `Game.Adventure.Tests`) with comprehensive unit tests.
+Each module has a corresponding test project with comprehensive unit tests:
+- `Game.Core.Tests` - CQS infrastructure and utilities testing
+- `Game.Adventure.Tests` - Combat and adventure system testing
+- `Game.Items.Tests` - Item management and loot generation testing  
+- `Game.Inventories.Tests` - Inventory operations and validation testing
+- `Game.Crafting.Tests` - Recipe and crafting system testing
+- `Game.Shop.Tests` - Shop management and customer simulation testing
+- `Game.Economy.Tests` - Financial tracking and treasury testing
+- `Game.UI.Tests` - UI command/query system testing
+
+**Current Test Coverage**: 1,480 tests passing across all modules
 
 ### Godot Integration
 
@@ -178,46 +226,86 @@ This project includes a sophisticated test reporting system that provides:
 
 ## 🏛️ Architecture Overview
 
-### Vertical Slice Architecture
+### Command Query Separation (CQS) Architecture
 
-The project is organized into **vertically sliced modules**, where each module represents a complete feature domain:
+The project implements **Command Query Separation** principles with modular domain architecture:
 
-- **Game.Core** - Shared utilities and cross-cutting concerns (logging, common interfaces)
-- **Game.Adventure** - Complete adventurer and combat system with its own models, controllers, and systems
+#### CQS Components
+- **Commands** - Operations that change state (StartExpedition, CraftItem, ShowToast)
+  - Return void (or Task for async)
+  - Focused on single responsibility
+  - Validate input and enforce business rules
+
+- **Queries** - Operations that retrieve data (GetAdventurerStatus, GetInventory, GetActiveToasts)
+  - Return data without side effects
+  - Read-only operations
+  - Can be cached for performance
+
+- **Handlers** - Individual processors for each command/query
+  - One handler per command/query type
+  - Dependency injection for services
+  - Clean separation of concerns
+
+- **Dispatcher** - Central orchestration of command/query routing
+  - Type-safe command/query dispatch
+  - Cross-cutting concerns (logging, validation)
+  - Async support throughout
+
+#### Domain Modules
+Each module represents a complete feature domain with its own CQS implementation:
+
+- **Game.Core** - CQS infrastructure, abstractions, and shared utilities
+- **Game.Adventure** - Complete combat and expedition system
 - **Game.Items** - Item definitions, materials, quality tiers, and loot generation
 - **Game.Inventories** - Inventory management, stacking, validation, and storage
-- **Game.Crafting** - Recipe system and item crafting logic
-- **Game.Shop** - Customer simulation, pricing, and shop management
+- **Game.Crafting** - Recipe system, crafting operations, and material processing
+- **Game.Shop** - Customer simulation, pricing strategies, and shop management
 - **Game.Economy** - Financial tracking, treasury management, and economic analytics
+- **Game.UI** - User interface operations, dialogs, toasts, and display coordination
 
-Each module is a separate C# project with:
-- Clear domain boundaries
-- Independent test project
-- Minimal coupling to other modules
-- Complete feature implementation (Models, Systems, Controllers, Data)
+Each module contains:
+- **Commands/** and **Queries/** for operations
+- **Handlers/** for command/query processing
+- **Models/** for domain data structures
+- **Systems/** for business logic coordination
+- **Extensions/** for dependency injection setup
 
 ### Design Patterns
-- **Vertical Slice Architecture**: Features organized by domain rather than technical layers
+- **Command Query Separation (CQS)**: Clean separation of state-changing operations and data queries
+- **Domain-Driven Design**: Modules organized around business domains rather than technical layers
+- **Dependency Injection**: Clean service resolution and testable architecture
 - **Generic Entity System**: Reusable `CombatEntityStats` for all combat units
 - **Factory Pattern**: `EntityFactory` creates configured adventurers and monsters  
 - **State Machine**: Robust state management for adventurer actions
-- **Observer Pattern**: Event-driven communication between systems
-- **MVC Architecture**: Separation of game logic, data, and presentation
+- **Observer Pattern**: Event-driven communication between systems through C# events
 
 ### Key Components
+- **`ICommand/IQuery`**: CQS abstractions for operations and data retrieval
+- **`ICommandHandler/IQueryHandler`**: Processors for individual commands and queries
+- **`ICommandQueryDispatcher`**: Central routing and orchestration of CQS operations
 - **`CombatEntityStats`**: Generic combat entity with configurable stats
 - **`CombatSystem`**: Real-time health-based auto-combat engine
-- **`AdventurerController`**: High-level adventurer management
-- **`GameManager`**: System coordination and lifecycle management
+- **`AdventurerController`**: High-level adventurer management and coordination
 - **`EntityFactory`**: Configuration-driven entity creation
+- **`GameLogger`**: Flexible logging system with multiple backend support
 
 ## 🧪 Testing Philosophy
 
-- **Comprehensive Coverage**: All production code is thoroughly tested
-- **Edge Case Validation**: Boundary conditions and error scenarios covered
-- **Integration Testing**: Multi-system workflows validated
-- **Event Testing**: All C# events and state transitions verified
-- **Regression Prevention**: Comprehensive test suite prevents breaking changes
+With **1,480 tests** currently passing, this project maintains exceptional test coverage:
+
+- **CQS Testing**: All commands, queries, and handlers thoroughly tested
+- **Edge Case Validation**: Boundary conditions, null inputs, and error scenarios covered
+- **Integration Testing**: Multi-system workflows and cross-module interactions validated
+- **Business Logic Coverage**: All game rules, calculations, and state transitions verified
+- **Event Testing**: All C# events and observer patterns tested for proper decoupling
+- **Regression Prevention**: Comprehensive test suite prevents breaking changes during refactoring
+
+### Test Organization
+- Each module has dedicated test project with focused test suites
+- Commands and queries tested for both happy path and error conditions
+- Handlers tested in isolation with mocked dependencies
+- Integration tests verify end-to-end workflows
+- Performance-sensitive code includes benchmark tests
 
 ## 📋 Code Standards
 
@@ -257,5 +345,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **xUnit** - Comprehensive testing framework
 
 ---
-
-*Development ongoing*
