@@ -21,7 +21,7 @@ public partial class ToastManager : Control, IToastOperations
     [Export] public float RepositionAnimationDuration { get; set; } = 0.3f;
 
     private readonly List<ActiveToastInfo> _activeToasts = new();
-    private VBoxContainer? _toastContainer;
+    private Control? _toastContainer;
 
     /// <summary>
     /// Godot-specific toast information that links UI instances with configuration.
@@ -33,11 +33,11 @@ public partial class ToastManager : Control, IToastOperations
         GameLogger.SetBackend(new GodotLoggerBackend());
 
         // Use the ToastContainer node from the scene instead of creating one
-        _toastContainer = GetNode<VBoxContainer>("ToastContainer");
+        _toastContainer = GetNode<Control>("ToastContainer");
 
         if (_toastContainer == null)
         {
-            GameLogger.Error("ToastContainer node not found in scene! Please ensure there's a VBoxContainer named 'ToastContainer' as a child of this ToastManager.");
+            GameLogger.Error("ToastContainer node not found in scene! Please ensure there's a Control named 'ToastContainer' as a child of this ToastManager.");
             return;
         }
 
@@ -113,7 +113,7 @@ public partial class ToastManager : Control, IToastOperations
         AnimateExistingToastsForNewToast(config.Anchor);
 
         // Create toast info records
-        var estimatedHeight = 35.0f; // Reduced from 60px for more compact stacking
+        var estimatedHeight = 35.0f;
         var toastInfo = new ToastInfo
         {
             Config = config,

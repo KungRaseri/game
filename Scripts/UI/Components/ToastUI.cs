@@ -23,13 +23,13 @@ public partial class ToastUI : PanelContainer
     {
         // Try to get existing nodes from scene first
         TryGetExistingNodes();
-        
+
         // If no nodes found, create them dynamically
         if (_titleLabel == null || _messageLabel == null)
         {
             SetupNodes();
         }
-        
+
         // Start invisible
         Modulate = new Color(1, 1, 1, 0);
 
@@ -50,7 +50,7 @@ public partial class ToastUI : PanelContainer
     public void ShowToast(ToastConfig config)
     {
         _config = config;
-        
+
         if (!_isInitialized)
         {
             CallDeferred("SetupAndShow");
@@ -110,13 +110,13 @@ public partial class ToastUI : PanelContainer
         // Initialize to null first
         _titleLabel = null;
         _messageLabel = null;
-        
+
         // Only try to get nodes if this ToastUI has child nodes
         if (GetChildCount() == 0)
         {
             return; // No children, will create nodes dynamically
         }
-        
+
         // Try to get nodes from the scene structure (if using scene file)
         try
         {
@@ -133,7 +133,7 @@ public partial class ToastUI : PanelContainer
         {
             GameLogger.Debug($"Could not find MarginContainer structure: {ex.Message}");
         }
-        
+
         // If that didn't work, try alternative paths
         if (_titleLabel == null || _messageLabel == null)
         {
@@ -219,17 +219,17 @@ public partial class ToastUI : PanelContainer
         if (styleBox != null)
         {
             styleBox = (StyleBoxFlat)styleBox.Duplicate();
-            
+
             // Set colors based on style
             var backgroundColor = GetStyleBackgroundColor(_config.Style);
             styleBox.BgColor = backgroundColor * _config.BackgroundTint;
-            
+
             // Set corner radius and border
             styleBox.CornerRadiusTopLeft = 8;
             styleBox.CornerRadiusTopRight = 8;
             styleBox.CornerRadiusBottomLeft = 8;
             styleBox.CornerRadiusBottomRight = 8;
-            
+
             styleBox.BorderWidthLeft = 2;
             styleBox.BorderWidthTop = 2;
             styleBox.BorderWidthRight = 2;
@@ -260,34 +260,57 @@ public partial class ToastUI : PanelContainer
 
     private void SetupPosition()
     {
-        // Store original position
-        _originalPosition = CalculateAnchorPosition();
-        Position = _originalPosition;
+        // Use Godot's built-in anchor system instead of manual calculations
+        SetAnchorsAndOffsetsFromAnchor();
     }
 
-    private Vector2 CalculateAnchorPosition()
+    private void SetAnchorsAndOffsetsFromAnchor()
     {
-        var parent = GetParent() as Control;
-        if (parent == null) return _config.Position;
-
-        var parentSize = parent.Size;
-        var toastSize = Size;
-        
-        Vector2 anchorPos = _config.Anchor switch
+        // Set anchors based on the toast anchor configuration
+        switch (_config.Anchor)
         {
-            ToastAnchor.TopLeft => Vector2.Zero,
-            ToastAnchor.TopCenter => new Vector2(parentSize.X / 2 - toastSize.X / 2, 0),
-            ToastAnchor.TopRight => new Vector2(parentSize.X - toastSize.X, 0),
-            ToastAnchor.CenterLeft => new Vector2(0, parentSize.Y / 2 - toastSize.Y / 2),
-            ToastAnchor.Center => new Vector2(parentSize.X / 2 - toastSize.X / 2, parentSize.Y / 2 - toastSize.Y / 2),
-            ToastAnchor.CenterRight => new Vector2(parentSize.X - toastSize.X, parentSize.Y / 2 - toastSize.Y / 2),
-            ToastAnchor.BottomLeft => new Vector2(0, parentSize.Y - toastSize.Y),
-            ToastAnchor.BottomCenter => new Vector2(parentSize.X / 2 - toastSize.X / 2, parentSize.Y - toastSize.Y),
-            ToastAnchor.BottomRight => new Vector2(parentSize.X - toastSize.X, parentSize.Y - toastSize.Y),
-            _ => Vector2.Zero
-        };
+            case ToastAnchor.TopLeft:
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopLeft);
+                break;
+            case ToastAnchor.TopCenter:
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopWide);
+                // Center horizontally
+                AnchorLeft = 0.5f;
+                AnchorRight = 0.5f;
+                break;
+            case ToastAnchor.TopRight:
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.TopRight);
+                break;
+            case ToastAnchor.CenterLeft:
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.CenterLeft);
+                break;
+            case ToastAnchor.Center:
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.Center);
+                break;
+            case ToastAnchor.CenterRight:
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.CenterRight);
+                break;
+            case ToastAnchor.BottomLeft:
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomLeft);
+                break;
+            case ToastAnchor.BottomCenter:
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomWide);
+                // Center horizontally
+                AnchorLeft = 0.5f;
+                AnchorRight = 0.5f;
+                break;
+            case ToastAnchor.BottomRight:
+                SetAnchorsAndOffsetsPreset(Control.LayoutPreset.BottomRight);
+                break;
+        }
 
-        return anchorPos + _config.AnchorOffset + _config.Position;
+        // Apply any additional offset from config
+        Position += _config.AnchorOffset + _config.Position;
+
+        // Store original position for animations
+        _originalPosition = Position;
+
+        GameLogger.Debug($"Toast anchored at {_config.Anchor} with position {Position}");
     }
 
     private void AnimateToast()
@@ -310,15 +333,15 @@ public partial class ToastUI : PanelContainer
     private void ApplyEntranceAnimation()
     {
         if (_animationTween == null) return;
-        
+
         Vector2 startOffset = GetAnimationStartOffset();
-        
+
         switch (_config.Animation)
         {
             case ToastAnimation.Fade:
                 _animationTween.TweenProperty(this, "modulate:a", 1.0f, _config.FadeInDuration);
                 break;
-                
+
             case ToastAnimation.SlideFromRight:
             case ToastAnimation.SlideFromLeft:
             case ToastAnimation.SlideFromTop:
@@ -329,7 +352,7 @@ public partial class ToastUI : PanelContainer
                     .SetEase(Tween.EaseType.Out);
                 _animationTween.TweenProperty(this, "modulate:a", 1.0f, _config.FadeInDuration);
                 break;
-                
+
             case ToastAnimation.Scale:
                 Scale = Vector2.Zero;
                 _animationTween.TweenProperty(this, "scale", Vector2.One, _config.FadeInDuration)
@@ -337,7 +360,7 @@ public partial class ToastUI : PanelContainer
                     .SetEase(Tween.EaseType.Out);
                 _animationTween.TweenProperty(this, "modulate:a", 1.0f, _config.FadeInDuration);
                 break;
-                
+
             case ToastAnimation.Bounce:
                 Scale = Vector2.Zero;
                 _animationTween.TweenProperty(this, "scale", Vector2.One, _config.FadeInDuration)
@@ -345,7 +368,7 @@ public partial class ToastUI : PanelContainer
                     .SetEase(Tween.EaseType.Out);
                 _animationTween.TweenProperty(this, "modulate:a", 1.0f, _config.FadeInDuration);
                 break;
-                
+
             default:
                 _animationTween.TweenProperty(this, "modulate:a", 1.0f, _config.FadeInDuration);
                 break;
@@ -378,15 +401,15 @@ public partial class ToastUI : PanelContainer
     private void ApplyExitAnimation()
     {
         if (_animationTween == null) return;
-        
+
         Vector2 endOffset = GetAnimationStartOffset(); // Reuse the same offset for exit
-        
+
         switch (_config.Animation)
         {
             case ToastAnimation.Fade:
                 _animationTween.TweenProperty(this, "modulate:a", 0.0f, _config.FadeOutDuration);
                 break;
-                
+
             case ToastAnimation.SlideFromRight:
             case ToastAnimation.SlideFromLeft:
             case ToastAnimation.SlideFromTop:
@@ -396,21 +419,21 @@ public partial class ToastUI : PanelContainer
                     .SetEase(Tween.EaseType.In);
                 _animationTween.TweenProperty(this, "modulate:a", 0.0f, _config.FadeOutDuration);
                 break;
-                
+
             case ToastAnimation.Scale:
                 _animationTween.TweenProperty(this, "scale", Vector2.Zero, _config.FadeOutDuration)
                     .SetTrans(Tween.TransitionType.Back)
                     .SetEase(Tween.EaseType.In);
                 _animationTween.TweenProperty(this, "modulate:a", 0.0f, _config.FadeOutDuration);
                 break;
-                
+
             case ToastAnimation.Bounce:
                 _animationTween.TweenProperty(this, "scale", Vector2.Zero, _config.FadeOutDuration)
                     .SetTrans(Tween.TransitionType.Bounce)
                     .SetEase(Tween.EaseType.In);
                 _animationTween.TweenProperty(this, "modulate:a", 0.0f, _config.FadeOutDuration);
                 break;
-                
+
             default:
                 _animationTween.TweenProperty(this, "modulate:a", 0.0f, _config.FadeOutDuration);
                 break;

@@ -4,6 +4,7 @@ using Game.Core.CQS;
 using Game.Core.Utils;
 using Game.DI;
 using Game.UI.Commands;
+using Game.UI.Models;
 using Godot;
 
 namespace Game.Scripts.Scenes;
@@ -53,7 +54,7 @@ public partial class MainGameScene : Control
             _dispatcher = DependencyInjectionNode.GetService<IDispatcher>();
 
             // Show welcome toast to test DI integration
-            await _dispatcher.DispatchCommandAsync(new ShowInfoToastCommand("Phase 1: DI system working! Start by gathering materials!"));
+            await _dispatcher.DispatchCommandAsync(new ShowInfoToastCommand("Phase 1: DI system working! Start by gathering materials!", ToastAnchor.TopCenter));
 
             _gameInitialized = true;
             GameLogger.Info("Game initialization completed successfully");
@@ -70,7 +71,7 @@ public partial class MainGameScene : Control
 
         try
         {
-            await _dispatcher.DispatchCommandAsync(new ShowSuccessToastCommand("Gather button pressed - basic functionality working!"));
+            await _dispatcher.DispatchCommandAsync(new ShowSuccessToastCommand("Gather button pressed - basic functionality working!", ToastAnchor.BottomRight));
             GameLogger.Info("Gather button test successful");
         }
         catch (Exception ex)

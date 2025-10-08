@@ -23,7 +23,8 @@ public class ShowWarningToastCommandHandler : ICommandHandler<ShowWarningToastCo
             Message = command.Message,
             Style = ToastStyle.Warning,
             Animation = ToastAnimation.SlideFromTop,
-            DisplayDuration = 4.0f
+            DisplayDuration = 4.0f,
+            Anchor = command.Anchor
         };
         await _toastOperations.ShowToastAsync(config);
     }

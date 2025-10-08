@@ -26,7 +26,7 @@ public class ShowMaterialToastCommandHandler : ICommandHandler<ShowMaterialToast
             Title = "Materials Collected",
             Message = message,
             Style = ToastStyle.Material,
-            Anchor = ToastAnchor.TopRight,
+            Anchor = command.Anchor,
             Animation = ToastAnimation.SlideFromRight,
             DisplayDuration = 4.0f
         };
