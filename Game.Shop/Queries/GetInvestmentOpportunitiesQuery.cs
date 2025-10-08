@@ -4,7 +4,7 @@ using Game.Economy.Models;
 namespace Game.Shop.Queries;
 
 /// <summary>
-/// Query to get available investment opportunities.
+/// Query to get available investment opportunities with shop-specific filtering.
 /// </summary>
 public record GetInvestmentOpportunitiesQuery : IQuery<List<InvestmentOpportunity>>
 {

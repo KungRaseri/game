@@ -1,5 +1,5 @@
 using Game.Core.CQS;
-using Game.Shop.Commands;
+using Game.Economy.Commands;
 using Game.Shop.Systems;
 
 namespace Game.Shop.Handlers;

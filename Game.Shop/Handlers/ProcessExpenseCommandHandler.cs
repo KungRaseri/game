@@ -1,5 +1,5 @@
 using Game.Core.CQS;
-using Game.Shop.Commands;
+using Game.Economy.Commands;
 using Game.Shop.Systems;
 
 namespace Game.Shop.Handlers;
@@ -20,14 +20,12 @@ public class ProcessExpenseCommandHandler : ICommandHandler<ProcessExpenseComman
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var recurrenceDays = command.RecurrenceInterval?.Days ?? 0;
-        
         var result = _shopManager.ProcessExpense(
             command.Type,
             command.Amount,
             command.Description,
             command.IsRecurring,
-            recurrenceDays);
+            command.RecurrenceDays);
 
         return Task.FromResult(result);
     }

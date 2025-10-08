@@ -1,5 +1,7 @@
 using Game.Core.CQS;
+using Game.Economy.Commands;
 using Game.Economy.Models;
+using Game.Economy.Queries;
 using Game.Shop.Commands;
 using Game.Shop.Handlers;
 using Game.Shop.Models;

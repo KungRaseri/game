@@ -5,41 +5,38 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game.Core.CQS;
 using Game.Economy.Models;
+using Game.Economy.Queries;
 using Game.Shop.Queries;
-using Game.Shop.Systems;
 
 namespace Game.Shop.Handlers;
 
 /// <summary>
-/// Handler for retrieving investment opportunities.
+/// Handler for retrieving investment opportunities with shop-specific logic.
+/// Delegates to Game.Economy for core investment data.
 /// </summary>
 public class GetInvestmentOpportunitiesQueryHandler : IQueryHandler<GetInvestmentOpportunitiesQuery, List<InvestmentOpportunity>>
 {
-    private readonly ShopManager _shopManager;
+    private readonly IDispatcher _dispatcher;
 
-    public GetInvestmentOpportunitiesQueryHandler(ShopManager shopManager)
+    public GetInvestmentOpportunitiesQueryHandler(IDispatcher dispatcher)
     {
-        _shopManager = shopManager ?? throw new ArgumentNullException(nameof(shopManager));
+        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
     }
 
-    public Task<List<InvestmentOpportunity>> HandleAsync(GetInvestmentOpportunitiesQuery query, CancellationToken cancellationToken = default)
+    public async Task<List<InvestmentOpportunity>> HandleAsync(GetInvestmentOpportunitiesQuery query, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        var opportunities = _shopManager.GetInvestmentOpportunities();
-        
-        // Apply filters
-        if (query.MinimumReturn.HasValue)
+        // Delegate to Game.Economy for core investment logic
+        var economyQuery = new GetAvailableInvestmentsQuery
         {
-            opportunities = opportunities.Where(o => o.ExpectedReturn >= (decimal)query.MinimumReturn.Value).ToList();
-        }
-        
-        if (query.MaxRiskLevel.HasValue)
-        {
-            // Use ROI percentage as risk indicator - higher ROI may indicate higher risk
-            opportunities = opportunities.Where(o => o.ROIPercentage <= query.MaxRiskLevel.Value).ToList();
-        }
+            AffordableOnly = true, // Shop context typically wants affordable options
+            MinimumReturn = query.MinimumReturn,
+            MaxRiskLevel = query.MaxRiskLevel
+        };
 
-        return Task.FromResult(opportunities);
+        var investments = await _dispatcher.DispatchQueryAsync<GetAvailableInvestmentsQuery, IReadOnlyList<InvestmentOpportunity>>(economyQuery, cancellationToken);
+        
+        return investments.ToList();
     }
 }

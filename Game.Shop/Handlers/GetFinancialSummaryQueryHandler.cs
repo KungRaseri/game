@@ -1,6 +1,6 @@
 using Game.Core.CQS;
 using Game.Economy.Models;
-using Game.Shop.Queries;
+using Game.Economy.Queries;
 using Game.Shop.Systems;
 
 namespace Game.Shop.Handlers;

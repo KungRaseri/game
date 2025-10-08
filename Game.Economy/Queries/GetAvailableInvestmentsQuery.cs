@@ -19,4 +19,14 @@ public record GetAvailableInvestmentsQuery : IQuery<IReadOnlyList<InvestmentOppo
     /// Optional investment type filter.
     /// </summary>
     public InvestmentType? InvestmentType { get; init; }
+
+    /// <summary>
+    /// Filter by minimum expected return percentage.
+    /// </summary>
+    public float? MinimumReturn { get; init; }
+
+    /// <summary>
+    /// Filter by maximum risk level.
+    /// </summary>
+    public int? MaxRiskLevel { get; init; }
 }
