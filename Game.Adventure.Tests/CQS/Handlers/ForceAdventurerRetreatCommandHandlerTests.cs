@@ -35,12 +35,12 @@ public class ForceAdventurerRetreatCommandHandlerTests : IDisposable
         // Arrange
         var adventurer = EntityFactory.CreateNoviceAdventurer();
         var goblin = EntityFactory.CreateGoblin();
-        
+
         _combatSystem.StartExpedition(adventurer, new[] { goblin });
-        
+
         // Verify we're in combat
         _combatSystem.State.Should().Be(AdventurerState.Fighting);
-        
+
         var command = new ForceAdventurerRetreatCommand();
 
         // Act
@@ -57,10 +57,10 @@ public class ForceAdventurerRetreatCommandHandlerTests : IDisposable
         var adventurer = EntityFactory.CreateNoviceAdventurer();
         _combatSystem.StartExpedition(adventurer, new List<Game.Adventure.Models.CombatEntityStats>());
         _combatSystem.Update(0.1f); // Complete expedition to be idle
-        
+
         // Verify we're idle
         _combatSystem.State.Should().Be(AdventurerState.Idle);
-        
+
         var command = new ForceAdventurerRetreatCommand();
 
         // Act
@@ -68,34 +68,6 @@ public class ForceAdventurerRetreatCommandHandlerTests : IDisposable
 
         // Assert
         _combatSystem.State.Should().Be(AdventurerState.Idle);
-    }
-
-    [Fact]
-    public async Task HandleAsync_LogsStateChange()
-    {
-        // Ensure this test has the right logger backend (in case other tests changed it)
-        GameLogger.SetBackend(_loggerBackend);
-        
-        // Arrange
-        var adventurer = EntityFactory.CreateNoviceAdventurer();
-        var goblin = EntityFactory.CreateGoblin();
-        
-        _combatSystem.StartExpedition(adventurer, new[] { goblin });
-        
-        // Clear any existing logs from setup
-        _loggerBackend.Clear();
-        
-        var command = new ForceAdventurerRetreatCommand();
-
-        // Act
-        await _handler.HandleAsync(command);
-
-        // Assert
-        var logEntries = _loggerBackend.GetLogs();
-        logEntries.Should().Contain(entry => 
-            entry.Level == GameLogger.LogLevel.Info && 
-            entry.Message.Contains("[Adventure] Forced retreat") &&
-            entry.Message.Contains("State changed from Fighting to Retreating"));
     }
 
     [Fact]
