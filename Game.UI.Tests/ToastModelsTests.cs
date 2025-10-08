@@ -87,7 +87,7 @@ public class ToastModelsTests
         info.Id.Should().NotBeEmpty();
         info.Config.Should().NotBeNull();
         info.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
-        info.Anchor.Should().Be(ToastAnchor.TopLeft); // Default enum value
+        info.Anchor.Should().Be(ToastAnchor.TopRight); // Default from ToastConfig
         info.BaseOffset.Should().Be(Vector2.Zero);
         info.EstimatedHeight.Should().Be(35.0f);
         info.IsVisible.Should().BeTrue();
@@ -98,14 +98,13 @@ public class ToastModelsTests
     {
         // Arrange
         var customTime = DateTime.UtcNow.AddMinutes(-5);
-        var customConfig = new ToastConfig { Message = "Test" };
+        var customConfig = new ToastConfig { Message = "Test", Anchor = ToastAnchor.Center };
         
         var info = new ToastInfo
         {
             Id = "custom-id",
             Config = customConfig,
             CreatedAt = customTime,
-            Anchor = ToastAnchor.Center,
             BaseOffset = new Vector2(50, 75),
             EstimatedHeight = 50.0f,
             IsVisible = false
@@ -119,46 +118,6 @@ public class ToastModelsTests
         info.BaseOffset.Should().Be(new Vector2(50, 75));
         info.EstimatedHeight.Should().Be(50.0f);
         info.IsVisible.Should().BeFalse();
-    }
-
-    [Fact]
-    public void ToastData_DefaultValues_ShouldBeCorrect()
-    {
-        // Arrange & Act
-        var data = new ToastData();
-
-        // Assert
-        data.Id.Should().NotBeEmpty();
-        data.Message.Should().BeEmpty();
-        data.Type.Should().Be("info");
-        data.DurationSeconds.Should().Be(3.0f);
-        data.IsPersistent.Should().BeFalse();
-        data.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
-    }
-
-    [Fact]
-    public void ToastData_WithCustomValues_ShouldPreserveValues()
-    {
-        // Arrange
-        var customTime = DateTime.UtcNow.AddHours(-1);
-        
-        var data = new ToastData
-        {
-            Id = "data-id",
-            Message = "Custom Message",
-            Type = "warning",
-            DurationSeconds = 10.0f,
-            IsPersistent = true,
-            CreatedAt = customTime
-        };
-
-        // Act & Assert
-        data.Id.Should().Be("data-id");
-        data.Message.Should().Be("Custom Message");
-        data.Type.Should().Be("warning");
-        data.DurationSeconds.Should().Be(10.0f);
-        data.IsPersistent.Should().BeTrue();
-        data.CreatedAt.Should().Be(customTime);
     }
 
     [Theory]

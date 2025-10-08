@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://ce3hfv7a2s1gs"]
+[gd_scene load_steps=5 format=3 uid="uid://ce3hfv7a2s1gs"]
 
 [ext_resource type="Script" uid="uid://da45ct5sa8e83" path="res://Scripts/Scenes/MainGameScene.cs" id="1_qla6v"]
+[ext_resource type="Script" uid="uid://dllo7knc510e0" path="res://Scripts/UI/Integration/ToastManager.cs" id="2_toast_manager"]
+[ext_resource type="Script" uid="uid://xirt3wunvh4h" path="res://Scripts/Integration/Managers/ToastDisplayManager.cs" id="3_toast_display_manager"]
+[ext_resource type="PackedScene" uid="uid://6tf8kit57jox" path="res://Scenes/UI/Toast.tscn" id="4_toast_scene"]
 
 [node name="MainGameScene" type="Control"]
 layout_mode = 3
@@ -16,6 +19,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.1, 0.1, 0.15, 1)
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
@@ -27,6 +32,8 @@ offset_left = 50.0
 offset_top = 50.0
 offset_right = -50.0
 offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TitleLabel" type="Label" parent="MainContainer"]
 layout_mode = 2
@@ -47,8 +54,8 @@ size_flags_vertical = 3
 
 [node name="GatherTitle" type="Label" parent="MainContainer/GameFlow/GatherSection"]
 layout_mode = 2
-text = "1. Gather Materials"
 theme_type_variation = &"HeaderMedium"
+text = "1. Gather Materials"
 
 [node name="GatherButton" type="Button" parent="MainContainer/GameFlow/GatherSection"]
 layout_mode = 2
@@ -66,14 +73,14 @@ size_flags_vertical = 3
 
 [node name="CraftTitle" type="Label" parent="MainContainer/GameFlow/CraftSection"]
 layout_mode = 2
-text = "2. Craft Items"
 theme_type_variation = &"HeaderMedium"
+text = "2. Craft Items"
 
 [node name="CraftButton" type="Button" parent="MainContainer/GameFlow/CraftSection"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Open Crafting"
 disabled = true
+text = "Open Crafting"
 
 [node name="CraftStatus" type="Label" parent="MainContainer/GameFlow/CraftSection"]
 layout_mode = 2
@@ -86,14 +93,14 @@ size_flags_vertical = 3
 
 [node name="ShopTitle" type="Label" parent="MainContainer/GameFlow/ShopSection"]
 layout_mode = 2
-text = "3. Manage Shop"
 theme_type_variation = &"HeaderMedium"
+text = "3. Manage Shop"
 
 [node name="ShopButton" type="Button" parent="MainContainer/GameFlow/ShopSection"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Open Shop"
 disabled = true
+text = "Open Shop"
 
 [node name="ShopStatus" type="Label" parent="MainContainer/GameFlow/ShopSection"]
 layout_mode = 2
@@ -105,16 +112,30 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
-[node name="ToastContainer" type="VBoxContainer" parent="UIOverlay"]
+[node name="ToastManager" type="Control" parent="UIOverlay"]
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 0.0
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.0
-offset_left = -320.0
-offset_bottom = 600.0
-grow_horizontal = 0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("2_toast_manager")
+ToastScene = ExtResource("4_toast_scene")
+
+[node name="ToastContainer" type="VBoxContainer" parent="UIOverlay/ToastManager"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ToastDisplayManager" type="Node" parent="UIOverlay" node_paths=PackedStringArray("ToastManager")]
+script = ExtResource("3_toast_display_manager")
+ToastManager = NodePath("../ToastManager")

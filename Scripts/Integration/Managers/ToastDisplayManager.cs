@@ -31,6 +31,13 @@ public partial class ToastDisplayManager : Node
     {
         try
         {
+            // Debug the ToastManager assignment
+            GameLogger.Debug($"ToastDisplayManager: ToastManager is {(ToastManager == null ? "NULL" : "assigned")}");
+            if (ToastManager != null)
+            {
+                GameLogger.Debug($"ToastDisplayManager: ToastManager type is {ToastManager.GetType().Name}");
+            }
+
             // Get UISystem from DI
             _uiSystem = Game.DI.DependencyInjectionNode.GetService<UISystem>();
 

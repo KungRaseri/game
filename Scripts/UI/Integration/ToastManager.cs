@@ -21,7 +21,7 @@ public partial class ToastManager : Control, IToastOperations
     [Export] public float RepositionAnimationDuration { get; set; } = 0.3f;
 
     private readonly List<ActiveToastInfo> _activeToasts = new();
-    private Control? _toastContainer;
+    private VBoxContainer? _toastContainer;
 
     /// <summary>
     /// Godot-specific toast information that links UI instances with configuration.
@@ -30,23 +30,24 @@ public partial class ToastManager : Control, IToastOperations
 
     public override void _Ready()
     {
-        // Create container for toasts
-        _toastContainer = new Control
-        {
-            AnchorLeft = 0,
-            AnchorTop = 0,
-            AnchorRight = 1,
-            AnchorBottom = 1,
-            OffsetLeft = 0,
-            OffsetTop = 0,
-            OffsetRight = 0,
-            OffsetBottom = 0,
-            MouseFilter = Control.MouseFilterEnum.Ignore
-        };
-        AddChild(_toastContainer);
-
         GameLogger.SetBackend(new GodotLoggerBackend());
-        GameLogger.Debug("ToastManager initialized");
+
+        // Use the ToastContainer node from the scene instead of creating one
+        _toastContainer = GetNode<VBoxContainer>("ToastContainer");
+
+        if (_toastContainer == null)
+        {
+            GameLogger.Error("ToastContainer node not found in scene! Please ensure there's a VBoxContainer named 'ToastContainer' as a child of this ToastManager.");
+            return;
+        }
+
+        // Load the ToastScene if not set via Export
+        if (ToastScene == null)
+        {
+            ToastScene = ResourceLoader.Load<PackedScene>("res://Scenes/UI/Toast.tscn");
+        }
+
+        GameLogger.Debug("ToastManager initialized with scene ToastContainer");
     }
 
     /// <summary>
@@ -116,7 +117,6 @@ public partial class ToastManager : Control, IToastOperations
         var toastInfo = new ToastInfo
         {
             Config = config,
-            Anchor = config.Anchor,
             BaseOffset = config.AnchorOffset,
             EstimatedHeight = estimatedHeight
         };
