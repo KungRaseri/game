@@ -6,12 +6,11 @@ using Game.Gathering.Extensions;
 using Game.Shop.Extensions;
 using Game.Inventories.Extensions;
 using Game.Crafting.Extensions;
-// using Game.Progression.Extensions; // TODO: Enable when Game.Progression is properly integrated
-using Game.Core.CQS;
 using Game.Core.Extensions;
 using Game.Core.Utils;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
+using Game.Scripts.Systems;
 
 namespace Game.DI;
 
@@ -71,6 +70,10 @@ public partial class DependencyInjectionNode : Node
 
         // Add CQS infrastructure
         services.AddCQS();
+
+        // Add ShopKeeper state system
+        GameLogger.Debug("[DI] Registering ShopKeeper state system...");
+        services.AddSingleton<ShopKeeperStateSystem>();
 
         // Add Adventure module services
         GameLogger.Debug("[DI] Registering Adventure module...");
