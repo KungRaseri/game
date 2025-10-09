@@ -29,15 +29,8 @@ public partial class MainGameScene : Control
 
     private void InitializeUI()
     {
-        // Update title
-        var titleLabel = GetNode<Label>("MainContainer/TitleLabel");
-        if (titleLabel != null)
-        {
-            titleLabel.Text = "Fantasy Shop Keeper - Phase 1 Complete!";
-        }
-
         // Connect gather button
-        var gatherButton = GetNode<Button>("MainContainer/GameFlow/GatherSection/GatherButton");
+        var gatherButton = GetNode<Button>("MainContainer/GatheringActions/GatherHerbs/Button");
         if (gatherButton != null)
         {
             gatherButton.Pressed += OnGatherButtonPressed;

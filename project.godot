@@ -10,7 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Game"
+config/name="ShopKeeper"
+config/version="0.0.1"
 run/main_scene="uid://ce3hfv7a2s1gs"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 config/icon="res://icon.svg"
@@ -18,6 +19,12 @@ config/icon="res://icon.svg"
 [autoload]
 
 DependencyInjection="*res://Scripts/DI/DependencyInjectionNode.cs"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/borderless=true
 
 [dotnet]
 
