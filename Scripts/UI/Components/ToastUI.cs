@@ -454,6 +454,36 @@ public partial class ToastUI : PanelContainer
     }
 
     /// <summary>
+    /// Updates the toast position with new configuration (used for repositioning).
+    /// </summary>
+    public void UpdatePosition(ToastConfig newConfig)
+    {
+        var oldConfig = _config;
+        _config = newConfig;
+        
+        // Calculate new position using the positioning system
+        CallDeferred(nameof(AnimateToNewPosition));
+    }
+    
+    private void AnimateToNewPosition()
+    {
+        // Store current position
+        var currentPos = Position;
+        
+        // Calculate new position
+        SetupPosition();
+        var targetPos = Position;
+        
+        // Start from current position and animate to target
+        Position = currentPos;
+        
+        var tween = CreateTween();
+        tween.TweenProperty(this, "position", targetPos, 0.3f)
+            .SetTrans(Tween.TransitionType.Quart)
+            .SetEase(Tween.EaseType.Out);
+    }
+
+    /// <summary>
     /// Handles mouse clicks for dismissal if enabled.
     /// </summary>
     public override void _GuiInput(InputEvent inputEvent)
