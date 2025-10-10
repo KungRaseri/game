@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace Game.Scripts.Models;
+namespace Game.Shop.Models;
 
 /// <summary>
 /// Represents the current activity state of the ShopKeeper player.

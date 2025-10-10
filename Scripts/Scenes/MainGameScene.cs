@@ -5,8 +5,8 @@ using Game.Core.Utils;
 using Game.DI;
 using Game.UI.Commands;
 using Game.UI.Models;
-using Game.Scripts.Systems;
-using Game.Scripts.Models;
+using Game.Shop.Systems;
+using Game.Shop.Models;
 using Godot;
 
 namespace Game.Scripts.Scenes;
@@ -18,7 +18,7 @@ namespace Game.Scripts.Scenes;
 public partial class MainGameScene : Control
 {
     private IDispatcher? _dispatcher;
-    private ShopKeeperStateSystem? _stateSystem;
+    private ShopKeeperStateManager? _stateManager;
     private bool _gameInitialized = false;
 
     // UI elements for state management
@@ -90,7 +90,7 @@ public partial class MainGameScene : Control
         {
             // Get services from DI
             _dispatcher = DependencyInjectionNode.GetService<IDispatcher>();
-            _stateSystem = DependencyInjectionNode.GetService<ShopKeeperStateSystem>();
+            _stateManager = DependencyInjectionNode.GetService<ShopKeeperStateManager>();
 
             // Show welcome toast
             await _dispatcher.DispatchCommandAsync(new ShowInfoToastCommand(
@@ -111,11 +111,11 @@ public partial class MainGameScene : Control
 
     private async void OnGatherButtonPressed()
     {
-        if (_stateSystem == null || !_gameInitialized) return;
+        if (_stateManager == null || !_gameInitialized) return;
 
         try
         {
-            var success = _stateSystem.StartGatheringHerbs(5, 1.0f);
+            var success = _stateManager.StartGatheringHerbs(5, 1.0f);
             
             if (success && _dispatcher != null)
             {
@@ -139,11 +139,11 @@ public partial class MainGameScene : Control
 
     private async void OnCraftButtonPressed()
     {
-        if (_stateSystem == null || !_gameInitialized) return;
+        if (_stateManager == null || !_gameInitialized) return;
 
         try
         {
-            var success = _stateSystem.StartCraftingPotions("basic_healing_potion", 1.0f);
+            var success = _stateManager.StartCraftingPotions("basic_healing_potion", 1.0f);
             
             if (success && _dispatcher != null)
             {
@@ -153,7 +153,7 @@ public partial class MainGameScene : Control
             }
             else if (_dispatcher != null)
             {
-                var (herbs, _) = _stateSystem.GetResourceCounts();
+                var (herbs, _) = _stateManager.GetResourceCounts();
                 var message = herbs <= 0 ? "No herbs available for crafting!" : "Cannot start crafting - you're already busy!";
                 await _dispatcher.DispatchCommandAsync(new ShowWarningToastCommand(message));
             }
@@ -168,11 +168,11 @@ public partial class MainGameScene : Control
 
     private async void OnShopButtonPressed()
     {
-        if (_stateSystem == null || !_gameInitialized) return;
+        if (_stateManager == null || !_gameInitialized) return;
 
         try
         {
-            var success = _stateSystem.StartRunningShop(0, 1.0f); // Run until potions sold out
+            var success = _stateManager.StartRunningShop(0, 1.0f); // Run until potions sold out
             
             if (success && _dispatcher != null)
             {
@@ -182,7 +182,7 @@ public partial class MainGameScene : Control
             }
             else if (_dispatcher != null)
             {
-                var (_, potions) = _stateSystem.GetResourceCounts();
+                var (_, potions) = _stateManager.GetResourceCounts();
                 var message = potions <= 0 ? "No potions available to sell!" : "Cannot open shop - you're already busy!";
                 await _dispatcher.DispatchCommandAsync(new ShowWarningToastCommand(message));
             }
@@ -197,11 +197,11 @@ public partial class MainGameScene : Control
 
     private async void OnStopButtonPressed()
     {
-        if (_stateSystem == null || !_gameInitialized) return;
+        if (_stateManager == null || !_gameInitialized) return;
 
         try
         {
-            var success = _stateSystem.StopCurrentActivity("Player requested stop");
+            var success = _stateManager.StopCurrentActivity("Player requested stop");
             
             if (success && _dispatcher != null)
             {
@@ -220,13 +220,13 @@ public partial class MainGameScene : Control
 
     private void UpdateUI()
     {
-        if (_stateSystem == null || !_gameInitialized) return;
+        if (_stateManager == null || !_gameInitialized) return;
 
         try
         {
             // Get current state
-            var stateInfo = _stateSystem.GetCurrentState();
-            var (herbs, potions) = _stateSystem.GetResourceCounts();
+            var stateInfo = _stateManager.GetCurrentState();
+            var (herbs, potions) = _stateManager.GetResourceCounts();
 
             // Update state display
             if (_stateLabel != null)
@@ -289,7 +289,7 @@ public partial class MainGameScene : Control
     public override void _ExitTree()
     {
         // Clean up any resources if needed
-        _stateSystem?.Dispose();
+        _stateManager?.Dispose();
         GameLogger.Info("MainGameScene exiting");
     }
 }

@@ -12,6 +12,11 @@
         <PackageReference Include="System.Text.Json" Version="9.0.9" />
     </ItemGroup>
 
+    <!-- State management for domain projects that need it -->
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Game.Shop' OR '$(MSBuildProjectName)' == 'Game.Adventure' OR '$(MSBuildProjectName)' == 'Game.Crafting' OR '$(MSBuildProjectName)' == 'Game.Gathering'">
+        <PackageReference Include="Stateless" Version="5.20.0" />
+    </ItemGroup>
+
     <!-- Test projects get additional packages and configuration -->
     <ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />

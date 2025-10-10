@@ -1,31 +1,31 @@
 #nullable enable
 
 using Game.Core.CQS;
-using Game.Scripts.Commands;
-using Game.Scripts.Systems;
+using Game.Shop.Commands;
+using Game.Shop.Systems;
 using Game.Core.Utils;
 
-namespace Game.Scripts.Handlers;
+namespace Game.Shop.Handlers;
 
 /// <summary>
 /// Handler for starting herb gathering activities.
 /// </summary>
 public class StartGatheringHerbsCommandHandler : ICommandHandler<StartGatheringHerbsCommand>
 {
-    private readonly ShopKeeperStateSystem _stateSystem;
+    private readonly ShopKeeperStateManager _stateManager;
 
-    public StartGatheringHerbsCommandHandler(ShopKeeperStateSystem stateSystem)
+    public StartGatheringHerbsCommandHandler(ShopKeeperStateManager stateManager)
     {
-        _stateSystem = stateSystem ?? throw new ArgumentNullException(nameof(stateSystem));
+        _stateManager = stateManager ?? throw new ArgumentNullException(nameof(stateManager));
     }
 
     public async Task HandleAsync(StartGatheringHerbsCommand command, CancellationToken cancellationToken = default)
     {
-        var result = _stateSystem.StartGatheringHerbs(command.DurationMinutes, command.EfficiencyMultiplier);
+        var result = _stateManager.StartGatheringHerbs(command.DurationMinutes, command.EfficiencyMultiplier);
         
         if (!result)
         {
-            throw new InvalidOperationException($"Cannot start gathering herbs. Current state: {_stateSystem.GetCurrentState().CurrentState}");
+            throw new InvalidOperationException($"Cannot start gathering herbs. Current state: {_stateManager.GetCurrentState().CurrentState}");
         }
 
         GameLogger.Info($"Started gathering herbs for {command.DurationMinutes} minutes with {command.EfficiencyMultiplier}x efficiency");
@@ -38,21 +38,21 @@ public class StartGatheringHerbsCommandHandler : ICommandHandler<StartGatheringH
 /// </summary>
 public class StartCraftingPotionsCommandHandler : ICommandHandler<StartCraftingPotionsCommand>
 {
-    private readonly ShopKeeperStateSystem _stateSystem;
+    private readonly ShopKeeperStateManager _stateManager;
 
-    public StartCraftingPotionsCommandHandler(ShopKeeperStateSystem stateSystem)
+    public StartCraftingPotionsCommandHandler(ShopKeeperStateManager stateManager)
     {
-        _stateSystem = stateSystem ?? throw new ArgumentNullException(nameof(stateSystem));
+        _stateManager = stateManager ?? throw new ArgumentNullException(nameof(stateManager));
     }
 
     public async Task HandleAsync(StartCraftingPotionsCommand command, CancellationToken cancellationToken = default)
     {
-        var result = _stateSystem.StartCraftingPotions(command.RecipeId, command.EfficiencyMultiplier);
+        var result = _stateManager.StartCraftingPotions(command.RecipeId, command.EfficiencyMultiplier);
         
         if (!result)
         {
-            var currentState = _stateSystem.GetCurrentState();
-            var (herbs, potions) = _stateSystem.GetResourceCounts();
+            var currentState = _stateManager.GetCurrentState();
+            var (herbs, potions) = _stateManager.GetResourceCounts();
             throw new InvalidOperationException($"Cannot start crafting potions. Current state: {currentState.CurrentState}, Available herbs: {herbs}");
         }
 
@@ -66,21 +66,21 @@ public class StartCraftingPotionsCommandHandler : ICommandHandler<StartCraftingP
 /// </summary>
 public class StartRunningShopCommandHandler : ICommandHandler<StartRunningShopCommand>
 {
-    private readonly ShopKeeperStateSystem _stateSystem;
+    private readonly ShopKeeperStateManager _stateManager;
 
-    public StartRunningShopCommandHandler(ShopKeeperStateSystem stateSystem)
+    public StartRunningShopCommandHandler(ShopKeeperStateManager stateManager)
     {
-        _stateSystem = stateSystem ?? throw new ArgumentNullException(nameof(stateSystem));
+        _stateManager = stateManager ?? throw new ArgumentNullException(nameof(stateManager));
     }
 
     public async Task HandleAsync(StartRunningShopCommand command, CancellationToken cancellationToken = default)
     {
-        var result = _stateSystem.StartRunningShop(command.DurationMinutes, command.PriceMultiplier);
+        var result = _stateManager.StartRunningShop(command.DurationMinutes, command.PriceMultiplier);
         
         if (!result)
         {
-            var currentState = _stateSystem.GetCurrentState();
-            var (herbs, potions) = _stateSystem.GetResourceCounts();
+            var currentState = _stateManager.GetCurrentState();
+            var (herbs, potions) = _stateManager.GetResourceCounts();
             throw new InvalidOperationException($"Cannot start running shop. Current state: {currentState.CurrentState}, Available potions: {potions}");
         }
 
@@ -95,17 +95,17 @@ public class StartRunningShopCommandHandler : ICommandHandler<StartRunningShopCo
 /// </summary>
 public class StopCurrentActivityCommandHandler : ICommandHandler<StopCurrentActivityCommand>
 {
-    private readonly ShopKeeperStateSystem _stateSystem;
+    private readonly ShopKeeperStateManager _stateManager;
 
-    public StopCurrentActivityCommandHandler(ShopKeeperStateSystem stateSystem)
+    public StopCurrentActivityCommandHandler(ShopKeeperStateManager stateManager)
     {
-        _stateSystem = stateSystem ?? throw new ArgumentNullException(nameof(stateSystem));
+        _stateManager = stateManager ?? throw new ArgumentNullException(nameof(stateManager));
     }
 
     public async Task HandleAsync(StopCurrentActivityCommand command, CancellationToken cancellationToken = default)
     {
-        var currentState = _stateSystem.GetCurrentState();
-        _stateSystem.StopCurrentActivity(command.Reason);
+        var currentState = _stateManager.GetCurrentState();
+        _stateManager.StopCurrentActivity(command.Reason);
         
         GameLogger.Info($"Stopped {currentState.CurrentState} activity: {command.Reason}");
         await Task.CompletedTask;
@@ -117,31 +117,31 @@ public class StopCurrentActivityCommandHandler : ICommandHandler<StopCurrentActi
 /// </summary>
 public class ForceStateTransitionCommandHandler : ICommandHandler<ForceStateTransitionCommand>
 {
-    private readonly ShopKeeperStateSystem _stateSystem;
+    private readonly ShopKeeperStateManager _stateManager;
 
-    public ForceStateTransitionCommandHandler(ShopKeeperStateSystem stateSystem)
+    public ForceStateTransitionCommandHandler(ShopKeeperStateManager stateManager)
     {
-        _stateSystem = stateSystem ?? throw new ArgumentNullException(nameof(stateSystem));
+        _stateManager = stateManager ?? throw new ArgumentNullException(nameof(stateManager));
     }
 
     public async Task HandleAsync(ForceStateTransitionCommand command, CancellationToken cancellationToken = default)
     {
         // First stop current activity
-        _stateSystem.StopCurrentActivity($"Forced transition: {command.Reason}");
+        _stateManager.StopCurrentActivity($"Forced transition: {command.Reason}");
 
         // Attempt to start the target activity based on state
         switch (command.TargetState)
         {
             case Models.ShopKeeperState.GatheringHerbs:
-                _stateSystem.StartGatheringHerbs();
+                _stateManager.StartGatheringHerbs();
                 break;
             
             case Models.ShopKeeperState.CraftingPotions:
-                _stateSystem.StartCraftingPotions();
+                _stateManager.StartCraftingPotions();
                 break;
             
             case Models.ShopKeeperState.RunningShop:
-                _stateSystem.StartRunningShop();
+                _stateManager.StartRunningShop();
                 break;
             
             case Models.ShopKeeperState.Idle:

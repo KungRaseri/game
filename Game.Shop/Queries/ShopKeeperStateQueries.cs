@@ -1,9 +1,9 @@
 #nullable enable
 
 using Game.Core.CQS;
-using Game.Scripts.Models;
+using Game.Shop.Models;
 
-namespace Game.Scripts.Queries;
+namespace Game.Shop.Queries;
 
 /// <summary>
 /// Query to get the current ShopKeeper state information.

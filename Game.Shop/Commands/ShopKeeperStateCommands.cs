@@ -1,9 +1,9 @@
 #nullable enable
 
 using Game.Core.CQS;
-using Game.Scripts.Models;
+using Game.Shop.Models;
 
-namespace Game.Scripts.Commands;
+namespace Game.Shop.Commands;
 
 /// <summary>
 /// Command to start gathering herbs.

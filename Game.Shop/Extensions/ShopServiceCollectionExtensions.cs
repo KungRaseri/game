@@ -31,6 +31,9 @@ public static class ShopServiceCollectionExtensions
         services.AddScoped<EnhancedCustomerAI>();
         services.AddScoped<ShopTrafficManager>();
 
+        // Register ShopKeeper state management system
+        services.AddSingleton<ShopKeeperStateManager>();
+
         // Register command handlers
         services.AddScoped<ICommandHandler<StockItemCommand, bool>, StockItemCommandHandler>();
         services.AddScoped<ICommandHandler<RemoveItemCommand, string?>, RemoveItemCommandHandler>();
@@ -41,6 +44,13 @@ public static class ShopServiceCollectionExtensions
         services.AddScoped<ICommandHandler<MakeInvestmentCommand, bool>, MakeInvestmentCommandHandler>();
         services.AddScoped<ICommandHandler<SetPricingStrategyCommand>, SetPricingStrategyCommandHandler>();
         services.AddScoped<ICommandHandler<ProcessDailyOperationsCommand>, ProcessDailyOperationsCommandHandler>();
+
+        // Register ShopKeeper command handlers
+        services.AddScoped<ICommandHandler<StartGatheringHerbsCommand>, StartGatheringHerbsCommandHandler>();
+        services.AddScoped<ICommandHandler<StartCraftingPotionsCommand>, StartCraftingPotionsCommandHandler>();
+        services.AddScoped<ICommandHandler<StartRunningShopCommand>, StartRunningShopCommandHandler>();
+        services.AddScoped<ICommandHandler<StopCurrentActivityCommand>, StopCurrentActivityCommandHandler>();
+        services.AddScoped<ICommandHandler<ForceStateTransitionCommand>, ForceStateTransitionCommandHandler>();
 
         // Register query handlers
         services.AddScoped<IQueryHandler<GetDisplaySlotQuery, ShopDisplaySlot?>, GetDisplaySlotQueryHandler>();
@@ -53,6 +63,12 @@ public static class ShopServiceCollectionExtensions
         services.AddScoped<IQueryHandler<GetTransactionHistoryQuery, IReadOnlyList<SaleTransaction>>, GetTransactionHistoryQueryHandler>();
         services.AddScoped<IQueryHandler<GetCompetitiveAnalysisQuery, CompetitionAnalysis>, GetCompetitiveAnalysisQueryHandler>();
         services.AddScoped<IQueryHandler<GetShopLayoutQuery, ShopLayout>, GetShopLayoutQueryHandler>();
+
+        // Register ShopKeeper query handlers
+        services.AddScoped<IQueryHandler<GetShopKeeperStateQuery, ShopKeeperStateInfo>, GetShopKeeperStateQueryHandler>();
+        services.AddScoped<IQueryHandler<CanTransitionToStateQuery, bool>, CanTransitionToStateQueryHandler>();
+        services.AddScoped<IQueryHandler<GetAvailableActivitiesQuery, AvailableActivitiesResult>, GetAvailableActivitiesQueryHandler>();
+        services.AddScoped<IQueryHandler<GetActivityStatisticsQuery, ActivityStatisticsResult>, GetActivityStatisticsQueryHandler>();
 
         return services;
     }
