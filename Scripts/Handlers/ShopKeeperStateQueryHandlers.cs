@@ -1,14 +1,12 @@
 #nullable enable
 
 using Game.Core.CQS;
-using Game.Core.Queries;
-using Game.Core.Systems;
-using Game.Core.Models;
+using Game.Scripts.Queries;
+using Game.Scripts.Systems;
+using Game.Scripts.Models;
 using Game.Core.Utils;
-using Game.Items.Queries;
-using Game.Inventories.Queries;
 
-namespace Game.Core.Handlers;
+namespace Game.Scripts.Handlers;
 
 /// <summary>
 /// Handler for getting current ShopKeeper state information.
@@ -55,7 +53,7 @@ public class CanTransitionToStateQueryHandler : IQueryHandler<CanTransitionToSta
 
     public async Task<bool> HandleAsync(CanTransitionToStateQuery query, CancellationToken cancellationToken = default)
     {
-        return await _stateSystem.CanTransitionToStateAsync(query.TargetState, query.IgnoreResourceRequirements);
+        return await Task.FromResult(_stateSystem.CanTransitionToState(query.TargetState, query.IgnoreResourceRequirements));
     }
 }
 
@@ -65,17 +63,16 @@ public class CanTransitionToStateQueryHandler : IQueryHandler<CanTransitionToSta
 public class GetAvailableActivitiesQueryHandler : IQueryHandler<GetAvailableActivitiesQuery, AvailableActivitiesResult>
 {
     private readonly ShopKeeperStateSystem _stateSystem;
-    private readonly IDispatcher _dispatcher;
 
-    public GetAvailableActivitiesQueryHandler(ShopKeeperStateSystem stateSystem, IDispatcher dispatcher)
+    public GetAvailableActivitiesQueryHandler(ShopKeeperStateSystem stateSystem)
     {
         _stateSystem = stateSystem ?? throw new ArgumentNullException(nameof(stateSystem));
-        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
     }
 
     public async Task<AvailableActivitiesResult> HandleAsync(GetAvailableActivitiesQuery query, CancellationToken cancellationToken = default)
     {
         var currentState = _stateSystem.GetCurrentState();
+        var (availableHerbs, availablePotions) = _stateSystem.GetResourceCounts();
         var unavailabilityReasons = new Dictionary<ShopKeeperState, string>();
 
         // Check if player is currently busy
@@ -86,17 +83,6 @@ public class GetAvailableActivitiesQueryHandler : IQueryHandler<GetAvailableActi
             unavailabilityReasons[ShopKeeperState.CraftingPotions] = $"Currently {currentState.CurrentState}";
             unavailabilityReasons[ShopKeeperState.RunningShop] = $"Currently {currentState.CurrentState}";
         }
-
-        // Get available resources
-        var herbQuery = new GetInventoryItemsQuery { ItemType = "Material" };
-        var herbsResult = await _dispatcher.DispatchQueryAsync<GetInventoryItemsQuery, Dictionary<string, int>>(herbQuery);
-        var availableHerbs = herbsResult.Where(kvp => kvp.Key.Contains("herb", StringComparison.OrdinalIgnoreCase))
-                                       .Sum(kvp => kvp.Value);
-
-        var potionQuery = new GetInventoryItemsQuery { ItemType = "Consumable" };
-        var potionsResult = await _dispatcher.DispatchQueryAsync<GetInventoryItemsQuery, Dictionary<string, int>>(potionQuery);
-        var availablePotions = potionsResult.Where(kvp => kvp.Key.Contains("potion", StringComparison.OrdinalIgnoreCase))
-                                          .Sum(kvp => kvp.Value);
 
         // Determine what activities are available
         bool canGatherHerbs = isIdle; // Can always gather herbs if idle
@@ -116,7 +102,7 @@ public class GetAvailableActivitiesQueryHandler : IQueryHandler<GetAvailableActi
             }
         }
 
-        return new AvailableActivitiesResult
+        return await Task.FromResult(new AvailableActivitiesResult
         {
             CanGatherHerbs = canGatherHerbs,
             CanCraftPotions = canCraftPotions,
@@ -125,7 +111,7 @@ public class GetAvailableActivitiesQueryHandler : IQueryHandler<GetAvailableActi
             AvailablePotions = availablePotions,
             UnavailabilityReasons = unavailabilityReasons,
             CurrentState = currentState.CurrentState
-        };
+        });
     }
 }
 

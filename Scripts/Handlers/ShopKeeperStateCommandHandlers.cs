@@ -1,11 +1,11 @@
 #nullable enable
 
 using Game.Core.CQS;
-using Game.Core.Commands;
-using Game.Core.Systems;
+using Game.Scripts.Commands;
+using Game.Scripts.Systems;
 using Game.Core.Utils;
 
-namespace Game.Core.Handlers;
+namespace Game.Scripts.Handlers;
 
 /// <summary>
 /// Handler for starting herb gathering activities.
@@ -21,7 +21,7 @@ public class StartGatheringHerbsCommandHandler : ICommandHandler<StartGatheringH
 
     public async Task HandleAsync(StartGatheringHerbsCommand command, CancellationToken cancellationToken = default)
     {
-        var result = await _stateSystem.StartGatheringHerbsAsync(command.DurationMinutes, command.EfficiencyMultiplier);
+        var result = _stateSystem.StartGatheringHerbs(command.DurationMinutes, command.EfficiencyMultiplier);
         
         if (!result)
         {
@@ -29,6 +29,7 @@ public class StartGatheringHerbsCommandHandler : ICommandHandler<StartGatheringH
         }
 
         GameLogger.Info($"Started gathering herbs for {command.DurationMinutes} minutes with {command.EfficiencyMultiplier}x efficiency");
+        await Task.CompletedTask;
     }
 }
 
@@ -46,15 +47,17 @@ public class StartCraftingPotionsCommandHandler : ICommandHandler<StartCraftingP
 
     public async Task HandleAsync(StartCraftingPotionsCommand command, CancellationToken cancellationToken = default)
     {
-        var result = await _stateSystem.StartCraftingPotionsAsync(command.RecipeId, command.EfficiencyMultiplier, command.MaxPotionsToCraft);
+        var result = _stateSystem.StartCraftingPotions(command.RecipeId, command.EfficiencyMultiplier);
         
         if (!result)
         {
             var currentState = _stateSystem.GetCurrentState();
-            throw new InvalidOperationException($"Cannot start crafting potions. Current state: {currentState.CurrentState}, Available resources: {currentState.AvailableResources}");
+            var (herbs, potions) = _stateSystem.GetResourceCounts();
+            throw new InvalidOperationException($"Cannot start crafting potions. Current state: {currentState.CurrentState}, Available herbs: {herbs}");
         }
 
         GameLogger.Info($"Started crafting potions using recipe {command.RecipeId} with {command.EfficiencyMultiplier}x efficiency");
+        await Task.CompletedTask;
     }
 }
 
@@ -72,16 +75,18 @@ public class StartRunningShopCommandHandler : ICommandHandler<StartRunningShopCo
 
     public async Task HandleAsync(StartRunningShopCommand command, CancellationToken cancellationToken = default)
     {
-        var result = await _stateSystem.StartRunningShopAsync(command.DurationMinutes, command.PriceMultiplier, command.AutoCloseWhenEmpty);
+        var result = _stateSystem.StartRunningShop(command.DurationMinutes, command.PriceMultiplier);
         
         if (!result)
         {
             var currentState = _stateSystem.GetCurrentState();
-            throw new InvalidOperationException($"Cannot start running shop. Current state: {currentState.CurrentState}, Available resources: {currentState.AvailableResources}");
+            var (herbs, potions) = _stateSystem.GetResourceCounts();
+            throw new InvalidOperationException($"Cannot start running shop. Current state: {currentState.CurrentState}, Available potions: {potions}");
         }
 
         var durationText = command.DurationMinutes > 0 ? $" for {command.DurationMinutes} minutes" : " until stock depleted";
         GameLogger.Info($"Started running shop{durationText} with {command.PriceMultiplier}x price multiplier");
+        await Task.CompletedTask;
     }
 }
 
@@ -100,9 +105,10 @@ public class StopCurrentActivityCommandHandler : ICommandHandler<StopCurrentActi
     public async Task HandleAsync(StopCurrentActivityCommand command, CancellationToken cancellationToken = default)
     {
         var currentState = _stateSystem.GetCurrentState();
-        await _stateSystem.StopCurrentActivityAsync(command.Reason);
+        _stateSystem.StopCurrentActivity(command.Reason);
         
         GameLogger.Info($"Stopped {currentState.CurrentState} activity: {command.Reason}");
+        await Task.CompletedTask;
     }
 }
 
@@ -121,28 +127,29 @@ public class ForceStateTransitionCommandHandler : ICommandHandler<ForceStateTran
     public async Task HandleAsync(ForceStateTransitionCommand command, CancellationToken cancellationToken = default)
     {
         // First stop current activity
-        await _stateSystem.StopCurrentActivityAsync($"Forced transition: {command.Reason}");
+        _stateSystem.StopCurrentActivity($"Forced transition: {command.Reason}");
 
         // Attempt to start the target activity based on state
         switch (command.TargetState)
         {
             case Models.ShopKeeperState.GatheringHerbs:
-                await _stateSystem.StartGatheringHerbsAsync();
+                _stateSystem.StartGatheringHerbs();
                 break;
             
             case Models.ShopKeeperState.CraftingPotions:
-                await _stateSystem.StartCraftingPotionsAsync();
+                _stateSystem.StartCraftingPotions();
                 break;
             
             case Models.ShopKeeperState.RunningShop:
-                await _stateSystem.StartRunningShopAsync();
+                _stateSystem.StartRunningShop();
                 break;
             
             case Models.ShopKeeperState.Idle:
-                // Already handled by StopCurrentActivityAsync
+                // Already handled by StopCurrentActivity
                 break;
         }
 
         GameLogger.Warning($"Forced state transition to {command.TargetState}: {command.Reason}");
+        await Task.CompletedTask;
     }
 }

@@ -8,9 +8,9 @@ using Game.Inventories.Extensions;
 using Game.Crafting.Extensions;
 using Game.Core.Extensions;
 using Game.Core.Utils;
+using Game.Scripts.Extensions;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
-using Game.Scripts.Systems;
 
 namespace Game.DI;
 
@@ -71,9 +71,9 @@ public partial class DependencyInjectionNode : Node
         // Add CQS infrastructure
         services.AddCQS();
 
-        // Add ShopKeeper state system
-        GameLogger.Debug("[DI] Registering ShopKeeper state system...");
-        services.AddSingleton<ShopKeeperStateSystem>();
+        // Add ShopKeeper state system and CQS handlers
+        GameLogger.Debug("[DI] Registering ShopKeeper state system and CQS handlers...");
+        services.AddShopKeeperStateServices();
 
         // Add Adventure module services
         GameLogger.Debug("[DI] Registering Adventure module...");
