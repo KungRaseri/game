@@ -1,7 +1,10 @@
 #nullable enable
 
 using Game.Core.CQS;
+using Game.Core.Data;
+using Game.Core.Data.Extensions;
 using Game.Crafting.Commands;
+using Game.Crafting.Data.Services;
 using Game.Crafting.Handlers;
 using Game.Crafting.Models;
 using Game.Crafting.Queries;
@@ -22,6 +25,13 @@ public static class ServiceCollectionExtensions
     /// <returns>The service collection for method chaining</returns>
     public static IServiceCollection AddCraftingServices(this IServiceCollection services)
     {
+        // Register data infrastructure
+        services.AddDataServices();
+
+        // Register data services  
+        services.AddSingleton<CraftingDataService>();
+        services.AddSingleton<RecipeInitializationService>();
+
         // Register core systems
         services.AddSingleton<RecipeManager>();
         services.AddSingleton<IRecipeManager>(provider => provider.GetRequiredService<RecipeManager>());

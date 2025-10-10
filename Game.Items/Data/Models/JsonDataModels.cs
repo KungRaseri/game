@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Items.Data;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
 
@@ -63,7 +64,7 @@ public class WeaponDataSet
 }
 
 /// <summary>
-/// JSON representation of weapon data (placeholder for future implementation)
+/// JSON representation of weapon data
 /// </summary>
 public class WeaponJsonData
 {
@@ -76,8 +77,19 @@ public class WeaponJsonData
     public string WeaponType { get; set; } = "Sword";
     public Dictionary<string, object> Properties { get; set; } = new();
 
-    // TODO: Implement when WeaponConfig is available
-    // public WeaponConfig ToWeaponConfig() { ... }
+    /// <summary>
+    /// Converts this JSON data to a WeaponConfig
+    /// </summary>
+    public WeaponConfig ToWeaponConfig()
+    {
+        return new WeaponConfig(
+            ItemId: Id,
+            Name: Name,
+            Description: Description,
+            BaseValue: BaseValue,
+            BaseDamageBonus: BaseDamage
+        );
+    }
 }
 
 /// <summary>
@@ -91,7 +103,7 @@ public class ArmorDataSet
 }
 
 /// <summary>
-/// JSON representation of armor data (placeholder for future implementation)
+/// JSON representation of armor data
 /// </summary>
 public class ArmorJsonData
 {
@@ -104,8 +116,19 @@ public class ArmorJsonData
     public string ArmorType { get; set; } = "Light";
     public Dictionary<string, object> Properties { get; set; } = new();
 
-    // TODO: Implement when ArmorConfig is available
-    // public ArmorConfig ToArmorConfig() { ... }
+    /// <summary>
+    /// Converts this JSON data to an ArmorConfig
+    /// </summary>
+    public ArmorConfig ToArmorConfig()
+    {
+        return new ArmorConfig(
+            ItemId: Id,
+            Name: Name,
+            Description: Description,
+            BaseValue: BaseValue,
+            BaseDamageReduction: BaseDefense
+        );
+    }
 }
 
 /// <summary>

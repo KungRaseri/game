@@ -1,0 +1,56 @@
+{
+  "adventurers": [
+    {
+      "entityId": "novice_adventurer",
+      "name": "Novice Adventurer",
+      "description": "A beginning adventurer with basic skills and equipment.",
+      "baseHealth": 100,
+      "baseDamage": 10,
+      "retreatThreshold": 0.25,
+      "healthRegenPerSecond": 1,
+      "entityType": "adventurer"
+    },
+    {
+      "entityId": "experienced_adventurer",
+      "name": "Experienced Adventurer",
+      "description": "A seasoned adventurer with improved combat abilities and tactics.",
+      "baseHealth": 150,
+      "baseDamage": 15,
+      "retreatThreshold": 0.20,
+      "healthRegenPerSecond": 2,
+      "entityType": "adventurer"
+    }
+  ],
+  "monsters": [
+    {
+      "entityId": "goblin",
+      "name": "Goblin",
+      "description": "A small, cunning creature that fights in groups but lacks individual strength.",
+      "baseHealth": 20,
+      "baseDamage": 5,
+      "retreatThreshold": 0.0,
+      "healthRegenPerSecond": 0,
+      "entityType": "monster"
+    },
+    {
+      "entityId": "orc",
+      "name": "Orc",
+      "description": "A brutish warrior with decent combat prowess and fierce determination.",
+      "baseHealth": 40,
+      "baseDamage": 8,
+      "retreatThreshold": 0.0,
+      "healthRegenPerSecond": 0,
+      "entityType": "monster"
+    },
+    {
+      "entityId": "troll",
+      "name": "Troll",
+      "description": "A massive creature with incredible strength and resilience in battle.",
+      "baseHealth": 80,
+      "baseDamage": 12,
+      "retreatThreshold": 0.0,
+      "healthRegenPerSecond": 0,
+      "entityType": "monster"
+    }
+  ]
+}
