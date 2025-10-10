@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "lastModified": "2025-10-10T00:00:00Z",
+  "weapons": [
+    {
+      "id": "weapon_iron_sword",
+      "name": "Iron Sword",
+      "description": "A sturdy iron blade, reliable in combat.",
+      "baseValue": 50,
+      "baseDamage": 5,
+      "baseDurability": 100,
+      "weaponType": "Sword",
+      "properties": {
+        "attackSpeed": 1.0,
+        "reach": "Medium"
+      }
+    },
+    {
+      "id": "weapon_steel_axe",
+      "name": "Steel Axe",
+      "description": "A sharp steel axe that cleaves through enemies.",
+      "baseValue": 75,
+      "baseDamage": 8,
+      "baseDurability": 120,
+      "weaponType": "Axe",
+      "properties": {
+        "attackSpeed": 0.8,
+        "reach": "Medium"
+      }
+    },
+    {
+      "id": "weapon_mithril_dagger",
+      "name": "Mithril Dagger",
+      "description": "A lightweight dagger forged from rare mithril.",
+      "baseValue": 100,
+      "baseDamage": 6,
+      "baseDurability": 80,
+      "weaponType": "Dagger",
+      "properties": {
+        "attackSpeed": 1.5,
+        "reach": "Short"
+      }
+    }
+  ]
+}
