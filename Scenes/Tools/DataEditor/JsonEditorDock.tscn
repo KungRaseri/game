@@ -52,9 +52,161 @@ This tool helps you edit and validate the game's JSON data files. Double-click a
 [node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="FileTree" type="Tree" parent="VBoxContainer"]
+[node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="Materials" type="Control" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="MaterialsVBox" type="VBoxContainer" parent="VBoxContainer/TabContainer/Materials"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MaterialsToolbar" type="HBoxContainer" parent="VBoxContainer/TabContainer/Materials/MaterialsVBox"]
+layout_mode = 2
+
+[node name="AddMaterialButton" type="Button" parent="VBoxContainer/TabContainer/Materials/MaterialsVBox/MaterialsToolbar"]
+layout_mode = 2
+text = "Add Material"
+
+[node name="EditMaterialButton" type="Button" parent="VBoxContainer/TabContainer/Materials/MaterialsVBox/MaterialsToolbar"]
+layout_mode = 2
+text = "Edit Selected"
+
+[node name="DeleteMaterialButton" type="Button" parent="VBoxContainer/TabContainer/Materials/MaterialsVBox/MaterialsToolbar"]
+layout_mode = 2
+text = "Delete Selected"
+
+[node name="MaterialsSpacer" type="Control" parent="VBoxContainer/TabContainer/Materials/MaterialsVBox/MaterialsToolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RawEditMaterialsButton" type="Button" parent="VBoxContainer/TabContainer/Materials/MaterialsVBox/MaterialsToolbar"]
+layout_mode = 2
+text = "Raw JSON"
+
+[node name="MaterialsList" type="Tree" parent="VBoxContainer/TabContainer/Materials/MaterialsVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 5
+column_titles_visible = true
+
+[node name="Recipes" type="Control" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="RecipesVBox" type="VBoxContainer" parent="VBoxContainer/TabContainer/Recipes"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="RecipesToolbar" type="HBoxContainer" parent="VBoxContainer/TabContainer/Recipes/RecipesVBox"]
+layout_mode = 2
+
+[node name="AddRecipeButton" type="Button" parent="VBoxContainer/TabContainer/Recipes/RecipesVBox/RecipesToolbar"]
+layout_mode = 2
+text = "Add Recipe"
+
+[node name="EditRecipeButton" type="Button" parent="VBoxContainer/TabContainer/Recipes/RecipesVBox/RecipesToolbar"]
+layout_mode = 2
+text = "Edit Selected"
+
+[node name="DeleteRecipeButton" type="Button" parent="VBoxContainer/TabContainer/Recipes/RecipesVBox/RecipesToolbar"]
+layout_mode = 2
+text = "Delete Selected"
+
+[node name="RecipesSpacer" type="Control" parent="VBoxContainer/TabContainer/Recipes/RecipesVBox/RecipesToolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RawEditRecipesButton" type="Button" parent="VBoxContainer/TabContainer/Recipes/RecipesVBox/RecipesToolbar"]
+layout_mode = 2
+text = "Raw JSON"
+
+[node name="RecipesList" type="Tree" parent="VBoxContainer/TabContainer/Recipes/RecipesVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 4
+column_titles_visible = true
+
+[node name="Entities" type="Control" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="EntitiesVBox" type="VBoxContainer" parent="VBoxContainer/TabContainer/Entities"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="EntitiesToolbar" type="HBoxContainer" parent="VBoxContainer/TabContainer/Entities/EntitiesVBox"]
+layout_mode = 2
+
+[node name="AddEntityButton" type="Button" parent="VBoxContainer/TabContainer/Entities/EntitiesVBox/EntitiesToolbar"]
+layout_mode = 2
+text = "Add Entity"
+
+[node name="EditEntityButton" type="Button" parent="VBoxContainer/TabContainer/Entities/EntitiesVBox/EntitiesToolbar"]
+layout_mode = 2
+text = "Edit Selected"
+
+[node name="DeleteEntityButton" type="Button" parent="VBoxContainer/TabContainer/Entities/EntitiesVBox/EntitiesToolbar"]
+layout_mode = 2
+text = "Delete Selected"
+
+[node name="EntitiesSpacer" type="Control" parent="VBoxContainer/TabContainer/Entities/EntitiesVBox/EntitiesToolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RawEditEntitiesButton" type="Button" parent="VBoxContainer/TabContainer/Entities/EntitiesVBox/EntitiesToolbar"]
+layout_mode = 2
+text = "Raw JSON"
+
+[node name="EntitiesList" type="Tree" parent="VBoxContainer/TabContainer/Entities/EntitiesVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 5
+column_titles_visible = true
+
+[node name="LootTables" type="Control" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="LootTablesVBox" type="VBoxContainer" parent="VBoxContainer/TabContainer/LootTables"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LootTablesToolbar" type="HBoxContainer" parent="VBoxContainer/TabContainer/LootTables/LootTablesVBox"]
+layout_mode = 2
+
+[node name="AddLootTableButton" type="Button" parent="VBoxContainer/TabContainer/LootTables/LootTablesVBox/LootTablesToolbar"]
+layout_mode = 2
+text = "Add Loot Table"
+
+[node name="EditLootTableButton" type="Button" parent="VBoxContainer/TabContainer/LootTables/LootTablesVBox/LootTablesToolbar"]
+layout_mode = 2
+text = "Edit Selected"
+
+[node name="DeleteLootTableButton" type="Button" parent="VBoxContainer/TabContainer/LootTables/LootTablesVBox/LootTablesToolbar"]
+layout_mode = 2
+text = "Delete Selected"
+
+[node name="LootTablesSpacer" type="Control" parent="VBoxContainer/TabContainer/LootTables/LootTablesVBox/LootTablesToolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RawEditLootTablesButton" type="Button" parent="VBoxContainer/TabContainer/LootTables/LootTablesVBox/LootTablesToolbar"]
+layout_mode = 2
+text = "Raw JSON"
+
+[node name="LootTablesList" type="Tree" parent="VBoxContainer/TabContainer/LootTables/LootTablesVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 3
+column_titles_visible = true
 
 [node name="StatusLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2

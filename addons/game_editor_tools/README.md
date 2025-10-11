@@ -1,6 +1,78 @@
-# Game Editor Tools Plugin
+# Game Editor Tools
 
-A Godot editor plugin for the Fantasy Shop Keeper game that provides tools for editing and managing JSON data files.
+This Godot editor plugin provides development tools for the Fantasy Shop Keeper game.
+
+## Features
+
+### Data Editor (Tabbed Interface)
+The main data editing tool with organized tabs for different data types:
+
+#### Materials Tab
+- View all materials from `materials.json`
+- Columns: ID, Name, Category, Quality, Value
+- Add/Edit/Delete materials (form-based editing coming soon)
+- Raw JSON editing via "Raw JSON" button
+
+#### Recipes Tab  
+- View all crafting recipes from `recipes.json`
+- Columns: ID, Name, Category, Difficulty
+- Add/Edit/Delete recipes (form-based editing coming soon)
+- Raw JSON editing via "Raw JSON" button
+
+#### Entities Tab
+- View all entities (adventurers and monsters) from `entities.json`
+- Columns: ID, Name, Type, Health, Damage
+- Add/Edit/Delete entities (form-based editing coming soon)
+- Raw JSON editing via "Raw JSON" button
+
+#### Loot Tables Tab
+- View all loot tables from `loot-tables.json`
+- Columns: ID, Name, Max Drops
+- Add/Edit/Delete loot tables (form-based editing coming soon)
+- Raw JSON editing via "Raw JSON" button
+
+### Global Actions
+- **Refresh**: Reload data from all JSON files
+- **Validate All**: Validate all JSON files against their schemas
+- Status bar showing current operation results
+
+### JSON Data Validation
+- Validates structure and required fields for all game data files
+- Reports errors and warnings with detailed descriptions
+- Ensures data integrity across the game systems
+
+## Usage
+
+1. Enable the plugin in Project Settings > Plugins
+2. The "Data Editor" dock will appear in the editor
+3. Use tabs to navigate between different data types
+4. Double-click items to edit (when form editing is implemented)
+5. Use "Raw JSON" buttons for direct file editing
+6. Use "Validate All" to check data integrity
+
+## File Structure
+
+```
+addons/game_editor_tools/
+├── DataEditor/              # Main data editing module
+│   ├── JsonDataEditorDock.cs    # Main tabbed interface
+│   ├── JsonDataValidator.cs     # Validation engine
+│   └── JsonQuickEditDialog.cs   # Template generator
+├── Scenes/Tools/DataEditor/
+│   └── JsonEditorDock.tscn      # UI scene definition
+├── GameEditorTools.cs           # Main plugin entry point
+├── plugin.cfg                   # Plugin configuration
+└── README.md                    # This file
+```
+
+## Planned Features
+
+- Form-based Add/Edit/Delete operations for each data type
+- Visual loot table designer with probability wheels
+- Recipe dependency graph visualization
+- Game balance testing tools
+- Bulk edit operations
+- Import/Export tools for spreadsheet workflows
 
 ## Features
 

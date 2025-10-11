@@ -1,6 +1,7 @@
 #if TOOLS
 using Godot;
 using System;
+using Game.Tools.DataEditor;
 
 [Tool]
 public partial class GameEditorTools : EditorPlugin

@@ -346,6 +346,16 @@ public class ValidationResults
         _messages.Add(new ValidationMessage(MessageType.Info, category, message));
     }
     
+    public IEnumerable<string> GetAllErrors()
+    {
+        return _messages.Where(m => m.Type == MessageType.Error).Select(m => $"[{m.Category}] {m.Message}");
+    }
+    
+    public IEnumerable<string> GetAllWarnings()
+    {
+        return _messages.Where(m => m.Type == MessageType.Warning).Select(m => $"[{m.Category}] {m.Message}");
+    }
+    
     public string GenerateReport()
     {
         var sb = new StringBuilder();
