@@ -1,10 +1,12 @@
 #nullable enable
 
+using FluentAssertions;
 using Game.Crafting.Handlers;
 using Game.Crafting.Models;
 using Game.Crafting.Queries;
 using Game.Crafting.Systems;
 using Game.Crafting.Tests.CQS;
+using Moq;
 
 namespace Game.Crafting.Tests.Handlers;
 

@@ -101,7 +101,7 @@ public class CustomerShoppingSessionTests
 
         // Track session events
         var phaseChanges = new List<ShoppingPhase>();
-        session.PhaseChanged += (c, phase) => phaseChanges.Add(phase);
+        session.PhaseChanged += (_, phase) => phaseChanges.Add(phase);
 
         // Act
         var satisfaction = await session.RunShoppingSessionAsync();
@@ -133,7 +133,7 @@ public class CustomerShoppingSessionTests
 
         // Track purchase completion
         SaleTransaction? completedTransaction = null;
-        session.PurchaseCompleted += (c, t) => completedTransaction = t;
+        session.PurchaseCompleted += (_, t) => completedTransaction = t;
 
         // Act
         var satisfaction = await session.RunShoppingSessionAsync();
@@ -245,7 +245,7 @@ public class CustomerShoppingSessionTests
 
         // Track purchase completion
         SaleTransaction? completedTransaction = null;
-        session.PurchaseCompleted += (c, t) => completedTransaction = t;
+        session.PurchaseCompleted += (_, t) => completedTransaction = t;
 
         // Act
         var satisfaction = await session.RunShoppingSessionAsync();
@@ -291,9 +291,9 @@ public class CustomerShoppingSessionTests
 
         var eventOrder = new List<string>();
 
-        session.PhaseChanged += (c, phase) => eventOrder.Add($"Phase:{phase}");
-        session.ItemExamined += (c, i, interest) => eventOrder.Add($"Examined:{i.Name}");
-        session.SessionEnded += (c, s, r) => eventOrder.Add($"Ended:{r}");
+        session.PhaseChanged += (_, phase) => eventOrder.Add($"Phase:{phase}");
+        session.ItemExamined += (_, i, _) => eventOrder.Add($"Examined:{i.Name}");
+        session.SessionEnded += (_, _, r) => eventOrder.Add($"Ended:{r}");
 
         // Act
         await session.RunShoppingSessionAsync();

@@ -369,7 +369,7 @@ public class RecipeManagerTests
         _recipeManager.AddRecipe(_testRecipe, unlocked: false);
 
         RecipeEventArgs? eventArgs = null;
-        _recipeManager.RecipeUnlocked += (sender, args) => eventArgs = args;
+        _recipeManager.RecipeUnlocked += (_, args) => eventArgs = args;
 
         // Act
         _recipeManager.UnlockRecipe(_testRecipe.RecipeId);
@@ -441,7 +441,7 @@ public class RecipeManagerTests
         _recipeManager.AddRecipe(_testRecipe, unlocked: true);
 
         RecipeEventArgs? eventArgs = null;
-        _recipeManager.RecipeLocked += (sender, args) => eventArgs = args;
+        _recipeManager.RecipeLocked += (_, args) => eventArgs = args;
 
         // Act
         _recipeManager.LockRecipe(_testRecipe.RecipeId);
@@ -732,7 +732,7 @@ public class RecipeManagerTests
 
         var eventRaised = false;
         Recipe? eventRecipe = null;
-        _recipeManager.RecipeUnlocked += (sender, args) =>
+        _recipeManager.RecipeUnlocked += (_, args) =>
         {
             eventRaised = true;
             eventRecipe = args.Recipe;
@@ -754,7 +754,7 @@ public class RecipeManagerTests
 
         var eventRaised = false;
         Recipe? eventRecipe = null;
-        _recipeManager.RecipeLocked += (sender, args) =>
+        _recipeManager.RecipeLocked += (_, args) =>
         {
             eventRaised = true;
             eventRecipe = args.Recipe;

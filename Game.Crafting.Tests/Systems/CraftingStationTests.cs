@@ -288,7 +288,7 @@ public class CraftingStationTests : IDisposable
         var order = _craftingStation.QueueCraftingOrder(_testRecipe.RecipeId, _testMaterials);
         
         CraftingEventArgs? eventArgs = null;
-        _craftingStation.CraftingCancelled += (sender, args) => eventArgs = args;
+        _craftingStation.CraftingCancelled += (_, args) => eventArgs = args;
         
         // Act
         _craftingStation.CancelOrder(order!.OrderId);
@@ -319,7 +319,7 @@ public class CraftingStationTests : IDisposable
         _craftingStation.QueueCraftingOrder(_testRecipe.RecipeId, _testMaterials);
         
         var cancelledCount = 0;
-        _craftingStation.CraftingCancelled += (sender, args) => cancelledCount++;
+        _craftingStation.CraftingCancelled += (_, _) => cancelledCount++;
         
         // Act
         _craftingStation.CancelAllOrders();
@@ -340,7 +340,7 @@ public class CraftingStationTests : IDisposable
     {
         // Arrange
         CraftingEventArgs? eventArgs = null;
-        _craftingStation.CraftingStarted += (sender, args) => eventArgs = args;
+        _craftingStation.CraftingStarted += (_, args) => eventArgs = args;
         
         // Act
         _craftingStation.QueueCraftingOrder(_testRecipe.RecipeId, _testMaterials);
@@ -356,7 +356,7 @@ public class CraftingStationTests : IDisposable
     {
         // Arrange
         var progressUpdates = new List<CraftingEventArgs>();
-        _craftingStation.CraftingProgressUpdated += (sender, args) => progressUpdates.Add(args);
+        _craftingStation.CraftingProgressUpdated += (_, args) => progressUpdates.Add(args);
         
         // Act
         _craftingStation.QueueCraftingOrder(_testRecipe.RecipeId, _testMaterials);

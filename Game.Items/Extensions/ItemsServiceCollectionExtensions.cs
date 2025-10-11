@@ -32,7 +32,7 @@ public static class ItemsServiceCollectionExtensions
         services.AddScoped<ItemCreationService>(); // Add JSON-based item creation service
 
         // Register core systems
-        services.AddSingleton<LootGenerator>(provider =>
+        services.AddSingleton<LootGenerator>(_ =>
         {
             // Create a simple loot generator with basic configurations
             // In a real implementation, this would come from configuration or database
