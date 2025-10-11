@@ -1,6 +1,4 @@
-#nullable enable
-
-using Game.Core.CQS;
+using FluentAssertions;
 using Game.Crafting.Commands;
 using Game.Crafting.Models;
 using Game.Crafting.Queries;
@@ -91,7 +89,7 @@ public class CraftingServiceTests
     public async Task CancelAllCraftingOrdersAsync_DispatchesCommand()
     {
         // Arrange
-        _mockDispatcher.RegisterCommandHandler<CancelAllCraftingOrdersCommand>(command =>
+        _mockDispatcher.RegisterCommandHandler<CancelAllCraftingOrdersCommand>(_ =>
             Task.CompletedTask);
 
         // Act
@@ -134,7 +132,7 @@ public class CraftingServiceTests
             QueuedOrders = new List<CraftingOrder> { TestHelpers.CreateTestOrder("queued") }
         };
 
-        _mockDispatcher.RegisterQueryHandler<GetAllCraftingOrdersQuery, CraftingOrdersResult>(query =>
+        _mockDispatcher.RegisterQueryHandler<GetAllCraftingOrdersQuery, CraftingOrdersResult>(_ =>
             Task.FromResult(expectedResult));
 
         // Act
@@ -152,7 +150,7 @@ public class CraftingServiceTests
         // Arrange
         var expectedStats = new Dictionary<string, object> { ["IsActive"] = true };
 
-        _mockDispatcher.RegisterQueryHandler<GetCraftingStationStatsQuery, Dictionary<string, object>>(query =>
+        _mockDispatcher.RegisterQueryHandler<GetCraftingStationStatsQuery, Dictionary<string, object>>(_ =>
             Task.FromResult(expectedStats));
 
         // Act
@@ -371,7 +369,7 @@ public class CraftingServiceTests
         // Arrange
         var expectedStats = new Dictionary<string, object> { ["TotalRecipes"] = 10 };
 
-        _mockDispatcher.RegisterQueryHandler<GetRecipeManagerStatsQuery, Dictionary<string, object>>(query =>
+        _mockDispatcher.RegisterQueryHandler<GetRecipeManagerStatsQuery, Dictionary<string, object>>(_ =>
             Task.FromResult(expectedStats));
 
         // Act
@@ -395,33 +393,34 @@ public class CraftingServiceTests
         var token = cts.Token;
 
         // Set up handlers that verify cancellation token
-        _mockDispatcher.RegisterCommandHandler<QueueCraftingOrderCommand, string>(cmd => Task.FromResult("order-id"));
-        _mockDispatcher.RegisterCommandHandler<CancelCraftingOrderCommand>(cmd => Task.CompletedTask);
-        _mockDispatcher.RegisterCommandHandler<CancelAllCraftingOrdersCommand>(cmd => Task.CompletedTask);
-        _mockDispatcher.RegisterCommandHandler<AddRecipeCommand>(cmd => Task.CompletedTask);
-        _mockDispatcher.RegisterCommandHandler<UnlockRecipeCommand>(cmd => Task.CompletedTask);
-        _mockDispatcher.RegisterCommandHandler<LockRecipeCommand>(cmd => Task.CompletedTask);
-        _mockDispatcher.RegisterCommandHandler<DiscoverRecipesCommand, int>(cmd => Task.FromResult(0));
+        _mockDispatcher.RegisterCommandHandler<QueueCraftingOrderCommand, string>(_ => Task.FromResult("order-id"));
+        _mockDispatcher.RegisterCommandHandler<CancelCraftingOrderCommand>(_ => Task.CompletedTask);
+        _mockDispatcher.RegisterCommandHandler<CancelAllCraftingOrdersCommand>(_ => Task.CompletedTask);
+        _mockDispatcher.RegisterCommandHandler<AddRecipeCommand>(_ => Task.CompletedTask);
+        _mockDispatcher.RegisterCommandHandler<UnlockRecipeCommand>(_ => Task.CompletedTask);
+        _mockDispatcher.RegisterCommandHandler<LockRecipeCommand>(_ => Task.CompletedTask);
+        _mockDispatcher.RegisterCommandHandler<DiscoverRecipesCommand, int>(_ => Task.FromResult(0));
 
-        _mockDispatcher.RegisterQueryHandler<GetCraftingOrderQuery, CraftingOrder?>(query => Task.FromResult<CraftingOrder?>(null));
-        _mockDispatcher.RegisterQueryHandler<GetAllCraftingOrdersQuery, CraftingOrdersResult>(query => 
+        _mockDispatcher.RegisterQueryHandler<GetCraftingOrderQuery, CraftingOrder?>(_ => Task.FromResult<CraftingOrder?>(null));
+        _mockDispatcher.RegisterQueryHandler<GetAllCraftingOrdersQuery, CraftingOrdersResult>(_ => 
             Task.FromResult(new CraftingOrdersResult
             {
                 CurrentOrder = null,
                 QueuedOrders = new List<CraftingOrder>()
             }));
-        _mockDispatcher.RegisterQueryHandler<GetCraftingStationStatsQuery, Dictionary<string, object>>(query => 
+        _mockDispatcher.RegisterQueryHandler<GetCraftingStationStatsQuery, Dictionary<string, object>>(_ => 
             Task.FromResult(new Dictionary<string, object>()));
-        _mockDispatcher.RegisterQueryHandler<GetRecipeQuery, Recipe?>(query => Task.FromResult<Recipe?>(null));
-        _mockDispatcher.RegisterQueryHandler<GetUnlockedRecipesQuery, IReadOnlyList<Recipe>>(query => 
+        _mockDispatcher.RegisterQueryHandler<GetRecipeQuery, Recipe?>(_ => Task.FromResult<Recipe?>(null));
+        _mockDispatcher.RegisterQueryHandler<GetUnlockedRecipesQuery, IReadOnlyList<Recipe>>(_ => 
             Task.FromResult<IReadOnlyList<Recipe>>(new List<Recipe>()));
-        _mockDispatcher.RegisterQueryHandler<SearchRecipesQuery, IReadOnlyList<Recipe>>(query => 
+        _mockDispatcher.RegisterQueryHandler<SearchRecipesQuery, IReadOnlyList<Recipe>>(_ => 
             Task.FromResult<IReadOnlyList<Recipe>>(new List<Recipe>()));
-        _mockDispatcher.RegisterQueryHandler<IsRecipeUnlockedQuery, bool>(query => Task.FromResult(false));
-        _mockDispatcher.RegisterQueryHandler<GetRecipeManagerStatsQuery, Dictionary<string, object>>(query => 
+        _mockDispatcher.RegisterQueryHandler<IsRecipeUnlockedQuery, bool>(_ => Task.FromResult(false));
+        _mockDispatcher.RegisterQueryHandler<GetRecipeManagerStatsQuery, Dictionary<string, object>>(_ => 
             Task.FromResult(new Dictionary<string, object>()));
 
         var materials = new Dictionary<string, Material>();
+        // ReSharper disable once CollectionNeverUpdated.Local
         var materialsList = new List<Material>();
         var recipe = TestHelpers.CreateTestRecipe();
 
