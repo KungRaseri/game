@@ -56,6 +56,13 @@ public partial class JsonDataEditorDock : Control
         GD.Print("JsonDataEditorDock: Initialization complete");
     }
 
+    public override void _ExitTree()
+    {
+        // Clean up any signals that were connected
+        DisconnectSignals();
+        GD.Print("JsonDataEditorDock: Cleanup completed");
+    }
+
     private void GetNodeReferences()
     {
         // Main UI elements
@@ -132,6 +139,44 @@ public partial class JsonDataEditorDock : Control
 
         if (_lootTablesList != null)
             _lootTablesList.ItemActivated += () => OnTreeItemActivated("LootTables");
+    }
+
+    private void DisconnectSignals()
+    {
+        if (_refreshButton != null)
+            _refreshButton.Pressed -= OnRefreshPressed;
+
+        if (_validateButton != null)
+            _validateButton.Pressed -= OnValidatePressed;
+
+        // Disconnect tab-specific signals
+        foreach (var dataType in _dataFilePaths.Keys)
+        {
+            if (_addButtons.TryGetValue(dataType, out var addBtn))
+                addBtn.Pressed -= () => OnAddPressed(dataType);
+
+            if (_editButtons.TryGetValue(dataType, out var editBtn))
+                editBtn.Pressed -= () => OnEditPressed(dataType);
+
+            if (_deleteButtons.TryGetValue(dataType, out var deleteBtn))
+                deleteBtn.Pressed -= () => OnDeletePressed(dataType);
+
+            if (_rawEditButtons.TryGetValue(dataType, out var rawBtn))
+                rawBtn.Pressed -= () => OnRawEditPressed(dataType);
+        }
+
+        // Disconnect tree double-click events
+        if (_materialsList != null)
+            _materialsList.ItemActivated -= () => OnTreeItemActivated("Materials");
+
+        if (_recipesList != null)
+            _recipesList.ItemActivated -= () => OnTreeItemActivated("Recipes");
+
+        if (_entitiesList != null)
+            _entitiesList.ItemActivated -= () => OnTreeItemActivated("Entities");
+
+        if (_lootTablesList != null)
+            _lootTablesList.ItemActivated -= () => OnTreeItemActivated("LootTables");
     }
 
     private void SetupTabContainers()
@@ -375,8 +420,16 @@ public partial class JsonDataEditorDock : Control
 
     private void OnAddPressed(string dataType)
     {
-        GD.Print($"Add {dataType} pressed - feature coming soon!");
-        UpdateStatus($"Add {dataType} - Feature coming soon", false);
+        switch (dataType)
+        {
+            case "Materials":
+                ShowMaterialEditor();
+                break;
+            default:
+                GD.Print($"Add {dataType} pressed - feature coming soon!");
+                UpdateStatus($"Add {dataType} - Feature coming soon", false);
+                break;
+        }
     }
 
     private void OnEditPressed(string dataType)
@@ -389,8 +442,17 @@ public partial class JsonDataEditorDock : Control
         }
 
         var id = selectedItem.GetText(0);
-        GD.Print($"Edit {dataType} pressed for ID: {id} - feature coming soon!");
-        UpdateStatus($"Edit {dataType} '{id}' - Feature coming soon", false);
+        
+        switch (dataType)
+        {
+            case "Materials":
+                ShowMaterialEditor(id);
+                break;
+            default:
+                GD.Print($"Edit {dataType} pressed for ID: {id} - feature coming soon!");
+                UpdateStatus($"Edit {dataType} '{id}' - Feature coming soon", false);
+                break;
+        }
     }
 
     private void OnDeletePressed(string dataType)
@@ -423,6 +485,45 @@ public partial class JsonDataEditorDock : Control
     private void OnTreeItemActivated(string dataType)
     {
         OnEditPressed(dataType);
+    }
+
+    // Material Editor Integration
+    private void ShowMaterialEditor(string? materialId = null)
+    {
+        try
+        {
+            var materialEditorScene = GD.Load<PackedScene>("res://Scenes/Tools/DataEditor/MaterialEditorDialog.tscn");
+            if (materialEditorScene == null)
+            {
+                UpdateStatus("Material editor scene not found!", true);
+                return;
+            }
+
+            var dialog = materialEditorScene.Instantiate<MaterialEditorDialog>();
+            if (dialog == null)
+            {
+                UpdateStatus("Failed to instantiate material editor dialog!", true);
+                return;
+            }
+
+            // Add dialog to main screen and show
+            var editorInterface = EditorInterface.Singleton;
+            var mainScreen = editorInterface.GetEditorMainScreen();
+            mainScreen.AddChild(dialog);
+            dialog.PopupCentered(new Vector2I(600, 500));
+            
+            // Connect to MaterialSaved signal to refresh data
+            dialog.MaterialSaved += () => 
+            {
+                RefreshMaterials();
+                UpdateStatus("Material data refreshed", false);
+            };
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus($"Error opening material editor: {ex.Message}", true);
+            GD.PrintErr($"ShowMaterialEditor error: {ex.Message}");
+        }
     }
 
     // Helper methods
@@ -492,9 +593,15 @@ public partial class JsonDataEditorDock : Control
 
     private static int GetJsonInt(JsonElement element, string propertyName)
     {
-        return element.TryGetProperty(propertyName, out var prop) && prop.ValueKind == JsonValueKind.Number 
-            ? prop.GetInt32() 
-            : 0;
+        if (element.TryGetProperty(propertyName, out var prop) && prop.ValueKind == JsonValueKind.Number)
+        {
+            // Handle both integer and floating-point values
+            if (prop.TryGetInt32(out var intValue))
+                return intValue;
+            else if (prop.TryGetDouble(out var doubleValue))
+                return (int)Math.Round(doubleValue);
+        }
+        return 0;
     }
 }
 
