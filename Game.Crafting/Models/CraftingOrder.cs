@@ -230,7 +230,7 @@ public class CraftingOrder
         {
             var satisfiedQuantity = AllocatedMaterials.Values
                 .Where(requirement.IsSatisfiedBy)
-                .Sum(material => 1); // Each material in the dictionary represents one unit
+                .Sum(_ => 1); // Each material in the dictionary represents one unit
 
             if (satisfiedQuantity < requirement.Quantity)
             {

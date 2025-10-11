@@ -52,7 +52,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddEconomyCoreSystems(this IServiceCollection services)
     {
         // Register treasury manager as singleton to maintain state
-        services.AddSingleton<ITreasuryManager>(provider => new TreasuryManager());
+        services.AddSingleton<ITreasuryManager>(_ => new TreasuryManager());
         
         // Register the high-level economy service
         services.AddScoped<EconomyService>();

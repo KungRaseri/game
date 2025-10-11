@@ -87,7 +87,7 @@ public class ShopTrafficManagerTests
         CustomerSatisfaction? finalSatisfaction = null;
 
         trafficManager.CustomerEntered += (customer) => enteredCustomer = customer;
-        trafficManager.CustomerLeft += (customer, satisfaction, reason) =>
+        trafficManager.CustomerLeft += (customer, satisfaction, _) =>
         {
             leftCustomer = customer;
             finalSatisfaction = satisfaction;
@@ -125,7 +125,7 @@ public class ShopTrafficManagerTests
 
         // Track purchase events
         SaleTransaction? recordedTransaction = null;
-        trafficManager.CustomerPurchased += (customer, transaction) => recordedTransaction = transaction;
+        trafficManager.CustomerPurchased += (_, transaction) => recordedTransaction = transaction;
 
         // Act
         await trafficManager.AddCustomerAsync(testCustomer);
