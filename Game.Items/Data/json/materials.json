@@ -1,240 +1,204 @@
 {
-	"version": "1.0",
-	"lastModified": "2025-10-10T00:00:00Z",
-	"materials": [
-		{
-			"id": "iron_ore",
-			"name": "Iron Ore",
-			"description": "Common metal ore used in basic weapon and armor crafting.",
-			"baseValue": 2.0,
-			"category": "Metal",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "silver_ore",
-			"name": "Silver Ore",
-			"description": "Refined metal ore with enhanced properties for quality equipment.",
-			"baseValue": 8.0,
-			"category": "Metal",
-			"qualityTier": "Uncommon",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "gold_ore",
-			"name": "Gold Ore",
-			"description": "Precious metal ore used for high-value items and decorative enhancements.",
-			"baseValue": 25.0,
-			"category": "Metal",
-			"qualityTier": "Rare",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "crude_leather",
-			"name": "Crude Leather",
-			"description": "Basic leather material from common creatures, suitable for simple armor.",
-			"baseValue": 1.0,
-			"category": "Leather",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "thick_leather",
-			"name": "Thick Leather",
-			"description": "Durable leather from larger creatures, provides better protection.",
-			"baseValue": 4.0,
-			"category": "Leather",
-			"qualityTier": "Uncommon",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "herbs",
-			"name": "Medicinal Herbs",
-			"description": "Common plants with healing properties, used in potion making.",
-			"baseValue": 1.0,
-			"category": "Herb",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "coal",
-			"name": "Coal",
-			"description": "Fuel material used in forging and smelting operations.",
-			"baseValue": 1.0,
-			"category": "Fuel",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "gem_shard",
-			"name": "Gem Shard",
-			"description": "Small fragments of precious gems, can be combined for greater value.",
-			"baseValue": 15.0,
-			"category": "Gem",
-			"qualityTier": "Rare",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "enchanted_stone",
-			"name": "Enchanted Stone",
-			"description": "Magically infused stone that enhances weapon and armor properties.",
-			"baseValue": 50.0,
-			"category": "Magical",
-			"qualityTier": "Epic",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "mana_crystal",
-			"name": "Mana Crystal",
-			"description": "Crystallized magical energy, extremely rare and powerful.",
-			"baseValue": 200.0,
-			"category": "Magical",
-			"qualityTier": "Legendary",
-			"stackable": true,
-			"maxStackSize": 999.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "material_iron_ore",
-			"name": "Iron Ore",
-			"description": "Raw iron ore, can be smelted into ingots.",
-			"baseValue": 5.0,
-			"category": "Metal",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 99.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "material_steel_ingot",
-			"name": "Steel Ingot",
-			"description": "Refined steel ingot, ready for crafting.",
-			"baseValue": 15.0,
-			"category": "Metal",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 99.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "material_monster_hide",
-			"name": "Monster Hide",
-			"description": "Tough hide from a defeated monster.",
-			"baseValue": 8.0,
-			"category": "Leather",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 50.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "material_tanned_leather",
-			"name": "Tanned Leather",
-			"description": "Processed leather suitable for armor crafting.",
-			"baseValue": 12.0,
-			"category": "Leather",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 50.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "material_oak_wood",
-			"name": "Oak Wood",
-			"description": "Strong oak wood for weapon handles and shields.",
-			"baseValue": 3.0,
-			"category": "Wood",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 99.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "material_ruby",
-			"name": "Ruby",
-			"description": "A precious red gemstone that radiates power.",
-			"baseValue": 100.0,
-			"category": "Gem",
-			"qualityTier": "Rare",
-			"stackable": true,
-			"maxStackSize": 20.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "material_simple_herbs",
-			"name": "Simple Herbs",
-			"description": "Common herbs gathered from the surrounding area.",
-			"baseValue": 2.0,
-			"category": "Herb",
-			"qualityTier": "Common",
-			"stackable": true,
-			"maxStackSize": 99.0,
-			"properties": {
-
-			}
-		},
-		{
-			"id": "copper_ore",
-			"name": "Copper Ore",
-			"description": "",
-			"category": "Metal",
-			"qualityTier": "Common",
-			"baseValue": 1.0,
-			"stackable": true,
-			"maxStackSize": 99.0,
-			"properties": {
-
-			}
-		}
-	]
+  "version": "1.0",
+  "lastModified": "2025-10-10T00:00:00Z",
+  "materials": [
+    {
+      "id": "ore_iron",
+      "name": "Iron Ore",
+      "description": "Common metal ore used in basic weapon and armor crafting.",
+      "category": "Metal",
+      "qualityTier": "Common",
+      "baseValue": 2,
+      "stackable": true,
+      "maxStackSize": 100,
+      "properties": {}
+    },
+    {
+      "id": "ore_silver",
+      "name": "Silver Ore",
+      "description": "Refined metal ore with enhanced properties for quality equipment.",
+      "category": "Metal",
+      "qualityTier": "Uncommon",
+      "baseValue": 8,
+      "stackable": true,
+      "maxStackSize": 100,
+      "properties": {}
+    },
+    {
+      "id": "gold_ore",
+      "name": "Gold Ore",
+      "description": "Precious metal ore used for high-value items and decorative enhancements.",
+      "baseValue": 25.0,
+      "category": "Metal",
+      "qualityTier": "Rare",
+      "stackable": true,
+      "maxStackSize": 999.0,
+      "properties": {}
+    },
+    {
+      "id": "crude_leather",
+      "name": "Crude Leather",
+      "description": "Basic leather material from common creatures, suitable for simple armor.",
+      "baseValue": 1.0,
+      "category": "Leather",
+      "qualityTier": "Common",
+      "stackable": true,
+      "maxStackSize": 999.0,
+      "properties": {}
+    },
+    {
+      "id": "thick_leather",
+      "name": "Thick Leather",
+      "description": "Durable leather from larger creatures, provides better protection.",
+      "baseValue": 4.0,
+      "category": "Leather",
+      "qualityTier": "Uncommon",
+      "stackable": true,
+      "maxStackSize": 999.0,
+      "properties": {}
+    },
+    {
+      "id": "herbs",
+      "name": "Medicinal Herbs",
+      "description": "Common plants with healing properties, used in potion making.",
+      "baseValue": 1.0,
+      "category": "Herb",
+      "qualityTier": "Common",
+      "stackable": true,
+      "maxStackSize": 999.0,
+      "properties": {}
+    },
+    {
+      "id": "coal",
+      "name": "Coal",
+      "description": "Fuel material used in forging and smelting operations.",
+      "baseValue": 1.0,
+      "category": "Fuel",
+      "qualityTier": "Common",
+      "stackable": true,
+      "maxStackSize": 999.0,
+      "properties": {}
+    },
+    {
+      "id": "gem_shard",
+      "name": "Gem Shard",
+      "description": "Small fragments of precious gems, can be combined for greater value.",
+      "baseValue": 15.0,
+      "category": "Gem",
+      "qualityTier": "Rare",
+      "stackable": true,
+      "maxStackSize": 999.0,
+      "properties": {}
+    },
+    {
+      "id": "enchanted_stone",
+      "name": "Enchanted Stone",
+      "description": "Magically infused stone that enhances weapon and armor properties.",
+      "baseValue": 50.0,
+      "category": "Magical",
+      "qualityTier": "Epic",
+      "stackable": true,
+      "maxStackSize": 999.0,
+      "properties": {}
+    },
+    {
+      "id": "mana_crystal",
+      "name": "Mana Crystal",
+      "description": "Crystallized magical energy, extremely rare and powerful.",
+      "baseValue": 200.0,
+      "category": "Magical",
+      "qualityTier": "Legendary",
+      "stackable": true,
+      "maxStackSize": 999.0,
+      "properties": {}
+    },
+    {
+      "id": "material_iron_ore",
+      "name": "Iron Ore",
+      "description": "Raw iron ore, can be smelted into ingots.",
+      "baseValue": 5.0,
+      "category": "Metal",
+      "qualityTier": "Common",
+      "stackable": true,
+      "maxStackSize": 99.0,
+      "properties": {}
+    },
+    {
+      "id": "material_steel_ingot",
+      "name": "Steel Ingot",
+      "description": "Refined steel ingot, ready for crafting.",
+      "baseValue": 15.0,
+      "category": "Metal",
+      "qualityTier": "Common",
+      "stackable": true,
+      "maxStackSize": 99.0,
+      "properties": {}
+    },
+    {
+      "id": "material_monster_hide",
+      "name": "Monster Hide",
+      "description": "Tough hide from a defeated monster.",
+      "baseValue": 8.0,
+      "category": "Leather",
+      "qualityTier": "Common",
+      "stackable": true,
+      "maxStackSize": 50.0,
+      "properties": {}
+    },
+    {
+      "id": "material_tanned_leather",
+      "name": "Tanned Leather",
+      "description": "Processed leather suitable for armor crafting.",
+      "baseValue": 12.0,
+      "category": "Leather",
+      "qualityTier": "Common",
+      "stackable": true,
+      "maxStackSize": 50.0,
+      "properties": {}
+    },
+    {
+      "id": "material_oak_wood",
+      "name": "Oak Wood",
+      "description": "Strong oak wood for weapon handles and shields.",
+      "baseValue": 3.0,
+      "category": "Wood",
+      "qualityTier": "Common",
+      "stackable": true,
+      "maxStackSize": 99.0,
+      "properties": {}
+    },
+    {
+      "id": "material_ruby",
+      "name": "Ruby",
+      "description": "A precious red gemstone that radiates power.",
+      "baseValue": 100.0,
+      "category": "Gem",
+      "qualityTier": "Rare",
+      "stackable": true,
+      "maxStackSize": 20.0,
+      "properties": {}
+    },
+    {
+      "id": "material_simple_herbs",
+      "name": "Simple Herbs",
+      "description": "Common herbs gathered from the surrounding area.",
+      "baseValue": 2.0,
+      "category": "Herb",
+      "qualityTier": "Common",
+      "stackable": true,
+      "maxStackSize": 99.0,
+      "properties": {}
+    },
+    {
+      "id": "copper_ore",
+      "name": "Copper Ore",
+      "description": "",
+      "category": "Metal",
+      "qualityTier": "Common",
+      "baseValue": 1.0,
+      "stackable": true,
+      "maxStackSize": 99.0,
+      "properties": {}
+    }
+  ]
 }

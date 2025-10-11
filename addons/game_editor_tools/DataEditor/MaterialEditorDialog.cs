@@ -14,7 +14,7 @@ namespace Game.Tools.DataEditor;
 /// Dialog for adding and editing material data
 /// </summary>
 [Tool]
-public partial class MaterialEditorDialog : AcceptDialog
+public partial class MaterialEditorDialog : Window
 {
     [Signal]
     public delegate void MaterialSavedEventHandler();
@@ -223,14 +223,17 @@ public partial class MaterialEditorDialog : AcceptDialog
             {
                 foreach (var material in materialsArray.EnumerateArray())
                 {
-                    if (GetJsonString(material, "id") == materialId)
+                    var materialIdFromJson = GetJsonString(material, "id");
+                    if (materialIdFromJson == materialId)
                     {
+                        GD.Print($"MaterialEditor: Found material '{materialId}', loading data...");
                         PopulateFormFromJson(material);
                         return;
                     }
                 }
             }
 
+            GD.PrintErr($"MaterialEditor: Material '{materialId}' not found in JSON!");
             ShowError($"Material '{materialId}' not found!");
         }
         catch (Exception ex)

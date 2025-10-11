@@ -510,6 +510,19 @@ public partial class JsonDataEditorDock : Control
             var editorInterface = EditorInterface.Singleton;
             var mainScreen = editorInterface.GetEditorMainScreen();
             mainScreen.AddChild(dialog);
+            
+            // Setup dialog for add or edit mode
+            if (string.IsNullOrEmpty(materialId))
+            {
+                GD.Print("MaterialEditor: Setting up for ADD mode");
+                dialog.SetupForAdd();
+            }
+            else
+            {
+                GD.Print($"MaterialEditor: Setting up for EDIT mode with ID: '{materialId}'");
+                dialog.SetupForEdit(materialId);
+            }
+            
             dialog.PopupCentered(new Vector2I(600, 500));
             
             // Connect to MaterialSaved signal to refresh data
