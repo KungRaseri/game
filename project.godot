@@ -29,3 +29,7 @@ window/size/borderless=true
 [dotnet]
 
 project/assembly_name="Game"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/game_editor_tools/plugin.cfg")
