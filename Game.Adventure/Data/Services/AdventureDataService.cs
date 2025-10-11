@@ -2,6 +2,8 @@
 
 using Game.Core.Data.Interfaces;
 using Game.Core.Data.Models;
+using Game.Core.Data.Services;
+using Game.Core.Extensions;
 using Game.Core.Utils;
 using Game.Adventure.Data.Models;
 using Game.Adventure.Data;
@@ -9,19 +11,36 @@ using Game.Adventure.Data;
 namespace Game.Adventure.Data.Services;
 
 /// <summary>
-/// Service for loading adventure-related data from JSON files within the Game.Adventure domain
+/// Service for loading adventure-related data from JSON files within the Game.Adventure domain.
+/// Supports hot-reload for development scenarios.
 /// </summary>
 public class AdventureDataService
 {
     private readonly IDataLoader<EntityDataSet> _entityLoader;
+    private readonly HotReloadService _hotReloadService;
     
     private IReadOnlyList<EntityTypeConfig>? _cachedAdventurerConfigs;
     private IReadOnlyList<EntityTypeConfig>? _cachedMonsterConfigs;
     private IReadOnlyDictionary<string, EntityTypeConfig>? _cachedEntityLookup;
     
-    public AdventureDataService(IDataLoader<EntityDataSet> entityLoader)
+    public AdventureDataService(IDataLoader<EntityDataSet> entityLoader, HotReloadService hotReloadService)
     {
         _entityLoader = entityLoader ?? throw new ArgumentNullException(nameof(entityLoader));
+        _hotReloadService = hotReloadService ?? throw new ArgumentNullException(nameof(hotReloadService));
+
+        // Enable hot-reload for development
+        EnableHotReload();
+    }
+
+    /// <summary>
+    /// Enables hot-reload for the Adventure domain JSON files
+    /// </summary>
+    private void EnableHotReload()
+    {
+        _hotReloadService.EnableIfDevelopment();
+        
+        Action clearCache = ClearCache;
+        _hotReloadService.EnableForDomain("Adventure", clearCache.ToAsyncCallback());
     }
 
     /// <summary>

@@ -5,6 +5,7 @@ using Game.Items.Data.Models;
 using Game.Crafting.Data.Models;
 using Game.Adventure.Data.Models;
 using Game.Tools.Tools;
+using static Game.Core.Utils.GameLogger;
 
 namespace Game.Tools;
 
@@ -32,6 +33,11 @@ class Program
             case "generate-schemas":
                 await GenerateSchemas(args.Skip(1).ToArray());
                 break;
+            case "hotreload":
+            case "hot-reload":
+            case "test-hotreload":
+                await HotReloadTester.RunAsync(args.Skip(1).ToArray());
+                break;
             case "help":
             case "--help":
             case "-h":
@@ -50,11 +56,13 @@ class Program
         Console.WriteLine();
         Console.WriteLine("Available commands:");
         Console.WriteLine("  schemas, generate-schemas  Generate JSON schema files for data types");
+        Console.WriteLine("  hotreload, hot-reload      Test hot-reload functionality for JSON files");
         Console.WriteLine("  help, --help, -h          Show this help message");
         Console.WriteLine();
         Console.WriteLine("Examples:");
         Console.WriteLine("  dotnet run --project Game.Tools schemas");
         Console.WriteLine("  dotnet run --project Game.Tools generate-schemas --output ./schemas");
+        Console.WriteLine("  dotnet run --project Game.Tools hotreload");
     }
 
     static async Task GenerateSchemas(string[] args)
@@ -155,14 +163,14 @@ class Program
 /// </summary>
 public class ConsoleLoggerBackend : ILoggerBackend
 {
-    public void Log(GameLogger.LogLevel level, string message)
+    public void Log(LogLevel level, string message)
     {
         var color = level switch
         {
-            GameLogger.LogLevel.Debug => ConsoleColor.Gray,
-            GameLogger.LogLevel.Info => ConsoleColor.White,
-            GameLogger.LogLevel.Warning => ConsoleColor.Yellow,
-            GameLogger.LogLevel.Error => ConsoleColor.Red,
+            LogLevel.Debug => ConsoleColor.Gray,
+            LogLevel.Info => ConsoleColor.White,
+            LogLevel.Warning => ConsoleColor.Yellow,
+            LogLevel.Error => ConsoleColor.Red,
             _ => ConsoleColor.White
         };
 

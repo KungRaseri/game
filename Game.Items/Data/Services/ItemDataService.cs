@@ -2,6 +2,8 @@
 
 using Game.Core.Data.Interfaces;
 using Game.Core.Data.Models;
+using Game.Core.Data.Services;
+using Game.Core.Extensions;
 using Game.Core.Utils;
 using Game.Items.Data.Models;
 using Game.Items.Models.Materials;
@@ -9,7 +11,8 @@ using Game.Items.Models.Materials;
 namespace Game.Items.Data.Services;
 
 /// <summary>
-/// Service for loading item-related data from JSON files within the Game.Items domain
+/// Service for loading item-related data from JSON files within the Game.Items domain.
+/// Supports hot-reload for development scenarios.
 /// </summary>
 public class ItemDataService
 {
@@ -17,17 +20,50 @@ public class ItemDataService
     private readonly IDataLoader<WeaponDataSet> _weaponLoader;
     private readonly IDataLoader<ArmorDataSet> _armorLoader;
     private readonly IDataLoader<LootTableDataSet> _lootTableLoader;
+    private readonly HotReloadService _hotReloadService;
+
+    // Cache fields for hot-reload support
+    private IReadOnlyList<MaterialConfig>? _cachedMaterials;
+    private IReadOnlyList<WeaponConfig>? _cachedWeapons;
+    private IReadOnlyList<ArmorConfig>? _cachedArmor;
     
     public ItemDataService(
         IDataLoader<MaterialDataSet> materialLoader,
         IDataLoader<WeaponDataSet> weaponLoader,
         IDataLoader<ArmorDataSet> armorLoader,
-        IDataLoader<LootTableDataSet> lootTableLoader)
+        IDataLoader<LootTableDataSet> lootTableLoader,
+        HotReloadService hotReloadService)
     {
         _materialLoader = materialLoader ?? throw new ArgumentNullException(nameof(materialLoader));
         _weaponLoader = weaponLoader ?? throw new ArgumentNullException(nameof(weaponLoader));
         _armorLoader = armorLoader ?? throw new ArgumentNullException(nameof(armorLoader));
         _lootTableLoader = lootTableLoader ?? throw new ArgumentNullException(nameof(lootTableLoader));
+        _hotReloadService = hotReloadService ?? throw new ArgumentNullException(nameof(hotReloadService));
+
+        // Enable hot-reload for development
+        EnableHotReload();
+    }
+
+    /// <summary>
+    /// Enables hot-reload for all JSON files in the Items domain
+    /// </summary>
+    private void EnableHotReload()
+    {
+        _hotReloadService.EnableIfDevelopment();
+        
+        Action clearCache = ClearAllCaches;
+        _hotReloadService.EnableForDomain("Items", clearCache.ToAsyncCallback());
+    }
+
+    /// <summary>
+    /// Clears all cached data to force reload from files (useful for hot-reload scenarios)
+    /// </summary>
+    public void ClearAllCaches()
+    {
+        _cachedMaterials = null;
+        _cachedWeapons = null;
+        _cachedArmor = null;
+        GameLogger.Debug("Items data cache cleared");
     }
 
     /// <summary>
@@ -35,6 +71,11 @@ public class ItemDataService
     /// </summary>
     public async Task<IReadOnlyList<MaterialConfig>> GetAllMaterialConfigsAsync()
     {
+        if (_cachedMaterials != null)
+        {
+            return _cachedMaterials;
+        }
+
         var dataPath = DataPath.GetDomainJsonPath("materials.json");
         var result = await _materialLoader.LoadAsync(dataPath);
         
@@ -44,8 +85,11 @@ public class ItemDataService
             return GetFallbackMaterials();
         }
 
-        return result.Data?.Materials?.Select(m => m.ToMaterialConfig()).ToList().AsReadOnly() 
+        _cachedMaterials = result.Data?.Materials?.Select(m => m.ToMaterialConfig()).ToList().AsReadOnly() 
                ?? GetFallbackMaterials();
+               
+        GameLogger.Debug($"Loaded {_cachedMaterials.Count} material configurations from JSON");
+        return _cachedMaterials;
     }
 
     /// <summary>
@@ -62,6 +106,11 @@ public class ItemDataService
     /// </summary>
     public async Task<IReadOnlyList<WeaponConfig>> GetAllWeaponConfigsAsync()
     {
+        if (_cachedWeapons != null)
+        {
+            return _cachedWeapons;
+        }
+
         var dataPath = DataPath.GetDomainJsonPath("weapons.json");
         var result = await _weaponLoader.LoadAsync(dataPath);
         
@@ -71,8 +120,11 @@ public class ItemDataService
             return GetFallbackWeapons();
         }
 
-        return result.Data?.Weapons?.Select(w => w.ToWeaponConfig()).ToList().AsReadOnly() 
+        _cachedWeapons = result.Data?.Weapons?.Select(w => w.ToWeaponConfig()).ToList().AsReadOnly() 
                ?? GetFallbackWeapons();
+               
+        GameLogger.Debug($"Loaded {_cachedWeapons.Count} weapon configurations from JSON");
+        return _cachedWeapons;
     }
 
     /// <summary>
@@ -89,6 +141,11 @@ public class ItemDataService
     /// </summary>
     public async Task<IReadOnlyList<ArmorConfig>> GetAllArmorConfigsAsync()
     {
+        if (_cachedArmor != null)
+        {
+            return _cachedArmor;
+        }
+
         var dataPath = DataPath.GetDomainJsonPath("armor.json");
         var result = await _armorLoader.LoadAsync(dataPath);
         
@@ -98,8 +155,11 @@ public class ItemDataService
             return GetFallbackArmor();
         }
 
-        return result.Data?.Armor?.Select(a => a.ToArmorConfig()).ToList().AsReadOnly() 
+        _cachedArmor = result.Data?.Armor?.Select(a => a.ToArmorConfig()).ToList().AsReadOnly() 
                ?? GetFallbackArmor();
+               
+        GameLogger.Debug($"Loaded {_cachedArmor.Count} armor configurations from JSON");
+        return _cachedArmor;
     }
 
     /// <summary>

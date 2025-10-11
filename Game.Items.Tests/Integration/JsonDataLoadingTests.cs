@@ -19,6 +19,7 @@ public class JsonDataLoadingTests
         // Arrange
         var services = new ServiceCollection();
         services.AddTransient(typeof(IDataLoader<>), typeof(JsonDataLoader<>));
+        services.AddSingleton<HotReloadService>(); // Add hot-reload service for dependency injection
         services.AddScoped<ItemDataService>();
         
         var serviceProvider = services.BuildServiceProvider();
@@ -39,6 +40,7 @@ public class JsonDataLoadingTests
         // Arrange
         var services = new ServiceCollection();
         services.AddTransient(typeof(IDataLoader<>), typeof(JsonDataLoader<>));
+        services.AddSingleton<HotReloadService>(); // Add hot-reload service for dependency injection
         services.AddScoped<ItemDataService>();
         services.AddScoped<ItemCreationService>();
         
@@ -60,6 +62,7 @@ public class JsonDataLoadingTests
         // Arrange
         var services = new ServiceCollection();
         services.AddTransient(typeof(IDataLoader<>), typeof(JsonDataLoader<>));
+        services.AddSingleton<HotReloadService>(); // Add hot-reload service for dependency injection
         services.AddScoped<ItemDataService>();
         
         var serviceProvider = services.BuildServiceProvider();

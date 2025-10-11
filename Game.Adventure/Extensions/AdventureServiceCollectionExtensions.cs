@@ -58,6 +58,9 @@ public static class AdventureServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddAdventureDataServices(this IServiceCollection services)
     {
+        // Register core data services
+        services.AddSingleton<HotReloadService>();
+        
         // Register data loaders for Adventure domain
         services.AddSingleton<IDataLoader<EntityDataSet>, JsonDataLoader<EntityDataSet>>();
         
