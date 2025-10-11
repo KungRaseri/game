@@ -1,0 +1,52 @@
+{
+  "$id": "EntityDataSet",
+  "definitions": {
+    "EntityData": {
+      "$id": "EntityData",
+      "type": "object",
+      "properties": {
+        "EntityId": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "BaseHealth": {
+          "type": "integer"
+        },
+        "BaseDamage": {
+          "type": "integer"
+        },
+        "RetreatThreshold": {
+          "type": "number"
+        },
+        "HealthRegenPerSecond": {
+          "type": "integer"
+        },
+        "EntityType": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "Adventurers": {
+      "$id": "IReadOnlyList\u00601",
+      "type": "array",
+      "items": {
+        "$ref": "EntityData"
+      }
+    },
+    "Monsters": {
+      "$id": "IReadOnlyList\u00601",
+      "type": "array",
+      "items": {
+        "$ref": "EntityData"
+      }
+    }
+  }
+}

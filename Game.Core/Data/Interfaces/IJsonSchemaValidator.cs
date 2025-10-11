@@ -1,5 +1,7 @@
 #nullable enable
 
+using Game.Core.Data.Models;
+
 namespace Game.Core.Data.Interfaces;
 
 /// <summary>

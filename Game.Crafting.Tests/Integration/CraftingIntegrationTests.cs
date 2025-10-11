@@ -12,6 +12,7 @@ using Game.Items.Models;
 using Game.Items.Models.Materials;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using CraftingExtensions = Game.Crafting.Extensions.CraftingServiceCollectionExtensions;
 
 namespace Game.Crafting.Tests.Integration;
 
@@ -38,8 +39,8 @@ public class CraftingIntegrationTests : IDisposable
         services.AddSingleton<IDispatcher, Dispatcher>();
         
         // Add crafting services
-        services.AddCraftingServices();
-        services.AddCraftingCoreSystems();
+        CraftingExtensions.AddCraftingServices(services);
+        CraftingExtensions.AddCraftingCoreSystems(services);
 
         _serviceProvider = services.BuildServiceProvider();
         _dispatcher = _serviceProvider.GetRequiredService<IDispatcher>();

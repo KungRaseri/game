@@ -73,7 +73,7 @@ public record ToastConfig
     /// <summary>
     /// Maximum width of the toast in pixels (0 = no limit).
     /// </summary>
-    public float MaxWidth { get; init; } = 280.0f;
+    public float MaxWidth { get; init; } = 300.0f;
 
     /// <summary>
     /// Whether the toast can be clicked to dismiss.

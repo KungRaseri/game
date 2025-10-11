@@ -25,6 +25,7 @@
 	  <Compile Remove="Game.Economy\**" />
 	  <Compile Remove="Game.Economy.Tests\**" />
 	  <Compile Remove="Game.Progression\**" />
+	  <Compile Remove="Game.Tools\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Remove="Game.Adventure\**" />
@@ -48,6 +49,7 @@
 	  <EmbeddedResource Remove="Game.Economy\**" />
 	  <EmbeddedResource Remove="Game.Economy.Tests\**" />
 	  <EmbeddedResource Remove="Game.Progression\**" />
+	  <EmbeddedResource Remove="Game.Tools\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="Game.Adventure\Game.Adventure.csproj" />

@@ -1,0 +1,62 @@
+{
+  "$id": "ArmorDataSet",
+  "definitions": {
+    "ArmorJsonData": {
+      "$id": "ArmorJsonData",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "BaseValue": {
+          "type": "integer"
+        },
+        "BaseDefense": {
+          "type": "integer"
+        },
+        "BaseDurability": {
+          "type": "integer"
+        },
+        "ArmorType": {
+          "type": "string"
+        },
+        "Properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "Version": {
+      "type": "string"
+    },
+    "LastModified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "Armor": {
+      "$id": "List\u00601",
+      "type": "array",
+      "items": {
+        "$ref": "ArmorJsonData"
+      }
+    }
+  }
+}

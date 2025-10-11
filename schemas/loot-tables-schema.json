@@ -1,0 +1,65 @@
+{
+  "$id": "LootTableDataSet",
+  "definitions": {
+    "LootEntryData": {
+      "$id": "LootEntryData",
+      "type": "object",
+      "properties": {
+        "ItemId": {
+          "type": "string"
+        },
+        "MinQuantity": {
+          "type": "integer"
+        },
+        "MaxQuantity": {
+          "type": "integer"
+        },
+        "DropChance": {
+          "type": "number"
+        },
+        "QualityTier": {
+          "type": "string"
+        }
+      }
+    },
+    "LootTableData": {
+      "$id": "LootTableData",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "MaxDrops": {
+          "type": "integer"
+        },
+        "Entries": {
+          "$id": "List\u00601",
+          "type": "array",
+          "items": {
+            "$ref": "LootEntryData"
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "Version": {
+      "type": "string"
+    },
+    "LastModified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "LootTables": {
+      "$id": "List\u00601",
+      "type": "array",
+      "items": {
+        "$ref": "LootTableData"
+      }
+    }
+  }
+}

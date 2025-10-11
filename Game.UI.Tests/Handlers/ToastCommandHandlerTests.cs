@@ -114,7 +114,7 @@ public class ToastCommandHandlerTests
             c.Title == "Materials Collected" && 
             c.Message == "Iron Ore, Coal, Copper" && 
             c.Style == ToastStyle.Material &&
-            c.Anchor == ToastAnchor.TopRight &&
+            c.Anchor == ToastAnchor.BottomRight &&
             c.Animation == ToastAnimation.SlideFromRight &&
             c.DisplayDuration == 4.0f)), Times.Once);
     }
@@ -207,7 +207,7 @@ public class ToastCommandHandlerTests
             c.Style == ToastStyle.Error &&
             c.Animation == ToastAnimation.Scale &&
             c.DisplayDuration == 5.0f &&
-            c.Anchor == ToastAnchor.Center)), Times.Once);
+            c.Anchor == ToastAnchor.TopLeft)), Times.Once);
     }
 
     [Fact]

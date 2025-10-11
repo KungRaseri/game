@@ -1,0 +1,128 @@
+{
+  "$id": "RecipeDataSet",
+  "definitions": {
+    "CraftingResultData": {
+      "$id": "CraftingResultData",
+      "type": "object",
+      "properties": {
+        "ItemId": {
+          "type": "string"
+        },
+        "ItemName": {
+          "type": "string"
+        },
+        "ItemType": {
+          "type": "string"
+        },
+        "BaseQuality": {
+          "type": "string"
+        },
+        "Quantity": {
+          "type": "integer"
+        },
+        "BaseValue": {
+          "type": "integer"
+        },
+        "ItemProperties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array"
+            ]
+          }
+        }
+      }
+    },
+    "MaterialRequirementData": {
+      "$id": "MaterialRequirementData",
+      "type": "object",
+      "properties": {
+        "Category": {
+          "type": "string"
+        },
+        "QualityTier": {
+          "type": "string"
+        },
+        "Quantity": {
+          "type": "integer"
+        }
+      }
+    },
+    "RecipeData": {
+      "$id": "RecipeData",
+      "type": "object",
+      "properties": {
+        "RecipeId": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "Category": {
+          "type": "string"
+        },
+        "MaterialRequirements": {
+          "$id": "List\u00601",
+          "type": "array",
+          "items": {
+            "$ref": "MaterialRequirementData"
+          }
+        },
+        "Result": {
+          "$ref": "CraftingResultData"
+        },
+        "CraftingTime": {
+          "type": "number"
+        },
+        "Difficulty": {
+          "type": "integer"
+        },
+        "Prerequisites": {
+          "$id": "List\u00601",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "IsUnlocked": {
+          "type": "boolean"
+        },
+        "ExperienceReward": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "StarterRecipes": {
+      "$id": "List\u00601",
+      "type": "array",
+      "items": {
+        "$ref": "RecipeData"
+      }
+    },
+    "AdvancedRecipes": {
+      "$id": "List\u00601",
+      "type": "array",
+      "items": {
+        "$ref": "RecipeData"
+      }
+    },
+    "Phase1Recipes": {
+      "$id": "List\u00601",
+      "type": "array",
+      "items": {
+        "$ref": "RecipeData"
+      }
+    }
+  }
+}
