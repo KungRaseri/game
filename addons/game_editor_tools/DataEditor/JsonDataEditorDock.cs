@@ -8,6 +8,7 @@ using System.Text.Json;
 
 /// <summary>
 /// Editor dock for editing JSON data files used by the game
+/// Scene-based version that loads UI from JsonEditorDock.tscn
 /// </summary>
 [Tool]
 public partial class JsonDataEditorDock : Control
@@ -23,67 +24,42 @@ public partial class JsonDataEditorDock : Control
     public override void _Ready()
     {
         Name = "JSON Data Editor";
-        CreateUI();
+        
+        // Get node references from the scene
+        GetNodeReferences();
+        
+        // Connect signals
+        ConnectSignals();
+        
+        // Initialize the file list
         RefreshFileList();
     }
 
-    private void CreateUI()
+    /// <summary>
+    /// Get references to nodes defined in the scene file
+    /// </summary>
+    private void GetNodeReferences()
     {
-        var vbox = new VBoxContainer();
-        AddChild(vbox);
+        _fileTree = GetNode<Tree>("VBoxContainer/FileTree");
+        _refreshButton = GetNode<Button>("VBoxContainer/HeaderContainer/RefreshButton");
+        _validateButton = GetNode<Button>("VBoxContainer/HeaderContainer/ValidateButton");
+        _statusLabel = GetNode<Label>("VBoxContainer/StatusLabel");
+        _infoLabel = GetNode<RichTextLabel>("VBoxContainer/InfoLabel");
+    }
 
-        // Header with title and buttons
-        var headerHBox = new HBoxContainer();
-        vbox.AddChild(headerHBox);
-
-        var title = new Label();
-        title.Text = "Game Data Files";
-        title.AddThemeStyleboxOverride("normal", new StyleBoxFlat());
-        headerHBox.AddChild(title);
-
-        // Add a spacer to push buttons to the right
-        var spacer = new Control();
-        spacer.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-        headerHBox.AddChild(spacer);
-
-        _refreshButton = new Button();
-        _refreshButton.Text = "Refresh";
-        _refreshButton.TooltipText = "Refresh the list of JSON files";
-        _refreshButton.Pressed += RefreshFileList;
-        headerHBox.AddChild(_refreshButton);
-
-        _validateButton = new Button();
-        _validateButton.Text = "Validate All";
-        _validateButton.TooltipText = "Validate all JSON files against their schemas";
-        _validateButton.Pressed += ValidateAllFiles;
-        headerHBox.AddChild(_validateButton);
-
-        vbox.AddChild(new HSeparator());
-
-        // Info section
-        _infoLabel = new RichTextLabel();
-        _infoLabel.CustomMinimumSize = new Vector2(0, 80);
-        _infoLabel.BbcodeEnabled = true;
-        _infoLabel.Text = "[b]JSON Data Editor[/b]\n\n" +
-                         "This tool helps you edit and validate the game's JSON data files. " +
-                         "Double-click a file to open it in the script editor.";
-        vbox.AddChild(_infoLabel);
-
-        vbox.AddChild(new HSeparator());
-
-        // File tree
-        _fileTree = new Tree();
-        _fileTree.SetColumnExpand(0, true);
-        _fileTree.ItemActivated += OnFileDoubleClicked;
-        _fileTree.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-        _fileTree.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
-        vbox.AddChild(_fileTree);
-
-        // Status bar
-        _statusLabel = new Label();
-        _statusLabel.Text = "Ready";
-        _statusLabel.AddThemeColorOverride("font_color", Colors.Green);
-        vbox.AddChild(_statusLabel);
+    /// <summary>
+    /// Connect button signals and tree interactions
+    /// </summary>
+    private void ConnectSignals()
+    {
+        if (_refreshButton != null)
+            _refreshButton.Pressed += RefreshFileList;
+            
+        if (_validateButton != null)
+            _validateButton.Pressed += ValidateAllFiles;
+            
+        if (_fileTree != null)
+            _fileTree.ItemActivated += OnFileDoubleClicked;
     }
 
     private void RefreshFileList()

@@ -42,9 +42,18 @@ A Godot editor plugin for the Fantasy Shop Keeper game that provides tools for e
 ### Using the JSON Data Editor Dock
 
 1. The dock appears on the left side of the editor when the plugin is enabled
-2. Click "Refresh" to update the file list
-3. Double-click any JSON file to open it in the editor
-4. Use "Validate All" to check all JSON files for errors
+2. The UI is loaded from `Scenes/Tools/DataEditor/JsonEditorDock.tscn` for easy visual customization
+3. Click "Refresh" to update the file list
+4. Double-click any JSON file to open it in the editor
+5. Use "Validate All" to check all JSON files for errors
+
+### Customizing the UI
+
+Since the dock uses a scene file (`Scenes/Tools/DataEditor/JsonEditorDock.tscn`), you can:
+- Open the scene in Godot's scene editor
+- Modify the layout, add new controls, or change styling
+- The script automatically finds nodes by their names
+- No code changes needed for basic UI modifications
 
 ### Validating JSON Data
 
@@ -68,11 +77,33 @@ A Godot editor plugin for the Fantasy Shop Keeper game that provides tools for e
 addons/game_editor_tools/
 ├── plugin.cfg                 # Plugin configuration
 ├── GameEditorTools.cs         # Main plugin class
-├── JsonDataEditorDock.cs      # File browser dock
-├── JsonDataValidator.cs       # Validation logic
-├── JsonQuickEditDialog.cs     # Quick edit dialog
-└── README.md                  # This file
+├── README.md                  # This file
+└── DataEditor/                # JSON data editing tools
+    ├── JsonDataEditorDock.cs  # Scene-based file browser dock
+    ├── JsonDataValidator.cs   # Validation logic
+    └── JsonQuickEditDialog.cs # Quick edit dialog
+
+Scenes/Tools/
+└── DataEditor/
+    └── JsonEditorDock.tscn    # UI scene for the data editor dock
 ```
+
+## Architecture
+
+The plugin uses a **scene-based approach** with **organized folder structure**:
+
+- **DataEditor/** - Contains all JSON data editing functionality
+- **JsonEditorDock.tscn** - Defines the UI layout declaratively
+- **JsonDataEditorDock.cs** - Provides the logic and node references
+- **GameEditorTools.cs** - Loads the scene and integrates with Godot editor
+
+This organization provides:
+- Clear separation of concerns (main plugin vs data editor tools)
+- Modular architecture for easy extension
+- Visual UI editing in Godot's scene editor
+- Clean separation of UI structure from business logic
+- Easy customization without code changes
+- Better collaboration between programmers and designers
 
 ## Supported JSON Files
 
@@ -85,17 +116,29 @@ The plugin specifically supports these game data files:
 
 ## Development Notes
 
+- Plugin uses **organized folder structure** for maintainability
+- **DataEditor/** folder contains all JSON editing functionality
 - Plugin is marked with `#if TOOLS` for editor-only compilation
 - Uses Godot 4.5 C# API conventions
 - Follows the game's existing JSON schema patterns
-- Designed to be extended with additional file types and operations
+- **Scene-based UI** for easy visual customization
+- Designed to be extended with additional tool categories
 - All validation logic is centralized and easily maintainable
 
 ## Future Enhancements
 
+### DataEditor Module
 - **Hot Reload**: Automatically reload game data when JSON files change
 - **Schema Validation**: Full JSON Schema validation support
 - **Backup System**: Automatic backups before making changes
 - **Diff Viewer**: Compare versions of JSON files
 - **Import/Export**: Bulk operations for JSON data
 - **Custom Templates**: User-defined templates for different item types
+
+### Additional Tool Modules
+The organized structure makes it easy to add new tool categories:
+- **SceneEditor/**: Tools for managing game scenes and levels
+- **AssetManager/**: Tools for organizing and validating game assets
+- **DatabaseTools/**: Tools for managing game database operations
+- **BuildTools/**: Automation tools for building and deployment
+- **TestingTools/**: Tools for automated testing and validation

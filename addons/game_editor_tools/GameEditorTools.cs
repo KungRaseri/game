@@ -13,9 +13,17 @@ public partial class GameEditorTools : EditorPlugin
 		// Get editor interface for accessing editor functionality
 		_editorInterface = EditorInterface.Singleton;
 
-		// Create and add JSON Data Editor dock
-		_jsonDataEditorDock = new JsonDataEditorDock();
-		AddControlToDock(DockSlot.LeftBr, _jsonDataEditorDock);
+		// Load and create JSON Data Editor dock from scene
+		var dockScene = GD.Load<PackedScene>("res://Scenes/Tools/DataEditor/JsonEditorDock.tscn");
+		if (dockScene != null)
+		{
+			_jsonDataEditorDock = dockScene.Instantiate<JsonDataEditorDock>();
+			AddControlToDock(DockSlot.LeftBr, _jsonDataEditorDock);
+		}
+		else
+		{
+			GD.PrintErr("[Game Editor Tools] Failed to load JsonEditorDock.tscn");
+		}
 
 		// Add custom menu items
 		AddToolMenuItem("Validate JSON Data", new Callable(this, nameof(OnValidateJsonData)));

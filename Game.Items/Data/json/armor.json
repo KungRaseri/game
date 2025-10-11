@@ -2,44 +2,44 @@
   "version": "1.0",
   "lastModified": "2025-10-10T00:00:00Z",
   "armor": [
-    {
-      "id": "armor_leather",
-      "name": "Leather Armor",
-      "description": "Basic leather protection for adventurers.",
-      "baseValue": 40,
-      "baseDefense": 3,
-      "baseDurability": 80,
-      "armorType": "Light",
-      "properties": {
-        "weight": "Light",
-        "flexibility": "High"
-      }
-    },
-    {
-      "id": "armor_chainmail",
-      "name": "Chain Mail",
-      "description": "Interlocking metal rings provide solid defense.",
-      "baseValue": 80,
-      "baseDefense": 5,
-      "baseDurability": 120,
-      "armorType": "Medium",
-      "properties": {
-        "weight": "Medium",
-        "flexibility": "Medium"
-      }
-    },
-    {
-      "id": "armor_plate",
-      "name": "Plate Armor",
-      "description": "Heavy steel plates offering maximum protection.",
-      "baseValue": 150,
-      "baseDefense": 8,
-      "baseDurability": 200,
-      "armorType": "Heavy",
-      "properties": {
-        "weight": "Heavy",
-        "flexibility": "Low"
-      }
-    }
+	{
+	  "id": "armor_leather",
+	  "name": "Leather Armor",
+	  "description": "Basic leather protection for adventurers.",
+	  "baseValue": 40,
+	  "baseDefense": 3,
+	  "baseDurability": 80,
+	  "armorType": "Light",
+	  "properties": {
+		"weight": "Light",
+		"flexibility": "High"
+	  }
+	},
+	{
+	  "id": "armor_chainmail",
+	  "name": "Chain Mail",
+	  "description": "Interlocking metal rings provide solid defense.",
+	  "baseValue": 80,
+	  "baseDefense": 5,
+	  "baseDurability": 120,
+	  "armorType": "Medium",
+	  "properties": {
+		"weight": "Medium",
+		"flexibility": "Medium"
+	  }
+	},
+	{
+	  "id": "armor_plate",
+	  "name": "Plate Armor",
+	  "description": "Heavy steel plates offering maximum protection.",
+	  "baseValue": 150,
+	  "baseDefense": 8,
+	  "baseDurability": 200,
+	  "armorType": "Heavy",
+	  "properties": {
+		"weight": "Heavy",
+		"flexibility": "Low"
+	  }
+	}
   ]
 }
