@@ -2,11 +2,16 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Game.Core.Extensions;
+using Game.Core.Data.Interfaces;
+using Game.Core.Data.Services;
 using Game.Adventure.Commands;
 using Game.Adventure.Queries;
 using Game.Adventure.Handlers;
 using Game.Adventure.Systems;
 using Game.Adventure.Models;
+using Game.Adventure.Data;
+using Game.Adventure.Data.Services;
+using Game.Adventure.Data.Models;
 
 namespace Game.Adventure.Extensions;
 
@@ -22,6 +27,9 @@ public static class AdventureServiceCollectionExtensions
     /// <returns>The service collection for method chaining</returns>
     public static IServiceCollection AddAdventureModule(this IServiceCollection services)
     {
+        // Register data services
+        services.AddAdventureDataServices();
+
         // Register core systems
         services.AddSingleton<CombatSystem>();
         services.AddScoped<AdventureSystem>();
@@ -41,6 +49,32 @@ public static class AdventureServiceCollectionExtensions
         services.AddQueryHandler<IsAdventurerInCombatQuery, bool, IsAdventurerInCombatQueryHandler>();
         services.AddQueryHandler<HasMonstersRemainingQuery, bool, HasMonstersRemainingQueryHandler>();
         services.AddQueryHandler<GetAdventurerInfoQuery, AdventurerInfo, GetAdventurerInfoQueryHandler>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Adventure data loading services
+    /// </summary>
+    public static IServiceCollection AddAdventureDataServices(this IServiceCollection services)
+    {
+        // Register core data services
+        services.AddSingleton<HotReloadService>();
+        
+        // Register data loaders for Adventure domain
+        services.AddSingleton<IDataLoader<EntityDataSet>, JsonDataLoader<EntityDataSet>>();
+        
+        // Register Adventure domain data services
+        services.AddSingleton<AdventureDataService>();
+        services.AddSingleton<EntityCreationService>(provider =>
+        {
+            var entityCreationService = new EntityCreationService(provider.GetRequiredService<AdventureDataService>());
+            
+            // Initialize EntityFactory with the service for backward compatibility
+            EntityFactory.SetEntityCreationService(entityCreationService);
+            
+            return entityCreationService;
+        });
 
         return services;
     }

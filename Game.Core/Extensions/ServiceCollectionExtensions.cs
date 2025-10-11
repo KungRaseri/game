@@ -2,6 +2,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Game.Core.CQS;
+using Game.Core.Data.Interfaces;
+using Game.Core.Data.Services;
 using Game.Core.Utils;
 
 namespace Game.Core.Extensions;
@@ -81,6 +83,24 @@ public static class ServiceCollectionExtensions
         where THandler : class, IQueryHandler<TQuery, TResult>
     {
         services.Add(new ServiceDescriptor(typeof(IQueryHandler<TQuery, TResult>), typeof(THandler), lifetime));
+        return services;
+    }
+
+    /// <summary>
+    /// Registers data services including JSON loading, caching, and validation.
+    /// Call this method to enable JSON data loading with validation and caching.
+    /// </summary>
+    /// <param name="services">Service collection to configure</param>
+    /// <returns>Service collection for method chaining</returns>
+    public static IServiceCollection AddDataServices(this IServiceCollection services)
+    {
+        // Register data loading services
+        services.AddSingleton(typeof(IDataLoader<>), typeof(JsonDataLoader<>));
+        services.AddSingleton(typeof(IDataCache<>), typeof(DataCacheService<>));
+        
+        // Register JSON schema validation services
+        services.AddSingleton<IJsonSchemaValidator, JsonSchemaValidator>();
+        
         return services;
     }
 }

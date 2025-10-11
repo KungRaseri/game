@@ -22,7 +22,8 @@ public class ShowTitledToastCommandHandler : ICommandHandler<ShowTitledToastComm
         {
             Title = command.Title,
             Message = command.Message,
-            Style = command.Style
+            Style = command.Style,
+            Anchor = command.Anchor
         };
         await _toastOperations.ShowToastAsync(config);
     }

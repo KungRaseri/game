@@ -1,0 +1,146 @@
+{
+  "version": "1.0",
+  "lastModified": "2025-10-10T00:00:00Z",
+  "lootTables": [
+    {
+      "id": "goblin",
+      "name": "Goblin Loot",
+      "maxDrops": 4,
+      "entries": [
+        {
+          "itemId": "iron_ore",
+          "minQuantity": 1,
+          "maxQuantity": 3,
+          "dropChance": 0.8,
+          "qualityTier": "Common"
+        },
+        {
+          "itemId": "crude_leather",
+          "minQuantity": 1,
+          "maxQuantity": 2,
+          "dropChance": 0.6,
+          "qualityTier": "Common"
+        },
+        {
+          "itemId": "herbs",
+          "minQuantity": 1,
+          "maxQuantity": 1,
+          "dropChance": 0.4,
+          "qualityTier": "Common"
+        },
+        {
+          "itemId": "iron_ore",
+          "minQuantity": 1,
+          "maxQuantity": 1,
+          "dropChance": 0.15,
+          "qualityTier": "Uncommon"
+        },
+        {
+          "itemId": "gem_shard",
+          "minQuantity": 1,
+          "maxQuantity": 1,
+          "dropChance": 0.02,
+          "qualityTier": "Rare"
+        }
+      ]
+    },
+    {
+      "id": "orc",
+      "name": "Orc Loot",
+      "maxDrops": 5,
+      "entries": [
+        {
+          "itemId": "iron_ore",
+          "minQuantity": 2,
+          "maxQuantity": 4,
+          "dropChance": 0.9,
+          "qualityTier": "Common"
+        },
+        {
+          "itemId": "thick_leather",
+          "minQuantity": 1,
+          "maxQuantity": 2,
+          "dropChance": 0.7,
+          "qualityTier": "Uncommon"
+        },
+        {
+          "itemId": "coal",
+          "minQuantity": 1,
+          "maxQuantity": 2,
+          "dropChance": 0.5,
+          "qualityTier": "Common"
+        },
+        {
+          "itemId": "silver_ore",
+          "minQuantity": 1,
+          "maxQuantity": 1,
+          "dropChance": 0.25,
+          "qualityTier": "Uncommon"
+        },
+        {
+          "itemId": "enchanted_stone",
+          "minQuantity": 1,
+          "maxQuantity": 1,
+          "dropChance": 0.05,
+          "qualityTier": "Epic"
+        }
+      ]
+    },
+    {
+      "id": "troll",
+      "name": "Troll Loot",
+      "maxDrops": 6,
+      "entries": [
+        {
+          "itemId": "iron_ore",
+          "minQuantity": 3,
+          "maxQuantity": 6,
+          "dropChance": 0.95,
+          "qualityTier": "Common"
+        },
+        {
+          "itemId": "silver_ore",
+          "minQuantity": 1,
+          "maxQuantity": 3,
+          "dropChance": 0.6,
+          "qualityTier": "Uncommon"
+        },
+        {
+          "itemId": "thick_leather",
+          "minQuantity": 2,
+          "maxQuantity": 3,
+          "dropChance": 0.8,
+          "qualityTier": "Uncommon"
+        },
+        {
+          "itemId": "gold_ore",
+          "minQuantity": 1,
+          "maxQuantity": 2,
+          "dropChance": 0.3,
+          "qualityTier": "Rare"
+        },
+        {
+          "itemId": "gem_shard",
+          "minQuantity": 1,
+          "maxQuantity": 2,
+          "dropChance": 0.15,
+          "qualityTier": "Rare"
+        },
+        {
+          "itemId": "enchanted_stone",
+          "minQuantity": 1,
+          "maxQuantity": 1,
+          "dropChance": 0.1,
+          "qualityTier": "Epic"
+        },
+        {
+          "itemId": "mana_crystal",
+          "minQuantity": 1,
+          "maxQuantity": 1,
+          "dropChance": 0.01,
+          "qualityTier": "Legendary"
+        }
+      ]
+    }
+  ]
+}

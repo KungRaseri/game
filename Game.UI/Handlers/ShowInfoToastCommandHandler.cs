@@ -23,7 +23,8 @@ public class ShowInfoToastCommandHandler : ICommandHandler<ShowInfoToastCommand>
             Message = command.Message,
             Style = ToastStyle.Info,
             Animation = ToastAnimation.Fade,
-            DisplayDuration = 3.0f
+            DisplayDuration = 3.0f,
+            Anchor = command.Anchor
         };
         await _toastOperations.ShowToastAsync(config);
     }

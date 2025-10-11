@@ -3,9 +3,11 @@
 [ext_resource type="Script" uid="uid://cencry1fmnpj1" path="res://Scripts/UI/Components/ToastUI.cs" id="1_toast_ui"]
 
 [node name="Toast" type="PanelContainer"]
-offset_right = 300.0
-offset_bottom = 40.0
-mouse_filter = 2
+offset_right = 256.0
+offset_bottom = 102.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
 script = ExtResource("1_toast_ui")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -15,7 +17,6 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Title" type="Label" parent="MarginContainer/VBox"]
-visible = false
 layout_mode = 2
 text = "Toast Title"
 horizontal_alignment = 1

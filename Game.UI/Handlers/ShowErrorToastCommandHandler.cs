@@ -24,7 +24,7 @@ public class ShowErrorToastCommandHandler : ICommandHandler<ShowErrorToastComman
             Style = ToastStyle.Error,
             Animation = ToastAnimation.Scale,
             DisplayDuration = 5.0f,
-            Anchor = ToastAnchor.Center
+            Anchor = command.Anchor
         };
         await _toastOperations.ShowToastAsync(config);
     }

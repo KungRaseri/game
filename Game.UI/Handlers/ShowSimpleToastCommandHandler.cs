@@ -21,7 +21,8 @@ public class ShowSimpleToastCommandHandler : ICommandHandler<ShowSimpleToastComm
         var config = new ToastConfig
         {
             Message = command.Message,
-            Style = command.Style
+            Style = command.Style,
+            Anchor = command.Anchor
         };
         await _toastOperations.ShowToastAsync(config);
     }

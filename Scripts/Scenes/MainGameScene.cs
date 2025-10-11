@@ -1,103 +1,71 @@
 #nullable enable
 
+using Game.Core.CQS;
 using Game.Core.Utils;
-using Game.Scripts.UI.Integration;
+using Game.DI;
+using Game.UI.Commands;
+using Game.UI.Models;
+using Game.Shop.Systems;
+using Game.Shop.Models;
 using Godot;
 
 namespace Game.Scripts.Scenes;
 
 /// <summary>
-/// Simplified main game scene focused on the core game flow:
-/// 1. Gather Materials
-/// 2. Craft Items  
-/// 3. Manage Shop
+/// Main game scene that provides the core interface for the Fantasy Shop Keeper game.
+/// Now includes ShopKeeper state management with gathering, crafting, and shop operations.
 /// </summary>
 public partial class MainGameScene : Control
 {
-    [Export] public PackedScene? ToastScene { get; set; }
+    private IDispatcher? _dispatcher;
+    private ShopKeeperStateManager? _stateManager;
+    private bool _gameInitialized = false;
 
-    [Signal]
-    public delegate void MaterialsGatheredEventHandler(int totalMaterials);
-
-    [Signal]
-    public delegate void ItemsCraftedEventHandler(int totalItems);
-
-    [Signal]
-    public delegate void ShopUpdatedEventHandler(int itemsForSale, int gold);
-
-    // Game state tracking
-    private int _materialsCollected = 0;
-    private int _itemsCrafted = 0;
-    private int _itemsForSale = 0;
-    private int _gold = 100;
-
-    // UI Component references
+    // UI elements for state management
     private Button? _gatherButton;
     private Button? _craftButton;
     private Button? _shopButton;
-    private Label? _gatherStatus;
-    private Label? _craftStatus;
-    private Label? _shopStatus;
-    private VBoxContainer? _toastContainer;
-    private ToastManager? _toastManager;
+    private Button? _stopButton;
+    private Label? _stateLabel;
+    private Label? _progressLabel;
+    private Label? _resourceLabel;
+    private ProgressBar? _progressBar;
 
     public override void _Ready()
     {
-        GameLogger.Info("MainGameScene initializing - Barebones UI");
+        GameLogger.SetBackend(new GodotLoggerBackend());
+        GameLogger.Info("MainGameScene initializing with ShopKeeper state system...");
 
-        CacheUIReferences();
-        InitializeToastSystem();
-        ConnectUIEvents();
-        UpdateUI();
-
-        GameLogger.Info("MainGameScene ready - Simple 3-step flow active");
-    }
-
-    public override void _Input(InputEvent inputEvent)
-    {
-        // Handle test input for toasts (T key)
-        if (inputEvent is InputEventKey keyEvent && keyEvent.Pressed)
-        {
-            if (keyEvent.Keycode == Key.T)
-            {
-                TestToasts();
-            }
-        }
-    }
-
-    public override void _ExitTree()
-    {
-        DisconnectUIEvents();
-        GameLogger.Info("MainGameScene disposed");
-    }
-
-    private void CacheUIReferences()
-    {
-        _gatherButton = GetNode<Button>("MainContainer/GameFlow/GatherSection/GatherButton");
-        _craftButton = GetNode<Button>("MainContainer/GameFlow/CraftSection/CraftButton");
-        _shopButton = GetNode<Button>("MainContainer/GameFlow/ShopSection/ShopButton");
+        InitializeUI();
+        InitializeGame();
         
-        _gatherStatus = GetNode<Label>("MainContainer/GameFlow/GatherSection/GatherStatus");
-        _craftStatus = GetNode<Label>("MainContainer/GameFlow/CraftSection/CraftStatus");
-        _shopStatus = GetNode<Label>("MainContainer/GameFlow/ShopSection/ShopStatus");
-        
-        _toastContainer = GetNode<VBoxContainer>("UIOverlay/ToastContainer");
+        // Update UI every second
+        var timer = new Godot.Timer();
+        timer.WaitTime = 1.0f;
+        timer.Autostart = true;
+        timer.Timeout += UpdateUI;
+        AddChild(timer);
     }
 
-    private void InitializeToastSystem()
+    private void InitializeUI()
     {
-        _toastManager = new ToastManager();
-        _toastManager.ToastScene = ToastScene;
-        _toastContainer?.AddChild(_toastManager);
-    }
+        // Try to connect to existing UI elements - if they don't exist, we'll create basic functionality anyway
+        _gatherButton = GetNodeOrNull<Button>("MainContainer/GatheringActions/GatherHerbs/Button");
+        _craftButton = GetNodeOrNull<Button>("MainContainer/CraftingActions/CraftPotions/Button");
+        _shopButton = GetNodeOrNull<Button>("MainContainer/ShopActions/RunShop/Button");
+        _stopButton = GetNodeOrNull<Button>("MainContainer/StateControls/StopActivity/Button");
+        _stateLabel = GetNodeOrNull<Label>("MainContainer/StateDisplay/CurrentState/Label");
+        _progressLabel = GetNodeOrNull<Label>("MainContainer/StateDisplay/Progress/Label");
+        _resourceLabel = GetNodeOrNull<Label>("MainContainer/StateDisplay/Resources/Label");
+        _progressBar = GetNodeOrNull<ProgressBar>("MainContainer/StateDisplay/Progress/Bar");
 
-    private void ConnectUIEvents()
-    {
+        // Connect existing gather button (we know this one exists)
         if (_gatherButton != null)
         {
             _gatherButton.Pressed += OnGatherButtonPressed;
         }
 
+        // Connect other buttons if they exist
         if (_craftButton != null)
         {
             _craftButton.Pressed += OnCraftButtonPressed;
@@ -107,164 +75,221 @@ public partial class MainGameScene : Control
         {
             _shopButton.Pressed += OnShopButtonPressed;
         }
+
+        if (_stopButton != null)
+        {
+            _stopButton.Pressed += OnStopButtonPressed;
+        }
+
+        GameLogger.Info("UI initialized successfully");
     }
 
-    private void DisconnectUIEvents()
+    private async void InitializeGame()
     {
-        if (_gatherButton != null)
+        try
         {
-            _gatherButton.Pressed -= OnGatherButtonPressed;
-        }
+            // Get services from DI
+            _dispatcher = DependencyInjectionNode.GetService<IDispatcher>();
+            _stateManager = DependencyInjectionNode.GetService<ShopKeeperStateManager>();
 
-        if (_craftButton != null)
-        {
-            _craftButton.Pressed -= OnCraftButtonPressed;
-        }
+            // Show welcome toast
+            await _dispatcher.DispatchCommandAsync(new ShowInfoToastCommand(
+                "ShopKeeper State System Ready! Choose an activity: Gather Herbs, Craft Potions, or Run Shop!", 
+                ToastAnchor.TopCenter));
 
-        if (_shopButton != null)
+            _gameInitialized = true;
+            GameLogger.Info("Game initialization completed successfully with ShopKeeper state system");
+
+            // Initial UI update
+            UpdateUI();
+        }
+        catch (Exception ex)
         {
-            _shopButton.Pressed -= OnShopButtonPressed;
+            GameLogger.Error(ex, "Error during game initialization");
         }
     }
 
-    private void OnGatherButtonPressed()
+    private async void OnGatherButtonPressed()
     {
-        // Simulate gathering materials
-        int materialsGained = GD.RandRange(1, 3);
-        _materialsCollected += materialsGained;
+        if (_stateManager == null || !_gameInitialized) return;
 
-        // Show toast notification
-        _toastManager?.ShowSuccess($"Gathered {materialsGained} materials!");
-
-        // Emit signal
-        EmitSignal(SignalName.MaterialsGathered, _materialsCollected);
-
-        // Update UI and enable next step
-        UpdateUI();
-        EnableNextSteps();
-
-        GameLogger.Info($"Gathered {materialsGained} materials. Total: {_materialsCollected}");
-    }
-
-    private void OnCraftButtonPressed()
-    {
-        if (_materialsCollected < 2)
+        try
         {
-            _toastManager?.ShowWarning("Need at least 2 materials to craft!");
-            return;
-        }
-
-        // Simulate crafting - consume materials, create items
-        int materialsUsed = Math.Min(2, _materialsCollected);
-        int itemsCreated = 1;
-
-        _materialsCollected -= materialsUsed;
-        _itemsCrafted += itemsCreated;
-
-        // Show toast notification
-        _toastManager?.ShowSuccess($"Crafted {itemsCreated} item using {materialsUsed} materials!");
-
-        // Emit signal
-        EmitSignal(SignalName.ItemsCrafted, _itemsCrafted);
-
-        // Update UI and enable next step
-        UpdateUI();
-        EnableNextSteps();
-
-        GameLogger.Info($"Crafted {itemsCreated} item. Total items: {_itemsCrafted}");
-    }
-
-    private void OnShopButtonPressed()
-    {
-        if (_itemsCrafted == 0)
-        {
-            _toastManager?.ShowWarning("Need at least 1 crafted item to manage shop!");
-            return;
-        }
-
-        // Simulate putting item up for sale
-        int itemsToSell = Math.Min(1, _itemsCrafted);
-        _itemsCrafted -= itemsToSell;
-        _itemsForSale += itemsToSell;
-
-        // Show toast notification
-        _toastManager?.ShowSuccess($"Put {itemsToSell} item up for sale!");
-
-        // Simulate some sales and gold earning
-        if (GD.Randf() > 0.5f) // 50% chance of immediate sale
-        {
-            int goldEarned = GD.RandRange(10, 25);
-            _gold += goldEarned;
-            _itemsForSale -= itemsToSell;
+            var success = _stateManager.StartGatheringHerbs(5, 1.0f);
             
-            GetTree().CreateTimer(1.0f).Timeout += () =>
+            if (success && _dispatcher != null)
             {
-                _toastManager?.ShowSuccess($"Sold item for {goldEarned} gold!");
-                UpdateUI();
-            };
+                await _dispatcher.DispatchCommandAsync(new ShowSuccessToastCommand(
+                    "Started gathering herbs for 5 minutes!", 
+                    ToastAnchor.BottomRight));
+            }
+            else if (_dispatcher != null)
+            {
+                await _dispatcher.DispatchCommandAsync(new ShowWarningToastCommand(
+                    "Cannot start gathering - you're already busy with another activity!"));
+            }
+            
+            GameLogger.Info($"Gather herbs result: {success}");
         }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Error starting herb gathering");
+        }
+    }
 
-        // Emit signal
-        EmitSignal(SignalName.ShopUpdated, _itemsForSale, _gold);
+    private async void OnCraftButtonPressed()
+    {
+        if (_stateManager == null || !_gameInitialized) return;
 
-        // Update UI
-        UpdateUI();
+        try
+        {
+            var success = _stateManager.StartCraftingPotions("basic_healing_potion", 1.0f);
+            
+            if (success && _dispatcher != null)
+            {
+                await _dispatcher.DispatchCommandAsync(new ShowSuccessToastCommand(
+                    "Started crafting potions from available herbs!", 
+                    ToastAnchor.BottomRight));
+            }
+            else if (_dispatcher != null)
+            {
+                var (herbs, _) = _stateManager.GetResourceCounts();
+                var message = herbs <= 0 ? "No herbs available for crafting!" : "Cannot start crafting - you're already busy!";
+                await _dispatcher.DispatchCommandAsync(new ShowWarningToastCommand(message));
+            }
+            
+            GameLogger.Info($"Craft potions result: {success}");
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Error starting potion crafting");
+        }
+    }
 
-        GameLogger.Info($"Managing shop. Items for sale: {_itemsForSale}, Gold: {_gold}");
+    private async void OnShopButtonPressed()
+    {
+        if (_stateManager == null || !_gameInitialized) return;
+
+        try
+        {
+            var success = _stateManager.StartRunningShop(0, 1.0f); // Run until potions sold out
+            
+            if (success && _dispatcher != null)
+            {
+                await _dispatcher.DispatchCommandAsync(new ShowSuccessToastCommand(
+                    "Opened shop for business! Selling potions to customers!", 
+                    ToastAnchor.BottomRight));
+            }
+            else if (_dispatcher != null)
+            {
+                var (_, potions) = _stateManager.GetResourceCounts();
+                var message = potions <= 0 ? "No potions available to sell!" : "Cannot open shop - you're already busy!";
+                await _dispatcher.DispatchCommandAsync(new ShowWarningToastCommand(message));
+            }
+            
+            GameLogger.Info($"Run shop result: {success}");
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Error starting shop operations");
+        }
+    }
+
+    private async void OnStopButtonPressed()
+    {
+        if (_stateManager == null || !_gameInitialized) return;
+
+        try
+        {
+            var success = _stateManager.StopCurrentActivity("Player requested stop");
+            
+            if (success && _dispatcher != null)
+            {
+                await _dispatcher.DispatchCommandAsync(new ShowInfoToastCommand(
+                    "Activity stopped. You are now idle and can start a new activity.", 
+                    ToastAnchor.BottomCenter));
+            }
+            
+            GameLogger.Info($"Stop activity result: {success}");
+        }
+        catch (Exception ex)
+        {
+            GameLogger.Error(ex, "Error stopping current activity");
+        }
     }
 
     private void UpdateUI()
     {
-        if (_gatherStatus != null)
-        {
-            _gatherStatus.Text = $"Materials collected: {_materialsCollected}";
-        }
+        if (_stateManager == null || !_gameInitialized) return;
 
-        if (_craftStatus != null)
+        try
         {
-            _craftStatus.Text = $"Items crafted: {_itemsCrafted}";
-        }
+            // Get current state
+            var stateInfo = _stateManager.GetCurrentState();
+            var (herbs, potions) = _stateManager.GetResourceCounts();
 
-        if (_shopStatus != null)
+            // Update state display
+            if (_stateLabel != null)
+            {
+                _stateLabel.Text = $"State: {stateInfo.CurrentState}";
+            }
+
+            if (_progressLabel != null)
+            {
+                _progressLabel.Text = stateInfo.StatusMessage;
+            }
+
+            if (_resourceLabel != null)
+            {
+                _resourceLabel.Text = $"Resources: {herbs} herbs, {potions} potions";
+            }
+
+            if (_progressBar != null)
+            {
+                _progressBar.Value = stateInfo.ActivityProgress * 100.0f;
+                _progressBar.Visible = stateInfo.CurrentState != ShopKeeperState.Idle;
+            }
+
+            // Update button states
+            var isIdle = stateInfo.CurrentState == ShopKeeperState.Idle;
+
+            if (_gatherButton != null)
+            {
+                _gatherButton.Disabled = !isIdle;
+                _gatherButton.Text = isIdle ? "Gather Herbs" : "Currently Busy";
+            }
+
+            if (_craftButton != null)
+            {
+                var canCraft = isIdle && herbs > 0;
+                _craftButton.Disabled = !canCraft;
+                _craftButton.Text = !isIdle ? "Currently Busy" : 
+                    herbs > 0 ? $"Craft Potions ({herbs} herbs)" : "No Herbs";
+            }
+
+            if (_shopButton != null)
+            {
+                var canRunShop = isIdle && potions > 0;
+                _shopButton.Disabled = !canRunShop;
+                _shopButton.Text = !isIdle ? "Currently Busy" : 
+                    potions > 0 ? $"Run Shop ({potions} potions)" : "No Potions";
+            }
+
+            if (_stopButton != null)
+            {
+                _stopButton.Disabled = isIdle;
+            }
+        }
+        catch (Exception ex)
         {
-            _shopStatus.Text = $"Items for sale: {_itemsForSale} | Gold: {_gold}";
+            GameLogger.Error(ex, "Error updating UI");
         }
     }
 
-    private void EnableNextSteps()
+    public override void _ExitTree()
     {
-        // Enable crafting if we have materials
-        if (_craftButton != null)
-        {
-            _craftButton.Disabled = _materialsCollected < 2;
-        }
-
-        // Enable shop if we have crafted items
-        if (_shopButton != null)
-        {
-            _shopButton.Disabled = _itemsCrafted == 0;
-        }
-    }
-
-    /// <summary>
-    /// Test method to demonstrate toast system.
-    /// </summary>
-    public void TestToasts()
-    {
-        if (_toastManager == null) return;
-
-        _toastManager.ShowSuccess("Test success toast!");
-        
-        GetTree().CreateTimer(0.5f).Timeout += () =>
-        {
-            _toastManager.ShowWarning("Test warning toast!");
-        };
-        
-        GetTree().CreateTimer(1.0f).Timeout += () =>
-        {
-            _toastManager.ShowError("Test error toast!");
-        };
-
-        GameLogger.Info("Toast test sequence initiated - press T to repeat");
+        // Clean up any resources if needed
+        _stateManager?.Dispose();
+        GameLogger.Info("MainGameScene exiting");
     }
 }

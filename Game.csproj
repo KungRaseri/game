@@ -10,8 +10,8 @@
 	  <Compile Remove="Game.Core.Tests\**" />
 	  <Compile Remove="Game.Crafting\**" />
 	  <Compile Remove="Game.Crafting.Tests\**" />
-	  <Compile Remove="Game.Economy\**" />
-	  <Compile Remove="Game.Economy.Tests\**" />
+	  <Compile Remove="Game.Gathering\**" />
+	  <Compile Remove="Game.Gathering.Tests\**" />
 	  <Compile Remove="Game.Inventories\**" />
 	  <Compile Remove="Game.Inventories.Tests\**" />
 	  <Compile Remove="Game.Inventory\**" />
@@ -22,6 +22,10 @@
 	  <Compile Remove="Game.Shop.Tests\**" />
 	  <Compile Remove="Game.UI\**" />
 	  <Compile Remove="Game.UI.Tests\**" />
+	  <Compile Remove="Game.Economy\**" />
+	  <Compile Remove="Game.Economy.Tests\**" />
+	  <Compile Remove="Game.Progression\**" />
+	  <Compile Remove="Game.Tools\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Remove="Game.Adventure\**" />
@@ -30,8 +34,8 @@
 	  <EmbeddedResource Remove="Game.Core.Tests\**" />
 	  <EmbeddedResource Remove="Game.Crafting\**" />
 	  <EmbeddedResource Remove="Game.Crafting.Tests\**" />
-	  <EmbeddedResource Remove="Game.Economy\**" />
-	  <EmbeddedResource Remove="Game.Economy.Tests\**" />
+	  <EmbeddedResource Remove="Game.Gathering\**" />
+	  <EmbeddedResource Remove="Game.Gathering.Tests\**" />
 	  <EmbeddedResource Remove="Game.Inventories\**" />
 	  <EmbeddedResource Remove="Game.Inventories.Tests\**" />
 	  <EmbeddedResource Remove="Game.Inventory\**" />
@@ -42,14 +46,19 @@
 	  <EmbeddedResource Remove="Game.Shop.Tests\**" />
 	  <EmbeddedResource Remove="Game.UI\**" />
 	  <EmbeddedResource Remove="Game.UI.Tests\**" />
+	  <EmbeddedResource Remove="Game.Economy\**" />
+	  <EmbeddedResource Remove="Game.Economy.Tests\**" />
+	  <EmbeddedResource Remove="Game.Progression\**" />
+	  <EmbeddedResource Remove="Game.Tools\**" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="Game.Adventure\Game.Adventure.csproj" />
 	  <ProjectReference Include="Game.Core\Game.Core.csproj" />
 	  <ProjectReference Include="Game.Crafting\Game.Crafting.csproj" />
-	  <ProjectReference Include="Game.Economy\Game.Economy.csproj" />
+	  <ProjectReference Include="Game.Gathering\Game.Gathering.csproj" />
 	  <ProjectReference Include="Game.Inventories\Game.Inventories.csproj" />
 	  <ProjectReference Include="Game.Items\Game.Items.csproj" />
+	  <ProjectReference Include="Game.Progression\Game.Progression.csproj" />
 	  <ProjectReference Include="Game.Shop\Game.Shop.csproj" />
 	  <ProjectReference Include="Game.UI\Game.UI.csproj" />
 	</ItemGroup>

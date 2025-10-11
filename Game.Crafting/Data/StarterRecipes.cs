@@ -2,15 +2,33 @@ using Game.Items.Models;
 using Game.Items.Models.Materials;
 using Game.Crafting.Models;
 using Game.Crafting.Systems;
+using Game.Crafting.Data.Services;
+using Game.Core.Utils;
 
 namespace Game.Crafting.Data;
 
 /// <summary>
 /// Static data provider for starter crafting recipes.
 /// These are the initial recipes available in the game.
+/// 
+/// NOTE: This class is deprecated in favor of JSON-based configuration.
+/// Use CraftingDataService and RecipeInitializationService for new implementations.
 /// </summary>
+[Obsolete("Use CraftingDataService and RecipeInitializationService instead. This class is maintained for backward compatibility only.")]
 public static class StarterRecipes
 {
+    private static RecipeInitializationService? _recipeInitializationService;
+
+    /// <summary>
+    /// Sets the recipe initialization service for dependency injection integration.
+    /// This allows the static methods to use JSON data when available.
+    /// </summary>
+    /// <param name="service">The recipe initialization service</param>
+    public static void SetRecipeInitializationService(RecipeInitializationService? service)
+    {
+        _recipeInitializationService = service;
+    }
+
     /// <summary>
     /// Gets all starter recipes that should be available when the game begins.
     /// </summary>
@@ -326,6 +344,24 @@ public static class StarterRecipes
         {
             throw new ArgumentNullException(nameof(recipeManager));
         }
+
+        // Use JSON-based service if available
+        if (_recipeInitializationService != null)
+        {
+            try
+            {
+                _recipeInitializationService.InitializeRecipeManager(recipeManager);
+                GameLogger.Info("[Crafting] Initialized RecipeManager using JSON data service");
+                return;
+            }
+            catch (Exception ex)
+            {
+                GameLogger.Warning($"[Crafting] Failed to use JSON service, falling back to hardcoded data: {ex.Message}");
+            }
+        }
+
+        // Fallback to hardcoded data
+        GameLogger.Warning("[Crafting] Using deprecated hardcoded recipe data. Consider migrating to JSON configuration.");
 
         // Add starter recipes (unlocked by default)
         foreach (var recipe in GetStarterRecipes())

@@ -23,7 +23,8 @@ public class ShowSuccessToastCommandHandler : ICommandHandler<ShowSuccessToastCo
             Message = command.Message,
             Style = ToastStyle.Success,
             Animation = ToastAnimation.Bounce,
-            DisplayDuration = 3.0f
+            DisplayDuration = 3.0f,
+            Anchor = command.Anchor
         };
         await _toastOperations.ShowToastAsync(config);
     }

@@ -1,0 +1,62 @@
+{
+  "$id": "WeaponDataSet",
+  "definitions": {
+    "WeaponJsonData": {
+      "$id": "WeaponJsonData",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "BaseValue": {
+          "type": "integer"
+        },
+        "BaseDamage": {
+          "type": "integer"
+        },
+        "BaseDurability": {
+          "type": "integer"
+        },
+        "WeaponType": {
+          "type": "string"
+        },
+        "Properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "Version": {
+      "type": "string"
+    },
+    "LastModified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "Weapons": {
+      "$id": "List\u00601",
+      "type": "array",
+      "items": {
+        "$ref": "WeaponJsonData"
+      }
+    }
+  }
+}

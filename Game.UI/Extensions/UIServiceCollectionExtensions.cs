@@ -16,7 +16,7 @@ namespace Game.UI.Extensions;
 public static class UIServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers all Adventure module services, systems, and CQS handlers.
+    /// Registers all UI module services, systems, and CQS handlers.
     /// </summary>
     /// <param name="services">The service collection to configure</param>
     /// <returns>The service collection for method chaining</returns>
@@ -24,6 +24,7 @@ public static class UIServiceCollectionExtensions
     {
         // Register core systems
         services.AddSingleton<ToastSystem>();
+        services.AddSingleton<IToastOperations>(provider => provider.GetRequiredService<ToastSystem>());
         services.AddScoped<UISystem>();
 
         // Register command handlers

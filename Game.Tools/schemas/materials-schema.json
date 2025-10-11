@@ -1,0 +1,65 @@
+{
+  "$id": "MaterialDataSet",
+  "definitions": {
+    "MaterialJsonData": {
+      "$id": "MaterialJsonData",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "BaseValue": {
+          "type": "integer"
+        },
+        "Category": {
+          "type": "string"
+        },
+        "QualityTier": {
+          "type": "string"
+        },
+        "Stackable": {
+          "type": "boolean"
+        },
+        "MaxStackSize": {
+          "type": "integer"
+        },
+        "Properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "object",
+              "array"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "Version": {
+      "type": "string"
+    },
+    "LastModified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "Materials": {
+      "$id": "List\u00601",
+      "type": "array",
+      "items": {
+        "$ref": "MaterialJsonData"
+      }
+    }
+  }
+}

@@ -1,5 +1,9 @@
 using Game.Core.CQS;
+using Game.Core.Data.Extensions;
+using Game.Core.Data.Services;
 using Game.Items.Commands;
+using Game.Items.Data.Models;
+using Game.Items.Data.Services;
 using Game.Items.Handlers;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
@@ -21,6 +25,12 @@ public static class ItemsServiceCollectionExtensions
     /// <returns>The service collection for chaining</returns>
     public static IServiceCollection AddItemsServices(this IServiceCollection services)
     {
+        // Register data loading services for JSON-based item data
+        services.AddDataServices(); // Add core data loading infrastructure
+        services.AddSingleton<HotReloadService>(); // Add hot-reload service for development
+        services.AddScoped<ItemDataService>(); // Add domain-specific data service
+        services.AddScoped<ItemCreationService>(); // Add JSON-based item creation service
+
         // Register core systems
         services.AddSingleton<LootGenerator>(_ =>
         {

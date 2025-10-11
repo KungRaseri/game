@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://ce3hfv7a2s1gs"]
+[gd_scene load_steps=5 format=3 uid="uid://ce3hfv7a2s1gs"]
 
 [ext_resource type="Script" uid="uid://da45ct5sa8e83" path="res://Scripts/Scenes/MainGameScene.cs" id="1_qla6v"]
+[ext_resource type="Script" uid="uid://dllo7knc510e0" path="res://Scripts/UI/Integration/ToastManager.cs" id="2_toast_manager"]
+[ext_resource type="Script" uid="uid://xirt3wunvh4h" path="res://Scripts/Integration/Managers/ToastDisplayManager.cs" id="3_toast_display_manager"]
+[ext_resource type="PackedScene" uid="uid://6tf8kit57jox" path="res://Scenes/UI/Toast.tscn" id="4_toast_scene"]
 
 [node name="MainGameScene" type="Control"]
 layout_mode = 3
@@ -16,6 +19,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.1, 0.1, 0.15, 1)
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
@@ -23,81 +28,87 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 50.0
-offset_top = 50.0
-offset_right = -50.0
-offset_bottom = -50.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="TitleLabel" type="Label" parent="MainContainer"]
-layout_mode = 2
-text = "Fantasy Shop Keeper"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HSeparator" type="HSeparator" parent="MainContainer"]
-layout_mode = 2
-
-[node name="GameFlow" type="VBoxContainer" parent="MainContainer"]
+[node name="GatheringActions" type="HBoxContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="GatherSection" type="VBoxContainer" parent="MainContainer/GameFlow"]
+[node name="GatherHerbs" type="VBoxContainer" parent="MainContainer/GatheringActions"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="GatherTitle" type="Label" parent="MainContainer/GameFlow/GatherSection"]
+[node name="Title" type="Label" parent="MainContainer/GatheringActions/GatherHerbs"]
 layout_mode = 2
-text = "1. Gather Materials"
 theme_type_variation = &"HeaderMedium"
+text = "Gather Herbs"
 
-[node name="GatherButton" type="Button" parent="MainContainer/GameFlow/GatherSection"]
+[node name="Button" type="Button" parent="MainContainer/GatheringActions/GatherHerbs"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Gather Materials"
+text = "Gather Herbs"
 
-[node name="GatherStatus" type="Label" parent="MainContainer/GameFlow/GatherSection"]
+[node name="Status" type="Label" parent="MainContainer/GatheringActions/GatherHerbs"]
 layout_mode = 2
-text = "Materials collected: 0"
+text = "Herbs: 0"
 horizontal_alignment = 1
 
-[node name="CraftSection" type="VBoxContainer" parent="MainContainer/GameFlow"]
+[node name="CraftingActions" type="HBoxContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CraftTitle" type="Label" parent="MainContainer/GameFlow/CraftSection"]
+[node name="CraftPotion" type="VBoxContainer" parent="MainContainer/CraftingActions"]
 layout_mode = 2
-text = "2. Craft Items"
-theme_type_variation = &"HeaderMedium"
+size_flags_vertical = 3
 
-[node name="CraftButton" type="Button" parent="MainContainer/GameFlow/CraftSection"]
+[node name="Title" type="Label" parent="MainContainer/CraftingActions/CraftPotion"]
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "Craft Potions"
+
+[node name="Button" type="Button" parent="MainContainer/CraftingActions/CraftPotion"]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Open Crafting"
 disabled = true
+text = "Craft Potion"
 
-[node name="CraftStatus" type="Label" parent="MainContainer/GameFlow/CraftSection"]
+[node name="Status" type="Label" parent="MainContainer/CraftingActions/CraftPotion"]
 layout_mode = 2
-text = "Items crafted: 0"
+text = "Potions: 0"
 horizontal_alignment = 1
 
-[node name="ShopSection" type="VBoxContainer" parent="MainContainer/GameFlow"]
+[node name="ShopActions" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="ShopSection" type="VBoxContainer" parent="MainContainer/ShopActions"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ShopTitle" type="Label" parent="MainContainer/GameFlow/ShopSection"]
+[node name="Title" type="Label" parent="MainContainer/ShopActions/ShopSection"]
 layout_mode = 2
-text = "3. Manage Shop"
 theme_type_variation = &"HeaderMedium"
+text = "Manage Shop"
 
-[node name="ShopButton" type="Button" parent="MainContainer/GameFlow/ShopSection"]
+[node name="Button" type="Button" parent="MainContainer/ShopActions/ShopSection"]
 layout_mode = 2
 size_flags_horizontal = 4
+disabled = true
 text = "Open Shop"
-disabled = true
 
-[node name="ShopStatus" type="Label" parent="MainContainer/GameFlow/ShopSection"]
+[node name="For Sale" type="Label" parent="MainContainer/ShopActions/ShopSection"]
 layout_mode = 2
-text = "Items for sale: 0 | Gold: 100"
+text = "Items for Sale: 0"
+horizontal_alignment = 1
+
+[node name="Items Sold" type="Label" parent="MainContainer/ShopActions/ShopSection"]
+layout_mode = 2
+text = "Items Sold: 0"
 horizontal_alignment = 1
 
 [node name="UIOverlay" type="Control" parent="."]
@@ -105,16 +116,30 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
-[node name="ToastContainer" type="VBoxContainer" parent="UIOverlay"]
+[node name="ToastManager" type="Control" parent="UIOverlay"]
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 0.0
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.0
-offset_left = -320.0
-offset_bottom = 600.0
-grow_horizontal = 0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("2_toast_manager")
+ToastScene = ExtResource("4_toast_scene")
+
+[node name="ToastContainer" type="Control" parent="UIOverlay/ToastManager"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ToastDisplayManager" type="Node" parent="UIOverlay" node_paths=PackedStringArray("ToastManager")]
+script = ExtResource("3_toast_display_manager")
+ToastManager = NodePath("../ToastManager")
