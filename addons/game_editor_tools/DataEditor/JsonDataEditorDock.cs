@@ -58,8 +58,8 @@ public partial class JsonDataEditorDock : Control
 
     public override void _ExitTree()
     {
-        // Clean up any signals that were connected
-        DisconnectSignals();
+        // Note: No need to manually disconnect signals when the dock is being destroyed
+        // Godot will automatically clean up signal connections when nodes are freed
         GD.Print("JsonDataEditorDock: Cleanup completed");
     }
 
@@ -139,44 +139,6 @@ public partial class JsonDataEditorDock : Control
 
         if (_lootTablesList != null)
             _lootTablesList.ItemActivated += () => OnTreeItemActivated("LootTables");
-    }
-
-    private void DisconnectSignals()
-    {
-        if (_refreshButton != null)
-            _refreshButton.Pressed -= OnRefreshPressed;
-
-        if (_validateButton != null)
-            _validateButton.Pressed -= OnValidatePressed;
-
-        // Disconnect tab-specific signals
-        foreach (var dataType in _dataFilePaths.Keys)
-        {
-            if (_addButtons.TryGetValue(dataType, out var addBtn))
-                addBtn.Pressed -= () => OnAddPressed(dataType);
-
-            if (_editButtons.TryGetValue(dataType, out var editBtn))
-                editBtn.Pressed -= () => OnEditPressed(dataType);
-
-            if (_deleteButtons.TryGetValue(dataType, out var deleteBtn))
-                deleteBtn.Pressed -= () => OnDeletePressed(dataType);
-
-            if (_rawEditButtons.TryGetValue(dataType, out var rawBtn))
-                rawBtn.Pressed -= () => OnRawEditPressed(dataType);
-        }
-
-        // Disconnect tree double-click events
-        if (_materialsList != null)
-            _materialsList.ItemActivated -= () => OnTreeItemActivated("Materials");
-
-        if (_recipesList != null)
-            _recipesList.ItemActivated -= () => OnTreeItemActivated("Recipes");
-
-        if (_entitiesList != null)
-            _entitiesList.ItemActivated -= () => OnTreeItemActivated("Entities");
-
-        if (_lootTablesList != null)
-            _lootTablesList.ItemActivated -= () => OnTreeItemActivated("LootTables");
     }
 
     private void SetupTabContainers()

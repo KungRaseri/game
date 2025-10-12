@@ -49,12 +49,18 @@ public partial class MaterialEditorDialog : Window
         SetupControls();
         ConnectSignals();
         ValidateForm();
+        
+        // Handle window close request (X button)
+        CloseRequested += Hide;
     }
 
     public override void _ExitTree()
     {
         // Disconnect all signals to prevent cleanup errors
         DisconnectSignals();
+        
+        // Disconnect window close signal
+        CloseRequested -= Hide;
     }
 
     private void GetNodeReferences()
