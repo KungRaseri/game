@@ -395,6 +395,9 @@ public partial class JsonDataEditorDock : Control
             case "Recipes":
                 ShowRecipeEditor();
                 break;
+            case "Entities":
+                ShowEntityEditor();
+                break;
             default:
                 GD.Print($"Add {dataType} pressed - feature coming soon!");
                 UpdateStatus($"Add {dataType} - Feature coming soon", false);
@@ -420,6 +423,9 @@ public partial class JsonDataEditorDock : Control
                 break;
             case "Recipes":
                 ShowRecipeEditor(id);
+                break;
+            case "Entities":
+                ShowEntityEditor(id);
                 break;
             default:
                 GD.Print($"Edit {dataType} pressed for ID: {id} - feature coming soon!");
@@ -561,6 +567,58 @@ public partial class JsonDataEditorDock : Control
         {
             UpdateStatus($"Error opening recipe editor: {ex.Message}", true);
             GD.PrintErr($"ShowRecipeEditor error: {ex.Message}");
+        }
+    }
+
+    // Entity Editor Integration
+    private void ShowEntityEditor(string? entityId = null)
+    {
+        try
+        {
+            var entityEditorScene = GD.Load<PackedScene>("res://Scenes/Tools/DataEditor/EntityEditorDialog.tscn");
+            if (entityEditorScene == null)
+            {
+                UpdateStatus("Entity editor scene not found!", true);
+                return;
+            }
+
+            var dialog = entityEditorScene.Instantiate<EntityEditorDialog>();
+            if (dialog == null)
+            {
+                UpdateStatus("Failed to instantiate entity editor dialog!", true);
+                return;
+            }
+
+            // Add dialog to main screen and show
+            var editorInterface = EditorInterface.Singleton;
+            var mainScreen = editorInterface.GetEditorMainScreen();
+            mainScreen.AddChild(dialog);
+            
+            // Setup dialog for add or edit mode
+            if (string.IsNullOrEmpty(entityId))
+            {
+                GD.Print("EntityEditor: Setting up for ADD mode");
+                dialog.SetupForAdd();
+            }
+            else
+            {
+                GD.Print($"EntityEditor: Setting up for EDIT mode with ID: '{entityId}'");
+                dialog.SetupForEdit(entityId);
+            }
+            
+            dialog.PopupCentered();
+            
+            // Connect to EntitySaved signal to refresh data
+            dialog.EntitySaved += () => 
+            {
+                RefreshEntities();
+                UpdateStatus("Entity data refreshed", false);
+            };
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus($"Error opening entity editor: {ex.Message}", true);
+            GD.PrintErr($"ShowEntityEditor error: {ex.Message}");
         }
     }
 

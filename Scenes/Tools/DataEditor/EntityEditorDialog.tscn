@@ -1,0 +1,195 @@
+[gd_scene load_steps=2 format=3 uid="uid://bm8v7x4lqr3yj"]
+
+[ext_resource type="Script" uid="uid://bsffudpw44i41" path="res://addons/game_editor_tools/DataEditor/EntityEditorDialog.cs" id="1_entity_editor"]
+
+[node name="EntityEditorDialog" type="Window"]
+oversampling_override = 1.0
+title = "Entity Editor"
+initial_position = 2
+size = Vector2i(800, 600)
+min_size = Vector2i(650, 500)
+script = ExtResource("1_entity_editor")
+
+[node name="MainVBox" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="HeaderLabel" type="Label" parent="MainVBox"]
+layout_mode = 2
+text = "Entity Properties"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MainVBox"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FormVBox" type="VBoxContainer" parent="MainVBox/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BasicInfoPanel" type="PanelContainer" parent="MainVBox/ScrollContainer/FormVBox"]
+layout_mode = 2
+
+[node name="BasicInfoVBox" type="VBoxContainer" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel"]
+layout_mode = 2
+
+[node name="BasicInfoLabel" type="Label" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox"]
+layout_mode = 2
+text = "Basic Information"
+
+[node name="NameHBox" type="HBoxContainer" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox/NameHBox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Name:"
+
+[node name="NameLineEdit" type="LineEdit" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox/NameHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Human readable name"
+
+[node name="TypeHBox" type="HBoxContainer" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="TypeLabel" type="Label" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox/TypeHBox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Entity Type:"
+
+[node name="TypeOptionButton" type="OptionButton" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox/TypeHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 2
+popup/item_0/text = "Adventurer"
+popup/item_0/id = 0
+popup/item_1/text = "Monster"
+popup/item_1/id = 1
+
+[node name="DescriptionVBox" type="VBoxContainer" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox/DescriptionVBox"]
+layout_mode = 2
+text = "Description:"
+
+[node name="DescriptionTextEdit" type="TextEdit" parent="MainVBox/ScrollContainer/FormVBox/BasicInfoPanel/BasicInfoVBox/DescriptionVBox"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+placeholder_text = "Detailed description of the entity"
+
+[node name="HSeparator2" type="HSeparator" parent="MainVBox/ScrollContainer/FormVBox"]
+layout_mode = 2
+
+[node name="CombatStatsPanel" type="PanelContainer" parent="MainVBox/ScrollContainer/FormVBox"]
+layout_mode = 2
+
+[node name="CombatStatsVBox" type="VBoxContainer" parent="MainVBox/ScrollContainer/FormVBox/CombatStatsPanel"]
+layout_mode = 2
+
+[node name="CombatStatsLabel" type="Label" parent="MainVBox/ScrollContainer/FormVBox/CombatStatsPanel/CombatStatsVBox"]
+layout_mode = 2
+text = "Combat Statistics"
+
+[node name="HSeparator3" type="HSeparator" parent="MainVBox/ScrollContainer/FormVBox"]
+layout_mode = 2
+
+[node name="ValidationPanel" type="PanelContainer" parent="MainVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="ValidationLabel" type="RichTextLabel" parent="MainVBox/ValidationPanel"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=red][b]Errors:[/b][/color]
+[color=red]• Entity ID is required[/color]
+[color=red]• Entity name is required[/color]"
+scroll_active = false
+
+[node name="ButtonHBox" type="HBoxContainer" parent="MainVBox"]
+layout_mode = 2
+
+[node name="CancelButton" type="Button" parent="MainVBox/ButtonHBox"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="Spacer" type="Control" parent="MainVBox/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SaveButton" type="Button" parent="MainVBox/ButtonHBox"]
+layout_mode = 2
+disabled = true
+text = "Save Entity"
+
+[node name="MainVBox_ScrollContainer_FormVBox_BasicInfoPanel_BasicInfoVBox_IdHBox#IdLabel" type="Label" parent="."]
+custom_minimum_size = Vector2(100, 0)
+text = "Entity ID:"
+
+[node name="MainVBox_ScrollContainer_FormVBox_BasicInfoPanel_BasicInfoVBox_IdHBox#IdLineEdit" type="LineEdit" parent="."]
+size_flags_horizontal = 3
+placeholder_text = "entity_unique_id"
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox#LeftColumn" type="VBoxContainer" parent="."]
+size_flags_horizontal = 3
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_LeftColumn#HealthHBox" type="HBoxContainer" parent="."]
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_LeftColumn_HealthHBox#HealthLabel" type="Label" parent="."]
+custom_minimum_size = Vector2(120, 0)
+text = "Base Health:"
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_LeftColumn_HealthHBox#HealthSpinBox" type="SpinBox" parent="."]
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 9999.0
+value = 100.0
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_LeftColumn#DamageHBox" type="HBoxContainer" parent="."]
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_LeftColumn_DamageHBox#DamageLabel" type="Label" parent="."]
+custom_minimum_size = Vector2(120, 0)
+text = "Base Damage:"
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_LeftColumn_DamageHBox#DamageSpinBox" type="SpinBox" parent="."]
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 999.0
+value = 10.0
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox#RightColumn" type="VBoxContainer" parent="."]
+size_flags_horizontal = 3
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_RightColumn#RetreatHBox" type="HBoxContainer" parent="."]
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_RightColumn_RetreatHBox#RetreatLabel" type="Label" parent="."]
+custom_minimum_size = Vector2(120, 0)
+text = "Retreat Threshold:"
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_RightColumn_RetreatHBox#RetreatSpinBox" type="SpinBox" parent="."]
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.05
+value = 0.25
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_RightColumn#RegenHBox" type="HBoxContainer" parent="."]
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_RightColumn_RegenHBox#RegenLabel" type="Label" parent="."]
+custom_minimum_size = Vector2(120, 0)
+text = "Health Regen/Sec:"
+
+[node name="MainVBox_ScrollContainer_FormVBox_CombatStatsPanel_CombatStatsVBox_StatsHBox_RightColumn_RegenHBox#RegenSpinBox" type="SpinBox" parent="."]
+size_flags_horizontal = 3
+value = 1.0
