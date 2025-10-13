@@ -10,14 +10,15 @@ namespace Game.Crafting.Data.Models;
 /// </summary>
 public class RecipeDataSet
 {
-    [JsonPropertyName("starterRecipes")]
-    public List<RecipeData> StarterRecipes { get; set; } = [];
+    [JsonPropertyName("BasicRecipes")]
+    public List<RecipeData> BasicRecipes { get; set; } = [];
 
-    [JsonPropertyName("advancedRecipes")]
+    [JsonPropertyName("AdvancedRecipes")]
     public List<RecipeData> AdvancedRecipes { get; set; } = [];
 
-    [JsonPropertyName("phase1Recipes")]
-    public List<RecipeData> Phase1Recipes { get; set; } = [];
+    // Legacy properties for backward compatibility
+    public List<RecipeData> StarterRecipes => BasicRecipes;
+    public List<RecipeData> Phase1Recipes => BasicRecipes;
 
     /// <summary>
     /// Converts this data set to domain recipe objects.
@@ -26,9 +27,8 @@ public class RecipeDataSet
     {
         var allRecipes = new List<Recipe>();
 
-        allRecipes.AddRange(StarterRecipes.Select(r => r.ToRecipe()));
+        allRecipes.AddRange(BasicRecipes.Select(r => r.ToRecipe()));
         allRecipes.AddRange(AdvancedRecipes.Select(r => r.ToRecipe()));
-        allRecipes.AddRange(Phase1Recipes.Select(r => r.ToRecipe()));
 
         return new RecipeCollection(allRecipes);
     }
@@ -201,10 +201,9 @@ public class RecipeCollection
     {
         AllRecipes = recipes.ToList();
         
-        // Note: This is a simplified approach. In a more complex system,
-        // you might want to track the original categorization from the JSON
+        // Categorize recipes based on their unlocked status and prerequisites
         StarterRecipes = AllRecipes.Where(r => r.IsUnlocked).ToList();
-        AdvancedRecipes = AllRecipes.Where(r => !r.IsUnlocked && r.Prerequisites.Any()).ToList();
-        Phase1Recipes = AllRecipes.Where(r => r.IsUnlocked && !r.Prerequisites.Any()).ToList();
+        AdvancedRecipes = AllRecipes.Where(r => !r.IsUnlocked).ToList();
+        Phase1Recipes = AllRecipes.Where(r => r.IsUnlocked).ToList(); // Same as starter for now
     }
 }

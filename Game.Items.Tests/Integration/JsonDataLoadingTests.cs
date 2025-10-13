@@ -30,7 +30,7 @@ public class JsonDataLoadingTests
 
         // Assert
         Assert.NotEmpty(materials);
-        Assert.Contains(materials, m => m.ItemId == "iron_ore");
+        Assert.Contains(materials, m => m.ItemId == "ore_iron");
         Assert.Contains(materials, m => m.ItemId == "material_oak_wood");
     }
 
@@ -69,7 +69,7 @@ public class JsonDataLoadingTests
         var itemDataService = serviceProvider.GetRequiredService<ItemDataService>();
 
         // Act
-        var ironOre = await itemDataService.GetMaterialConfigAsync("iron_ore");
+        var ironOre = await itemDataService.GetMaterialConfigAsync("ore_iron");
 
         // Assert
         Assert.NotNull(ironOre);
