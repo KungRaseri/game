@@ -11,6 +11,16 @@ using System.Linq;
 namespace Game.Tools.DataEditor;
 
 /// <summary>
+/// Data structure for ingredient entries
+/// </summary>
+public class IngredientData
+{
+    public string Category { get; set; } = "Metal";
+    public string QualityTier { get; set; } = "Common";
+    public int Quantity { get; set; } = 1;
+}
+
+/// <summary>
 /// Dialog for adding and editing recipe data
 /// </summary>
 [Tool]
@@ -30,9 +40,12 @@ public partial class RecipeEditorDialog : Window
     private RichTextLabel? _validationLabel;
     private Button? _saveButton;
     private Button? _cancelButton;
+    private Button? _addIngredientButton;
+    private VBoxContainer? _ingredientsListContainer;
 
     // Data
     private string? _editingRecipeId;
+    private readonly List<IngredientData> _ingredients = new();
     private readonly Dictionary<string, string> _dataFilePaths = new()
     {
         ["Recipes"] = "Game.Crafting/Data/json/recipes.json"
@@ -40,6 +53,8 @@ public partial class RecipeEditorDialog : Window
 
     // Categories based on the JSON data
     private readonly string[] _categories = { "Weapons", "Armor", "Consumables", "Tools", "Materials" };
+    private readonly string[] _materialCategories = { "Metal", "Wood", "Leather", "Herb", "Gem", "Fabric", "Stone" };
+    private readonly string[] _qualityTiers = { "Common", "Uncommon", "Rare", "Epic", "Legendary" };
 
     public override void _Ready()
     {
@@ -64,15 +79,19 @@ public partial class RecipeEditorDialog : Window
     private void GetNodeReferences()
     {
         // Basic info controls
-        _idLineEdit = GetNode<LineEdit>("VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/IdGroup/IdLineEdit");
-        _nameLineEdit = GetNode<LineEdit>("VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/NameGroup/NameLineEdit");
-        _categoryOptionButton = GetNode<OptionButton>("VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/CategoryGroup/CategoryOptionButton");
-        _descriptionTextEdit = GetNode<TextEdit>("VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/DescriptionGroup/DescriptionTextEdit");
+        _idLineEdit = GetNode<LineEdit>("VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/IdGroup/IdLineEdit");
+        _nameLineEdit = GetNode<LineEdit>("VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/NameGroup/NameLineEdit");
+        _categoryOptionButton = GetNode<OptionButton>("VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/CategoryGroup/CategoryOptionButton");
+        _descriptionTextEdit = GetNode<TextEdit>("VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/DescriptionGroup/DescriptionTextEdit");
 
         // Crafting properties controls
-        _craftingTimeSpinBox = GetNode<SpinBox>("VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/CraftingTimeGroup/CraftingTimeSpinBox");
-        _difficultySpinBox = GetNode<SpinBox>("VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/DifficultyGroup/DifficultySpinBox");
-        _experienceSpinBox = GetNode<SpinBox>("VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/ExperienceGroup/ExperienceSpinBox");
+        _craftingTimeSpinBox = GetNode<SpinBox>("VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/CraftingTimeGroup/CraftingTimeSpinBox");
+        _difficultySpinBox = GetNode<SpinBox>("VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/DifficultyGroup/DifficultySpinBox");
+        _experienceSpinBox = GetNode<SpinBox>("VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/ExperienceGroup/ExperienceSpinBox");
+
+        // Ingredients controls
+        _addIngredientButton = GetNode<Button>("VBoxContainer/ScrollContainer/FormContainer/IngredientsGroup/IngredientsVBox/IngredientsHeader/AddIngredientButton");
+        _ingredientsListContainer = GetNode<VBoxContainer>("VBoxContainer/ScrollContainer/FormContainer/IngredientsGroup/IngredientsVBox/IngredientsScrollContainer/IngredientsListContainer");
 
         // UI controls
         _validationLabel = GetNode<RichTextLabel>("VBoxContainer/ValidationContainer/ValidationLabel");
@@ -116,6 +135,9 @@ public partial class RecipeEditorDialog : Window
         if (_experienceSpinBox != null)
             _experienceSpinBox.ValueChanged += OnValueChanged;
 
+        if (_addIngredientButton != null)
+            _addIngredientButton.Pressed += OnAddIngredientPressed;
+
         if (_saveButton != null)
             _saveButton.Pressed += OnSavePressed;
 
@@ -145,6 +167,9 @@ public partial class RecipeEditorDialog : Window
 
         if (_experienceSpinBox != null)
             _experienceSpinBox.ValueChanged -= OnValueChanged;
+
+        if (_addIngredientButton != null)
+            _addIngredientButton.Pressed -= OnAddIngredientPressed;
 
         if (_saveButton != null)
             _saveButton.Pressed -= OnSavePressed;
@@ -184,6 +209,10 @@ public partial class RecipeEditorDialog : Window
         if (_craftingTimeSpinBox != null) _craftingTimeSpinBox.Value = 30;
         if (_difficultySpinBox != null) _difficultySpinBox.Value = 1;
         if (_experienceSpinBox != null) _experienceSpinBox.Value = 10;
+        
+        // Clear ingredients
+        _ingredients.Clear();
+        RefreshIngredientsDisplay();
     }
 
     private void LoadRecipeData(string recipeId)
@@ -244,6 +273,24 @@ public partial class RecipeEditorDialog : Window
         if (_craftingTimeSpinBox != null) _craftingTimeSpinBox.Value = GetJsonDouble(recipe, "craftingTime");
         if (_difficultySpinBox != null) _difficultySpinBox.Value = GetJsonInt(recipe, "difficulty");
         if (_experienceSpinBox != null) _experienceSpinBox.Value = GetJsonInt(recipe, "experienceReward");
+
+        // Load ingredients
+        _ingredients.Clear();
+        if (recipe.TryGetProperty("materialRequirements", out var requirements) && requirements.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var requirement in requirements.EnumerateArray())
+            {
+                var ingredient = new IngredientData
+                {
+                    Category = GetJsonString(requirement, "category"),
+                    QualityTier = GetJsonString(requirement, "qualityTier"),
+                    Quantity = GetJsonInt(requirement, "quantity")
+                };
+                _ingredients.Add(ingredient);
+            }
+        }
+        
+        RefreshIngredientsDisplay();
     }
 
     // Event handlers
@@ -270,6 +317,10 @@ public partial class RecipeEditorDialog : Window
 
         if (string.IsNullOrEmpty(name))
             errors.Add("Recipe name is required");
+
+        // Validate ingredients
+        if (_ingredients.Count == 0)
+            warnings.Add("Recipe has no material requirements");
 
         // Display validation results
         DisplayValidationResults(errors, warnings);
@@ -326,6 +377,117 @@ public partial class RecipeEditorDialog : Window
     private void OnCancelPressed()
     {
         Hide();
+    }
+
+    // Ingredients management methods
+    private void OnAddIngredientPressed()
+    {
+        var newIngredient = new IngredientData();
+        _ingredients.Add(newIngredient);
+        RefreshIngredientsDisplay();
+        ValidateForm();
+    }
+
+    private void OnRemoveIngredientPressed(int index)
+    {
+        if (index >= 0 && index < _ingredients.Count)
+        {
+            _ingredients.RemoveAt(index);
+            RefreshIngredientsDisplay();
+            ValidateForm();
+        }
+    }
+
+    private void OnIngredientChanged(int index)
+    {
+        ValidateForm();
+    }
+
+    private void RefreshIngredientsDisplay()
+    {
+        if (_ingredientsListContainer == null) return;
+
+        // Clear existing children
+        foreach (Node child in _ingredientsListContainer.GetChildren())
+        {
+            child.QueueFree();
+        }
+
+        // Add ingredient entries
+        for (int i = 0; i < _ingredients.Count; i++)
+        {
+            var ingredient = _ingredients[i];
+            var ingredientControl = CreateIngredientControl(ingredient, i);
+            _ingredientsListContainer.AddChild(ingredientControl);
+        }
+    }
+
+    private Control CreateIngredientControl(IngredientData ingredient, int index)
+    {
+        var container = new HBoxContainer();
+
+        // Category dropdown
+        var categoryLabel = new Label { Text = "Category:" };
+        categoryLabel.CustomMinimumSize = new Vector2(70, 0);
+        container.AddChild(categoryLabel);
+
+        var categoryOption = new OptionButton();
+        categoryOption.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+        foreach (var category in _materialCategories)
+        {
+            categoryOption.AddItem(category);
+        }
+        var categoryIndex = Array.IndexOf(_materialCategories, ingredient.Category);
+        if (categoryIndex >= 0)
+            categoryOption.Selected = categoryIndex;
+        categoryOption.ItemSelected += (long _) => {
+            ingredient.Category = _materialCategories[categoryOption.Selected];
+            OnIngredientChanged(index);
+        };
+        container.AddChild(categoryOption);
+
+        // Quality dropdown
+        var qualityLabel = new Label { Text = "Quality:" };
+        qualityLabel.CustomMinimumSize = new Vector2(50, 0);
+        container.AddChild(qualityLabel);
+
+        var qualityOption = new OptionButton();
+        qualityOption.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+        foreach (var quality in _qualityTiers)
+        {
+            qualityOption.AddItem(quality);
+        }
+        var qualityIndex = Array.IndexOf(_qualityTiers, ingredient.QualityTier);
+        if (qualityIndex >= 0)
+            qualityOption.Selected = qualityIndex;
+        qualityOption.ItemSelected += (long _) => {
+            ingredient.QualityTier = _qualityTiers[qualityOption.Selected];
+            OnIngredientChanged(index);
+        };
+        container.AddChild(qualityOption);
+
+        // Quantity spinner
+        var quantityLabel = new Label { Text = "Qty:" };
+        quantityLabel.CustomMinimumSize = new Vector2(30, 0);
+        container.AddChild(quantityLabel);
+
+        var quantitySpinBox = new SpinBox();
+        quantitySpinBox.MinValue = 1;
+        quantitySpinBox.MaxValue = 99;
+        quantitySpinBox.Value = ingredient.Quantity;
+        quantitySpinBox.CustomMinimumSize = new Vector2(80, 0);
+        quantitySpinBox.ValueChanged += (double value) => {
+            ingredient.Quantity = (int)value;
+            OnIngredientChanged(index);
+        };
+        container.AddChild(quantitySpinBox);
+
+        // Remove button
+        var removeButton = new Button { Text = "Remove" };
+        removeButton.Pressed += () => OnRemoveIngredientPressed(index);
+        container.AddChild(removeButton);
+
+        return container;
     }
 
     private void AddNewRecipe()

@@ -17,7 +17,7 @@ anchor_bottom = 1.0
 offset_left = 8.0
 offset_top = 8.0
 offset_right = -8.0
-offset_bottom = -49.0
+offset_bottom = -8.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -38,51 +38,56 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="BasicInfoGroup" type="Control" parent="VBoxContainer/ScrollContainer/FormContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BasicInfoVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup"]
-layout_mode = 0
+[node name="BasicInfoGroup" type="PanelContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="IdGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+[node name="BasicInfoVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup"]
 layout_mode = 2
 
-[node name="IdLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/IdGroup"]
+[node name="IdGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="IdLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/IdGroup"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Recipe ID:"
 
-[node name="IdLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/IdGroup"]
+[node name="IdLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/IdGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "recipe_item_name"
 
-[node name="NameGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+[node name="NameGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox"]
 layout_mode = 2
 
-[node name="NameLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/NameGroup"]
+[node name="NameLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/NameGroup"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Name:"
 
-[node name="NameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/NameGroup"]
+[node name="NameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/NameGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Human readable name"
 
-[node name="CategoryGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+[node name="CategoryGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox"]
 layout_mode = 2
 
-[node name="CategoryLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/CategoryGroup"]
+[node name="CategoryLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/CategoryGroup"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Category:"
 
-[node name="CategoryOptionButton" type="OptionButton" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/CategoryGroup"]
+[node name="CategoryOptionButton" type="OptionButton" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/CategoryGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
 selected = 0
@@ -98,35 +103,36 @@ popup/item_3/id = 3
 popup/item_4/text = "Materials"
 popup/item_4/id = 4
 
-[node name="DescriptionGroup" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+[node name="DescriptionGroup" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox"]
 layout_mode = 2
 
-[node name="DescriptionLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/DescriptionGroup"]
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/DescriptionGroup"]
 layout_mode = 2
 text = "Description:"
 
-[node name="DescriptionTextEdit" type="TextEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/DescriptionGroup"]
+[node name="DescriptionTextEdit" type="TextEdit" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/BasicInfoGroup/BasicInfoVBox/DescriptionGroup"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 placeholder_text = "Detailed description of the recipe"
 
-[node name="CraftingPropertiesGroup" type="Control" parent="VBoxContainer/ScrollContainer/FormContainer"]
+[node name="CraftingPropertiesGroup" type="PanelContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CraftingPropertiesVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup"]
-layout_mode = 0
-
-[node name="CraftingTimeGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox"]
+[node name="CraftingPropertiesVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup"]
 layout_mode = 2
 
-[node name="CraftingTimeLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/CraftingTimeGroup"]
+[node name="CraftingTimeGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox"]
+layout_mode = 2
+
+[node name="CraftingTimeLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/CraftingTimeGroup"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Crafting Time:"
 
-[node name="CraftingTimeSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/CraftingTimeGroup"]
+[node name="CraftingTimeSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/CraftingTimeGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 1.0
@@ -134,32 +140,32 @@ max_value = 300.0
 value = 30.0
 suffix = " seconds"
 
-[node name="DifficultyGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox"]
+[node name="DifficultyGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox"]
 layout_mode = 2
 
-[node name="DifficultyLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/DifficultyGroup"]
+[node name="DifficultyLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/DifficultyGroup"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Difficulty:"
 
-[node name="DifficultySpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/DifficultyGroup"]
+[node name="DifficultySpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/DifficultyGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 10.0
 value = 1.0
 
-[node name="ExperienceGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox"]
+[node name="ExperienceGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox"]
 layout_mode = 2
 
-[node name="ExperienceLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/ExperienceGroup"]
+[node name="ExperienceLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/ExperienceGroup"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Experience:"
 
-[node name="ExperienceSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/ExperienceGroup"]
+[node name="ExperienceSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/HBoxContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/ExperienceGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 1.0
@@ -170,16 +176,52 @@ suffix = " XP"
 [node name="HSeparator2" type="HSeparator" parent="VBoxContainer/ScrollContainer/FormContainer"]
 layout_mode = 2
 
-[node name="ValidationContainer" type="VBoxContainer" parent="VBoxContainer"]
+[node name="IngredientsGroup" type="PanelContainer" parent="VBoxContainer/ScrollContainer/FormContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="IngredientsVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/IngredientsGroup"]
+layout_mode = 2
+
+[node name="IngredientsHeader" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/IngredientsGroup/IngredientsVBox"]
+layout_mode = 2
+
+[node name="IngredientsLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/IngredientsGroup/IngredientsVBox/IngredientsHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Material Requirements:"
+
+[node name="AddIngredientButton" type="Button" parent="VBoxContainer/ScrollContainer/FormContainer/IngredientsGroup/IngredientsVBox/IngredientsHeader"]
+layout_mode = 2
+text = "Add Ingredient"
+
+[node name="IngredientsScrollContainer" type="ScrollContainer" parent="VBoxContainer/ScrollContainer/FormContainer/IngredientsGroup/IngredientsVBox"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="IngredientsListContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/IngredientsGroup/IngredientsVBox/IngredientsScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+
+[node name="ValidationContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.33
 
 [node name="ValidationLabel" type="RichTextLabel" parent="VBoxContainer/ValidationContainer"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+size_flags_vertical = 3
 bbcode_enabled = true
 text = "[color=red][b]Errors:[/b][/color]
 [color=red]• Recipe ID is required[/color]
-[color=red]• Recipe name is required[/color]"
+[color=red]• Recipe name is required[/color]
+[color=yellow][b]Warnings:[/b][/color]
+[color=yellow]• Recipe has no material requirements[/color]"
 scroll_active = false
 
 [node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
