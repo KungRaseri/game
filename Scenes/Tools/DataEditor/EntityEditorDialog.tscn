@@ -131,6 +131,14 @@ min_value = 0.0
 max_value = 999999.0
 value = 1.0
 
+[node name="ValidationContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ValidationLabel" type="RichTextLabel" parent="VBoxContainer/ValidationContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=green][b]Ready to save[/b][/color]"
+
 [node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 alignment = 1
