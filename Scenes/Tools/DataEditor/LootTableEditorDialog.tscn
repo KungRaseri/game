@@ -1,0 +1,134 @@
+[gd_scene load_steps=2 format=3 uid="uid://cr48s0unc2mva"]
+
+[ext_resource type="Script" uid="uid://csglbjq6rbjho" path="res://addons/game_editor_tools/DataEditor/LootTableEditorDialog.cs" id="1_loot_table_editor"]
+
+[node name="LootTableEditorDialog" type="Window"]
+oversampling_override = 1.0
+title = "Loot Table Editor"
+initial_position = 2
+size = Vector2i(1200, 700)
+min_size = Vector2i(800, 600)
+script = ExtResource("1_loot_table_editor")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="HeaderLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Loot Table Properties"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FormContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BasicInfoGroup" type="PanelContainer" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+
+[node name="BasicInfoVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup"]
+layout_mode = 2
+
+[node name="BasicInfoLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+text = "Basic Information"
+
+[node name="IdGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="IdLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/IdGroup"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "ID *"
+
+[node name="IdLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/IdGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "unique_loot_table_id"
+
+[node name="NameGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/NameGroup"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Display Name *"
+
+[node name="NameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/NameGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Goblin Loot"
+
+[node name="MaxDropsGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="MaxDropsLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/MaxDropsGroup"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Max Drops *"
+
+[node name="MaxDropsSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/MaxDropsGroup"]
+layout_mode = 2
+min_value = 1.0
+max_value = 20.0
+value = 3.0
+
+[node name="MaxDropsHelpLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/MaxDropsGroup"]
+modulate = Color(0.7, 0.7, 0.7, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Maximum number of items that can drop from this table"
+
+[node name="EntriesGroup" type="PanelContainer" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+
+[node name="EntriesVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/EntriesGroup"]
+layout_mode = 2
+
+[node name="EntriesHeaderContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/EntriesGroup/EntriesVBox"]
+layout_mode = 2
+
+[node name="EntriesLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/EntriesGroup/EntriesVBox/EntriesHeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Loot Entries"
+
+[node name="AddEntryButton" type="Button" parent="VBoxContainer/ScrollContainer/FormContainer/EntriesGroup/EntriesVBox/EntriesHeaderContainer"]
+layout_mode = 2
+text = "Add Entry"
+
+[node name="EntriesContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/EntriesGroup/EntriesVBox"]
+layout_mode = 2
+
+[node name="ValidationContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ValidationLabel" type="RichTextLabel" parent="VBoxContainer/ValidationContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=gray]* Required fields[/color]
+[color=red][b]Errors:[/b][/color]
+[color=red]• ID is required[/color]
+[color=red]• Display Name is required[/color]"
+
+[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="SaveButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Save Loot Table"

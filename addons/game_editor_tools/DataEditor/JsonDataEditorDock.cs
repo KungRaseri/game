@@ -398,6 +398,9 @@ public partial class JsonDataEditorDock : Control
             case "Entities":
                 ShowEntityEditor();
                 break;
+            case "LootTables":
+                ShowLootTableEditor();
+                break;
             default:
                 GD.Print($"Add {dataType} pressed - feature coming soon!");
                 UpdateStatus($"Add {dataType} - Feature coming soon", false);
@@ -426,6 +429,9 @@ public partial class JsonDataEditorDock : Control
                 break;
             case "Entities":
                 ShowEntityEditor(id);
+                break;
+            case "LootTables":
+                ShowLootTableEditor(id);
                 break;
             default:
                 GD.Print($"Edit {dataType} pressed for ID: {id} - feature coming soon!");
@@ -619,6 +625,57 @@ public partial class JsonDataEditorDock : Control
         {
             UpdateStatus($"Error opening entity editor: {ex.Message}", true);
             GD.PrintErr($"ShowEntityEditor error: {ex.Message}");
+        }
+    }
+
+    private void ShowLootTableEditor(string? lootTableId = null)
+    {
+        try
+        {
+            var lootTableEditorScene = GD.Load<PackedScene>("res://Scenes/Tools/DataEditor/LootTableEditorDialog.tscn");
+            if (lootTableEditorScene == null)
+            {
+                UpdateStatus("Loot table editor scene not found!", true);
+                return;
+            }
+
+            var dialog = lootTableEditorScene.Instantiate<LootTableEditorDialog>();
+            if (dialog == null)
+            {
+                UpdateStatus("Failed to instantiate loot table editor dialog!", true);
+                return;
+            }
+
+            // Add dialog to main screen and show
+            var editorInterface = EditorInterface.Singleton;
+            var mainScreen = editorInterface.GetEditorMainScreen();
+            mainScreen.AddChild(dialog);
+            
+            // Setup dialog for add or edit mode
+            if (string.IsNullOrEmpty(lootTableId))
+            {
+                GD.Print("LootTableEditor: Setting up for ADD mode");
+                dialog.SetupForAdd();
+            }
+            else
+            {
+                GD.Print($"LootTableEditor: Setting up for EDIT mode with ID: '{lootTableId}'");
+                dialog.SetupForEdit(lootTableId);
+            }
+            
+            dialog.PopupCentered();
+            
+            // Connect to LootTableSaved signal to refresh data
+            dialog.LootTableSaved += () => 
+            {
+                RefreshLootTables();
+                UpdateStatus("Loot table data refreshed", false);
+            };
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus($"Error opening loot table editor: {ex.Message}", true);
+            GD.PrintErr($"ShowLootTableEditor error: {ex.Message}");
         }
     }
 

@@ -1,8 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://bm8v7x4lqr3yj"]
 
-[ext_resource type="Script" path="res://addons/game_editor_tools/DataEditor/EntityEditorDialog.cs" id="1_entity_editor"]
+[ext_resource type="Script" uid="uid://bsffudpw44i41" path="res://addons/game_editor_tools/DataEditor/EntityEditorDialog.cs" id="1_entity_editor"]
 
 [node name="EntityEditorDialog" type="Window"]
+oversampling_override = 1.0
 title = "Entity Editor"
 initial_position = 2
 size = Vector2i(800, 600)
@@ -103,7 +104,6 @@ layout_mode = 2
 [node name="DamageSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/LeftColumn/DamageGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
-min_value = 0.0
 max_value = 999999.0
 value = 10.0
 
@@ -117,8 +117,6 @@ layout_mode = 2
 [node name="RetreatSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/RightColumn/RetreatGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
-min_value = 0.0
-max_value = 100.0
 value = 25.0
 
 [node name="RegenGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/RightColumn"]
@@ -127,7 +125,6 @@ layout_mode = 2
 [node name="RegenSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/RightColumn/RegenGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
-min_value = 0.0
 max_value = 999999.0
 value = 1.0
 
@@ -137,7 +134,10 @@ layout_mode = 2
 [node name="ValidationLabel" type="RichTextLabel" parent="VBoxContainer/ValidationContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[color=green][b]Ready to save[/b][/color]"
+text = "[color=red][b]Errors:[/b][/color]
+[color=red]• Entity ID is required[/color]
+[color=red]• Entity name is required[/color]
+[color=red]• Retreat threshold must be between 0 and 1[/color]"
 
 [node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -149,4 +149,5 @@ text = "Cancel"
 
 [node name="SaveButton" type="Button" parent="VBoxContainer/ButtonContainer"]
 layout_mode = 2
+disabled = true
 text = "Save"
