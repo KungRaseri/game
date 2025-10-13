@@ -64,19 +64,11 @@ public partial class LootTableEditorDialog : Window
         LoadAvailableMaterials();
         SetupControls();
         ConnectSignals();
-        ValidateForm();
         
         // Handle window close request (X button)
         CloseRequested += Hide;
-    }
-
-    public override void _ExitTree()
-    {
-        // Disconnect all signals to prevent cleanup errors
-        DisconnectSignals();
         
-        // Disconnect window close signal
-        CloseRequested -= Hide;
+        // Don't call ValidateForm here - it will be called when SetupForAdd or SetupForEdit is called
     }
 
     private void GetNodeReferences()
@@ -157,27 +149,6 @@ public partial class LootTableEditorDialog : Window
             _cancelButton.Pressed += OnCancelPressed;
     }
 
-    private void DisconnectSignals()
-    {
-        if (_idLineEdit != null)
-            _idLineEdit.TextChanged -= OnTextChanged;
-
-        if (_nameLineEdit != null)
-            _nameLineEdit.TextChanged -= OnTextChanged;
-
-        if (_maxDropsSpinBox != null)
-            _maxDropsSpinBox.ValueChanged -= OnValueChanged;
-
-        if (_addEntryButton != null)
-            _addEntryButton.Pressed -= OnAddEntryPressed;
-
-        if (_saveButton != null)
-            _saveButton.Pressed -= OnSavePressed;
-
-        if (_cancelButton != null)
-            _cancelButton.Pressed -= OnCancelPressed;
-    }
-
     /// <summary>
     /// Setup dialog for adding a new loot table
     /// </summary>
@@ -202,6 +173,7 @@ public partial class LootTableEditorDialog : Window
             _saveButton.Text = "Update Loot Table";
 
         LoadLootTableData(lootTableId);
+        // Validation is called at the end of LoadLootTableData after entries are loaded
     }
 
     private void ClearForm()
@@ -212,6 +184,7 @@ public partial class LootTableEditorDialog : Window
         
         _lootEntries.Clear();
         RefreshEntriesList();
+        ValidateForm();
     }
 
     private void LoadLootTableData(string lootTableId)
@@ -277,6 +250,9 @@ public partial class LootTableEditorDialog : Window
         }
 
         RefreshEntriesList();
+        
+        // Validate form after all data is loaded
+        ValidateForm();
     }
 
     // Event handlers
