@@ -281,16 +281,17 @@ public partial class RecipeEditorDialog : Window
             var jsonContent = File.ReadAllText(filePath);
             using var document = JsonDocument.Parse(jsonContent);
 
-            // Search through all recipe arrays
-            foreach (var property in document.RootElement.EnumerateObject())
+            // Search through BasicRecipes and AdvancedRecipes arrays
+            var arrayNames = new[] { "BasicRecipes", "AdvancedRecipes" };
+            foreach (var arrayName in arrayNames)
             {
-                if (property.Value.ValueKind == JsonValueKind.Array)
+                if (document.RootElement.TryGetProperty(arrayName, out var recipesArray) && recipesArray.ValueKind == JsonValueKind.Array)
                 {
-                    foreach (var recipe in property.Value.EnumerateArray())
+                    foreach (var recipe in recipesArray.EnumerateArray())
                     {
                         if (GetJsonString(recipe, "recipeId") == recipeId)
                         {
-                            GD.Print($"RecipeEditor: Found recipe '{recipeId}', loading data...");
+                            GD.Print($"RecipeEditor: Found recipe '{recipeId}' in {arrayName}, loading data...");
                             PopulateFormFromJson(recipe);
                             return;
                         }
@@ -667,20 +668,20 @@ public partial class RecipeEditorDialog : Window
         {
             var newRecipe = CreateRecipeJsonObject();
             
-            // Add to starterRecipes array by default for new recipes
-            if (jsonNode["starterRecipes"] is JsonArray starterRecipesArray)
+            // Add to BasicRecipes array by default for new recipes
+            if (jsonNode["BasicRecipes"] is JsonArray basicRecipesArray)
             {
-                starterRecipesArray.Add(newRecipe);
+                basicRecipesArray.Add(newRecipe);
 
                 var options = new JsonSerializerOptions { WriteIndented = true };
                 var updatedJson = jsonNode.ToJsonString(options);
                 File.WriteAllText(filePath, updatedJson);
 
-                GD.Print($"Added new recipe: {_idLineEdit?.Text} to starterRecipes");
+                GD.Print($"Added new recipe: {_idLineEdit?.Text} to BasicRecipes");
             }
             else
             {
-                throw new InvalidOperationException("starterRecipes array not found in JSON");
+                throw new InvalidOperationException("BasicRecipes array not found in JSON");
             }
         }
         else
@@ -700,10 +701,11 @@ public partial class RecipeEditorDialog : Window
             var updatedRecipe = CreateRecipeJsonObject();
             bool found = false;
 
-            // Search through all recipe arrays
-            foreach (var property in jsonNode.AsObject())
+            // Search through BasicRecipes and AdvancedRecipes arrays
+            var arrayNames = new[] { "BasicRecipes", "AdvancedRecipes" };
+            foreach (var arrayName in arrayNames)
             {
-                if (property.Value is JsonArray recipesArray)
+                if (jsonNode[arrayName] is JsonArray recipesArray)
                 {
                     for (int i = 0; i < recipesArray.Count; i++)
                     {
@@ -711,6 +713,7 @@ public partial class RecipeEditorDialog : Window
                         {
                             recipesArray[i] = updatedRecipe;
                             found = true;
+                            GD.Print($"Updated recipe: {_editingRecipeId} in {arrayName}");
                             break;
                         }
                     }
@@ -848,12 +851,13 @@ public partial class RecipeEditorDialog : Window
             var jsonContent = File.ReadAllText(filePath);
             using var document = JsonDocument.Parse(jsonContent);
             
-            // Search through all recipe arrays
-            foreach (var property in document.RootElement.EnumerateObject())
+            // Search through BasicRecipes and AdvancedRecipes arrays
+            var arrayNames = new[] { "BasicRecipes", "AdvancedRecipes" };
+            foreach (var arrayName in arrayNames)
             {
-                if (property.Value.ValueKind == JsonValueKind.Array)
+                if (document.RootElement.TryGetProperty(arrayName, out var recipesArray) && recipesArray.ValueKind == JsonValueKind.Array)
                 {
-                    foreach (var recipe in property.Value.EnumerateArray())
+                    foreach (var recipe in recipesArray.EnumerateArray())
                     {
                         if (GetJsonString(recipe, "recipeId") == id)
                             return true;

@@ -250,12 +250,13 @@ public partial class JsonDataEditorDock : Control
             var jsonContent = File.ReadAllText(filePath);
             using var document = JsonDocument.Parse(jsonContent);
             
-            // Search through all recipe arrays (starterRecipes, advancedRecipes, phase1Recipes)
-            foreach (var property in document.RootElement.EnumerateObject())
+            // Search through BasicRecipes and AdvancedRecipes arrays
+            var arrayNames = new[] { "BasicRecipes", "AdvancedRecipes" };
+            foreach (var arrayName in arrayNames)
             {
-                if (property.Value.ValueKind == JsonValueKind.Array)
+                if (document.RootElement.TryGetProperty(arrayName, out var recipesArray) && recipesArray.ValueKind == JsonValueKind.Array)
                 {
-                    foreach (var recipe in property.Value.EnumerateArray())
+                    foreach (var recipe in recipesArray.EnumerateArray())
                     {
                         var item = _recipesList.CreateItem(root);
                         item.SetText(0, GetJsonString(recipe, "recipeId"));
