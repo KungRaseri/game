@@ -387,6 +387,9 @@ public partial class JsonDataEditorDock : Control
             case "Materials":
                 ShowMaterialEditor();
                 break;
+            case "Recipes":
+                ShowRecipeEditor();
+                break;
             default:
                 GD.Print($"Add {dataType} pressed - feature coming soon!");
                 UpdateStatus($"Add {dataType} - Feature coming soon", false);
@@ -409,6 +412,9 @@ public partial class JsonDataEditorDock : Control
         {
             case "Materials":
                 ShowMaterialEditor(id);
+                break;
+            case "Recipes":
+                ShowRecipeEditor(id);
                 break;
             default:
                 GD.Print($"Edit {dataType} pressed for ID: {id} - feature coming soon!");
@@ -498,6 +504,58 @@ public partial class JsonDataEditorDock : Control
         {
             UpdateStatus($"Error opening material editor: {ex.Message}", true);
             GD.PrintErr($"ShowMaterialEditor error: {ex.Message}");
+        }
+    }
+
+    // Recipe Editor Integration
+    private void ShowRecipeEditor(string? recipeId = null)
+    {
+        try
+        {
+            var recipeEditorScene = GD.Load<PackedScene>("res://Scenes/Tools/DataEditor/RecipeEditorDialog.tscn");
+            if (recipeEditorScene == null)
+            {
+                UpdateStatus("Recipe editor scene not found!", true);
+                return;
+            }
+
+            var dialog = recipeEditorScene.Instantiate<RecipeEditorDialog>();
+            if (dialog == null)
+            {
+                UpdateStatus("Failed to instantiate recipe editor dialog!", true);
+                return;
+            }
+
+            // Add dialog to main screen and show
+            var editorInterface = EditorInterface.Singleton;
+            var mainScreen = editorInterface.GetEditorMainScreen();
+            mainScreen.AddChild(dialog);
+            
+            // Setup dialog for add or edit mode
+            if (string.IsNullOrEmpty(recipeId))
+            {
+                GD.Print("RecipeEditor: Setting up for ADD mode");
+                dialog.SetupForAdd();
+            }
+            else
+            {
+                GD.Print($"RecipeEditor: Setting up for EDIT mode with ID: '{recipeId}'");
+                dialog.SetupForEdit(recipeId);
+            }
+            
+            dialog.PopupCentered(new Vector2I(700, 700));
+            
+            // Connect to RecipeSaved signal to refresh data
+            dialog.RecipeSaved += () => 
+            {
+                RefreshRecipes();
+                UpdateStatus("Recipe data refreshed", false);
+            };
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus($"Error opening recipe editor: {ex.Message}", true);
+            GD.PrintErr($"ShowRecipeEditor error: {ex.Message}");
         }
     }
 

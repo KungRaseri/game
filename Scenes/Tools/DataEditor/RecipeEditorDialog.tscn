@@ -1,0 +1,199 @@
+[gd_scene load_steps=2 format=3 uid="uid://beav56rxaccxh"]
+
+[ext_resource type="Script" uid="uid://dyglc5netoqkw" path="res://addons/game_editor_tools/DataEditor/RecipeEditorDialog.cs" id="1_recipe_editor"]
+
+[node name="RecipeEditorDialog" type="Window"]
+oversampling_override = 1.0
+title = "Recipe Editor"
+initial_position = 2
+size = Vector2i(700, 700)
+min_size = Vector2i(650, 650)
+script = ExtResource("1_recipe_editor")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HeaderLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Recipe Properties"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FormContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BasicInfoGroup" type="Control" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BasicInfoVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup"]
+layout_mode = 0
+
+[node name="IdGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="IdLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/IdGroup"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Recipe ID:"
+
+[node name="IdLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/IdGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "recipe_item_name"
+
+[node name="NameGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/NameGroup"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Name:"
+
+[node name="NameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/NameGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Human readable name"
+
+[node name="CategoryGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="CategoryLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/CategoryGroup"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Category:"
+
+[node name="CategoryOptionButton" type="OptionButton" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/CategoryGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 5
+popup/item_0/text = "Weapons"
+popup/item_0/id = 0
+popup/item_1/text = "Armor"
+popup/item_1/id = 1
+popup/item_2/text = "Consumables"
+popup/item_2/id = 2
+popup/item_3/text = "Tools"
+popup/item_3/id = 3
+popup/item_4/text = "Materials"
+popup/item_4/id = 4
+
+[node name="DescriptionGroup" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/DescriptionGroup"]
+layout_mode = 2
+text = "Description:"
+
+[node name="DescriptionTextEdit" type="TextEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/DescriptionGroup"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+placeholder_text = "Detailed description of the recipe"
+
+[node name="CraftingPropertiesGroup" type="Control" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CraftingPropertiesVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup"]
+layout_mode = 0
+
+[node name="CraftingTimeGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox"]
+layout_mode = 2
+
+[node name="CraftingTimeLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/CraftingTimeGroup"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Crafting Time:"
+
+[node name="CraftingTimeSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/CraftingTimeGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 300.0
+value = 30.0
+suffix = " seconds"
+
+[node name="DifficultyGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox"]
+layout_mode = 2
+
+[node name="DifficultyLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/DifficultyGroup"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Difficulty:"
+
+[node name="DifficultySpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/DifficultyGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 10.0
+value = 1.0
+
+[node name="ExperienceGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox"]
+layout_mode = 2
+
+[node name="ExperienceLabel" type="Label" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/ExperienceGroup"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Experience:"
+
+[node name="ExperienceSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CraftingPropertiesGroup/CraftingPropertiesVBox/ExperienceGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 500.0
+value = 10.0
+suffix = " XP"
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+
+[node name="ValidationContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ValidationLabel" type="RichTextLabel" parent="VBoxContainer/ValidationContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=red][b]Errors:[/b][/color]
+[color=red]• Recipe ID is required[/color]
+[color=red]• Recipe name is required[/color]"
+scroll_active = false
+
+[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="Spacer" type="Control" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SaveButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+disabled = true
+text = "Save Recipe"
