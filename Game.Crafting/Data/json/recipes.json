@@ -1,354 +1,354 @@
 {
   "starterRecipes": [
-    {
-      "recipeId": "recipe_iron_sword",
-      "name": "Iron Sword",
-      "description": "A sturdy iron sword suitable for novice adventurers. Requires basic metalworking skills.",
-      "category": "Weapons",
-      "materialRequirements": [
-        {
-          "category": "Metal",
-          "qualityTier": "Common",
-          "quantity": 3
-        },
-        {
-          "category": "Wood",
-          "qualityTier": "Common",
-          "quantity": 1
-        }
-      ],
-      "result": {
-        "itemId": "iron_sword",
-        "itemName": "Iron Sword",
-        "itemType": "Weapon",
-        "baseQuality": "Common",
-        "quantity": 1,
-        "baseValue": 50,
-        "itemProperties": {
-          "DamageBonus": 8
-        }
-      },
-      "craftingTime": 30.0,
-      "difficulty": 2,
-      "prerequisites": [],
-      "isUnlocked": true,
-      "experienceReward": 15
-    },
-    {
-      "recipeId": "recipe_wooden_shield",
-      "name": "Wooden Shield",
-      "description": "A simple wooden shield reinforced with leather straps. Provides basic protection.",
-      "category": "Armor",
-      "materialRequirements": [
-        {
-          "category": "Wood",
-          "qualityTier": "Common",
-          "quantity": 4
-        },
-        {
-          "category": "Leather",
-          "qualityTier": "Common",
-          "quantity": 2
-        }
-      ],
-      "result": {
-        "itemId": "wooden_shield",
-        "itemName": "Wooden Shield",
-        "itemType": "Armor",
-        "baseQuality": "Common",
-        "quantity": 1,
-        "baseValue": 30,
-        "itemProperties": {
-          "DamageReduction": 5
-        }
-      },
-      "craftingTime": 25.0,
-      "difficulty": 1,
-      "prerequisites": [],
-      "isUnlocked": true,
-      "experienceReward": 12
-    },
-    {
-      "recipeId": "recipe_health_potion",
-      "name": "Health Potion",
-      "description": "A basic healing potion brewed from common herbs. Restores health when consumed.",
-      "category": "Consumables",
-      "materialRequirements": [
-        {
-          "category": "Herb",
-          "qualityTier": "Common",
-          "quantity": 2
-        },
-        {
-          "category": "Gem",
-          "qualityTier": "Common",
-          "quantity": 1
-        }
-      ],
-      "result": {
-        "itemId": "health_potion",
-        "itemName": "Health Potion",
-        "itemType": "Consumable",
-        "baseQuality": "Common",
-        "quantity": 1,
-        "baseValue": 25,
-        "itemProperties": {
-          "HealingAmount": 50
-        }
-      },
-      "craftingTime": 15.0,
-      "difficulty": 1,
-      "prerequisites": [],
-      "isUnlocked": true,
-      "experienceReward": 10
-    }
+	{
+	  "recipeId": "recipe_iron_sword",
+	  "name": "Iron Sword",
+	  "description": "A sturdy iron sword suitable for novice adventurers. Requires basic metalworking skills.",
+	  "category": "Weapons",
+	  "materialRequirements": [
+		{
+		  "category": "Metal",
+		  "qualityTier": "Common",
+		  "quantity": 3
+		},
+		{
+		  "category": "Wood",
+		  "qualityTier": "Common",
+		  "quantity": 1
+		}
+	  ],
+	  "result": {
+		"itemId": "iron_sword",
+		"itemName": "Iron Sword",
+		"itemType": "Weapon",
+		"baseQuality": "Common",
+		"quantity": 1,
+		"baseValue": 50,
+		"itemProperties": {
+		  "DamageBonus": 8
+		}
+	  },
+	  "craftingTime": 30.0,
+	  "difficulty": 2,
+	  "prerequisites": [],
+	  "isUnlocked": true,
+	  "experienceReward": 15
+	},
+	{
+	  "recipeId": "recipe_wooden_shield",
+	  "name": "Wooden Shield",
+	  "description": "A simple wooden shield reinforced with leather straps. Provides basic protection.",
+	  "category": "Armor",
+	  "materialRequirements": [
+		{
+		  "category": "Wood",
+		  "qualityTier": "Common",
+		  "quantity": 4
+		},
+		{
+		  "category": "Leather",
+		  "qualityTier": "Common",
+		  "quantity": 2
+		}
+	  ],
+	  "result": {
+		"itemId": "wooden_shield",
+		"itemName": "Wooden Shield",
+		"itemType": "Armor",
+		"baseQuality": "Common",
+		"quantity": 1,
+		"baseValue": 30,
+		"itemProperties": {
+		  "DamageReduction": 5
+		}
+	  },
+	  "craftingTime": 25.0,
+	  "difficulty": 1,
+	  "prerequisites": [],
+	  "isUnlocked": true,
+	  "experienceReward": 12
+	},
+	{
+	  "recipeId": "recipe_health_potion",
+	  "name": "Health Potion",
+	  "description": "A basic healing potion brewed from common herbs. Restores health when consumed.",
+	  "category": "Consumables",
+	  "materialRequirements": [
+		{
+		  "category": "Herb",
+		  "qualityTier": "Common",
+		  "quantity": 2
+		},
+		{
+		  "category": "Gem",
+		  "qualityTier": "Common",
+		  "quantity": 1
+		}
+	  ],
+	  "result": {
+		"itemId": "health_potion",
+		"itemName": "Health Potion",
+		"itemType": "Consumable",
+		"baseQuality": "Common",
+		"quantity": 1,
+		"baseValue": 25,
+		"itemProperties": {
+		  "HealingAmount": 50
+		}
+	  },
+	  "craftingTime": 15.0,
+	  "difficulty": 1,
+	  "prerequisites": [],
+	  "isUnlocked": true,
+	  "experienceReward": 10
+	}
   ],
   "advancedRecipes": [
-    {
-      "recipeId": "recipe_steel_sword",
-      "name": "Steel Sword",
-      "description": "An improved sword made from high-quality steel. Significantly more effective than iron.",
-      "category": "Weapons",
-      "materialRequirements": [
-        {
-          "category": "Metal",
-          "qualityTier": "Uncommon",
-          "quantity": 4
-        },
-        {
-          "category": "Wood",
-          "qualityTier": "Uncommon",
-          "quantity": 1
-        },
-        {
-          "category": "Gem",
-          "qualityTier": "Common",
-          "quantity": 1
-        }
-      ],
-      "result": {
-        "itemId": "steel_sword",
-        "itemName": "Steel Sword",
-        "itemType": "Weapon",
-        "baseQuality": "Uncommon",
-        "quantity": 1,
-        "baseValue": 120,
-        "itemProperties": {
-          "DamageBonus": 15
-        }
-      },
-      "craftingTime": 60.0,
-      "difficulty": 4,
-      "prerequisites": [
+	{
+	  "recipeId": "recipe_steel_sword",
+	  "name": "Steel Sword",
+	  "description": "An improved sword made from high-quality steel. Significantly more effective than iron.",
+	  "category": "Weapons",
+	  "materialRequirements": [
+		{
+		  "category": "Metal",
+		  "qualityTier": "Uncommon",
+		  "quantity": 4
+		},
+		{
+		  "category": "Wood",
+		  "qualityTier": "Uncommon",
+		  "quantity": 1
+		},
+		{
+		  "category": "Gem",
+		  "qualityTier": "Common",
+		  "quantity": 1
+		}
+	  ],
+	  "result": {
+		"itemId": "steel_sword",
+		"itemName": "Steel Sword",
+		"itemType": "Weapon",
+		"baseQuality": "Uncommon",
+		"quantity": 1,
+		"baseValue": 120,
+		"itemProperties": {
+		  "DamageBonus": 15
+		}
+	  },
+	  "craftingTime": 60.0,
+	  "difficulty": 4,
+	  "prerequisites": [
         "recipe_iron_sword"
-      ],
-      "isUnlocked": false,
-      "experienceReward": 25
-    },
-    {
-      "recipeId": "recipe_iron_shield",
-      "name": "Iron Shield",
-      "description": "A reinforced shield with iron plating. Much more durable than wood alone.",
-      "category": "Armor",
-      "materialRequirements": [
-        {
-          "category": "Metal",
-          "qualityTier": "Common",
-          "quantity": 3
-        },
-        {
-          "category": "Leather",
-          "qualityTier": "Common",
-          "quantity": 2
-        },
-        {
-          "category": "Wood",
-          "qualityTier": "Common",
-          "quantity": 1
-        }
-      ],
-      "result": {
-        "itemId": "iron_shield",
-        "itemName": "Iron Shield",
-        "itemType": "Armor",
-        "baseQuality": "Uncommon",
-        "quantity": 1,
-        "baseValue": 75,
-        "itemProperties": {
-          "DamageReduction": 10
-        }
-      },
-      "craftingTime": 45.0,
-      "difficulty": 3,
-      "prerequisites": [
+	  ],
+	  "isUnlocked": false,
+	  "experienceReward": 25
+	},
+	{
+	  "recipeId": "recipe_iron_shield",
+	  "name": "Iron Shield",
+	  "description": "A reinforced shield with iron plating. Much more durable than wood alone.",
+	  "category": "Armor",
+	  "materialRequirements": [
+		{
+		  "category": "Metal",
+		  "qualityTier": "Common",
+		  "quantity": 3
+		},
+		{
+		  "category": "Leather",
+		  "qualityTier": "Common",
+		  "quantity": 2
+		},
+		{
+		  "category": "Wood",
+		  "qualityTier": "Common",
+		  "quantity": 1
+		}
+	  ],
+	  "result": {
+		"itemId": "iron_shield",
+		"itemName": "Iron Shield",
+		"itemType": "Armor",
+		"baseQuality": "Uncommon",
+		"quantity": 1,
+		"baseValue": 75,
+		"itemProperties": {
+		  "DamageReduction": 10
+		}
+	  },
+	  "craftingTime": 45.0,
+	  "difficulty": 3,
+	  "prerequisites": [
         "recipe_wooden_shield"
-      ],
-      "isUnlocked": false,
-      "experienceReward": 20
-    },
-    {
-      "recipeId": "recipe_greater_health_potion",
-      "name": "Greater Health Potion",
-      "description": "An enhanced healing potion with double the potency of the basic version.",
-      "category": "Consumables",
-      "materialRequirements": [
-        {
-          "category": "Herb",
-          "qualityTier": "Uncommon",
-          "quantity": 3
-        },
-        {
-          "category": "Gem",
-          "qualityTier": "Uncommon",
-          "quantity": 2
-        }
-      ],
-      "result": {
-        "itemId": "greater_health_potion",
-        "itemName": "Greater Health Potion",
-        "itemType": "Consumable",
-        "baseQuality": "Uncommon",
-        "quantity": 1,
-        "baseValue": 60,
-        "itemProperties": {
-          "HealingAmount": 100
-        }
-      },
-      "craftingTime": 30.0,
-      "difficulty": 3,
-      "prerequisites": [
+	  ],
+	  "isUnlocked": false,
+	  "experienceReward": 20
+	},
+	{
+	  "recipeId": "recipe_greater_health_potion",
+	  "name": "Greater Health Potion",
+	  "description": "An enhanced healing potion with double the potency of the basic version.",
+	  "category": "Consumables",
+	  "materialRequirements": [
+		{
+		  "category": "Herb",
+		  "qualityTier": "Uncommon",
+		  "quantity": 3
+		},
+		{
+		  "category": "Gem",
+		  "qualityTier": "Uncommon",
+		  "quantity": 2
+		}
+	  ],
+	  "result": {
+		"itemId": "greater_health_potion",
+		"itemName": "Greater Health Potion",
+		"itemType": "Consumable",
+		"baseQuality": "Uncommon",
+		"quantity": 1,
+		"baseValue": 60,
+		"itemProperties": {
+		  "HealingAmount": 100
+		}
+	  },
+	  "craftingTime": 30.0,
+	  "difficulty": 3,
+	  "prerequisites": [
         "recipe_health_potion"
-      ],
-      "isUnlocked": false,
-      "experienceReward": 18
-    },
-    {
-      "recipeId": "recipe_leather_armor",
-      "name": "Leather Armor",
-      "description": "Flexible leather armor that provides good protection without hindering movement.",
-      "category": "Armor",
-      "materialRequirements": [
-        {
-          "category": "Leather",
-          "qualityTier": "Common",
-          "quantity": 6
-        },
-        {
-          "category": "Metal",
-          "qualityTier": "Common",
-          "quantity": 2
-        }
-      ],
-      "result": {
-        "itemId": "leather_armor",
-        "itemName": "Leather Armor",
-        "itemType": "Armor",
-        "baseQuality": "Common",
-        "quantity": 1,
-        "baseValue": 80,
-        "itemProperties": {
-          "DamageReduction": 8
-        }
-      },
-      "craftingTime": 50.0,
-      "difficulty": 3,
-      "prerequisites": [],
-      "isUnlocked": false,
-      "experienceReward": 22
-    }
+	  ],
+	  "isUnlocked": false,
+	  "experienceReward": 18
+	},
+	{
+	  "recipeId": "recipe_leather_armor",
+	  "name": "Leather Armor",
+	  "description": "Flexible leather armor that provides good protection without hindering movement.",
+	  "category": "Armor",
+	  "materialRequirements": [
+		{
+		  "category": "Leather",
+		  "qualityTier": "Common",
+		  "quantity": 6
+		},
+		{
+		  "category": "Metal",
+		  "qualityTier": "Common",
+		  "quantity": 2
+		}
+	  ],
+	  "result": {
+		"itemId": "leather_armor",
+		"itemName": "Leather Armor",
+		"itemType": "Armor",
+		"baseQuality": "Common",
+		"quantity": 1,
+		"baseValue": 80,
+		"itemProperties": {
+		  "DamageReduction": 8
+		}
+	  },
+	  "craftingTime": 50.0,
+	  "difficulty": 3,
+	  "prerequisites": [],
+	  "isUnlocked": false,
+	  "experienceReward": 22
+	}
   ],
   "phase1Recipes": [
-    {
-      "recipeId": "recipe_simple_health_potion",
-      "name": "Simple Health Potion",
-      "description": "A basic healing potion made from simple herbs. Restores a small amount of health.",
-      "category": "Consumables",
-      "materialRequirements": [
-        {
-          "category": "Herb",
-          "qualityTier": "Common",
-          "quantity": 2
-        }
-      ],
-      "result": {
-        "itemId": "simple_health_potion",
-        "itemName": "Simple Health Potion",
-        "itemType": "Consumable",
-        "baseQuality": "Common",
-        "quantity": 1,
-        "baseValue": 15,
-        "itemProperties": {
-          "HealingAmount": 25
-        }
-      },
-      "craftingTime": 10.0,
-      "difficulty": 1,
-      "prerequisites": [],
-      "isUnlocked": true,
-      "experienceReward": 8
-    },
-    {
-      "recipeId": "recipe_basic_sword",
-      "name": "Basic Sword",
-      "description": "A simple sword forged from iron ore with an oak wood handle. Good for starting adventurers.",
-      "category": "Weapons",
-      "materialRequirements": [
-        {
-          "category": "Metal",
-          "qualityTier": "Common",
-          "quantity": 3
-        },
-        {
-          "category": "Wood",
-          "qualityTier": "Common",
-          "quantity": 1
-        }
-      ],
-      "result": {
-        "itemId": "basic_sword",
-        "itemName": "Basic Sword",
-        "itemType": "Weapon",
-        "baseQuality": "Common",
-        "quantity": 1,
-        "baseValue": 35,
-        "itemProperties": {
-          "DamageBonus": 6
-        }
-      },
-      "craftingTime": 25.0,
-      "difficulty": 2,
-      "prerequisites": [],
-      "isUnlocked": true,
-      "experienceReward": 12
-    },
-    {
-      "recipeId": "recipe_phase1_wooden_shield",
-      "name": "Wooden Shield",
-      "description": "A simple wooden shield crafted from oak planks. Provides basic protection.",
-      "category": "Armor",
-      "materialRequirements": [
-        {
-          "category": "Wood",
-          "qualityTier": "Common",
-          "quantity": 4
-        }
-      ],
-      "result": {
-        "itemId": "wooden_shield",
-        "itemName": "Wooden Shield",
-        "itemType": "Armor",
-        "baseQuality": "Common",
-        "quantity": 1,
-        "baseValue": 20,
-        "itemProperties": {
-          "DamageReduction": 3
-        }
-      },
-      "craftingTime": 20.0,
-      "difficulty": 1,
-      "prerequisites": [],
-      "isUnlocked": true,
-      "experienceReward": 10
-    }
+	{
+	  "recipeId": "recipe_simple_health_potion",
+	  "name": "Simple Health Potion",
+	  "description": "A basic healing potion made from simple herbs. Restores a small amount of health.",
+	  "category": "Consumables",
+	  "materialRequirements": [
+		{
+		  "category": "Herb",
+		  "qualityTier": "Common",
+		  "quantity": 2
+		}
+	  ],
+	  "result": {
+		"itemId": "simple_health_potion",
+		"itemName": "Simple Health Potion",
+		"itemType": "Consumable",
+		"baseQuality": "Common",
+		"quantity": 1,
+		"baseValue": 15,
+		"itemProperties": {
+		  "HealingAmount": 25
+		}
+	  },
+	  "craftingTime": 10.0,
+	  "difficulty": 1,
+	  "prerequisites": [],
+	  "isUnlocked": true,
+	  "experienceReward": 8
+	},
+	{
+	  "recipeId": "recipe_basic_sword",
+	  "name": "Basic Sword",
+	  "description": "A simple sword forged from iron ore with an oak wood handle. Good for starting adventurers.",
+	  "category": "Weapons",
+	  "materialRequirements": [
+		{
+		  "category": "Metal",
+		  "qualityTier": "Common",
+		  "quantity": 3
+		},
+		{
+		  "category": "Wood",
+		  "qualityTier": "Common",
+		  "quantity": 1
+		}
+	  ],
+	  "result": {
+		"itemId": "basic_sword",
+		"itemName": "Basic Sword",
+		"itemType": "Weapon",
+		"baseQuality": "Common",
+		"quantity": 1,
+		"baseValue": 35,
+		"itemProperties": {
+		  "DamageBonus": 6
+		}
+	  },
+	  "craftingTime": 25.0,
+	  "difficulty": 2,
+	  "prerequisites": [],
+	  "isUnlocked": true,
+	  "experienceReward": 12
+	},
+	{
+	  "recipeId": "recipe_phase1_wooden_shield",
+	  "name": "Wooden Shield",
+	  "description": "A simple wooden shield crafted from oak planks. Provides basic protection.",
+	  "category": "Armor",
+	  "materialRequirements": [
+		{
+		  "category": "Wood",
+		  "qualityTier": "Common",
+		  "quantity": 4
+		}
+	  ],
+	  "result": {
+		"itemId": "wooden_shield",
+		"itemName": "Wooden Shield",
+		"itemType": "Armor",
+		"baseQuality": "Common",
+		"quantity": 1,
+		"baseValue": 20,
+		"itemProperties": {
+		  "DamageReduction": 3
+		}
+	  },
+	  "craftingTime": 20.0,
+	  "difficulty": 1,
+	  "prerequisites": [],
+	  "isUnlocked": true,
+	  "experienceReward": 10
+	}
   ]
 }

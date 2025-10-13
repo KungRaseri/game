@@ -250,15 +250,19 @@ public partial class JsonDataEditorDock : Control
             var jsonContent = File.ReadAllText(filePath);
             using var document = JsonDocument.Parse(jsonContent);
             
-            if (document.RootElement.TryGetProperty("recipes", out var recipesArray))
+            // Search through all recipe arrays (starterRecipes, advancedRecipes, phase1Recipes)
+            foreach (var property in document.RootElement.EnumerateObject())
             {
-                foreach (var recipe in recipesArray.EnumerateArray())
+                if (property.Value.ValueKind == JsonValueKind.Array)
                 {
-                    var item = _recipesList.CreateItem(root);
-                    item.SetText(0, GetJsonString(recipe, "recipeId"));
-                    item.SetText(1, GetJsonString(recipe, "name"));
-                    item.SetText(2, GetJsonString(recipe, "category"));
-                    item.SetText(3, GetJsonInt(recipe, "difficulty").ToString());
+                    foreach (var recipe in property.Value.EnumerateArray())
+                    {
+                        var item = _recipesList.CreateItem(root);
+                        item.SetText(0, GetJsonString(recipe, "recipeId"));
+                        item.SetText(1, GetJsonString(recipe, "name"));
+                        item.SetText(2, GetJsonString(recipe, "category"));
+                        item.SetText(3, GetJsonInt(recipe, "difficulty").ToString());
+                    }
                 }
             }
         }
@@ -491,7 +495,7 @@ public partial class JsonDataEditorDock : Control
                 dialog.SetupForEdit(materialId);
             }
             
-            dialog.PopupCentered(new Vector2I(600, 500));
+            dialog.PopupCentered();
             
             // Connect to MaterialSaved signal to refresh data
             dialog.MaterialSaved += () => 
@@ -543,7 +547,7 @@ public partial class JsonDataEditorDock : Control
                 dialog.SetupForEdit(recipeId);
             }
             
-            dialog.PopupCentered(new Vector2I(700, 700));
+            dialog.PopupCentered();
             
             // Connect to RecipeSaved signal to refresh data
             dialog.RecipeSaved += () => 
