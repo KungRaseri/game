@@ -271,7 +271,7 @@ public partial class CraftingWorkshopUI : Control
         
         // TODO: Get actual materials from inventory system
         // For now, simulate some materials
-        var ironOre = new Material("iron_ore", "Iron Ore", "Raw iron ore", QualityTier.Common, 5, Category.Metal);
+        var ironOre = new Material("ore_iron", "Iron Ore", "Raw iron ore", QualityTier.Common, 5, Category.Metal);
         var leather = new Material("leather", "Leather", "Cured animal hide", QualityTier.Common, 3, Category.Leather);
         var wood = new Material("wood", "Wood", "Common lumber", QualityTier.Common, 2, Category.Wood);
         var cloth = new Material("cloth", "Cloth", "Woven fabric", QualityTier.Common, 4, Category.Cloth);

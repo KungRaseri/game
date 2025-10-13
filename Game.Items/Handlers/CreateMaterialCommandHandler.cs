@@ -32,7 +32,7 @@ public class CreateMaterialCommandHandler : ICommandHandler<CreateMaterialComman
         // For now, delegate to ItemTypes static configurations
         return configId.ToLowerInvariant() switch
         {
-            "iron_ore" => ItemTypes.IronOre,
+            "ore_iron" => ItemTypes.IronOre,
             "steel_ingot" => ItemTypes.SteelIngot,
             "monster_hide" => ItemTypes.MonsterHide,
             "tanned_leather" => ItemTypes.TannedLeather,

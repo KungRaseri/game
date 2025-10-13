@@ -20,8 +20,8 @@ public static class LootConfiguration
         var materials = new Dictionary<string, Material>();
 
         // Metal materials
-        materials["iron_ore"] = new Material(
-            "iron_ore",
+        materials["ore_iron"] = new Material(
+            "ore_iron",
             "Iron Ore",
             "Common metal ore used in basic weapon and armor crafting.",
             QualityTier.Common,
@@ -149,10 +149,10 @@ public static class LootConfiguration
             "goblin",
             new List<LootEntry>
             {
-                new(materials["iron_ore"], 0.8f, 1, 3),
+                new(materials["ore_iron"], 0.8f, 1, 3),
                 new(materials["crude_leather"], 0.6f, 1, 2),
                 new(materials["herbs"], 0.4f, 1, 1),
-                new(materials["iron_ore"], 0.15f, 1, 1, QualityTier.Uncommon),
+                new(materials["ore_iron"], 0.15f, 1, 1, QualityTier.Uncommon),
                 new(materials["gem_shard"], 0.02f, 1, 1)
             },
             1,
@@ -164,7 +164,7 @@ public static class LootConfiguration
             "orc",
             new List<LootEntry>
             {
-                new(materials["iron_ore"], 0.9f, 2, 4),
+                new(materials["ore_iron"], 0.9f, 2, 4),
                 new(materials["thick_leather"], 0.7f, 1, 2),
                 new(materials["coal"], 0.5f, 1, 2),
                 new(materials["silver_ore"], 0.25f, 1, 1),
@@ -179,7 +179,7 @@ public static class LootConfiguration
             "troll",
             new List<LootEntry>
             {
-                new(materials["iron_ore"], 0.95f, 3, 6),
+                new(materials["ore_iron"], 0.95f, 3, 6),
                 new(materials["silver_ore"], 0.6f, 1, 3),
                 new(materials["thick_leather"], 0.8f, 2, 3),
                 new(materials["gold_ore"], 0.3f, 1, 2),

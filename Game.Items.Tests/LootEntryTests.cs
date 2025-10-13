@@ -9,7 +9,7 @@ namespace Game.Items.Tests;
 public class LootEntryTests
 {
     private readonly Material _testMaterial = new(
-        "iron_ore",
+        "ore_iron",
         "Iron Ore",
         "Common metal ore",
         QualityTier.Common,

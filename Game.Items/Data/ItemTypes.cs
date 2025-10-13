@@ -59,7 +59,7 @@ public static class ItemTypes
 
     // Materials - Metals
     public static MaterialConfig IronOre { get; } = new(
-        ItemId: "material_iron_ore",
+        ItemId: "material_ore_iron",
         Name: "Iron Ore",
         Description: "Raw iron ore, can be smelted into ingots.",
         BaseValue: 5,

@@ -32,9 +32,9 @@ public class RecipeInitializationService
 
         try
         {
-            // Load starter recipes (unlocked by default)
-            var starterRecipes = await _craftingDataService.GetStarterRecipesAsync(cancellationToken);
-            foreach (var recipe in starterRecipes)
+            // Load basic recipes (unlocked by default)
+            var basicRecipes = await _craftingDataService.GetBasicRecipesAsync(cancellationToken);
+            foreach (var recipe in basicRecipes)
             {
                 recipeManager.AddRecipe(recipe, unlocked: true);
             }
@@ -44,13 +44,6 @@ public class RecipeInitializationService
             foreach (var recipe in advancedRecipes)
             {
                 recipeManager.AddRecipe(recipe, unlocked: false);
-            }
-
-            // Load Phase 1 recipes (unlocked by default)
-            var phase1Recipes = await _craftingDataService.GetPhase1RecipesAsync(cancellationToken);
-            foreach (var recipe in phase1Recipes)
-            {
-                recipeManager.AddRecipe(recipe, unlocked: true);
             }
 
             GameLogger.Info($"[Crafting] Initialized RecipeManager with {recipeManager.AllRecipes.Count} recipes from JSON");

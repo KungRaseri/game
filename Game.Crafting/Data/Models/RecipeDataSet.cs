@@ -13,12 +13,8 @@ public class RecipeDataSet
     [JsonPropertyName("BasicRecipes")]
     public List<RecipeData> BasicRecipes { get; set; } = [];
 
-    [JsonPropertyName("AdvancedRecipes")]
+        [JsonPropertyName("AdvancedRecipes")]
     public List<RecipeData> AdvancedRecipes { get; set; } = [];
-
-    // Legacy properties for backward compatibility
-    public List<RecipeData> StarterRecipes => BasicRecipes;
-    public List<RecipeData> Phase1Recipes => BasicRecipes;
 
     /// <summary>
     /// Converts this data set to domain recipe objects.
@@ -193,17 +189,15 @@ public class CraftingResultData
 public class RecipeCollection
 {
     public IReadOnlyList<Recipe> AllRecipes { get; }
-    public IReadOnlyList<Recipe> StarterRecipes { get; }
+    public IReadOnlyList<Recipe> BasicRecipes { get; }
     public IReadOnlyList<Recipe> AdvancedRecipes { get; }
-    public IReadOnlyList<Recipe> Phase1Recipes { get; }
 
     public RecipeCollection(IEnumerable<Recipe> recipes)
     {
         AllRecipes = recipes.ToList();
         
-        // Categorize recipes based on their unlocked status and prerequisites
-        StarterRecipes = AllRecipes.Where(r => r.IsUnlocked).ToList();
+        // Categorize recipes based on their unlocked status
+        BasicRecipes = AllRecipes.Where(r => r.IsUnlocked).ToList();
         AdvancedRecipes = AllRecipes.Where(r => !r.IsUnlocked).ToList();
-        Phase1Recipes = AllRecipes.Where(r => r.IsUnlocked).ToList(); // Same as starter for now
     }
 }

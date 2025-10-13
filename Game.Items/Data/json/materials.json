@@ -133,7 +133,7 @@
 			}
 		},
 		{
-			"id": "material_iron_ore",
+			"id": "material_ore_iron",
 			"name": "Iron Ore",
 			"description": "Raw iron ore, can be smelted into ingots.",
 			"baseValue": 5,

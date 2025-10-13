@@ -24,7 +24,7 @@ public class CreateMaterialCommandHandlerTests
         // Arrange
         var command = new CreateMaterialCommand
         {
-            MaterialConfigId = "iron_ore",
+            MaterialConfigId = "ore_iron",
             Quality = QualityTier.Common
         };
 
@@ -99,7 +99,7 @@ public class CreateMaterialCommandHandlerTests
     }
 
     [Theory]
-    [InlineData("iron_ore", Category.Metal)]
+    [InlineData("ore_iron", Category.Metal)]
     [InlineData("steel_ingot", Category.Metal)]
     [InlineData("monster_hide", Category.Leather)]
     [InlineData("tanned_leather", Category.Leather)]
@@ -132,7 +132,7 @@ public class CreateMaterialCommandHandlerTests
         // Arrange
         var command = new CreateMaterialCommand
         {
-            MaterialConfigId = "iron_ore",
+            MaterialConfigId = "ore_iron",
             Quality = quality
         };
 
@@ -184,7 +184,7 @@ public class CreateMaterialCommandHandlerTests
         // Arrange
         var command = new CreateMaterialCommand
         {
-            MaterialConfigId = "iron_ore",
+            MaterialConfigId = "ore_iron",
             Quality = QualityTier.Common
         };
 

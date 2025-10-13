@@ -263,7 +263,7 @@ public partial class LootTableEditorDialog : Window
     {
         var newEntry = new LootEntryData
         {
-            ItemId = _availableMaterials.FirstOrDefault() ?? "iron_ore",
+            ItemId = _availableMaterials.FirstOrDefault() ?? "ore_iron",
             MinQuantity = 1,
             MaxQuantity = 1,
             DropChance = 0.5,

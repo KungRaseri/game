@@ -8,7 +8,7 @@
       "maxDrops": 4,
       "entries": [
         {
-          "itemId": "iron_ore",
+          "itemId": "ore_iron",
           "minQuantity": 1,
           "maxQuantity": 3,
           "dropChance": 0.8,
@@ -29,7 +29,7 @@
           "qualityTier": "Common"
         },
         {
-          "itemId": "iron_ore",
+          "itemId": "ore_iron",
           "minQuantity": 1,
           "maxQuantity": 1,
           "dropChance": 0.15,
@@ -50,7 +50,7 @@
       "maxDrops": 5,
       "entries": [
         {
-          "itemId": "iron_ore",
+          "itemId": "ore_iron",
           "minQuantity": 2,
           "maxQuantity": 4,
           "dropChance": 0.9,
@@ -92,7 +92,7 @@
       "maxDrops": 6,
       "entries": [
         {
-          "itemId": "iron_ore",
+          "itemId": "ore_iron",
           "minQuantity": 3,
           "maxQuantity": 6,
           "dropChance": 0.95,
