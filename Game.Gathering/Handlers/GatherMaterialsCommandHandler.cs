@@ -13,9 +13,9 @@ namespace Game.Gathering.Handlers;
 /// </summary>
 public class GatherMaterialsCommandHandler : ICommandHandler<GatherMaterialsCommand, GatherMaterialsResult>
 {
-    private readonly GatheringSystem _gatheringSystem;
+    private readonly IGatheringSystem _gatheringSystem;
 
-    public GatherMaterialsCommandHandler(GatheringSystem gatheringSystem)
+    public GatherMaterialsCommandHandler(IGatheringSystem gatheringSystem)
     {
         _gatheringSystem = gatheringSystem ?? throw new ArgumentNullException(nameof(gatheringSystem));
     }

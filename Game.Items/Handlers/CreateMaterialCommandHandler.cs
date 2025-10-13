@@ -30,7 +30,16 @@ public class CreateMaterialCommandHandler : ICommandHandler<CreateMaterialComman
     {
         // This would typically come from a repository or service
         // For now, delegate to ItemTypes static configurations
-        return configId.ToLowerInvariant() switch
+        // Handle both full ItemId and short form
+        var normalizedId = configId.ToLowerInvariant();
+        
+        // Remove "material_" prefix if present
+        if (normalizedId.StartsWith("material_"))
+        {
+            normalizedId = normalizedId.Substring("material_".Length);
+        }
+        
+        return normalizedId switch
         {
             "ore_iron" => ItemTypes.IronOre,
             "steel_ingot" => ItemTypes.SteelIngot,
@@ -38,6 +47,7 @@ public class CreateMaterialCommandHandler : ICommandHandler<CreateMaterialComman
             "tanned_leather" => ItemTypes.TannedLeather,
             "oak_wood" => ItemTypes.OakWood,
             "ruby" => ItemTypes.Ruby,
+            "simple_herbs" => ItemTypes.SimpleHerbs,
             _ => null
         };
     }

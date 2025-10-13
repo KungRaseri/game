@@ -74,28 +74,18 @@ public static class CraftingServiceCollectionExtensions
     {
         // Register data loaders for Crafting domain
         services.AddSingleton<IDataLoader<RecipeDataSet>, JsonDataLoader<RecipeDataSet>>();
-        
+
         // Register Crafting domain data services
         services.AddSingleton<CraftingDataService>(provider =>
         {
             var craftingDataService = new CraftingDataService(provider.GetRequiredService<IDataLoader<RecipeDataSet>>());
-            
-            // Set up backward compatibility for static Phase1Recipes class
-#pragma warning disable CS0618 // Type or member is obsolete
-            Phase1Recipes.SetCraftingDataService(craftingDataService);
-#pragma warning restore CS0618 // Type or member is obsolete
-            
+
             return craftingDataService;
         });
         services.AddSingleton<RecipeInitializationService>(provider =>
         {
             var recipeInitializationService = new RecipeInitializationService(provider.GetRequiredService<CraftingDataService>());
-            
-            // Set up backward compatibility for static StarterRecipes class
-#pragma warning disable CS0618 // Type or member is obsolete
-            StarterRecipes.SetRecipeInitializationService(recipeInitializationService);
-#pragma warning restore CS0618 // Type or member is obsolete
-            
+
             return recipeInitializationService;
         });
 

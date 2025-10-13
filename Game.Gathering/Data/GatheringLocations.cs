@@ -90,6 +90,11 @@ public static class GatheringLocations
     /// </summary>
     public static GatheringLocationConfig? GetLocationConfig(string locationId)
     {
+        if (string.IsNullOrWhiteSpace(locationId))
+        {
+            return null;
+        }
+
         return locationId.ToLowerInvariant() switch
         {
             "surrounding_area" => SurroundingArea,
