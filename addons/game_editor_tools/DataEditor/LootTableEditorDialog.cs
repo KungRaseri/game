@@ -84,8 +84,8 @@ public partial class LootTableEditorDialog : Window
         _idLineEdit = GetNode<LineEdit>("VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/IdGroup/IdLineEdit");
         _nameLineEdit = GetNode<LineEdit>("VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/NameGroup/NameLineEdit");
         _maxDropsSpinBox = GetNode<SpinBox>("VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/MaxDropsGroup/MaxDropsSpinBox");
-        _entriesListContainer = GetNode<VBoxContainer>("VBoxContainer/ScrollContainer/FormContainer/EntriesGroup/EntriesContainer");
-        _addEntryButton = GetNode<Button>("VBoxContainer/ScrollContainer/FormContainer/EntriesGroup/AddEntryButton");
+        _entriesListContainer = GetNode<VBoxContainer>("VBoxContainer/ScrollContainer/FormContainer/EntriesGroup/EntriesVBox/EntriesContainer");
+        _addEntryButton = GetNode<Button>("VBoxContainer/ScrollContainer/FormContainer/EntriesGroup/EntriesVBox/EntriesHeaderContainer/AddEntryButton");
         _validationLabel = GetNode<RichTextLabel>("VBoxContainer/ValidationContainer/ValidationLabel");
         _saveButton = GetNode<Button>("VBoxContainer/ButtonContainer/SaveButton");
         _cancelButton = GetNode<Button>("VBoxContainer/ButtonContainer/CancelButton");

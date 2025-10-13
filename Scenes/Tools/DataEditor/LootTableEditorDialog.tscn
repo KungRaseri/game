@@ -119,7 +119,9 @@ bbcode_enabled = true
 text = "[color=gray]* Required fields[/color]
 [color=red][b]Errors:[/b][/color]
 [color=red]• ID is required[/color]
-[color=red]• Display Name is required[/color]"
+[color=red]• Display Name is required[/color]
+[color=yellow][b]Warnings:[/b][/color]
+[color=yellow]• Loot table has no entries[/color]"
 
 [node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -131,4 +133,5 @@ text = "Cancel"
 
 [node name="SaveButton" type="Button" parent="VBoxContainer/ButtonContainer"]
 layout_mode = 2
+disabled = true
 text = "Save Loot Table"
