@@ -54,15 +54,6 @@ public partial class MaterialEditorDialog : Window
         CloseRequested += Hide;
     }
 
-    public override void _ExitTree()
-    {
-        // Disconnect all signals to prevent cleanup errors
-        DisconnectSignals();
-        
-        // Disconnect window close signal
-        CloseRequested -= Hide;
-    }
-
     private void GetNodeReferences()
     {
         _idLineEdit = GetNode<LineEdit>("VBoxContainer/ScrollContainer/FormContainer/IdGroup/IdLineEdit");
@@ -138,39 +129,6 @@ public partial class MaterialEditorDialog : Window
 
         if (_cancelButton != null)
             _cancelButton.Pressed += OnCancelPressed;
-    }
-
-    private void DisconnectSignals()
-    {
-        if (_idLineEdit != null)
-            _idLineEdit.TextChanged -= OnTextChanged;
-
-        if (_nameLineEdit != null)
-            _nameLineEdit.TextChanged -= OnTextChanged;
-
-        if (_descriptionTextEdit != null)
-            _descriptionTextEdit.TextChanged -= OnDescriptionChanged;
-
-        if (_categoryOptionButton != null)
-            _categoryOptionButton.ItemSelected -= OnItemSelected;
-
-        if (_qualityOptionButton != null)
-            _qualityOptionButton.ItemSelected -= OnItemSelected;
-
-        if (_valueSpinBox != null)
-            _valueSpinBox.ValueChanged -= OnValueChanged;
-
-        if (_stackableCheckBox != null)
-            _stackableCheckBox.Toggled -= OnStackableToggled;
-
-        if (_maxStackSpinBox != null)
-            _maxStackSpinBox.ValueChanged -= OnValueChanged;
-
-        if (_saveButton != null)
-            _saveButton.Pressed -= OnSavePressed;
-
-        if (_cancelButton != null)
-            _cancelButton.Pressed -= OnCancelPressed;
     }
 
     /// <summary>
