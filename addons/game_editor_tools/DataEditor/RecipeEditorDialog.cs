@@ -7,6 +7,10 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Scripts.Utils;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
+using Game.Crafting.Models;
 
 namespace Game.Tools.DataEditor;
 
@@ -67,12 +71,6 @@ public partial class RecipeEditorDialog : Window
         ["Recipes"] = "Game.Crafting/Data/json/recipes.json"
     };
 
-    // Categories based on the JSON data
-    private readonly string[] _categories = { "Weapons", "Armor", "Consumables", "Tools", "Materials" };
-    private readonly string[] _materialCategories = { "Metal", "Wood", "Leather", "Herb", "Gem", "Fabric", "Stone" };
-    private readonly string[] _qualityTiers = { "Common", "Uncommon", "Rare", "Epic", "Legendary" };
-    private readonly string[] _itemTypes = { "Weapon", "Armor", "Consumable", "Tool", "Material", "Item" };
-
     public override void _Ready()
     {
         GetNodeReferences();
@@ -124,34 +122,22 @@ public partial class RecipeEditorDialog : Window
 
     private void SetupControls()
     {
-        // Setup category options
+        // Setup category options using EnumUIHelper
         if (_categoryOptionButton != null)
         {
-            _categoryOptionButton.Clear();
-            foreach (var category in _categories)
-            {
-                _categoryOptionButton.AddItem(category);
-            }
+            EnumUIHelper.PopulateOptionButton<RecipeCategory>(_categoryOptionButton);
         }
 
-        // Setup result item type options
+        // Setup result item type options using EnumUIHelper
         if (_resultItemTypeOptionButton != null)
         {
-            _resultItemTypeOptionButton.Clear();
-            foreach (var itemType in _itemTypes)
-            {
-                _resultItemTypeOptionButton.AddItem(itemType);
-            }
+            EnumUIHelper.PopulateOptionButton<ItemType>(_resultItemTypeOptionButton);
         }
 
-        // Setup result quality options
+        // Setup result quality options using EnumUIHelper
         if (_resultQualityOptionButton != null)
         {
-            _resultQualityOptionButton.Clear();
-            foreach (var quality in _qualityTiers)
-            {
-                _resultQualityOptionButton.AddItem(quality);
-            }
+            EnumUIHelper.PopulateOptionButton<QualityTier>(_resultQualityOptionButton);
         }
     }
 
@@ -314,13 +300,11 @@ public partial class RecipeEditorDialog : Window
         if (_nameLineEdit != null) _nameLineEdit.Text = GetJsonString(recipe, "name");
         if (_descriptionTextEdit != null) _descriptionTextEdit.Text = GetJsonString(recipe, "description");
 
-        // Set category
-        var category = GetJsonString(recipe, "category");
-        if (_categoryOptionButton != null)
+        // Set category using enum parsing
+        var categoryString = GetJsonString(recipe, "category");
+        if (_categoryOptionButton != null && Enum.TryParse<RecipeCategory>(categoryString, true, out var category))
         {
-            var categoryIndex = Array.IndexOf(_categories, category);
-            if (categoryIndex >= 0)
-                _categoryOptionButton.Selected = categoryIndex;
+            EnumUIHelper.SetSelectedEnum(_categoryOptionButton, category);
         }
 
         if (_craftingTimeSpinBox != null) _craftingTimeSpinBox.Value = GetJsonDouble(recipe, "craftingTime");
@@ -350,21 +334,19 @@ public partial class RecipeEditorDialog : Window
         {
             if (_resultItemIdLineEdit != null) _resultItemIdLineEdit.Text = GetJsonString(result, "itemId");
             if (_resultItemNameLineEdit != null) _resultItemNameLineEdit.Text = GetJsonString(result, "itemName");
-            
-            var itemType = GetJsonString(result, "itemType");
-            if (_resultItemTypeOptionButton != null)
+
+            // Set item type using enum parsing
+            var itemTypeString = GetJsonString(result, "itemType");
+            if (_resultItemTypeOptionButton != null && Enum.TryParse<ItemType>(itemTypeString, true, out var itemType))
             {
-                var itemTypeIndex = Array.IndexOf(_itemTypes, itemType);
-                if (itemTypeIndex >= 0)
-                    _resultItemTypeOptionButton.Selected = itemTypeIndex;
+                EnumUIHelper.SetSelectedEnum(_resultItemTypeOptionButton, itemType);
             }
 
-            var baseQuality = GetJsonString(result, "baseQuality");
-            if (_resultQualityOptionButton != null)
+            // Set quality tier using enum parsing
+            var baseQualityString = GetJsonString(result, "baseQuality");
+            if (_resultQualityOptionButton != null && Enum.TryParse<QualityTier>(baseQualityString, true, out var baseQuality))
             {
-                var qualityIndex = Array.IndexOf(_qualityTiers, baseQuality);
-                if (qualityIndex >= 0)
-                    _resultQualityOptionButton.Selected = qualityIndex;
+                EnumUIHelper.SetSelectedEnum(_resultQualityOptionButton, baseQuality);
             }
 
             if (_resultQuantitySpinBox != null) _resultQuantitySpinBox.Value = GetJsonInt(result, "quantity");
@@ -557,15 +539,16 @@ public partial class RecipeEditorDialog : Window
 
         var categoryOption = new OptionButton();
         categoryOption.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-        foreach (var category in _materialCategories)
+        EnumUIHelper.PopulateOptionButton<Category>(categoryOption);
+
+        // Set selected category
+        if (Enum.TryParse<Category>(ingredient.Category, true, out var category))
         {
-            categoryOption.AddItem(category);
+            EnumUIHelper.SetSelectedEnum(categoryOption, category);
         }
-        var categoryIndex = Array.IndexOf(_materialCategories, ingredient.Category);
-        if (categoryIndex >= 0)
-            categoryOption.Selected = categoryIndex;
+
         categoryOption.ItemSelected += (long _) => {
-            ingredient.Category = _materialCategories[categoryOption.Selected];
+            ingredient.Category = EnumUIHelper.GetSelectedEnum<Category>(categoryOption).ToString();
             OnIngredientChanged(index);
         };
         container.AddChild(categoryOption);
@@ -577,15 +560,16 @@ public partial class RecipeEditorDialog : Window
 
         var qualityOption = new OptionButton();
         qualityOption.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-        foreach (var quality in _qualityTiers)
+        EnumUIHelper.PopulateOptionButton<QualityTier>(qualityOption);
+
+        // Set selected quality tier
+        if (Enum.TryParse<QualityTier>(ingredient.QualityTier, true, out var qualityTier))
         {
-            qualityOption.AddItem(quality);
+            EnumUIHelper.SetSelectedEnum(qualityOption, qualityTier);
         }
-        var qualityIndex = Array.IndexOf(_qualityTiers, ingredient.QualityTier);
-        if (qualityIndex >= 0)
-            qualityOption.Selected = qualityIndex;
+
         qualityOption.ItemSelected += (long _) => {
-            ingredient.QualityTier = _qualityTiers[qualityOption.Selected];
+            ingredient.QualityTier = EnumUIHelper.GetSelectedEnum<QualityTier>(qualityOption).ToString();
             OnIngredientChanged(index);
         };
         container.AddChild(qualityOption);
@@ -742,12 +726,16 @@ public partial class RecipeEditorDialog : Window
 
     private JsonObject CreateRecipeJsonObject()
     {
+        var category = _categoryOptionButton != null
+            ? EnumUIHelper.GetSelectedEnum<RecipeCategory>(_categoryOptionButton).ToString()
+            : RecipeCategory.Weapons.ToString();
+
         var recipe = new JsonObject
         {
             ["recipeId"] = _idLineEdit?.Text ?? "",
             ["name"] = _nameLineEdit?.Text ?? "",
             ["description"] = _descriptionTextEdit?.Text ?? "",
-            ["category"] = _categories[_categoryOptionButton?.Selected ?? 0],
+            ["category"] = category,
             ["materialRequirements"] = new JsonArray(),
             ["result"] = CreateResultJsonObject(),
             ["craftingTime"] = _craftingTimeSpinBox?.Value ?? 30.0,
@@ -789,12 +777,20 @@ public partial class RecipeEditorDialog : Window
 
     private JsonObject CreateResultJsonObject()
     {
+        var itemType = _resultItemTypeOptionButton != null
+            ? EnumUIHelper.GetSelectedEnum<ItemType>(_resultItemTypeOptionButton).ToString()
+            : ItemType.Weapon.ToString();
+
+        var baseQuality = _resultQualityOptionButton != null
+            ? EnumUIHelper.GetSelectedEnum<QualityTier>(_resultQualityOptionButton).ToString()
+            : QualityTier.Common.ToString();
+
         return new JsonObject
         {
             ["itemId"] = _resultItemIdLineEdit?.Text ?? "",
             ["itemName"] = _resultItemNameLineEdit?.Text ?? "",
-            ["itemType"] = _itemTypes[_resultItemTypeOptionButton?.Selected ?? 0],
-            ["baseQuality"] = _qualityTiers[_resultQualityOptionButton?.Selected ?? 0],
+            ["itemType"] = itemType,
+            ["baseQuality"] = baseQuality,
             ["quantity"] = (int)(_resultQuantitySpinBox?.Value ?? 1),
             ["baseValue"] = (int)(_resultValueSpinBox?.Value ?? 10),
             ["itemProperties"] = new JsonObject()

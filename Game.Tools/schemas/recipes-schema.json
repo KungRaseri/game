@@ -12,10 +12,12 @@
           "type": "string"
         },
         "ItemType": {
-          "type": "string"
+          "type": "string",
+          "enum": ["Weapon", "Armor", "Accessory", "Ring", "Material", "Consumable"]
         },
         "BaseQuality": {
-          "type": "string"
+          "type": "string",
+          "enum": ["Common", "Uncommon", "Rare", "Epic", "Legendary"]
         },
         "Quantity": {
           "type": "integer"
@@ -43,10 +45,12 @@
       "type": "object",
       "properties": {
         "Category": {
-          "type": "string"
+          "type": "string",
+          "enum": ["Metal", "Wood", "Leather", "Cloth", "Gem", "Herb", "Bone", "Magical", "Essence", "Fuel"]
         },
         "QualityTier": {
-          "type": "string"
+          "type": "string",
+          "enum": ["Common", "Uncommon", "Rare", "Epic", "Legendary"]
         },
         "Quantity": {
           "type": "integer"
@@ -67,7 +71,8 @@
           "type": "string"
         },
         "Category": {
-          "type": "string"
+          "type": "string",
+          "enum": ["Weapons", "Armor", "Consumables", "Tools", "Materials"]
         },
         "MaterialRequirements": {
           "$id": "List\u00601",

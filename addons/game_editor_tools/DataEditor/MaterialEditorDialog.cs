@@ -7,6 +7,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Scripts.Utils;
+using Game.Items.Models;
+using Game.Items.Models.Materials;
 
 namespace Game.Tools.DataEditor;
 
@@ -39,10 +42,6 @@ public partial class MaterialEditorDialog : Window
         ["Materials"] = "Game.Items/Data/json/materials.json"
     };
 
-    // Categories and Quality Tiers
-    private readonly string[] _categories = { "Metal", "Leather", "Herb", "Fuel", "Gem", "Magical", "Wood", "Misc" };
-    private readonly string[] _qualityTiers = { "Common", "Uncommon", "Rare", "Epic", "Legendary" };
-
     public override void _Ready()
     {
         GetNodeReferences();
@@ -71,24 +70,16 @@ public partial class MaterialEditorDialog : Window
 
     private void SetupControls()
     {
-        // Setup category dropdown
+        // Setup category dropdown using EnumUIHelper
         if (_categoryOptionButton != null)
         {
-            _categoryOptionButton.Clear();
-            foreach (var category in _categories)
-            {
-                _categoryOptionButton.AddItem(category);
-            }
+            EnumUIHelper.PopulateOptionButton<Category>(_categoryOptionButton);
         }
 
-        // Setup quality tier dropdown
+        // Setup quality tier dropdown using EnumUIHelper
         if (_qualityOptionButton != null)
         {
-            _qualityOptionButton.Clear();
-            foreach (var tier in _qualityTiers)
-            {
-                _qualityOptionButton.AddItem(tier);
-            }
+            EnumUIHelper.PopulateOptionButton<QualityTier>(_qualityOptionButton);
         }
 
         // Setup stacking controls
@@ -212,22 +203,18 @@ public partial class MaterialEditorDialog : Window
         if (_nameLineEdit != null) _nameLineEdit.Text = GetJsonString(material, "name");
         if (_descriptionTextEdit != null) _descriptionTextEdit.Text = GetJsonString(material, "description");
 
-        // Set category
-        var category = GetJsonString(material, "category");
-        if (_categoryOptionButton != null)
+        // Set category using enum parsing
+        var categoryString = GetJsonString(material, "category");
+        if (_categoryOptionButton != null && Enum.TryParse<Category>(categoryString, true, out var category))
         {
-            var categoryIndex = Array.IndexOf(_categories, category);
-            if (categoryIndex >= 0)
-                _categoryOptionButton.Selected = categoryIndex;
+            EnumUIHelper.SetSelectedEnum(_categoryOptionButton, category);
         }
 
-        // Set quality tier
-        var qualityTier = GetJsonString(material, "qualityTier");
-        if (_qualityOptionButton != null)
+        // Set quality tier using enum parsing
+        var qualityTierString = GetJsonString(material, "qualityTier");
+        if (_qualityOptionButton != null && Enum.TryParse<QualityTier>(qualityTierString, true, out var qualityTier))
         {
-            var qualityIndex = Array.IndexOf(_qualityTiers, qualityTier);
-            if (qualityIndex >= 0)
-                _qualityOptionButton.Selected = qualityIndex;
+            EnumUIHelper.SetSelectedEnum(_qualityOptionButton, qualityTier);
         }
 
         if (_valueSpinBox != null) _valueSpinBox.Value = GetJsonInt(material, "baseValue");
@@ -388,13 +375,21 @@ public partial class MaterialEditorDialog : Window
 
     private JsonObject CreateMaterialJsonObject()
     {
+        var category = _categoryOptionButton != null
+            ? EnumUIHelper.GetSelectedEnum<Category>(_categoryOptionButton).ToString()
+            : Category.Metal.ToString();
+
+        var qualityTier = _qualityOptionButton != null
+            ? EnumUIHelper.GetSelectedEnum<QualityTier>(_qualityOptionButton).ToString()
+            : QualityTier.Common.ToString();
+
         return new JsonObject
         {
             ["id"] = _idLineEdit?.Text ?? "",
             ["name"] = _nameLineEdit?.Text ?? "",
             ["description"] = _descriptionTextEdit?.Text ?? "",
-            ["category"] = _categories[_categoryOptionButton?.Selected ?? 0],
-            ["qualityTier"] = _qualityTiers[_qualityOptionButton?.Selected ?? 0],
+            ["category"] = category,
+            ["qualityTier"] = qualityTier,
             ["baseValue"] = (int)(_valueSpinBox?.Value ?? 1),
             ["stackable"] = _stackableCheckBox?.ButtonPressed ?? true,
             ["maxStackSize"] = (int)(_maxStackSpinBox?.Value ?? 99),

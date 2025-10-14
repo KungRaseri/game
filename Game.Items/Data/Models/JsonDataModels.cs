@@ -25,8 +25,8 @@ public class MaterialJsonData
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public int BaseValue { get; set; }
-    public string Category { get; set; } = string.Empty;
-    public string QualityTier { get; set; } = "Common";
+    public Category Category { get; set; }
+    public QualityTier QualityTier { get; set; } = QualityTier.Common;
     public bool Stackable { get; set; } = true;
     public int MaxStackSize { get; set; } = 99;
     public Dictionary<string, object> Properties { get; set; } = new();
@@ -36,17 +36,12 @@ public class MaterialJsonData
     /// </summary>
     public MaterialConfig ToMaterialConfig()
     {
-        if (!Enum.TryParse<Category>(Category, true, out var categoryEnum))
-        {
-            throw new InvalidOperationException($"Invalid category: {Category}");
-        }
-
         return new MaterialConfig(
             ItemId: Id,
             Name: Name,
             Description: Description,
             BaseValue: BaseValue,
-            Category: categoryEnum,
+            Category: Category,
             Stackable: Stackable,
             MaxStackSize: MaxStackSize
         );

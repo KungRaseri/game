@@ -3,6 +3,7 @@
 using System.Text.Json;
 using Game.Core.Data.Interfaces;
 using Game.Core.Data.Models;
+using Game.Core.Serialization;
 using Game.Core.Utils;
 
 namespace Game.Core.Data.Services;
@@ -24,7 +25,8 @@ public class JsonDataLoader<T> : IDataLoader<T> where T : class
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            Converters = { new EnumJsonConverterFactory() }
         };
     }
 

@@ -45,7 +45,7 @@ public class RecipeData
     public string Description { get; set; } = string.Empty;
 
     [JsonPropertyName("category")]
-    public string Category { get; set; } = string.Empty;
+    public RecipeCategory Category { get; set; }
 
     [JsonPropertyName("materialRequirements")]
     public List<MaterialRequirementData> MaterialRequirements { get; set; } = [];
@@ -73,11 +73,6 @@ public class RecipeData
     /// </summary>
     public Recipe ToRecipe()
     {
-        if (!Enum.TryParse<RecipeCategory>(Category, true, out var recipeCategory))
-        {
-            throw new InvalidOperationException($"Invalid recipe category: {Category}");
-        }
-
         var materialRequirements = MaterialRequirements.Select(mr => mr.ToMaterialRequirement()).ToList();
         var craftingResult = Result.ToCraftingResult();
 
@@ -85,7 +80,7 @@ public class RecipeData
             recipeId: RecipeId,
             name: Name,
             description: Description,
-            category: recipeCategory,
+            category: Category,
             materialRequirements: materialRequirements,
             result: craftingResult,
             craftingTime: CraftingTime,
@@ -103,10 +98,10 @@ public class RecipeData
 public class MaterialRequirementData
 {
     [JsonPropertyName("category")]
-    public string Category { get; set; } = string.Empty;
+    public Category Category { get; set; }
 
     [JsonPropertyName("qualityTier")]
-    public string QualityTier { get; set; } = string.Empty;
+    public QualityTier QualityTier { get; set; }
 
     [JsonPropertyName("quantity")]
     public int Quantity { get; set; }
@@ -116,17 +111,7 @@ public class MaterialRequirementData
     /// </summary>
     public MaterialRequirement ToMaterialRequirement()
     {
-        if (!Enum.TryParse<Category>(Category, true, out var category))
-        {
-            throw new InvalidOperationException($"Invalid material category: {Category}");
-        }
-
-        if (!Enum.TryParse<QualityTier>(QualityTier, true, out var qualityTier))
-        {
-            throw new InvalidOperationException($"Invalid quality tier: {QualityTier}");
-        }
-
-        return new MaterialRequirement(category, qualityTier, Quantity);
+        return new MaterialRequirement(Category, QualityTier, Quantity);
     }
 }
 
@@ -142,10 +127,10 @@ public class CraftingResultData
     public string ItemName { get; set; } = string.Empty;
 
     [JsonPropertyName("itemType")]
-    public string ItemType { get; set; } = string.Empty;
+    public ItemType ItemType { get; set; }
 
     [JsonPropertyName("baseQuality")]
-    public string BaseQuality { get; set; } = string.Empty;
+    public QualityTier BaseQuality { get; set; }
 
     [JsonPropertyName("quantity")]
     public int Quantity { get; set; } = 1;
@@ -161,21 +146,11 @@ public class CraftingResultData
     /// </summary>
     public CraftingResult ToCraftingResult()
     {
-        if (!Enum.TryParse<ItemType>(ItemType, true, out var itemType))
-        {
-            throw new InvalidOperationException($"Invalid item type: {ItemType}");
-        }
-
-        if (!Enum.TryParse<QualityTier>(BaseQuality, true, out var baseQuality))
-        {
-            throw new InvalidOperationException($"Invalid base quality: {BaseQuality}");
-        }
-
         return new CraftingResult(
             itemId: ItemId,
             itemName: ItemName,
-            itemType: itemType,
-            baseQuality: baseQuality,
+            itemType: ItemType,
+            baseQuality: BaseQuality,
             quantity: Quantity,
             baseValue: BaseValue,
             itemProperties: ItemProperties

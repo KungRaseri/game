@@ -7,6 +7,7 @@ using Game.Items.Models;
 using Game.Items.Models.Materials;
 using Game.Inventories.Models;
 using Game.Core.Utils;
+using Game.Scripts.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,17 +123,19 @@ public partial class CraftingWorkshopUI : Control
 
     private void InitializeUI()
     {
-        // Set up category filter
+        // Set up category filter using EnumUIHelper
         if (_categoryFilter != null)
         {
-            _categoryFilter.AddItem("All Categories");
-            _categoryFilter.AddItem("Weapons");
-            _categoryFilter.AddItem("Armor");
-            _categoryFilter.AddItem("Consumables");
-            _categoryFilter.AddItem("Tools");
-            _categoryFilter.AddItem("Materials");
+            _categoryFilter.Clear();
+            _categoryFilter.AddItem("All Categories"); // Index 0 for "All"
+
+            // Add all recipe categories from enum
+            foreach (RecipeCategory category in Enum.GetValues<RecipeCategory>())
+            {
+                _categoryFilter.AddItem(category.ToString());
+            }
         }
-        
+
         // Load initial data
         RefreshRecipeList();
         RefreshMaterialsList();
@@ -248,7 +251,7 @@ public partial class CraftingWorkshopUI : Control
             if (categoryIndex > 0)
             {
                 var expectedCategory = GetCategoryFromIndex(categoryIndex);
-                if (recipe.Category != expectedCategory)
+                if (expectedCategory.HasValue && recipe.Category != expectedCategory.Value)
                     continue;
             }
             
@@ -403,17 +406,20 @@ public partial class CraftingWorkshopUI : Control
         return true;
     }
 
-    private RecipeCategory GetCategoryFromIndex(int index)
+    private RecipeCategory? GetCategoryFromIndex(int index)
     {
-        return index switch
-        {
-            1 => RecipeCategory.Weapons,
-            2 => RecipeCategory.Armor,
-            3 => RecipeCategory.Consumables,
-            4 => RecipeCategory.Tools,
-            5 => RecipeCategory.Materials,
-            _ => RecipeCategory.Weapons
-        };
+        // Index 0 is "All Categories", so return null to skip filtering
+        if (index == 0)
+            return null;
+
+        // Subtract 1 from index because 0 is "All Categories"
+        var enumValues = Enum.GetValues<RecipeCategory>();
+        var adjustedIndex = index - 1;
+
+        if (adjustedIndex >= 0 && adjustedIndex < enumValues.Length)
+            return enumValues[adjustedIndex];
+
+        return null; // If out of range, treat as "All"
     }
 
     /// <summary>

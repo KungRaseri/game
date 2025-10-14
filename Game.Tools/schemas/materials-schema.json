@@ -18,10 +18,12 @@
           "type": "integer"
         },
         "Category": {
-          "type": "string"
+          "type": "string",
+          "enum": ["Metal", "Wood", "Leather", "Cloth", "Gem", "Herb", "Bone", "Magical", "Essence", "Fuel"]
         },
         "QualityTier": {
-          "type": "string"
+          "type": "string",
+          "enum": ["Common", "Uncommon", "Rare", "Epic", "Legendary"]
         },
         "Stackable": {
           "type": "boolean"
