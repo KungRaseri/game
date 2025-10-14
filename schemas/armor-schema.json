@@ -24,7 +24,8 @@
           "type": "integer"
         },
         "ArmorType": {
-          "type": "string"
+          "type": "string",
+          "enum": ["Light", "Medium", "Heavy"]
         },
         "Properties": {
           "type": "object",

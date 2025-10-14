@@ -1,3 +1,5 @@
+using Game.Items.Models;
+
 namespace Game.Items.Data;
 
 /// <summary>
@@ -8,5 +10,6 @@ public record ArmorConfig(
     string Name,
     string Description,
     int BaseValue,
-    int BaseDamageReduction
+    int BaseDamageReduction,
+    ArmorType ArmorType
 );

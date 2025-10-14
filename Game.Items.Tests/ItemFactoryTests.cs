@@ -15,7 +15,8 @@ public class ItemFactoryTests
             Name: "Test Sword",
             Description: "A test sword",
             BaseValue: 100,
-            BaseDamageBonus: 10
+            BaseDamageBonus: 10,
+            WeaponType: WeaponType.Sword
         );
 
         // Act
@@ -48,7 +49,7 @@ public class ItemFactoryTests
     public void CreateWeapon_AppliesQualityTierModifiers_ToValue()
     {
         // Arrange
-        var config = new WeaponConfig("test", "Test", "Test", 100, 10);
+        var config = new WeaponConfig("test", "Test", "Test", 100, 10, WeaponType.Sword);
 
         // Act
         var commonWeapon = ItemFactory.CreateWeapon(config, QualityTier.Common);
@@ -70,7 +71,8 @@ public class ItemFactoryTests
             Name: "Test Armor",
             Description: "Test armor piece",
             BaseValue: 80,
-            BaseDamageReduction: 5
+            BaseDamageReduction: 5,
+            ArmorType: ArmorType.Medium
         );
 
         // Act
@@ -103,7 +105,7 @@ public class ItemFactoryTests
     public void CreateArmor_AppliesQualityTierModifiers_ToValue()
     {
         // Arrange
-        var config = new ArmorConfig("test", "Test", "Test", 50, 5);
+        var config = new ArmorConfig("test", "Test", "Test", 50, 5, ArmorType.Light);
 
         // Act
         var commonArmor = ItemFactory.CreateArmor(config, QualityTier.Common);

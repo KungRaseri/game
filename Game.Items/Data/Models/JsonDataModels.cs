@@ -3,6 +3,8 @@
 using Game.Items.Data;
 using Game.Items.Models;
 using Game.Items.Models.Materials;
+using System.Text.Json.Serialization;
+using Game.Items.Data.Json;
 
 namespace Game.Items.Data.Models;
 
@@ -69,7 +71,10 @@ public class WeaponJsonData
     public int BaseValue { get; set; }
     public int BaseDamage { get; set; }
     public int BaseDurability { get; set; } = 100;
-    public string WeaponType { get; set; } = "Sword";
+    
+    [JsonConverter(typeof(WeaponTypeJsonConverter))]
+    public WeaponType WeaponType { get; set; } = WeaponType.Sword;
+    
     public Dictionary<string, object> Properties { get; set; } = new();
 
     /// <summary>
@@ -82,7 +87,8 @@ public class WeaponJsonData
             Name: Name,
             Description: Description,
             BaseValue: BaseValue,
-            BaseDamageBonus: BaseDamage
+            BaseDamageBonus: BaseDamage,
+            WeaponType: WeaponType
         );
     }
 }
@@ -108,7 +114,10 @@ public class ArmorJsonData
     public int BaseValue { get; set; }
     public int BaseDefense { get; set; }
     public int BaseDurability { get; set; } = 100;
-    public string ArmorType { get; set; } = "Light";
+    
+    [JsonConverter(typeof(ArmorTypeJsonConverter))]
+    public ArmorType ArmorType { get; set; } = ArmorType.Light;
+    
     public Dictionary<string, object> Properties { get; set; } = new();
 
     /// <summary>
@@ -121,7 +130,8 @@ public class ArmorJsonData
             Name: Name,
             Description: Description,
             BaseValue: BaseValue,
-            BaseDamageReduction: BaseDefense
+            BaseDamageReduction: BaseDefense,
+            ArmorType: ArmorType
         );
     }
 }

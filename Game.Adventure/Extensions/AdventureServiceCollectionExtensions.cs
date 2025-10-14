@@ -49,6 +49,7 @@ public static class AdventureServiceCollectionExtensions
         services.AddQueryHandler<IsAdventurerInCombatQuery, bool, IsAdventurerInCombatQueryHandler>();
         services.AddQueryHandler<HasMonstersRemainingQuery, bool, HasMonstersRemainingQueryHandler>();
         services.AddQueryHandler<GetAdventurerInfoQuery, AdventurerInfo, GetAdventurerInfoQueryHandler>();
+        services.AddQueryHandler<GetEntitiesByTypeQuery, IReadOnlyList<EntityTypeConfig>, GetEntitiesByTypeQueryHandler>();
 
         return services;
     }
@@ -65,7 +66,8 @@ public static class AdventureServiceCollectionExtensions
         services.AddSingleton<IDataLoader<EntityDataSet>, JsonDataLoader<EntityDataSet>>();
         
         // Register Adventure domain data services
-        services.AddSingleton<AdventureDataService>();
+        services.AddSingleton<IAdventureDataService, AdventureDataService>();
+        services.AddSingleton<AdventureDataService>(provider => (AdventureDataService)provider.GetRequiredService<IAdventureDataService>());
         services.AddSingleton<EntityCreationService>(provider =>
         {
             var entityCreationService = new EntityCreationService(provider.GetRequiredService<AdventureDataService>());

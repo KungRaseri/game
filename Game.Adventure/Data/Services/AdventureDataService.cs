@@ -7,6 +7,8 @@ using Game.Core.Extensions;
 using Game.Core.Utils;
 using Game.Adventure.Data.Models;
 using Game.Adventure.Data;
+using Game.Adventure.Models;
+using Game.Adventure.Systems;
 
 namespace Game.Adventure.Data.Services;
 
@@ -14,7 +16,7 @@ namespace Game.Adventure.Data.Services;
 /// Service for loading adventure-related data from JSON files within the Game.Adventure domain.
 /// Supports hot-reload for development scenarios.
 /// </summary>
-public class AdventureDataService
+public class AdventureDataService : IAdventureDataService
 {
     private readonly IDataLoader<EntityDataSet> _entityLoader;
     private readonly HotReloadService _hotReloadService;
@@ -135,6 +137,21 @@ public class AdventureDataService
         var monsters = await GetMonsterConfigsAsync(cancellationToken);
         
         return adventurers.Concat(monsters).ToList().AsReadOnly();
+    }
+
+    /// <summary>
+    /// Gets entity configurations filtered by EntityType enum.
+    /// </summary>
+    public async Task<IReadOnlyList<EntityTypeConfig>> GetEntitiesByTypeAsync(EntityType entityType, CancellationToken cancellationToken = default)
+    {
+        return entityType switch
+        {
+            EntityType.Adventurer => await GetAdventurerConfigsAsync(cancellationToken),
+            EntityType.Monster => await GetMonsterConfigsAsync(cancellationToken),
+            EntityType.NPC => new List<EntityTypeConfig>().AsReadOnly(), // Not implemented yet
+            EntityType.Boss => new List<EntityTypeConfig>().AsReadOnly(), // Not implemented yet
+            _ => new List<EntityTypeConfig>().AsReadOnly()
+        };
     }
 
     /// <summary>

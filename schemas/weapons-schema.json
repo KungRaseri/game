@@ -24,7 +24,8 @@
           "type": "integer"
         },
         "WeaponType": {
-          "type": "string"
+          "type": "string",
+          "enum": ["Sword", "Axe", "Dagger"]
         },
         "Properties": {
           "type": "object",
