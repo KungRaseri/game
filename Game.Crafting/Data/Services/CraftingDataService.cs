@@ -29,12 +29,12 @@ public class CraftingDataService
     }
 
     /// <summary>
-    /// Gets starter recipes that should be available when the game begins.
+    /// Gets basic recipes that should be available when the game begins.
     /// </summary>
-    public async Task<IReadOnlyList<Recipe>> GetStarterRecipesAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Recipe>> GetBasicRecipesAsync(CancellationToken cancellationToken = default)
     {
         var recipeData = await LoadRecipeDataAsync(cancellationToken);
-        return recipeData.StarterRecipes.Select(r => r.ToRecipe()).ToList();
+        return recipeData.BasicRecipes.Select(r => r.ToRecipe()).ToList();
     }
 
     /// <summary>
@@ -44,15 +44,6 @@ public class CraftingDataService
     {
         var recipeData = await LoadRecipeDataAsync(cancellationToken);
         return recipeData.AdvancedRecipes.Select(r => r.ToRecipe()).ToList();
-    }
-
-    /// <summary>
-    /// Gets Phase 1 recipes that use only gatherable materials.
-    /// </summary>
-    public async Task<IReadOnlyList<Recipe>> GetPhase1RecipesAsync(CancellationToken cancellationToken = default)
-    {
-        var recipeData = await LoadRecipeDataAsync(cancellationToken);
-        return recipeData.Phase1Recipes.Select(r => r.ToRecipe()).ToList();
     }
 
     /// <summary>
@@ -110,7 +101,7 @@ public class CraftingDataService
                 return GetFallbackRecipeData();
             }
 
-            GameLogger.Info($"[Crafting] Loaded {loadResult.Data.StarterRecipes.Count + loadResult.Data.AdvancedRecipes.Count + loadResult.Data.Phase1Recipes.Count} recipes from JSON");
+            GameLogger.Info($"[Crafting] Loaded {loadResult.Data.BasicRecipes.Count + loadResult.Data.AdvancedRecipes.Count} recipes from JSON");
             return loadResult.Data;
         }
         catch (Exception ex)
@@ -130,9 +121,8 @@ public class CraftingDataService
         // Return minimal fallback data
         return new RecipeDataSet
         {
-            StarterRecipes = [],
-            AdvancedRecipes = [],
-            Phase1Recipes = []
+            BasicRecipes = [],
+            AdvancedRecipes = []
         };
     }
 

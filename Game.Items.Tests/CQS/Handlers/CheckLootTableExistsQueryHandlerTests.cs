@@ -220,7 +220,7 @@ public class CheckLootTableExistsQueryHandlerTests
 
         // Create test materials
         var ironOre = new Material(
-            itemId: "iron_ore_common",
+            itemId: "ore_iron_common",
             name: "Iron Ore",
             description: "Common iron ore",
             quality: QualityTier.Common,

@@ -19,10 +19,12 @@ public static class GatheringServiceCollectionExtensions
     public static IServiceCollection AddGatheringModule(this IServiceCollection services)
     {
         // Register core gathering system
+        services.AddScoped<IGatheringSystem, GatheringSystem>();
         services.AddScoped<GatheringSystem>();
         
         // Register command handlers
         services.AddCommandHandler<GatherMaterialsCommand, GatherMaterialsResult, GatherMaterialsCommandHandler>();
+        services.AddScoped<GatherMaterialsCommandHandler>(); // Also register concrete type
         
         return services;
     }

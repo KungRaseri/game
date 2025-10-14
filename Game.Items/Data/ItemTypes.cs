@@ -1,3 +1,4 @@
+using Game.Items.Models;
 using Game.Items.Models.Materials;
 
 namespace Game.Items.Data;
@@ -13,7 +14,8 @@ public static class ItemTypes
         Name: "Iron Sword",
         Description: "A sturdy iron blade, reliable in combat.",
         BaseValue: 50,
-        BaseDamageBonus: 5
+        BaseDamageBonus: 5,
+        WeaponType: WeaponType.Sword
     );
 
     public static WeaponConfig SteelAxe { get; } = new(
@@ -21,7 +23,8 @@ public static class ItemTypes
         Name: "Steel Axe",
         Description: "A sharp steel axe that cleaves through enemies.",
         BaseValue: 75,
-        BaseDamageBonus: 8
+        BaseDamageBonus: 8,
+        WeaponType: WeaponType.Axe
     );
 
     public static WeaponConfig MithrilDagger { get; } = new(
@@ -29,7 +32,8 @@ public static class ItemTypes
         Name: "Mithril Dagger",
         Description: "A lightweight dagger forged from rare mithril.",
         BaseValue: 100,
-        BaseDamageBonus: 6
+        BaseDamageBonus: 6,
+        WeaponType: WeaponType.Dagger
     );
 
     // Armor
@@ -38,7 +42,8 @@ public static class ItemTypes
         Name: "Leather Armor",
         Description: "Basic leather protection for adventurers.",
         BaseValue: 40,
-        BaseDamageReduction: 3
+        BaseDamageReduction: 3,
+        ArmorType: ArmorType.Light
     );
 
     public static ArmorConfig ChainMail { get; } = new(
@@ -46,7 +51,8 @@ public static class ItemTypes
         Name: "Chain Mail",
         Description: "Interlocking metal rings provide solid defense.",
         BaseValue: 80,
-        BaseDamageReduction: 5
+        BaseDamageReduction: 5,
+        ArmorType: ArmorType.Medium
     );
 
     public static ArmorConfig PlateArmor { get; } = new(
@@ -54,12 +60,13 @@ public static class ItemTypes
         Name: "Plate Armor",
         Description: "Heavy steel plates offering maximum protection.",
         BaseValue: 150,
-        BaseDamageReduction: 8
+        BaseDamageReduction: 8,
+        ArmorType: ArmorType.Heavy
     );
 
     // Materials - Metals
     public static MaterialConfig IronOre { get; } = new(
-        ItemId: "material_iron_ore",
+        ItemId: "material_ore_iron",
         Name: "Iron Ore",
         Description: "Raw iron ore, can be smelted into ingots.",
         BaseValue: 5,

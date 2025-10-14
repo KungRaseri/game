@@ -54,8 +54,8 @@ public static class TestHelpers
         // Recipe needs: 2x Metal (Common+), 1x Wood (Common+)
         var materials = new Dictionary<string, Material>
         {
-            ["metal1"] = new Material("iron_ore_1", "Iron Ore 1", "Basic metal", QualityTier.Common, 10, Category.Metal),
-            ["metal2"] = new Material("iron_ore_2", "Iron Ore 2", "Basic metal", QualityTier.Common, 10, Category.Metal),
+            ["metal1"] = new Material("ore_iron_1", "Iron Ore 1", "Basic metal", QualityTier.Common, 10, Category.Metal),
+            ["metal2"] = new Material("ore_iron_2", "Iron Ore 2", "Basic metal", QualityTier.Common, 10, Category.Metal),
             ["wood1"] = new Material("oak_wood", "Oak Wood", "Quality wood", QualityTier.Common, 5, Category.Wood)
         };
 

@@ -28,7 +28,7 @@
       "description": "A small, cunning creature that fights in groups but lacks individual strength.",
       "baseHealth": 20,
       "baseDamage": 5,
-      "retreatThreshold": 0.0,
+      "retreatThreshold": 0,
       "healthRegenPerSecond": 0,
       "entityType": "monster"
     },

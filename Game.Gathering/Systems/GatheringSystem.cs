@@ -15,7 +15,7 @@ namespace Game.Gathering.Systems;
 /// Core gathering system that handles material collection logic.
 /// Manages gathering locations, yields, and integrates with inventory.
 /// </summary>
-public class GatheringSystem
+public class GatheringSystem : IGatheringSystem
 {
     private readonly IDispatcher _dispatcher;
     private readonly Random _random;

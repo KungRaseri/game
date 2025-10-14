@@ -24,7 +24,9 @@
           "type": "integer"
         },
         "EntityType": {
-          "type": "string"
+          "type": "string",
+          "enum": ["adventurer", "monster", "npc", "boss"],
+          "description": "The type classification for this entity"
         },
         "Description": {
           "type": "string"

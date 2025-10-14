@@ -8,7 +8,7 @@ namespace Game.Items.Tests.Materials;
 public class DropTests
 {
     private readonly Material _testMaterial = new(
-        "iron_ore",
+        "ore_iron",
         "Iron Ore",
         "Common metal ore",
         QualityTier.Common,

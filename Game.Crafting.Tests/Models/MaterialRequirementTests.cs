@@ -50,7 +50,7 @@ public class MaterialRequirementTests
     {
         // Arrange
         var requirement = new MaterialRequirement(Category.Metal, QualityTier.Common, 1);
-        var material = new Material("iron_ore", "Iron Ore", "Basic metal", QualityTier.Common, 10, Category.Metal);
+        var material = new Material("ore_iron", "Iron Ore", "Basic metal", QualityTier.Common, 10, Category.Metal);
 
         // Act
         var result = requirement.IsSatisfiedBy(material);
@@ -78,7 +78,7 @@ public class MaterialRequirementTests
     {
         // Arrange
         var requirement = new MaterialRequirement(Category.Metal, QualityTier.Rare, 1);
-        var material = new Material("iron_ore", "Iron Ore", "Basic metal", QualityTier.Common, 10, Category.Metal);
+        var material = new Material("ore_iron", "Iron Ore", "Basic metal", QualityTier.Common, 10, Category.Metal);
 
         // Act
         var result = requirement.IsSatisfiedBy(material);
@@ -106,7 +106,7 @@ public class MaterialRequirementTests
     {
         // Arrange
         var requirement = new MaterialRequirement(Category.Metal, QualityTier.Common, 1, "steel_ore");
-        var material = new Material("iron_ore", "Iron Ore", "Basic metal", QualityTier.Common, 10, Category.Metal);
+        var material = new Material("ore_iron", "Iron Ore", "Basic metal", QualityTier.Common, 10, Category.Metal);
 
         // Act
         var result = requirement.IsSatisfiedBy(material);
@@ -119,8 +119,8 @@ public class MaterialRequirementTests
     public void IsSatisfiedBy_WithSpecificMaterialIdMatch_ReturnsTrue()
     {
         // Arrange
-        var requirement = new MaterialRequirement(Category.Metal, QualityTier.Common, 1, "iron_ore");
-        var material = new Material("iron_ore", "Iron Ore", "Basic metal", QualityTier.Common, 10, Category.Metal);
+        var requirement = new MaterialRequirement(Category.Metal, QualityTier.Common, 1, "ore_iron");
+        var material = new Material("ore_iron", "Iron Ore", "Basic metal", QualityTier.Common, 10, Category.Metal);
 
         // Act
         var result = requirement.IsSatisfiedBy(material);

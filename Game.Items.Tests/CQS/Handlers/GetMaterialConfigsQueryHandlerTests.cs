@@ -31,7 +31,7 @@ public class GetMaterialConfigsQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().NotBeEmpty();
-        result.Should().HaveCount(6); // iron_ore, steel_ingot, monster_hide, tanned_leather, oak_wood, ruby
+        result.Should().HaveCount(6); // ore_iron, steel_ingot, monster_hide, tanned_leather, oak_wood, ruby
         
         var resultList = result.ToList();
         resultList.Should().Contain(config => config.Name == "Iron Ore");

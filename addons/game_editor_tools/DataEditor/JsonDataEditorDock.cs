@@ -56,6 +56,13 @@ public partial class JsonDataEditorDock : Control
         GD.Print("JsonDataEditorDock: Initialization complete");
     }
 
+    public override void _ExitTree()
+    {
+        // Note: No need to manually disconnect signals when the dock is being destroyed
+        // Godot will automatically clean up signal connections when nodes are freed
+        GD.Print("JsonDataEditorDock: Cleanup completed");
+    }
+
     private void GetNodeReferences()
     {
         // Main UI elements
@@ -243,15 +250,20 @@ public partial class JsonDataEditorDock : Control
             var jsonContent = File.ReadAllText(filePath);
             using var document = JsonDocument.Parse(jsonContent);
             
-            if (document.RootElement.TryGetProperty("recipes", out var recipesArray))
+            // Search through BasicRecipes and AdvancedRecipes arrays
+            var arrayNames = new[] { "BasicRecipes", "AdvancedRecipes" };
+            foreach (var arrayName in arrayNames)
             {
-                foreach (var recipe in recipesArray.EnumerateArray())
+                if (document.RootElement.TryGetProperty(arrayName, out var recipesArray) && recipesArray.ValueKind == JsonValueKind.Array)
                 {
-                    var item = _recipesList.CreateItem(root);
-                    item.SetText(0, GetJsonString(recipe, "recipeId"));
-                    item.SetText(1, GetJsonString(recipe, "name"));
-                    item.SetText(2, GetJsonString(recipe, "category"));
-                    item.SetText(3, GetJsonInt(recipe, "difficulty").ToString());
+                    foreach (var recipe in recipesArray.EnumerateArray())
+                    {
+                        var item = _recipesList.CreateItem(root);
+                        item.SetText(0, GetJsonString(recipe, "recipeId"));
+                        item.SetText(1, GetJsonString(recipe, "name"));
+                        item.SetText(2, GetJsonString(recipe, "category"));
+                        item.SetText(3, GetJsonInt(recipe, "difficulty").ToString());
+                    }
                 }
             }
         }
@@ -375,8 +387,25 @@ public partial class JsonDataEditorDock : Control
 
     private void OnAddPressed(string dataType)
     {
-        GD.Print($"Add {dataType} pressed - feature coming soon!");
-        UpdateStatus($"Add {dataType} - Feature coming soon", false);
+        switch (dataType)
+        {
+            case "Materials":
+                ShowMaterialEditor();
+                break;
+            case "Recipes":
+                ShowRecipeEditor();
+                break;
+            case "Entities":
+                ShowEntityEditor();
+                break;
+            case "LootTables":
+                ShowLootTableEditor();
+                break;
+            default:
+                GD.Print($"Add {dataType} pressed - feature coming soon!");
+                UpdateStatus($"Add {dataType} - Feature coming soon", false);
+                break;
+        }
     }
 
     private void OnEditPressed(string dataType)
@@ -389,8 +418,26 @@ public partial class JsonDataEditorDock : Control
         }
 
         var id = selectedItem.GetText(0);
-        GD.Print($"Edit {dataType} pressed for ID: {id} - feature coming soon!");
-        UpdateStatus($"Edit {dataType} '{id}' - Feature coming soon", false);
+        
+        switch (dataType)
+        {
+            case "Materials":
+                ShowMaterialEditor(id);
+                break;
+            case "Recipes":
+                ShowRecipeEditor(id);
+                break;
+            case "Entities":
+                ShowEntityEditor(id);
+                break;
+            case "LootTables":
+                ShowLootTableEditor(id);
+                break;
+            default:
+                GD.Print($"Edit {dataType} pressed for ID: {id} - feature coming soon!");
+                UpdateStatus($"Edit {dataType} '{id}' - Feature coming soon", false);
+                break;
+        }
     }
 
     private void OnDeletePressed(string dataType)
@@ -423,6 +470,213 @@ public partial class JsonDataEditorDock : Control
     private void OnTreeItemActivated(string dataType)
     {
         OnEditPressed(dataType);
+    }
+
+    // Material Editor Integration
+    private void ShowMaterialEditor(string? materialId = null)
+    {
+        try
+        {
+            var materialEditorScene = GD.Load<PackedScene>("res://Scenes/Tools/DataEditor/MaterialEditorDialog.tscn");
+            if (materialEditorScene == null)
+            {
+                UpdateStatus("Material editor scene not found!", true);
+                return;
+            }
+
+            var dialog = materialEditorScene.Instantiate<MaterialEditorDialog>();
+            if (dialog == null)
+            {
+                UpdateStatus("Failed to instantiate material editor dialog!", true);
+                return;
+            }
+
+            // Add dialog to main screen and show
+            var editorInterface = EditorInterface.Singleton;
+            var mainScreen = editorInterface.GetEditorMainScreen();
+            mainScreen.AddChild(dialog);
+            
+            // Setup dialog for add or edit mode
+            if (string.IsNullOrEmpty(materialId))
+            {
+                GD.Print("MaterialEditor: Setting up for ADD mode");
+                dialog.SetupForAdd();
+            }
+            else
+            {
+                GD.Print($"MaterialEditor: Setting up for EDIT mode with ID: '{materialId}'");
+                dialog.SetupForEdit(materialId);
+            }
+            
+            dialog.PopupCentered();
+            
+            // Connect to MaterialSaved signal to refresh data
+            dialog.MaterialSaved += () => 
+            {
+                RefreshMaterials();
+                UpdateStatus("Material data refreshed", false);
+            };
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus($"Error opening material editor: {ex.Message}", true);
+            GD.PrintErr($"ShowMaterialEditor error: {ex.Message}");
+        }
+    }
+
+    // Recipe Editor Integration
+    private void ShowRecipeEditor(string? recipeId = null)
+    {
+        try
+        {
+            var recipeEditorScene = GD.Load<PackedScene>("res://Scenes/Tools/DataEditor/RecipeEditorDialog.tscn");
+            if (recipeEditorScene == null)
+            {
+                UpdateStatus("Recipe editor scene not found!", true);
+                return;
+            }
+
+            var dialog = recipeEditorScene.Instantiate<RecipeEditorDialog>();
+            if (dialog == null)
+            {
+                UpdateStatus("Failed to instantiate recipe editor dialog!", true);
+                return;
+            }
+
+            // Add dialog to main screen and show
+            var editorInterface = EditorInterface.Singleton;
+            var mainScreen = editorInterface.GetEditorMainScreen();
+            mainScreen.AddChild(dialog);
+            
+            // Setup dialog for add or edit mode
+            if (string.IsNullOrEmpty(recipeId))
+            {
+                GD.Print("RecipeEditor: Setting up for ADD mode");
+                dialog.SetupForAdd();
+            }
+            else
+            {
+                GD.Print($"RecipeEditor: Setting up for EDIT mode with ID: '{recipeId}'");
+                dialog.SetupForEdit(recipeId);
+            }
+            
+            dialog.PopupCentered();
+            
+            // Connect to RecipeSaved signal to refresh data
+            dialog.RecipeSaved += () => 
+            {
+                RefreshRecipes();
+                UpdateStatus("Recipe data refreshed", false);
+            };
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus($"Error opening recipe editor: {ex.Message}", true);
+            GD.PrintErr($"ShowRecipeEditor error: {ex.Message}");
+        }
+    }
+
+    // Entity Editor Integration
+    private void ShowEntityEditor(string? entityId = null)
+    {
+        try
+        {
+            var entityEditorScene = GD.Load<PackedScene>("res://Scenes/Tools/DataEditor/EntityEditorDialog.tscn");
+            if (entityEditorScene == null)
+            {
+                UpdateStatus("Entity editor scene not found!", true);
+                return;
+            }
+
+            var dialog = entityEditorScene.Instantiate<EntityEditorDialog>();
+            if (dialog == null)
+            {
+                UpdateStatus("Failed to instantiate entity editor dialog!", true);
+                return;
+            }
+
+            // Add dialog to main screen and show
+            var editorInterface = EditorInterface.Singleton;
+            var mainScreen = editorInterface.GetEditorMainScreen();
+            mainScreen.AddChild(dialog);
+            
+            // Setup dialog for add or edit mode
+            if (string.IsNullOrEmpty(entityId))
+            {
+                GD.Print("EntityEditor: Setting up for ADD mode");
+                dialog.SetupForAdd();
+            }
+            else
+            {
+                GD.Print($"EntityEditor: Setting up for EDIT mode with ID: '{entityId}'");
+                dialog.SetupForEdit(entityId);
+            }
+            
+            dialog.PopupCentered();
+            
+            // Connect to EntitySaved signal to refresh data
+            dialog.EntitySaved += () => 
+            {
+                RefreshEntities();
+                UpdateStatus("Entity data refreshed", false);
+            };
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus($"Error opening entity editor: {ex.Message}", true);
+            GD.PrintErr($"ShowEntityEditor error: {ex.Message}");
+        }
+    }
+
+    private void ShowLootTableEditor(string? lootTableId = null)
+    {
+        try
+        {
+            var lootTableEditorScene = GD.Load<PackedScene>("res://Scenes/Tools/DataEditor/LootTableEditorDialog.tscn");
+            if (lootTableEditorScene == null)
+            {
+                UpdateStatus("Loot table editor scene not found!", true);
+                return;
+            }
+
+            var dialog = lootTableEditorScene.Instantiate<LootTableEditorDialog>();
+            if (dialog == null)
+            {
+                UpdateStatus("Failed to instantiate loot table editor dialog!", true);
+                return;
+            }
+
+            // Add dialog to main screen and show
+            var editorInterface = EditorInterface.Singleton;
+            var mainScreen = editorInterface.GetEditorMainScreen();
+            mainScreen.AddChild(dialog);
+            
+            // Setup dialog for add or edit mode
+            if (string.IsNullOrEmpty(lootTableId))
+            {
+                GD.Print("LootTableEditor: Setting up for ADD mode");
+                dialog.SetupForAdd();
+            }
+            else
+            {
+                GD.Print($"LootTableEditor: Setting up for EDIT mode with ID: '{lootTableId}'");
+                dialog.SetupForEdit(lootTableId);
+            }
+            
+            dialog.PopupCentered();
+            
+            // Connect to LootTableSaved signal to refresh data
+            dialog.LootTableSaved += () => 
+            {
+                RefreshLootTables();
+                UpdateStatus("Loot table data refreshed", false);
+            };
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus($"Error opening loot table editor: {ex.Message}", true);
+            GD.PrintErr($"ShowLootTableEditor error: {ex.Message}");
+        }
     }
 
     // Helper methods
@@ -492,9 +746,15 @@ public partial class JsonDataEditorDock : Control
 
     private static int GetJsonInt(JsonElement element, string propertyName)
     {
-        return element.TryGetProperty(propertyName, out var prop) && prop.ValueKind == JsonValueKind.Number 
-            ? prop.GetInt32() 
-            : 0;
+        if (element.TryGetProperty(propertyName, out var prop) && prop.ValueKind == JsonValueKind.Number)
+        {
+            // Handle both integer and floating-point values
+            if (prop.TryGetInt32(out var intValue))
+                return intValue;
+            else if (prop.TryGetDouble(out var doubleValue))
+                return (int)Math.Round(doubleValue);
+        }
+        return 0;
     }
 }
 

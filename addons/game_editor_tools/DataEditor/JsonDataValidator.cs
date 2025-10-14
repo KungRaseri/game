@@ -299,7 +299,13 @@ public class JsonDataValidator
                         {
                             if (value.ValueKind == JsonValueKind.Number)
                             {
-                                var num = value.GetInt32();
+                                // Handle both integer and floating-point values
+                                int num = 0;
+                                if (value.TryGetInt32(out var intValue))
+                                    num = intValue;
+                                else if (value.TryGetDouble(out var doubleValue))
+                                    num = (int)Math.Round(doubleValue);
+                                
                                 if (num <= 0)
                                 {
                                     results.AddWarning("Entities", $"Entity has non-positive {field}: {num}");

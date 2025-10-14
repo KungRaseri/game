@@ -1,6 +1,9 @@
 #nullable enable
 
 using Game.Adventure.Data;
+using Game.Adventure.Models;
+using Game.Adventure.Data.Json;
+using System.Text.Json.Serialization;
 
 namespace Game.Adventure.Data.Models;
 
@@ -15,7 +18,10 @@ public record EntityData
     public required int BaseDamage { get; init; }
     public float RetreatThreshold { get; init; } = 0f;
     public int HealthRegenPerSecond { get; init; } = 0;
-    public string EntityType { get; init; } = "monster"; // "adventurer" or "monster"
+    
+    [JsonConverter(typeof(EntityTypeJsonConverter))]
+    public EntityType EntityType { get; init; } = EntityType.Monster;
+    
     public string Description { get; init; } = "";
 
     /// <summary>
@@ -60,8 +66,8 @@ public record EntityDataSet
     /// <summary>
     /// Gets entities by type
     /// </summary>
-    public IEnumerable<EntityData> GetEntitiesByType(string entityType)
+    public IEnumerable<EntityData> GetEntitiesByType(EntityType entityType)
     {
-        return GetAllEntities().Where(e => e.EntityType.Equals(entityType, StringComparison.OrdinalIgnoreCase));
+        return GetAllEntities().Where(e => e.EntityType == entityType);
     }
 }

@@ -1,0 +1,153 @@
+[gd_scene load_steps=2 format=3 uid="uid://bm8v7x4lqr3yj"]
+
+[ext_resource type="Script" uid="uid://bsffudpw44i41" path="res://addons/game_editor_tools/DataEditor/EntityEditorDialog.cs" id="1_entity_editor"]
+
+[node name="EntityEditorDialog" type="Window"]
+oversampling_override = 1.0
+title = "Entity Editor"
+initial_position = 2
+size = Vector2i(800, 600)
+min_size = Vector2i(650, 500)
+script = ExtResource("1_entity_editor")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="HeaderLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Entity Properties"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FormContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BasicInfoGroup" type="PanelContainer" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+
+[node name="BasicInfoVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup"]
+layout_mode = 2
+
+[node name="IdGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="IdLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/IdGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "entity_unique_id"
+
+[node name="NameGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="NameLineEdit" type="LineEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/NameGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Human readable name"
+
+[node name="TypeGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="TypeOptionButton" type="OptionButton" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/TypeGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 2
+popup/item_0/text = "Adventurer"
+popup/item_0/id = 0
+popup/item_1/text = "Monster"
+popup/item_1/id = 1
+
+[node name="DescriptionGroup" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox"]
+layout_mode = 2
+
+[node name="DescriptionTextEdit" type="TextEdit" parent="VBoxContainer/ScrollContainer/FormContainer/BasicInfoGroup/BasicInfoVBox/DescriptionGroup"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+placeholder_text = "Detailed description of the entity"
+
+[node name="CombatStatsGroup" type="PanelContainer" parent="VBoxContainer/ScrollContainer/FormContainer"]
+layout_mode = 2
+
+[node name="CombatStatsVBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup"]
+layout_mode = 2
+
+[node name="StatsHBox" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox"]
+layout_mode = 2
+
+[node name="LeftColumn" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HealthGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/LeftColumn"]
+layout_mode = 2
+
+[node name="HealthSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/LeftColumn/HealthGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 999999.0
+value = 100.0
+
+[node name="DamageGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/LeftColumn"]
+layout_mode = 2
+
+[node name="DamageSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/LeftColumn/DamageGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 999999.0
+value = 10.0
+
+[node name="RightColumn" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RetreatGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/RightColumn"]
+layout_mode = 2
+
+[node name="RetreatSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/RightColumn/RetreatGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+value = 25.0
+
+[node name="RegenGroup" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/RightColumn"]
+layout_mode = 2
+
+[node name="RegenSpinBox" type="SpinBox" parent="VBoxContainer/ScrollContainer/FormContainer/CombatStatsGroup/CombatStatsVBox/StatsHBox/RightColumn/RegenGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 999999.0
+value = 1.0
+
+[node name="ValidationContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ValidationLabel" type="RichTextLabel" parent="VBoxContainer/ValidationContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=red][b]Errors:[/b][/color]
+[color=red]• Entity ID is required[/color]
+[color=red]• Entity name is required[/color]
+[color=red]• Retreat threshold must be between 0 and 1[/color]"
+
+[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="SaveButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+disabled = true
+text = "Save"

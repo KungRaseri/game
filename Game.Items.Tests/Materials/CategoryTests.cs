@@ -12,7 +12,7 @@ public class CategoryTests
     {
         // Arrange & Act
         var material = new Material(
-            "iron_ore",
+            "ore_iron",
             "Iron Ore",
             "Common metal ore",
             QualityTier.Common,
@@ -23,7 +23,7 @@ public class CategoryTests
         );
 
         // Assert
-        Assert.Equal("iron_ore", material.ItemId);
+        Assert.Equal("ore_iron", material.ItemId);
         Assert.Equal("Iron Ore", material.Name);
         Assert.Equal("Common metal ore", material.Description);
         Assert.Equal(Category.Metal, material.Category);

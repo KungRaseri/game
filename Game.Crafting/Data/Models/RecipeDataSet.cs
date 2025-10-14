@@ -10,14 +10,11 @@ namespace Game.Crafting.Data.Models;
 /// </summary>
 public class RecipeDataSet
 {
-    [JsonPropertyName("starterRecipes")]
-    public List<RecipeData> StarterRecipes { get; set; } = [];
+    [JsonPropertyName("BasicRecipes")]
+    public List<RecipeData> BasicRecipes { get; set; } = [];
 
-    [JsonPropertyName("advancedRecipes")]
+        [JsonPropertyName("AdvancedRecipes")]
     public List<RecipeData> AdvancedRecipes { get; set; } = [];
-
-    [JsonPropertyName("phase1Recipes")]
-    public List<RecipeData> Phase1Recipes { get; set; } = [];
 
     /// <summary>
     /// Converts this data set to domain recipe objects.
@@ -26,9 +23,8 @@ public class RecipeDataSet
     {
         var allRecipes = new List<Recipe>();
 
-        allRecipes.AddRange(StarterRecipes.Select(r => r.ToRecipe()));
+        allRecipes.AddRange(BasicRecipes.Select(r => r.ToRecipe()));
         allRecipes.AddRange(AdvancedRecipes.Select(r => r.ToRecipe()));
-        allRecipes.AddRange(Phase1Recipes.Select(r => r.ToRecipe()));
 
         return new RecipeCollection(allRecipes);
     }
@@ -49,7 +45,7 @@ public class RecipeData
     public string Description { get; set; } = string.Empty;
 
     [JsonPropertyName("category")]
-    public string Category { get; set; } = string.Empty;
+    public RecipeCategory Category { get; set; }
 
     [JsonPropertyName("materialRequirements")]
     public List<MaterialRequirementData> MaterialRequirements { get; set; } = [];
@@ -77,11 +73,6 @@ public class RecipeData
     /// </summary>
     public Recipe ToRecipe()
     {
-        if (!Enum.TryParse<RecipeCategory>(Category, true, out var recipeCategory))
-        {
-            throw new InvalidOperationException($"Invalid recipe category: {Category}");
-        }
-
         var materialRequirements = MaterialRequirements.Select(mr => mr.ToMaterialRequirement()).ToList();
         var craftingResult = Result.ToCraftingResult();
 
@@ -89,7 +80,7 @@ public class RecipeData
             recipeId: RecipeId,
             name: Name,
             description: Description,
-            category: recipeCategory,
+            category: Category,
             materialRequirements: materialRequirements,
             result: craftingResult,
             craftingTime: CraftingTime,
@@ -107,10 +98,10 @@ public class RecipeData
 public class MaterialRequirementData
 {
     [JsonPropertyName("category")]
-    public string Category { get; set; } = string.Empty;
+    public Category Category { get; set; }
 
     [JsonPropertyName("qualityTier")]
-    public string QualityTier { get; set; } = string.Empty;
+    public QualityTier QualityTier { get; set; }
 
     [JsonPropertyName("quantity")]
     public int Quantity { get; set; }
@@ -120,17 +111,7 @@ public class MaterialRequirementData
     /// </summary>
     public MaterialRequirement ToMaterialRequirement()
     {
-        if (!Enum.TryParse<Category>(Category, true, out var category))
-        {
-            throw new InvalidOperationException($"Invalid material category: {Category}");
-        }
-
-        if (!Enum.TryParse<QualityTier>(QualityTier, true, out var qualityTier))
-        {
-            throw new InvalidOperationException($"Invalid quality tier: {QualityTier}");
-        }
-
-        return new MaterialRequirement(category, qualityTier, Quantity);
+        return new MaterialRequirement(Category, QualityTier, Quantity);
     }
 }
 
@@ -146,10 +127,10 @@ public class CraftingResultData
     public string ItemName { get; set; } = string.Empty;
 
     [JsonPropertyName("itemType")]
-    public string ItemType { get; set; } = string.Empty;
+    public ItemType ItemType { get; set; }
 
     [JsonPropertyName("baseQuality")]
-    public string BaseQuality { get; set; } = string.Empty;
+    public QualityTier BaseQuality { get; set; }
 
     [JsonPropertyName("quantity")]
     public int Quantity { get; set; } = 1;
@@ -165,21 +146,11 @@ public class CraftingResultData
     /// </summary>
     public CraftingResult ToCraftingResult()
     {
-        if (!Enum.TryParse<ItemType>(ItemType, true, out var itemType))
-        {
-            throw new InvalidOperationException($"Invalid item type: {ItemType}");
-        }
-
-        if (!Enum.TryParse<QualityTier>(BaseQuality, true, out var baseQuality))
-        {
-            throw new InvalidOperationException($"Invalid base quality: {BaseQuality}");
-        }
-
         return new CraftingResult(
             itemId: ItemId,
             itemName: ItemName,
-            itemType: itemType,
-            baseQuality: baseQuality,
+            itemType: ItemType,
+            baseQuality: BaseQuality,
             quantity: Quantity,
             baseValue: BaseValue,
             itemProperties: ItemProperties
@@ -193,18 +164,15 @@ public class CraftingResultData
 public class RecipeCollection
 {
     public IReadOnlyList<Recipe> AllRecipes { get; }
-    public IReadOnlyList<Recipe> StarterRecipes { get; }
+    public IReadOnlyList<Recipe> BasicRecipes { get; }
     public IReadOnlyList<Recipe> AdvancedRecipes { get; }
-    public IReadOnlyList<Recipe> Phase1Recipes { get; }
 
     public RecipeCollection(IEnumerable<Recipe> recipes)
     {
         AllRecipes = recipes.ToList();
         
-        // Note: This is a simplified approach. In a more complex system,
-        // you might want to track the original categorization from the JSON
-        StarterRecipes = AllRecipes.Where(r => r.IsUnlocked).ToList();
-        AdvancedRecipes = AllRecipes.Where(r => !r.IsUnlocked && r.Prerequisites.Any()).ToList();
-        Phase1Recipes = AllRecipes.Where(r => r.IsUnlocked && !r.Prerequisites.Any()).ToList();
+        // Categorize recipes based on their unlocked status
+        BasicRecipes = AllRecipes.Where(r => r.IsUnlocked).ToList();
+        AdvancedRecipes = AllRecipes.Where(r => !r.IsUnlocked).ToList();
     }
 }

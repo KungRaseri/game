@@ -1,3 +1,5 @@
+using Game.Items.Models;
+
 namespace Game.Items.Data;
 
 /// <summary>
@@ -8,5 +10,6 @@ public record WeaponConfig(
     string Name,
     string Description,
     int BaseValue,
-    int BaseDamageBonus
+    int BaseDamageBonus,
+    WeaponType WeaponType
 );

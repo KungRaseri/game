@@ -32,7 +32,7 @@ public class LootConfigurationTests
         var materials = LootConfiguration.GetMaterials();
 
         // Assert - Check for specific expected materials
-        Assert.True(materials.ContainsKey("iron_ore"));
+        Assert.True(materials.ContainsKey("ore_iron"));
         Assert.True(materials.ContainsKey("silver_ore"));
         Assert.True(materials.ContainsKey("gold_ore"));
         Assert.True(materials.ContainsKey("crude_leather"));
@@ -51,7 +51,7 @@ public class LootConfigurationTests
         var materials = LootConfiguration.GetMaterials();
 
         // Assert - Verify material categories
-        Assert.Equal(Category.Metal, materials["iron_ore"].Category);
+        Assert.Equal(Category.Metal, materials["ore_iron"].Category);
         Assert.Equal(Category.Metal, materials["silver_ore"].Category);
         Assert.Equal(Category.Metal, materials["gold_ore"].Category);
 
@@ -73,7 +73,7 @@ public class LootConfigurationTests
         var materials = LootConfiguration.GetMaterials();
 
         // Assert - Verify rarity progression
-        Assert.Equal(QualityTier.Common, materials["iron_ore"].Quality);
+        Assert.Equal(QualityTier.Common, materials["ore_iron"].Quality);
         Assert.Equal(QualityTier.Uncommon, materials["silver_ore"].Quality);
         Assert.Equal(QualityTier.Rare, materials["gold_ore"].Quality);
 
@@ -92,13 +92,13 @@ public class LootConfigurationTests
         var materials = LootConfiguration.GetMaterials();
 
         // Assert - Verify value progression matches rarity
-        Assert.True(materials["iron_ore"].BaseValue < materials["silver_ore"].BaseValue);
+        Assert.True(materials["ore_iron"].BaseValue < materials["silver_ore"].BaseValue);
         Assert.True(materials["silver_ore"].BaseValue < materials["gold_ore"].BaseValue);
 
         Assert.True(materials["crude_leather"].BaseValue < materials["thick_leather"].BaseValue);
 
         // Higher rarity materials should have higher base values
-        Assert.True(materials["gem_shard"].BaseValue > materials["iron_ore"].BaseValue);
+        Assert.True(materials["gem_shard"].BaseValue > materials["ore_iron"].BaseValue);
         Assert.True(materials["enchanted_stone"].BaseValue > materials["gem_shard"].BaseValue);
         Assert.True(materials["mana_crystal"].BaseValue > materials["enchanted_stone"].BaseValue);
     }
@@ -160,12 +160,12 @@ public class LootConfigurationTests
         // Assert - Goblin should primarily drop common materials
         var materials = goblinTable.PossibleDrops.Select(entry => entry.Material.ItemId).ToList();
 
-        Assert.Contains("iron_ore", materials);
+        Assert.Contains("ore_iron", materials);
         Assert.Contains("crude_leather", materials);
         Assert.Contains("herbs", materials);
 
         // Should have some chance for better materials but not guaranteed
-        var ironOreEntries = goblinTable.PossibleDrops.Where(e => e.Material.ItemId == "iron_ore").ToList();
+        var ironOreEntries = goblinTable.PossibleDrops.Where(e => e.Material.ItemId == "ore_iron").ToList();
         Assert.Contains(ironOreEntries, e => e.DropChance >= 0.5f); // High chance for common iron ore
     }
 
