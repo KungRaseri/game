@@ -11,7 +11,7 @@ using Game.Core.Utils;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Game.DI;
+namespace Game.Scripts.DI;
 
 /// <summary>
 /// Custom dependency injection manager for Godot that integrates with our CQS pattern.
@@ -43,14 +43,14 @@ public partial class DependencyInjectionNode : Node
 
     public override void _Ready()
     {
-        GD.Print("Initializing custom dependency injection...");
+        GameLogger.Info("Initializing custom dependency injection...");
         GameLogger.SetBackend(new GodotLoggerBackend());
 
         _services = new ServiceCollection();
         ConfigureServices(_services);
         _serviceProvider = _services.BuildServiceProvider();
 
-        GD.Print("Dependency injection initialized successfully!");
+        GameLogger.Info("Dependency injection initialized successfully!");
     }
 
     public override void _ExitTree()
@@ -98,6 +98,6 @@ public partial class DependencyInjectionNode : Node
         // etc.
 
         GameLogger.Debug($"[DI] Service configuration completed - Registered {services.Count} services");
-        GD.Print($"Registered {services.Count} services");
+        GameLogger.Info($"Registered {services.Count} services");
     }
 }

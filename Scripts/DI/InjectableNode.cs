@@ -1,6 +1,8 @@
 #nullable enable
 
 using System.Reflection;
+using Game.Core.Utils;
+using Game.Scripts.DI;
 using Godot;
 
 namespace Game.DI;
@@ -38,16 +40,16 @@ public abstract partial class InjectableNode : Node
                     if (service != null)
                     {
                         property.SetValue(this, service);
-                        GD.Print($"Injected {property.PropertyType.Name} into {type.Name}.{property.Name}");
+                        GameLogger.Info($"Injected {property.PropertyType.Name} into {type.Name}.{property.Name}");
                     }
                     else
                     {
-                        GD.PrintErr($"Failed to inject {property.PropertyType.Name} into {type.Name}.{property.Name} - service not registered");
+                        GameLogger.Error($"Failed to inject {property.PropertyType.Name} into {type.Name}.{property.Name} - service not registered");
                     }
                 }
                 catch (Exception ex)
                 {
-                    GD.PrintErr($"Error injecting {property.PropertyType.Name} into {type.Name}.{property.Name}: {ex.Message}");
+                    GameLogger.Error($"Error injecting {property.PropertyType.Name} into {type.Name}.{property.Name}: {ex.Message}");
                 }
             }
         }
@@ -64,16 +66,16 @@ public abstract partial class InjectableNode : Node
                 if (service != null)
                 {
                     field.SetValue(this, service);
-                    GD.Print($"✅ Injected {field.FieldType.Name} into {type.Name}.{field.Name}");
+                    GameLogger.Info($"✅ Injected {field.FieldType.Name} into {type.Name}.{field.Name}");
                 }
                 else
                 {
-                    GD.PrintErr($"❌ Failed to inject {field.FieldType.Name} into {type.Name}.{field.Name} - service not registered");
+                    GameLogger.Error($"❌ Failed to inject {field.FieldType.Name} into {type.Name}.{field.Name} - service not registered");
                 }
             }
             catch (Exception ex)
             {
-                GD.PrintErr($"❌ Error injecting {field.FieldType.Name} into {type.Name}.{field.Name}: {ex.Message}");
+                GameLogger.Error($"❌ Error injecting {field.FieldType.Name} into {type.Name}.{field.Name}: {ex.Message}");
             }
         }
     }
