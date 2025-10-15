@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
 using Godot;
@@ -27,7 +28,7 @@ public partial class CreditsScreenController : Control
 
     public override void _Ready()
     {
-        GD.Print("CreditsScreen: Initializing");
+        GameLogger.Info("CreditsScreen: Initializing");
         
         // Cache node references
         CacheNodeReferences();
@@ -35,7 +36,7 @@ public partial class CreditsScreenController : Control
         // Start auto-scroll
         StartAutoScroll();
         
-        GD.Print("CreditsScreen: Ready");
+        GameLogger.Info("CreditsScreen: Ready");
     }
     
     public override void _Input(InputEvent @event)
@@ -54,7 +55,7 @@ public partial class CreditsScreenController : Control
                 case Key.Space:
                     // Toggle auto-scroll
                     _autoScrollEnabled = !_autoScrollEnabled;
-                    GD.Print($"CreditsScreen: Auto-scroll toggled to {_autoScrollEnabled}");
+                    GameLogger.Info($"CreditsScreen: Auto-scroll toggled to {_autoScrollEnabled}");
                     break;
                     
                 case Key.Escape:
@@ -84,7 +85,7 @@ public partial class CreditsScreenController : Control
         _fadeTransition = GetNode<FadeTransition>("FadeTransition");
         _creditsContent = GetNode<VBoxContainer>("Content/VBox/ScrollContainer/CreditsContent");
         
-        GD.Print("CreditsScreen: Node references cached");
+        GameLogger.Info("CreditsScreen: Node references cached");
     }
     
     /// <summary>
@@ -96,7 +97,7 @@ public partial class CreditsScreenController : Control
         {
             _scrollContainer.ScrollVertical = 0;
             _scrollPosition = 0.0f;
-            GD.Print("CreditsScreen: Auto-scroll started");
+            GameLogger.Info("CreditsScreen: Auto-scroll started");
         }
     }
     
@@ -141,13 +142,13 @@ public partial class CreditsScreenController : Control
     {
         try
         {
-            GD.Print("CreditsScreen: Back button pressed");
+            GameLogger.Info("CreditsScreen: Back button pressed");
             
             await TransitionToMainMenu();
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"CreditsScreen: Failed to return to main menu: {ex.Message}");
+            GameLogger.Error($"CreditsScreen: Failed to return to main menu: {ex.Message}");
         }
     }
     
@@ -165,21 +166,21 @@ public partial class CreditsScreenController : Control
         // Perform fade out if available
         if (_fadeTransition != null)
         {
-            GD.Print("CreditsScreen: Starting fade out");
+            GameLogger.Info("CreditsScreen: Starting fade out");
             await _fadeTransition.FadeOutAsync(0.5f);
         }
         
         // Use CQS command for scene transition
         if (GameManager.Instance != null)
         {
-            GD.Print($"CreditsScreen: Using CQS transition to: {MainMenuScenePath}");
+            GameLogger.Info($"CreditsScreen: Using CQS transition to: {MainMenuScenePath}");
             var command = Game.UI.Commands.TransitionToSceneCommand.Simple(MainMenuScenePath);
             await GameManager.Instance.DispatchAsync(command);
         }
         else
         {
             // Fallback to direct transition
-            GD.Print($"CreditsScreen: Returning to main menu: {MainMenuScenePath}");
+            GameLogger.Info($"CreditsScreen: Returning to main menu: {MainMenuScenePath}");
             GetTree().ChangeSceneToFile(MainMenuScenePath);
         }
     }

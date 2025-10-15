@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Core.Utils;
 using Game.Scripts.UI.Components;
 using Game.Scripts.Managers;
 using Godot;
@@ -28,7 +29,7 @@ public partial class SplashScreenController : Control
 
     public override void _Ready()
     {
-        GD.Print("SplashScreen: Initializing");
+        GameLogger.Info("SplashScreen: Initializing");
         
         // Cache node references
         CacheNodeReferences();
@@ -42,7 +43,7 @@ public partial class SplashScreenController : Control
     
     public override void _ExitTree()
     {
-        GD.Print("SplashScreen: Cleaning up");
+        GameLogger.Info("SplashScreen: Cleaning up");
         
         // Clean up timer connection
         if (_initTimer != null)
@@ -73,7 +74,7 @@ public partial class SplashScreenController : Control
             _initTimer.Timeout += OnInitTimerTimeout;
         }
         
-        GD.Print("SplashScreen: Node references cached");
+        GameLogger.Info("SplashScreen: Node references cached");
     }
     
     /// <summary>
@@ -95,7 +96,7 @@ public partial class SplashScreenController : Control
         else
         {
             // GameManager not ready yet, will be called when it's available
-            GD.Print("SplashScreen: Waiting for GameManager...");
+            GameLogger.Info("SplashScreen: Waiting for GameManager...");
         }
     }
     
@@ -105,7 +106,7 @@ public partial class SplashScreenController : Control
     private void OnGameManagerInitialized()
     {
         _gameManagerReady = true;
-        GD.Print("SplashScreen: GameManager ready");
+        GameLogger.Info("SplashScreen: GameManager ready");
         
         if (_statusLabel != null)
         {
@@ -139,7 +140,7 @@ public partial class SplashScreenController : Control
     {
         try
         {
-            GD.Print("SplashScreen: Starting initialization work");
+            GameLogger.Info("SplashScreen: Starting initialization work");
             
             // Simulate some initialization tasks using Godot's timer system
             await ToSignal(GetTree().CreateTimer(0.5), SceneTreeTimer.SignalName.Timeout);
@@ -166,11 +167,11 @@ public partial class SplashScreenController : Control
             _initializationComplete = true;
             CheckCanContinue();
             
-            GD.Print("SplashScreen: Initialization work completed");
+            GameLogger.Info("SplashScreen: Initialization work completed");
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"SplashScreen: Initialization failed: {ex.Message}");
+            GameLogger.Error($"SplashScreen: Initialization failed: {ex.Message}");
             
             if (_statusLabel != null)
             {
@@ -184,7 +185,7 @@ public partial class SplashScreenController : Control
     /// </summary>
     private void OnInitTimerTimeout()
     {
-        GD.Print("SplashScreen: Minimum display time elapsed");
+        GameLogger.Info("SplashScreen: Minimum display time elapsed");
         CheckCanContinue();
     }
     
@@ -210,7 +211,7 @@ public partial class SplashScreenController : Control
                 _statusLabel.Text = "Press Continue to start the game!";
             }
             
-            GD.Print("SplashScreen: Ready to continue");
+            GameLogger.Info("SplashScreen: Ready to continue");
         }
     }
     
@@ -221,13 +222,13 @@ public partial class SplashScreenController : Control
     {
         if (!_canContinue)
         {
-            GD.PrintRaw("SplashScreen: Continue pressed but not ready");
+            GameLogger.Debug("SplashScreen: Continue pressed but not ready");
             return;
         }
         
         try
         {
-            GD.Print("SplashScreen: Continue button pressed, transitioning to next scene");
+            GameLogger.Info("SplashScreen: Continue button pressed, transitioning to next scene");
             
             // Disable the button to prevent multiple clicks
             if (_continueButton != null)
@@ -238,12 +239,12 @@ public partial class SplashScreenController : Control
             // Use CQS command for scene transition
             if (GameManager.Instance != null)
             {
-                GD.Print($"SplashScreen: Using CQS transition to: {NextScenePath}");
+                GameLogger.Info($"SplashScreen: Using CQS transition to: {NextScenePath}");
                 
                 // Perform fade out if available
                 if (_fadeTransition != null)
                 {
-                    GD.Print("SplashScreen: Starting fade out");
+                    GameLogger.Info("SplashScreen: Starting fade out");
                     await _fadeTransition.FadeOutAsync(0.5f);
                 }
                 
@@ -253,7 +254,7 @@ public partial class SplashScreenController : Control
             else
             {
                 // Fallback to direct transition if GameManager not available
-                GD.PrintErr("SplashScreen: GameManager not available, using direct transition");
+                GameLogger.Error("SplashScreen: GameManager not available, using direct transition");
                 
                 if (_fadeTransition != null)
                 {
@@ -265,7 +266,7 @@ public partial class SplashScreenController : Control
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"SplashScreen: Failed to transition to next scene: {ex.Message}");
+            GameLogger.Error($"SplashScreen: Failed to transition to next scene: {ex.Message}");
             
             // Re-enable button on error
             if (_continueButton != null)

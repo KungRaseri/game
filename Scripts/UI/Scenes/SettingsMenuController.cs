@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
 using Godot;
@@ -38,7 +39,7 @@ public partial class SettingsMenuController : Control
 
     public override void _Ready()
     {
-        GD.Print("SettingsMenu: Initializing");
+        GameLogger.Info("SettingsMenu: Initializing");
         
         // Initialize settings manager
         _settingsManager = new SettingsManager();
@@ -52,7 +53,7 @@ public partial class SettingsMenuController : Control
         // Update UI to reflect current settings
         UpdateUI();
         
-        GD.Print("SettingsMenu: Ready");
+        GameLogger.Info("SettingsMenu: Ready");
     }
     
     public override void _Input(InputEvent @event)
@@ -82,7 +83,7 @@ public partial class SettingsMenuController : Control
         _applyButton = GetNode<Button>("Content/VBox/ButtonContainer/ApplyButton");
         _fadeTransition = GetNode<FadeTransition>("FadeTransition");
         
-        GD.Print("SettingsMenu: Node references cached");
+        GameLogger.Info("SettingsMenu: Node references cached");
     }
     
     /// <summary>
@@ -92,7 +93,7 @@ public partial class SettingsMenuController : Control
     {
         if (_settingsManager == null)
         {
-            GD.PrintErr("SettingsMenu: SettingsManager not initialized");
+            GameLogger.Error("SettingsMenu: SettingsManager not initialized");
             return;
         }
         
@@ -109,7 +110,7 @@ public partial class SettingsMenuController : Control
         ApplyAudioSettings();
         ApplyDisplaySettings();
         
-        GD.Print($"SettingsMenu: Loaded settings - Master: {_masterVolume}%, Music: {_musicVolume}%, SFX: {_sfxVolume}%, Fullscreen: {_fullscreen}");
+        GameLogger.Info($"SettingsMenu: Loaded settings - Master: {_masterVolume}%, Music: {_musicVolume}%, SFX: {_sfxVolume}%, Fullscreen: {_fullscreen}");
     }
     
     /// <summary>
@@ -232,7 +233,7 @@ public partial class SettingsMenuController : Control
         
         try
         {
-            GD.Print("SettingsMenu: Applying settings...");
+            GameLogger.Info("SettingsMenu: Applying settings...");
             
             // Apply audio settings
             ApplyAudioSettings();
@@ -246,11 +247,11 @@ public partial class SettingsMenuController : Control
             _settingsChanged = false;
             UpdateApplyButton();
             
-            GD.Print("SettingsMenu: Settings applied successfully");
+            GameLogger.Info("SettingsMenu: Settings applied successfully");
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"SettingsMenu: Failed to apply settings: {ex.Message}");
+            GameLogger.Error($"SettingsMenu: Failed to apply settings: {ex.Message}");
         }
     }
     
@@ -261,7 +262,7 @@ public partial class SettingsMenuController : Control
     {
         try
         {
-            GD.Print("SettingsMenu: Back button pressed");
+            GameLogger.Info("SettingsMenu: Back button pressed");
             
             // TODO: Show unsaved changes dialog if _settingsChanged
             
@@ -269,7 +270,7 @@ public partial class SettingsMenuController : Control
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"SettingsMenu: Failed to return to main menu: {ex.Message}");
+            GameLogger.Error($"SettingsMenu: Failed to return to main menu: {ex.Message}");
         }
     }
     
@@ -304,11 +305,11 @@ public partial class SettingsMenuController : Control
                 AudioServer.SetBusVolumeDb(sfxBusIndex, volumeDb);
             }
             
-            GD.Print($"SettingsMenu: Audio settings applied - Master: {_masterVolume}%, Music: {_musicVolume}%, SFX: {_sfxVolume}%");
+            GameLogger.Info($"SettingsMenu: Audio settings applied - Master: {_masterVolume}%, Music: {_musicVolume}%, SFX: {_sfxVolume}%");
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"SettingsMenu: Failed to apply audio settings: {ex.Message}");
+            GameLogger.Error($"SettingsMenu: Failed to apply audio settings: {ex.Message}");
         }
     }
     
@@ -325,12 +326,12 @@ public partial class SettingsMenuController : Control
             if (currentMode != targetMode)
             {
                 DisplayServer.WindowSetMode(targetMode);
-                GD.Print($"SettingsMenu: Display mode changed to {targetMode}");
+                GameLogger.Info($"SettingsMenu: Display mode changed to {targetMode}");
             }
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"SettingsMenu: Failed to apply display settings: {ex.Message}");
+            GameLogger.Error($"SettingsMenu: Failed to apply display settings: {ex.Message}");
         }
     }
     
@@ -341,7 +342,7 @@ public partial class SettingsMenuController : Control
     {
         if (_settingsManager == null)
         {
-            GD.PrintErr("SettingsMenu: SettingsManager not initialized");
+            GameLogger.Error("SettingsMenu: SettingsManager not initialized");
             return;
         }
         
@@ -354,11 +355,11 @@ public partial class SettingsMenuController : Control
         // Write to disk
         if (_settingsManager.SaveSettings())
         {
-            GD.Print("SettingsMenu: Settings saved successfully");
+            GameLogger.Info("SettingsMenu: Settings saved successfully");
         }
         else
         {
-            GD.PrintErr("SettingsMenu: Failed to save settings");
+            GameLogger.Error("SettingsMenu: Failed to save settings");
         }
     }
     
@@ -374,21 +375,21 @@ public partial class SettingsMenuController : Control
         // Perform fade out if available
         if (_fadeTransition != null)
         {
-            GD.Print("SettingsMenu: Starting fade out");
+            GameLogger.Info("SettingsMenu: Starting fade out");
             await _fadeTransition.FadeOutAsync(0.5f);
         }
         
         // Use CQS command for scene transition
         if (GameManager.Instance != null)
         {
-            GD.Print($"SettingsMenu: Using CQS transition to: {MainMenuScenePath}");
+            GameLogger.Info($"SettingsMenu: Using CQS transition to: {MainMenuScenePath}");
             var command = Game.UI.Commands.TransitionToSceneCommand.Simple(MainMenuScenePath);
             await GameManager.Instance.DispatchAsync(command);
         }
         else
         {
             // Fallback to direct transition
-            GD.Print($"SettingsMenu: Returning to main menu: {MainMenuScenePath}");
+            GameLogger.Info($"SettingsMenu: Returning to main menu: {MainMenuScenePath}");
             GetTree().ChangeSceneToFile(MainMenuScenePath);
         }
     }

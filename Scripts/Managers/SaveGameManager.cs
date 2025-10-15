@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Core.Utils;
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ public class SaveGameManager
     public SaveGameManager()
     {
         _saveDirectoryPath = System.IO.Path.Combine(OS.GetUserDataDir(), SaveDirectoryName);
-        GD.Print($"SaveGameManager: Save directory: {_saveDirectoryPath}");
+        GameLogger.Info($"SaveGameManager: Save directory: {_saveDirectoryPath}");
     }
 
     /// <summary>
@@ -38,7 +39,7 @@ public class SaveGameManager
             using var dir = DirAccess.Open(_saveDirectoryPath);
             if (dir == null)
             {
-                GD.PrintErr($"SaveGameManager: Failed to open save directory: {_saveDirectoryPath}");
+                GameLogger.Error($"SaveGameManager: Failed to open save directory: {_saveDirectoryPath}");
                 return false;
             }
 
@@ -60,7 +61,7 @@ public class SaveGameManager
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"SaveGameManager: Exception checking for save files: {ex.Message}");
+            GameLogger.Error($"SaveGameManager: Exception checking for save files: {ex.Message}");
             return false;
         }
     }
@@ -91,7 +92,7 @@ public class SaveGameManager
             using var dir = DirAccess.Open(_saveDirectoryPath);
             if (dir == null)
             {
-                GD.PrintErr($"SaveGameManager: Failed to open save directory");
+                GameLogger.Error($"SaveGameManager: Failed to open save directory");
                 return saves;
             }
 
@@ -116,7 +117,7 @@ public class SaveGameManager
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"SaveGameManager: Exception getting save files: {ex.Message}");
+            GameLogger.Error($"SaveGameManager: Exception getting save files: {ex.Message}");
         }
 
         return saves;
@@ -156,7 +157,7 @@ public class SaveGameManager
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"SaveGameManager: Exception reading save file info: {ex.Message}");
+            GameLogger.Error($"SaveGameManager: Exception reading save file info: {ex.Message}");
             return null;
         }
     }
@@ -171,12 +172,12 @@ public class SaveGameManager
             if (!DirAccess.DirExistsAbsolute(_saveDirectoryPath))
             {
                 DirAccess.MakeDirRecursiveAbsolute(_saveDirectoryPath);
-                GD.Print($"SaveGameManager: Created save directory: {_saveDirectoryPath}");
+                GameLogger.Info($"SaveGameManager: Created save directory: {_saveDirectoryPath}");
             }
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"SaveGameManager: Failed to create save directory: {ex.Message}");
+            GameLogger.Error($"SaveGameManager: Failed to create save directory: {ex.Message}");
         }
     }
 }

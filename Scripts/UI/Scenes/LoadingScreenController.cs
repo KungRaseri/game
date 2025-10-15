@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
 using Godot;
@@ -49,7 +50,7 @@ public partial class LoadingScreenController : Control
 
     public override void _Ready()
     {
-        GD.Print("LoadingScreen: Initializing");
+        GameLogger.Info("LoadingScreen: Initializing");
         
         // Cache node references
         CacheNodeReferences();
@@ -60,7 +61,7 @@ public partial class LoadingScreenController : Control
     
     public override void _ExitTree()
     {
-        GD.Print("LoadingScreen: Cleaning up");
+        GameLogger.Info("LoadingScreen: Cleaning up");
         
         // Clean up timer connection
         if (_loadingTimer != null)
@@ -87,7 +88,7 @@ public partial class LoadingScreenController : Control
             _loadingTimer.Timeout += OnLoadingTimerTimeout;
         }
         
-        GD.Print("LoadingScreen: Node references cached");
+        GameLogger.Info("LoadingScreen: Node references cached");
     }
     
     /// <summary>
@@ -105,7 +106,7 @@ public partial class LoadingScreenController : Control
         // Start the loading simulation
         SimulateLoading();
         
-        GD.Print("LoadingScreen: Loading started");
+        GameLogger.Info("LoadingScreen: Loading started");
     }
     
     /// <summary>
@@ -141,7 +142,7 @@ public partial class LoadingScreenController : Control
                 }
                 
                 _targetProgress = phaseEndProgress;
-                GD.Print($"LoadingScreen: Completed phase {i + 1}/{_loadingPhases.Length} - {_loadingPhases[i]}");
+                GameLogger.Info($"LoadingScreen: Completed phase {i + 1}/{_loadingPhases.Length} - {_loadingPhases[i]}");
             }
             
             // Ensure we meet minimum loading time
@@ -149,7 +150,7 @@ public partial class LoadingScreenController : Control
             if (elapsedTime < MinLoadingTime)
             {
                 float remainingTime = MinLoadingTime - elapsedTime;
-                GD.Print($"LoadingScreen: Waiting additional {remainingTime:F1}s to meet minimum loading time");
+                GameLogger.Info($"LoadingScreen: Waiting additional {remainingTime:F1}s to meet minimum loading time");
                 await ToSignal(GetTree().CreateTimer(remainingTime), SceneTreeTimer.SignalName.Timeout);
             }
             
@@ -159,7 +160,7 @@ public partial class LoadingScreenController : Control
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"LoadingScreen: Loading simulation failed: {ex.Message}");
+            GameLogger.Error($"LoadingScreen: Loading simulation failed: {ex.Message}");
         }
     }
     
@@ -288,7 +289,7 @@ public partial class LoadingScreenController : Control
     {
         try
         {
-            GD.Print("LoadingScreen: Loading completed, transitioning to next scene");
+            GameLogger.Info("LoadingScreen: Loading completed, transitioning to next scene");
             
             // Show completion message briefly
             if (_statusLabel != null)
@@ -301,27 +302,27 @@ public partial class LoadingScreenController : Control
             // Perform fade out if available
             if (_fadeTransition != null)
             {
-                GD.Print("LoadingScreen: Starting fade out");
+                GameLogger.Info("LoadingScreen: Starting fade out");
                 await _fadeTransition.FadeOutAsync(0.5f);
             }
             
             // Use CQS command for scene transition
             if (GameManager.Instance != null)
             {
-                GD.Print($"LoadingScreen: Using CQS transition to: {NextScenePath}");
+                GameLogger.Info($"LoadingScreen: Using CQS transition to: {NextScenePath}");
                 var command = Game.UI.Commands.TransitionToSceneCommand.Simple(NextScenePath);
                 await GameManager.Instance.DispatchAsync(command);
             }
             else
             {
                 // Fallback to direct transition
-                GD.Print($"LoadingScreen: Changing to scene: {NextScenePath}");
+                GameLogger.Info($"LoadingScreen: Changing to scene: {NextScenePath}");
                 GetTree().ChangeSceneToFile(NextScenePath);
             }
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"LoadingScreen: Failed to complete loading: {ex.Message}");
+            GameLogger.Error($"LoadingScreen: Failed to complete loading: {ex.Message}");
         }
     }
 }

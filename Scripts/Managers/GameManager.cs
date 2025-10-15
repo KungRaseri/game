@@ -31,7 +31,7 @@ public partial class GameManager : Node
         // Set up singleton instance
         if (Instance != null)
         {
-            GD.PrintErr("GameManager: Multiple instances detected! Freeing duplicate.");
+            GameLogger.Error("GameManager: Multiple instances detected! Freeing duplicate.");
             QueueFree();
             return;
         }
@@ -179,6 +179,6 @@ public partial class GameManagerAutoload : Node
         var gameManager = new GameManager();
         GetTree().Root.AddChild(gameManager);
         
-        GD.Print("GameManagerAutoload: GameManager instance created and added to scene tree");
+        GameLogger.Info("GameManagerAutoload: GameManager instance created and added to scene tree");
     }
 }

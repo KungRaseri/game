@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Core.Utils;
 using Godot;
 using System.IO;
 
@@ -34,7 +35,7 @@ public class SettingsManager
         _configFile = new ConfigFile();
         _settingsPath = System.IO.Path.Combine(OS.GetUserDataDir(), SettingsFileName);
         
-        GD.Print($"SettingsManager: Settings path: {_settingsPath}");
+        GameLogger.Info($"SettingsManager: Settings path: {_settingsPath}");
     }
 
     /// <summary>
@@ -50,20 +51,20 @@ public class SettingsManager
             {
                 if (error == Error.FileNotFound)
                 {
-                    GD.Print("SettingsManager: Settings file not found, using defaults");
+                    GameLogger.Info("SettingsManager: Settings file not found, using defaults");
                     return false;
                 }
                 
-                GD.PrintErr($"SettingsManager: Failed to load settings: {error}");
+                GameLogger.Error($"SettingsManager: Failed to load settings: {error}");
                 return false;
             }
             
-            GD.Print("SettingsManager: Settings loaded successfully");
+            GameLogger.Info("SettingsManager: Settings loaded successfully");
             return true;
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"SettingsManager: Exception while loading settings: {ex.Message}");
+            GameLogger.Error($"SettingsManager: Exception while loading settings: {ex.Message}");
             return false;
         }
     }
@@ -86,16 +87,16 @@ public class SettingsManager
             
             if (error != Error.Ok)
             {
-                GD.PrintErr($"SettingsManager: Failed to save settings: {error}");
+                GameLogger.Error($"SettingsManager: Failed to save settings: {error}");
                 return false;
             }
             
-            GD.Print($"SettingsManager: Settings saved to {_settingsPath}");
+            GameLogger.Info($"SettingsManager: Settings saved to {_settingsPath}");
             return true;
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"SettingsManager: Exception while saving settings: {ex.Message}");
+            GameLogger.Error($"SettingsManager: Exception while saving settings: {ex.Message}");
             return false;
         }
     }
@@ -136,6 +137,6 @@ public class SettingsManager
         SetSfxVolume(DefaultSfxVolume);
         SetFullscreen(DefaultFullscreen);
         
-        GD.Print("SettingsManager: Settings reset to defaults");
+        GameLogger.Info("SettingsManager: Settings reset to defaults");
     }
 }

@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
 using Godot;
@@ -34,7 +35,7 @@ public partial class MainMenuController : Control
 
     public override void _Ready()
     {
-        GD.Print("MainMenu: Initializing");
+        GameLogger.Info("MainMenu: Initializing");
         
         // Initialize save game manager
         _saveGameManager = new SaveGameManager();
@@ -51,7 +52,7 @@ public partial class MainMenuController : Control
         // Set up keyboard navigation
         SetupKeyboardNavigation();
         
-        GD.Print("MainMenu: Ready");
+        GameLogger.Info("MainMenu: Ready");
     }
     
     public override void _Input(InputEvent @event)
@@ -75,7 +76,7 @@ public partial class MainMenuController : Control
         _statusLabel = GetNode<Label>("Content/RightPanel/GamePreview/StatusPanel/StatusLabel");
         _fadeTransition = GetNode<FadeTransition>("FadeTransition");
         
-        GD.Print("MainMenu: Node references cached");
+        GameLogger.Info("MainMenu: Node references cached");
     }
     
     /// <summary>
@@ -85,7 +86,7 @@ public partial class MainMenuController : Control
     {
         if (_saveGameManager == null)
         {
-            GD.PrintErr("MainMenu: SaveGameManager not initialized");
+            GameLogger.Error("MainMenu: SaveGameManager not initialized");
             _hasSaveGame = false;
             return;
         }
@@ -99,11 +100,11 @@ public partial class MainMenuController : Control
             var mostRecent = _saveGameManager.GetMostRecentSave();
             if (mostRecent != null)
             {
-                GD.Print($"MainMenu: Found save file: {mostRecent.FileName}");
+                GameLogger.Info($"MainMenu: Found save file: {mostRecent.FileName}");
             }
         }
         
-        GD.Print($"MainMenu: Save game exists: {_hasSaveGame}");
+        GameLogger.Info($"MainMenu: Save game exists: {_hasSaveGame}");
     }
     
     /// <summary>
@@ -124,7 +125,7 @@ public partial class MainMenuController : Control
                 "Ready to start your adventure!";
         }
         
-        GD.Print("MainMenu: UI state updated");
+        GameLogger.Info("MainMenu: UI state updated");
     }
     
     /// <summary>
@@ -134,7 +135,7 @@ public partial class MainMenuController : Control
     {
         try
         {
-            GD.Print("MainMenu: New Game button pressed");
+            GameLogger.Info("MainMenu: New Game button pressed");
             
             if (_statusLabel != null)
             {
@@ -145,7 +146,7 @@ public partial class MainMenuController : Control
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"MainMenu: Failed to start new game: {ex.Message}");
+            GameLogger.Error($"MainMenu: Failed to start new game: {ex.Message}");
             
             if (_statusLabel != null)
             {
@@ -161,13 +162,13 @@ public partial class MainMenuController : Control
     {
         if (!_hasSaveGame)
         {
-            GD.PrintRaw("MainMenu: Continue pressed but no save game available");
+            GameLogger.Debug("MainMenu: Continue pressed but no save game available");
             return;
         }
         
         try
         {
-            GD.Print("MainMenu: Continue button pressed");
+            GameLogger.Info("MainMenu: Continue button pressed");
             
             if (_statusLabel != null)
             {
@@ -178,7 +179,7 @@ public partial class MainMenuController : Control
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"MainMenu: Failed to continue game: {ex.Message}");
+            GameLogger.Error($"MainMenu: Failed to continue game: {ex.Message}");
             
             if (_statusLabel != null)
             {
@@ -194,7 +195,7 @@ public partial class MainMenuController : Control
     {
         try
         {
-            GD.Print("MainMenu: Settings button pressed");
+            GameLogger.Info("MainMenu: Settings button pressed");
             
             if (_statusLabel != null)
             {
@@ -205,7 +206,7 @@ public partial class MainMenuController : Control
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"MainMenu: Failed to open settings: {ex.Message}");
+            GameLogger.Error($"MainMenu: Failed to open settings: {ex.Message}");
             
             if (_statusLabel != null)
             {
@@ -221,7 +222,7 @@ public partial class MainMenuController : Control
     {
         try
         {
-            GD.Print("MainMenu: Credits button pressed");
+            GameLogger.Info("MainMenu: Credits button pressed");
             
             if (_statusLabel != null)
             {
@@ -232,7 +233,7 @@ public partial class MainMenuController : Control
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"MainMenu: Failed to open credits: {ex.Message}");
+            GameLogger.Error($"MainMenu: Failed to open credits: {ex.Message}");
             
             if (_statusLabel != null)
             {
@@ -248,7 +249,7 @@ public partial class MainMenuController : Control
     {
         try
         {
-            GD.Print("MainMenu: Quit button pressed");
+            GameLogger.Info("MainMenu: Quit button pressed");
             
             if (_statusLabel != null)
             {
@@ -258,17 +259,17 @@ public partial class MainMenuController : Control
             // Perform fade out if available
             if (_fadeTransition != null)
             {
-                GD.Print("MainMenu: Starting fade out for quit");
+                GameLogger.Info("MainMenu: Starting fade out for quit");
                 await _fadeTransition.FadeOutAsync(0.5f);
             }
             
             // Quit the game
-            GD.Print("MainMenu: Quitting game");
+            GameLogger.Info("MainMenu: Quitting game");
             GetTree().Quit();
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"MainMenu: Failed to quit game: {ex.Message}");
+            GameLogger.Error($"MainMenu: Failed to quit game: {ex.Message}");
         }
     }
     
@@ -292,21 +293,21 @@ public partial class MainMenuController : Control
         // Perform fade out if available
         if (_fadeTransition != null)
         {
-            GD.Print($"MainMenu: Starting fade out for transition to {scenePath}");
+            GameLogger.Info($"MainMenu: Starting fade out for transition to {scenePath}");
             await _fadeTransition.FadeOutAsync(0.5f);
         }
         
         // Use CQS command for scene transition
         if (GameManager.Instance != null)
         {
-            GD.Print($"MainMenu: Using CQS transition to: {scenePath}");
+            GameLogger.Info($"MainMenu: Using CQS transition to: {scenePath}");
             var command = Game.UI.Commands.TransitionToSceneCommand.Simple(scenePath);
             await GameManager.Instance.DispatchAsync(command);
         }
         else
         {
             // Fallback to direct transition
-            GD.Print($"MainMenu: Changing to scene: {scenePath}");
+            GameLogger.Info($"MainMenu: Changing to scene: {scenePath}");
             GetTree().ChangeSceneToFile(scenePath);
         }
     }
@@ -342,7 +343,7 @@ public partial class MainMenuController : Control
     {
         if (what == NotificationWMWindowFocusIn)
         {
-            GD.Print("MainMenu: Window focus gained, refreshing state");
+            GameLogger.Info("MainMenu: Window focus gained, refreshing state");
             CheckForSaveGames();
             UpdateUIState();
             EnableAllButtons();
@@ -366,7 +367,7 @@ public partial class MainMenuController : Control
         // Set initial focus on the first enabled button
         UpdateButtonFocus();
         
-        GD.Print("MainMenu: Keyboard navigation initialized");
+        GameLogger.Info("MainMenu: Keyboard navigation initialized");
     }
     
     /// <summary>
@@ -458,7 +459,7 @@ public partial class MainMenuController : Control
         if (selectedButton != null && !selectedButton.Disabled)
         {
             selectedButton.GrabFocus();
-            GD.Print($"MainMenu: Focus on button index {_selectedButtonIndex}");
+            GameLogger.Info($"MainMenu: Focus on button index {_selectedButtonIndex}");
         }
     }
     
@@ -471,7 +472,7 @@ public partial class MainMenuController : Control
         if (button != null && !button.Disabled)
         {
             button.EmitSignal("pressed");
-            GD.Print($"MainMenu: Activated button index {_selectedButtonIndex}");
+            GameLogger.Info($"MainMenu: Activated button index {_selectedButtonIndex}");
         }
     }
 }
