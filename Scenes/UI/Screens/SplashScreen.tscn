@@ -83,9 +83,8 @@ disabled = true
 text = "Continue"
 
 [node name="FadeTransition" parent="." instance=ExtResource("2_pufkq")]
+visible = false
 layout_mode = 1
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="InitTimer" type="Timer" parent="."]
 wait_time = 2.0

@@ -63,15 +63,6 @@ layout_mode = 2
 [node name="LoadingProgressBar" parent="Content/VBox/ProgressContainer" instance=ExtResource("3_g6j2p")]
 layout_mode = 2
 
-[node name="Spacer3" type="Control" parent="Content/VBox/ProgressContainer"]
-custom_minimum_size = Vector2(0, 10)
-layout_mode = 2
-
-[node name="ProgressLabel" type="Label" parent="Content/VBox/ProgressContainer"]
-layout_mode = 2
-text = "0%"
-horizontal_alignment = 1
-
 [node name="Spacer4" type="Control" parent="Content/VBox"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
@@ -95,6 +86,7 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="TipLabel" type="Label" parent="BottomContainer"]
+custom_minimum_size = Vector2(256, 25)
 layout_mode = 2
 text = "Tip: Manage your shop inventory to maximize profits!"
 horizontal_alignment = 1

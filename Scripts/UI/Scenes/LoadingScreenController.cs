@@ -18,7 +18,6 @@ public partial class LoadingScreenController : Control
     
     // Cached node references
     private Label? _phaseLabel;
-    private Label? _progressLabel;
     private Label? _statusLabel;
     private Label? _tipLabel;
     private LoadingProgressBar? _progressBar;
@@ -76,7 +75,6 @@ public partial class LoadingScreenController : Control
     private void CacheNodeReferences()
     {
         _phaseLabel = GetNode<Label>("Content/VBox/PhaseLabel");
-        _progressLabel = GetNode<Label>("Content/VBox/ProgressContainer/ProgressLabel");
         _statusLabel = GetNode<Label>("Content/VBox/StatusLabel");
         _tipLabel = GetNode<Label>("BottomContainer/TipLabel");
         _progressBar = GetNode<LoadingProgressBar>("Content/VBox/ProgressContainer/LoadingProgressBar");
@@ -254,16 +252,9 @@ public partial class LoadingScreenController : Control
     /// </summary>
     private void UpdateProgressDisplay()
     {
-        int progressInt = Mathf.RoundToInt(_currentProgress);
-        
         if (_progressBar != null)
         {
             _progressBar.SetProgress(_currentProgress);
-        }
-        
-        if (_progressLabel != null)
-        {
-            _progressLabel.Text = $"{progressInt}%";
         }
     }
     

@@ -39,72 +39,17 @@ public partial class LoadingProgressBar : Control
 
     public override void _Ready()
     {
-        SetupProgressBar();
-        SetupLabels();
+        // Get references to nodes from the scene
+        _progressBar = GetNode<ProgressBar>("ProgressBar");
+        _percentageLabel = GetNodeOrNull<Label>("ProgressLabel");
+        
+        // Style the progress bar
+        StyleProgressBar();
+        
+        // Initialize display
         UpdateDisplay();
         
         GameLogger.Debug("LoadingProgressBar component initialized");
-    }
-
-    /// <summary>
-    /// Sets up the progress bar control.
-    /// </summary>
-    private void SetupProgressBar()
-    {
-        // Create main container
-        var container = new VBoxContainer();
-        AddChild(container);
-        container.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
-
-        // Create progress bar section
-        var progressSection = new HBoxContainer();
-        container.AddChild(progressSection);
-        progressSection.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-
-        // Create progress bar
-        _progressBar = new ProgressBar();
-        progressSection.AddChild(_progressBar);
-        _progressBar.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-        _progressBar.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
-        _progressBar.CustomMinimumSize = new Vector2I(0, BarHeight);
-        _progressBar.Value = 0;
-        _progressBar.Step = 0.1;
-        _progressBar.ShowPercentage = false; // We'll handle percentage display ourselves
-
-        // Style the progress bar
-        StyleProgressBar();
-    }
-
-    /// <summary>
-    /// Sets up percentage and status labels.
-    /// </summary>
-    private void SetupLabels()
-    {
-        if (!HasNode("VBoxContainer"))
-        {
-            GameLogger.Warning("VBoxContainer not found for labels");
-            return;
-        }
-
-        var container = GetNode<VBoxContainer>("VBoxContainer");
-
-        // Create percentage label if enabled
-        if (ShowPercentage)
-        {
-            _percentageLabel = new Label();
-            container.AddChild(_percentageLabel);
-            _percentageLabel.HorizontalAlignment = HorizontalAlignment.Center;
-            _percentageLabel.AddThemeColorOverride("font_color", TextColor);
-            _percentageLabel.Text = string.Format(PercentageFormat, 0.0f);
-        }
-
-        // Create status label
-        _statusLabel = new Label();
-        container.AddChild(_statusLabel);
-        _statusLabel.HorizontalAlignment = HorizontalAlignment.Center;
-        _statusLabel.AddThemeColorOverride("font_color", TextColor);
-        _statusLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-        _statusLabel.Text = string.Empty;
     }
 
     /// <summary>
@@ -159,15 +104,12 @@ public partial class LoadingProgressBar : Control
 
     /// <summary>
     /// Sets the status text to display below the progress bar.
+    /// Note: Status text is not displayed in the current implementation.
     /// </summary>
     public void SetStatusText(string statusText)
     {
         _currentStatusText = statusText ?? string.Empty;
-        
-        if (_statusLabel != null)
-        {
-            _statusLabel.Text = _currentStatusText;
-        }
+        // Status label is managed by the parent scene if needed
     }
 
     /// <summary>
@@ -258,12 +200,11 @@ public partial class LoadingProgressBar : Control
         if (_percentageLabel != null && ShowPercentage)
         {
             _percentageLabel.Text = string.Format(PercentageFormat, _currentProgress);
+            _percentageLabel.Visible = true;
         }
-
-        // Update status label
-        if (_statusLabel != null)
+        else if (_percentageLabel != null)
         {
-            _statusLabel.Text = _currentStatusText;
+            _percentageLabel.Visible = false;
         }
     }
 
@@ -281,11 +222,6 @@ public partial class LoadingProgressBar : Control
         if (_percentageLabel != null)
         {
             _percentageLabel.AddThemeColorOverride("font_color", TextColor);
-        }
-        
-        if (_statusLabel != null)
-        {
-            _statusLabel.AddThemeColorOverride("font_color", TextColor);
         }
     }
 

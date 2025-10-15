@@ -37,8 +37,8 @@ public partial class FadeTransition : ColorRect
         // Make sure it's on top
         ZIndex = 1000;
         
-        // Ensure mouse input is blocked during fades
-        MouseFilter = Control.MouseFilterEnum.Stop;
+        // Only block mouse input when visible
+        MouseFilter = Visible ? Control.MouseFilterEnum.Stop : Control.MouseFilterEnum.Ignore;
         
         GameLogger.Debug("FadeTransition component initialized");
     }
@@ -100,6 +100,7 @@ public partial class FadeTransition : ColorRect
         
         _isFading = true;
         Visible = true;
+        MouseFilter = Control.MouseFilterEnum.Stop; // Block input during fade
         
         try
         {
@@ -127,6 +128,7 @@ public partial class FadeTransition : ColorRect
         if (duration < 0) duration = DefaultDuration;
         
         _isFading = true;
+        MouseFilter = Control.MouseFilterEnum.Stop; // Block input during fade
         
         try
         {
@@ -138,6 +140,7 @@ public partial class FadeTransition : ColorRect
             await ToSignal(_fadeTween, Tween.SignalName.Finished);
             
             Visible = false; // Hide when fully transparent
+            MouseFilter = Control.MouseFilterEnum.Ignore; // Allow input through when hidden
             
             GameLogger.Debug("Fade in transition completed");
         }
