@@ -1,12 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://c7m9p5q1x8n2l"]
+[gd_scene load_steps=2 format=3 uid="uid://c7nap5q1x8n2l"]
 
-[ext_resource type="Script" path="res://Scripts/UI/Components/LoadingProgressBar.cs" id="1_r8k5j"]
+[ext_resource type="Script" uid="uid://dtehc570s3ihx" path="res://Scripts/UI/Components/LoadingProgressBar.cs" id="1_r8k5j"]
 
 [node name="LoadingProgressBar" type="Control"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
-custom_minimum_size = Vector2(0, 30)
+grow_horizontal = 2
 script = ExtResource("1_r8k5j")
 
 [node name="Background" type="NinePatchRect" parent="."]
@@ -14,14 +15,16 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.2, 0.2, 0.25, 1)
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-max_value = 100.0
+grow_horizontal = 2
+grow_vertical = 2
 step = 0.1
 show_percentage = false
 
@@ -36,6 +39,8 @@ offset_left = -50.0
 offset_top = -10.0
 offset_right = 50.0
 offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
 text = "0%"
 horizontal_alignment = 1
 vertical_alignment = 1

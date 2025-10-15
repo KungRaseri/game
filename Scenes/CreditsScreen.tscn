@@ -162,7 +162,5 @@ text = "Back to Menu"
 
 [node name="FadeTransition" parent="." instance=ExtResource("2_3z8vk")]
 layout_mode = 1
-grow_horizontal = 2
-grow_vertical = 2
 
 [connection signal="pressed" from="Content/VBox/ButtonContainer/BackButton" to="." method="OnBackButtonPressed"]

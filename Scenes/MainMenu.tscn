@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c561310d2vcv"]
 
-[ext_resource type="Script" uid="uid://c7rolaiky3pda" path="res://Scripts/UI/Scenes/MainMenuController.cs" id="1_p8k7h"]
-[ext_resource type="PackedScene" uid="uid://c8vqh8vy4n1ri" path="res://Scripts/UI/Components/FadeTransition.tscn" id="2_m6j3l"]
+[ext_resource type="Script" uid="uid://c7rolaiky3pda" path="res://Scripts/UI/Scenes/MainMenuController.cs" id="1_2a0sc"]
+[ext_resource type="PackedScene" uid="uid://b8p7wn4ol8t7l" path="res://Scenes/UI/Components/FadeTransition.tscn" id="2_m6j3l"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
 font_size = 36
@@ -14,7 +14,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_p8k7h")
+script = ExtResource("1_2a0sc")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -159,8 +159,6 @@ horizontal_alignment = 1
 
 [node name="FadeTransition" parent="." instance=ExtResource("2_m6j3l")]
 layout_mode = 1
-grow_horizontal = 2
-grow_vertical = 2
 
 [connection signal="pressed" from="Content/LeftPanel/VBox/MenuButtons/NewGameButton" to="." method="OnNewGameButtonPressed"]
 [connection signal="pressed" from="Content/LeftPanel/VBox/MenuButtons/ContinueButton" to="." method="OnContinueButtonPressed"]

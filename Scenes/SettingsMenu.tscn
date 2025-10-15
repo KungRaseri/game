@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b8m3x5law1q7r"]
 
-[ext_resource type="Script" uid="uid://c1ghyq7yowma7" path="res://Scripts/UI/Scenes/SettingsMenuController.cs" id="1_s3h8k"]
-[ext_resource type="PackedScene" uid="uid://c8vqh8vy4n1ri" path="res://Scripts/UI/Components/FadeTransition.tscn" id="2_f7j2p"]
+[ext_resource type="Script" uid="uid://c1ghyq7yowma7" path="res://Scripts/UI/Scenes/SettingsMenuController.cs" id="1_2a0sc"]
+[ext_resource type="PackedScene" uid="uid://b8p7wn4ol8t7l" path="res://Scenes/UI/Components/FadeTransition.tscn" id="2_f7j2p"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_header"]
 font_size = 28
@@ -14,7 +14,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_s3h8k")
+script = ExtResource("1_2a0sc")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -178,8 +178,6 @@ text = "Apply Settings"
 
 [node name="FadeTransition" parent="." instance=ExtResource("2_f7j2p")]
 layout_mode = 1
-grow_horizontal = 2
-grow_vertical = 2
 
 [connection signal="value_changed" from="Content/VBox/SettingsContainer/AudioSettings/MasterVolumeContainer/MasterVolumeSlider" to="." method="OnMasterVolumeChanged"]
 [connection signal="value_changed" from="Content/VBox/SettingsContainer/AudioSettings/MusicVolumeContainer/MusicVolumeSlider" to="." method="OnMusicVolumeChanged"]
