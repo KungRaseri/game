@@ -1,9 +1,12 @@
 #nullable enable
 
-using System;
+using System.Threading.Tasks;
 using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
+using Game.UI.Commands;
+using Game.UI.Models;
+using Game.UI.Queries;
 using Godot;
 
 namespace Game.Scripts.UI.Scenes;
@@ -15,8 +18,6 @@ namespace Game.Scripts.UI.Scenes;
 public partial class SettingsMenuController : Control
 {
     [Export] public string MainMenuScenePath { get; set; } = "res://Scenes/UI/Screens/MainMenu.tscn";
-    
-    private SettingsManager? _settingsManager;
     
     // Cached node references
     private HSlider? _masterVolumeSlider;
@@ -41,14 +42,11 @@ public partial class SettingsMenuController : Control
     {
         GameLogger.Info("SettingsMenu: Initializing");
         
-        // Initialize settings manager
-        _settingsManager = new SettingsManager();
-        
         // Cache node references
         CacheNodeReferences();
         
-        // Load current settings
-        LoadSettings();
+        // Load current settings using CQS
+        await LoadSettings();
         
         // Update UI to reflect current settings
         UpdateUI();
@@ -94,28 +92,24 @@ public partial class SettingsMenuController : Control
     }
     
     /// <summary>
-    /// Loads settings from configuration file or uses defaults.
+    /// Loads settings from configuration file using CQS.
     /// </summary>
-    private void LoadSettings()
+    private async Task LoadSettings()
     {
-        if (_settingsManager == null)
+        if (GameManager.Instance == null)
         {
-            GameLogger.Error("SettingsMenu: SettingsManager not initialized");
+            GameLogger.Error("SettingsMenu: GameManager not initialized");
             return;
         }
         
-        // Load settings from file
-        _settingsManager.LoadSettings();
+        var query = new GetAllSettingsQuery();
+        var settings = await GameManager.Instance.DispatchAsync<GetAllSettingsQuery, SettingsData>(query);
         
-        // Get values from settings manager
-        _masterVolume = _settingsManager.GetMasterVolume();
-        _musicVolume = _settingsManager.GetMusicVolume();
-        _sfxVolume = _settingsManager.GetSfxVolume();
-        _fullscreen = _settingsManager.GetFullscreen();
-        
-        // Apply settings to system
-        ApplyAudioSettings();
-        ApplyDisplaySettings();
+        // Store current values
+        _masterVolume = settings.MasterVolume;
+        _musicVolume = settings.MusicVolume;
+        _sfxVolume = settings.SfxVolume;
+        _fullscreen = settings.Fullscreen;
         
         GameLogger.Info($"SettingsMenu: Loaded settings - Master: {_masterVolume}%, Music: {_musicVolume}%, SFX: {_sfxVolume}%, Fullscreen: {_fullscreen}");
     }
@@ -192,8 +186,8 @@ public partial class SettingsMenuController : Control
         UpdateVolumeLabels();
         UpdateApplyButton();
         
-        // Apply immediately for preview
-        ApplyAudioSettings();
+        // Apply immediately for preview (fire-and-forget is acceptable for preview)
+        _ = ApplyAudioSettings();
     }
     
     /// <summary>
@@ -231,7 +225,7 @@ public partial class SettingsMenuController : Control
     /// <summary>
     /// Called when the Apply button is pressed.
     /// </summary>
-    public void OnApplyButtonPressed()
+    public async void OnApplyButtonPressed()
     {
         if (!_settingsChanged)
         {
@@ -243,13 +237,13 @@ public partial class SettingsMenuController : Control
             GameLogger.Info("SettingsMenu: Applying settings...");
             
             // Apply audio settings
-            ApplyAudioSettings();
+            await ApplyAudioSettings();
             
             // Apply display settings
-            ApplyDisplaySettings();
+            await ApplyDisplaySettings();
             
             // Save settings to persistent storage
-            SaveSettings();
+            await SaveSettings();
             
             _settingsChanged = false;
             UpdateApplyButton();
@@ -274,10 +268,10 @@ public partial class SettingsMenuController : Control
             // Warn if there are unsaved changes
             if (_settingsChanged)
             {
-                GameLogger.Warning("SettingsMenu: Discarding unsaved changes");
+                GameLogger.Info("SettingsMenu: Discarding unsaved changes");
                 // Note: In a full implementation, this would show a confirmation dialog
                 // For now, we log a warning and reload settings to discard changes
-                LoadSettings();
+                await LoadSettings();
                 UpdateUI();
                 _settingsChanged = false;
             }
@@ -291,36 +285,26 @@ public partial class SettingsMenuController : Control
     }
     
     /// <summary>
-    /// Applies audio settings to the audio system.
+    /// Applies audio settings to the audio system using CQS.
     /// </summary>
-    private void ApplyAudioSettings()
+    private async Task ApplyAudioSettings()
     {
+        if (GameManager.Instance == null)
+        {
+            GameLogger.Error("SettingsMenu: GameManager not initialized");
+            return;
+        }
+        
         try
         {
-            // Apply master volume
-            var masterBusIndex = AudioServer.GetBusIndex("Master");
-            if (masterBusIndex >= 0)
+            var command = new ApplyAudioSettingsCommand
             {
-                var volumeDb = LinearToDb(_masterVolume / 100.0f);
-                AudioServer.SetBusVolumeDb(masterBusIndex, volumeDb);
-            }
+                MasterVolume = _masterVolume,
+                MusicVolume = _musicVolume,
+                SfxVolume = _sfxVolume
+            };
             
-            // Apply music volume
-            var musicBusIndex = AudioServer.GetBusIndex("Music");
-            if (musicBusIndex >= 0)
-            {
-                var volumeDb = LinearToDb(_musicVolume / 100.0f);
-                AudioServer.SetBusVolumeDb(musicBusIndex, volumeDb);
-            }
-            
-            // Apply SFX volume
-            var sfxBusIndex = AudioServer.GetBusIndex("SFX");
-            if (sfxBusIndex >= 0)
-            {
-                var volumeDb = LinearToDb(_sfxVolume / 100.0f);
-                AudioServer.SetBusVolumeDb(sfxBusIndex, volumeDb);
-            }
-            
+            await GameManager.Instance.DispatchAsync(command);
             GameLogger.Info($"SettingsMenu: Audio settings applied - Master: {_masterVolume}%, Music: {_musicVolume}%, SFX: {_sfxVolume}%");
         }
         catch (System.Exception ex)
@@ -330,20 +314,25 @@ public partial class SettingsMenuController : Control
     }
     
     /// <summary>
-    /// Applies display settings to the display system.
+    /// Applies display settings to the display system using CQS.
     /// </summary>
-    private void ApplyDisplaySettings()
+    private async Task ApplyDisplaySettings()
     {
+        if (GameManager.Instance == null)
+        {
+            GameLogger.Error("SettingsMenu: GameManager not initialized");
+            return;
+        }
+        
         try
         {
-            var currentMode = DisplayServer.WindowGetMode();
-            var targetMode = _fullscreen ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed;
-            
-            if (currentMode != targetMode)
+            var command = new ApplyDisplaySettingsCommand
             {
-                DisplayServer.WindowSetMode(targetMode);
-                GameLogger.Info($"SettingsMenu: Display mode changed to {targetMode}");
-            }
+                Fullscreen = _fullscreen
+            };
+            
+            await GameManager.Instance.DispatchAsync(command);
+            GameLogger.Info($"SettingsMenu: Display settings applied - Fullscreen: {_fullscreen}");
         }
         catch (System.Exception ex)
         {
@@ -352,30 +341,32 @@ public partial class SettingsMenuController : Control
     }
     
     /// <summary>
-    /// Saves settings to persistent storage.
+    /// Saves settings to persistent storage using CQS.
     /// </summary>
-    private void SaveSettings()
+    private async Task SaveSettings()
     {
-        if (_settingsManager == null)
+        if (GameManager.Instance == null)
         {
-            GameLogger.Error("SettingsMenu: SettingsManager not initialized");
+            GameLogger.Error("SettingsMenu: GameManager not initialized");
             return;
         }
         
-        // Save values to settings manager
-        _settingsManager.SetMasterVolume(_masterVolume);
-        _settingsManager.SetMusicVolume(_musicVolume);
-        _settingsManager.SetSfxVolume(_sfxVolume);
-        _settingsManager.SetFullscreen(_fullscreen);
-        
-        // Write to disk
-        if (_settingsManager.SaveSettings())
+        try
         {
+            var command = new SaveSettingsCommand
+            {
+                MasterVolume = _masterVolume,
+                MusicVolume = _musicVolume,
+                SfxVolume = _sfxVolume,
+                Fullscreen = _fullscreen
+            };
+            
+            await GameManager.Instance.DispatchAsync(command);
             GameLogger.Info("SettingsMenu: Settings saved successfully");
         }
-        else
+        catch (System.Exception ex)
         {
-            GameLogger.Error("SettingsMenu: Failed to save settings");
+            GameLogger.Error($"SettingsMenu: Failed to save settings: {ex.Message}");
         }
     }
     
@@ -410,19 +401,4 @@ public partial class SettingsMenuController : Control
         }
     }
     
-    /// <summary>
-    /// Converts linear volume (0-1) to decibels.
-    /// </summary>
-    private static float LinearToDb(float linear)
-    {
-        return linear > 0 ? 20.0f * (float)Math.Log10(linear) : -80.0f;
-    }
-    
-    /// <summary>
-    /// Converts decibels to linear volume (0-1).
-    /// </summary>
-    private static float DbToLinear(float db)
-    {
-        return Mathf.Pow(10.0f, db / 20.0f);
-    }
 }

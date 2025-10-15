@@ -17,8 +17,6 @@ public partial class MainMenuController : Control
     [Export] public string SettingsScenePath { get; set; } = "res://Scenes/UI/Screens/SettingsMenu.tscn";
     [Export] public string CreditsScenePath { get; set; } = "res://Scenes/UI/Screens/CreditsScreen.tscn";
     
-    private SaveGameManager? _saveGameManager;
-    
     // Cached node references
     private Button? _newGameButton;
     private Button? _continueButton;
@@ -37,14 +35,11 @@ public partial class MainMenuController : Control
     {
         GameLogger.Info("MainMenu: Initializing");
         
-        // Initialize save game manager
-        _saveGameManager = new SaveGameManager();
-        
         // Cache node references
         CacheNodeReferences();
         
-        // Check for existing save games
-        CheckForSaveGames();
+        // Check for existing save games using CQS
+        await CheckForSaveGames();
         
         // Update UI state
         UpdateUIState();
@@ -87,31 +82,42 @@ public partial class MainMenuController : Control
     }
     
     /// <summary>
-    /// Checks for existing save games to enable/disable the continue button.
+    /// Checks for existing save games to enable/disable the continue button using CQS.
     /// </summary>
-    private void CheckForSaveGames()
+    private async Task CheckForSaveGames()
     {
-        if (_saveGameManager == null)
+        try
         {
-            GameLogger.Error("MainMenu: SaveGameManager not initialized");
-            _hasSaveGame = false;
-            return;
-        }
-        
-        // Check for any save files
-        _hasSaveGame = _saveGameManager.HasAnySaveFiles();
-        
-        // Get most recent save info if available
-        if (_hasSaveGame)
-        {
-            var mostRecent = _saveGameManager.GetMostRecentSave();
-            if (mostRecent != null)
+            if (GameManager.Instance == null)
             {
-                GameLogger.Info($"MainMenu: Found save file: {mostRecent.FileName}");
+                GameLogger.Error("MainMenu: GameManager not initialized");
+                _hasSaveGame = false;
+                return;
             }
+            
+            // Use CQS query to check for save files
+            var hasSavesQuery = new Game.UI.Queries.HasSaveFilesQuery();
+            _hasSaveGame = await GameManager.Instance.DispatchAsync<Game.UI.Queries.HasSaveFilesQuery, bool>(hasSavesQuery);
+            
+            // Get most recent save info if available
+            if (_hasSaveGame)
+            {
+                var getMostRecentQuery = new Game.UI.Queries.GetMostRecentSaveQuery();
+                var mostRecent = await GameManager.Instance.DispatchAsync<Game.UI.Queries.GetMostRecentSaveQuery, Game.UI.Models.SaveGameMetadata?>(getMostRecentQuery);
+                
+                if (mostRecent != null)
+                {
+                    GameLogger.Info($"MainMenu: Found save file: {mostRecent.FileName}");
+                }
+            }
+            
+            GameLogger.Info($"MainMenu: Save game exists: {_hasSaveGame}");
         }
-        
-        GameLogger.Info($"MainMenu: Save game exists: {_hasSaveGame}");
+        catch (System.Exception ex)
+        {
+            GameLogger.Error($"MainMenu: Failed to check for save games: {ex.Message}");
+            _hasSaveGame = false;
+        }
     }
     
     /// <summary>
@@ -351,10 +357,19 @@ public partial class MainMenuController : Control
         if (what == NotificationWMWindowFocusIn)
         {
             GameLogger.Info("MainMenu: Window focus gained, refreshing state");
-            CheckForSaveGames();
-            UpdateUIState();
-            EnableAllButtons();
+            // Fire and forget - refresh save game state asynchronously
+            _ = RefreshStateAsync();
         }
+    }
+    
+    /// <summary>
+    /// Refreshes the menu state asynchronously.
+    /// </summary>
+    private async Task RefreshStateAsync()
+    {
+        await CheckForSaveGames();
+        UpdateUIState();
+        EnableAllButtons();
     }
     
     /// <summary>
