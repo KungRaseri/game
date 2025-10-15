@@ -12,7 +12,7 @@ namespace Game.Scripts.UI.Scenes;
 /// </summary>
 public partial class LoadingScreenController : Control
 {
-    [Export] public string NextScenePath { get; set; } = "res://Scenes/UI/MainMenu.tscn";
+    [Export] public string NextScenePath { get; set; } = "res://Scenes/UI/Screens/MainMenu.tscn";
     [Export] public float MinLoadingTime { get; set; } = 3.0f;
     [Export] public float UpdateInterval { get; set; } = 0.1f;
     

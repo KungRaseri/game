@@ -13,7 +13,7 @@ namespace Game.Scripts.UI.Scenes;
 /// </summary>
 public partial class SettingsMenuController : Control
 {
-    [Export] public string MainMenuScenePath { get; set; } = "res://Scenes/UI/MainMenu.tscn";
+    [Export] public string MainMenuScenePath { get; set; } = "res://Scenes/UI/Screens/MainMenu.tscn";
     
     private SettingsManager? _settingsManager;
     

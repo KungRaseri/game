@@ -13,8 +13,8 @@ namespace Game.Scripts.UI.Scenes;
 public partial class MainMenuController : Control
 {
     [Export] public string GameScenePath { get; set; } = "res://Scenes/MainGameScene.tscn";
-    [Export] public string SettingsScenePath { get; set; } = "res://Scenes/UI/SettingsMenu.tscn";
-    [Export] public string CreditsScenePath { get; set; } = "res://Scenes/UI/CreditsScreen.tscn";
+    [Export] public string SettingsScenePath { get; set; } = "res://Scenes/UI/Screens/SettingsMenu.tscn";
+    [Export] public string CreditsScenePath { get; set; } = "res://Scenes/UI/Screens/CreditsScreen.tscn";
     
     private SaveGameManager? _saveGameManager;
     

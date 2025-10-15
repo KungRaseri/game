@@ -13,7 +13,7 @@ namespace Game.Scripts.UI.Scenes;
 public partial class SplashScreenController : Control
 {
     [Export] public float MinDisplayTime { get; set; } = 2.0f;
-    [Export] public string NextScenePath { get; set; } = "res://Scenes/UI/LoadingScreen.tscn";
+    [Export] public string NextScenePath { get; set; } = "res://Scenes/UI/Screens/LoadingScreen.tscn";
     
     // Cached node references
     private Label? _statusLabel;

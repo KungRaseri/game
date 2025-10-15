@@ -12,7 +12,7 @@ namespace Game.Scripts.UI.Scenes;
 /// </summary>
 public partial class CreditsScreenController : Control
 {
-    [Export] public string MainMenuScenePath { get; set; } = "res://Scenes/UI/MainMenu.tscn";
+    [Export] public string MainMenuScenePath { get; set; } = "res://Scenes/UI/Screens/MainMenu.tscn";
     [Export] public float ScrollSpeed { get; set; } = 50.0f;
     
     // Cached node references
