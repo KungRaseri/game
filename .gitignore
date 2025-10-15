@@ -1,5 +1,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,godot
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,visualstudiocode,godot
+### Images ###
+*.png
+*.png.import
+*.psd
+*.txt
+Thumbs.db
 
 ### Godot ###
 # Godot 4+ specific ignores

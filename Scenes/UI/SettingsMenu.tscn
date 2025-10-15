@@ -1,0 +1,187 @@
+[gd_scene load_steps=4 format=3 uid="uid://b8m3x5law1q7r"]
+
+[ext_resource type="Script" path="res://Scripts/UI/Scenes/SettingsMenuController.cs" id="1_s3h8k"]
+[ext_resource type="PackedScene" path="res://Scripts/UI/Components/FadeTransition.tscn" id="2_f7j2p"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_header"]
+font_size = 28
+font_color = Color(0.9, 0.9, 0.95, 1)
+
+[node name="SettingsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_s3h8k")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.08, 1)
+
+[node name="Content" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="Content"]
+layout_mode = 2
+custom_minimum_size = Vector2(600, 500)
+
+[node name="Header" type="VBoxContainer" parent="Content/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Content/VBox/Header"]
+layout_mode = 2
+text = "Settings"
+label_settings = SubResource("LabelSettings_header")
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Content/VBox/Header"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 30)
+
+[node name="SettingsContainer" type="VBoxContainer" parent="Content/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="AudioSettings" type="VBoxContainer" parent="Content/VBox/SettingsContainer"]
+layout_mode = 2
+
+[node name="AudioHeader" type="Label" parent="Content/VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+text = "Audio Settings"
+horizontal_alignment = 1
+
+[node name="AudioSeparator" type="HSeparator" parent="Content/VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="Content/VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+
+[node name="MasterVolumeLabel" type="Label" parent="Content/VBox/SettingsContainer/AudioSettings/MasterVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Master Volume:"
+vertical_alignment = 1
+
+[node name="MasterVolumeSlider" type="HSlider" parent="Content/VBox/SettingsContainer/AudioSettings/MasterVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="MasterVolumeValue" type="Label" parent="Content/VBox/SettingsContainer/AudioSettings/MasterVolumeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 0)
+text = "100%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="Content/VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+
+[node name="MusicVolumeLabel" type="Label" parent="Content/VBox/SettingsContainer/AudioSettings/MusicVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Music Volume:"
+vertical_alignment = 1
+
+[node name="MusicVolumeSlider" type="HSlider" parent="Content/VBox/SettingsContainer/AudioSettings/MusicVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 80.0
+
+[node name="MusicVolumeValue" type="Label" parent="Content/VBox/SettingsContainer/AudioSettings/MusicVolumeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 0)
+text = "80%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SFXVolumeContainer" type="HBoxContainer" parent="Content/VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+
+[node name="SFXVolumeLabel" type="Label" parent="Content/VBox/SettingsContainer/AudioSettings/SFXVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SFX Volume:"
+vertical_alignment = 1
+
+[node name="SFXVolumeSlider" type="HSlider" parent="Content/VBox/SettingsContainer/AudioSettings/SFXVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 90.0
+
+[node name="SFXVolumeValue" type="Label" parent="Content/VBox/SettingsContainer/AudioSettings/SFXVolumeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 0)
+text = "90%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spacer2" type="Control" parent="Content/VBox/SettingsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 30)
+
+[node name="DisplaySettings" type="VBoxContainer" parent="Content/VBox/SettingsContainer"]
+layout_mode = 2
+
+[node name="DisplayHeader" type="Label" parent="Content/VBox/SettingsContainer/DisplaySettings"]
+layout_mode = 2
+text = "Display Settings"
+horizontal_alignment = 1
+
+[node name="DisplaySeparator" type="HSeparator" parent="Content/VBox/SettingsContainer/DisplaySettings"]
+layout_mode = 2
+
+[node name="FullscreenContainer" type="HBoxContainer" parent="Content/VBox/SettingsContainer/DisplaySettings"]
+layout_mode = 2
+
+[node name="FullscreenLabel" type="Label" parent="Content/VBox/SettingsContainer/DisplaySettings/FullscreenContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Fullscreen:"
+vertical_alignment = 1
+
+[node name="FullscreenCheckBox" type="CheckBox" parent="Content/VBox/SettingsContainer/DisplaySettings/FullscreenContainer"]
+layout_mode = 2
+
+[node name="Spacer3" type="Control" parent="Content/VBox/SettingsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ButtonContainer" type="HBoxContainer" parent="Content/VBox"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="Content/VBox/ButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Back to Menu"
+
+[node name="Spacer4" type="Control" parent="Content/VBox/ButtonContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(20, 0)
+
+[node name="ApplyButton" type="Button" parent="Content/VBox/ButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Apply Settings"
+
+[node name="FadeTransition" parent="." instance=ExtResource("2_f7j2p")]
+layout_mode = 1
+
+[connection signal="value_changed" from="Content/VBox/SettingsContainer/AudioSettings/MasterVolumeContainer/MasterVolumeSlider" to="." method="OnMasterVolumeChanged"]
+[connection signal="value_changed" from="Content/VBox/SettingsContainer/AudioSettings/MusicVolumeContainer/MusicVolumeSlider" to="." method="OnMusicVolumeChanged"]
+[connection signal="value_changed" from="Content/VBox/SettingsContainer/AudioSettings/SFXVolumeContainer/SFXVolumeSlider" to="." method="OnSFXVolumeChanged"]
+[connection signal="toggled" from="Content/VBox/SettingsContainer/DisplaySettings/FullscreenContainer/FullscreenCheckBox" to="." method="OnFullscreenToggled"]
+[connection signal="pressed" from="Content/VBox/ButtonContainer/BackButton" to="." method="OnBackButtonPressed"]
+[connection signal="pressed" from="Content/VBox/ButtonContainer/ApplyButton" to="." method="OnApplyButtonPressed"]

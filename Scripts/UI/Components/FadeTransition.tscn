@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8vqh8vy4n1ri"]
+
+[ext_resource type="Script" path="res://Scripts/UI/Components/FadeTransition.cs" id="1_b5h7n"]
+
+[node name="FadeTransition" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_b5h7n")
+
+[node name="FadeOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Tween" type="Tween" parent="."]

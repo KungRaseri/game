@@ -1,0 +1,161 @@
+[gd_scene load_steps=4 format=3 uid="uid://c561310d2vcv"]
+
+[ext_resource type="Script" path="res://Scripts/UI/Scenes/MainMenuController.cs" id="1_p8k7h"]
+[ext_resource type="PackedScene" path="res://Scripts/UI/Components/FadeTransition.tscn" id="2_m6j3l"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 36
+font_color = Color(0.9, 0.9, 0.95, 1)
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_p8k7h")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.08, 0.08, 0.12, 1)
+
+[node name="Content" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="LeftPanel" type="CenterContainer" parent="Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="Content/LeftPanel"]
+layout_mode = 2
+custom_minimum_size = Vector2(400, 500)
+
+[node name="Title" type="Label" parent="Content/LeftPanel/VBox"]
+layout_mode = 2
+text = "FANTASY SHOP KEEPER"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Content/LeftPanel/VBox"]
+layout_mode = 2
+text = "An Idle Dungeon Crawler & Shop Management Game"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Content/LeftPanel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+
+[node name="MenuButtons" type="VBoxContainer" parent="Content/LeftPanel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
+
+[node name="NewGameButton" type="Button" parent="Content/LeftPanel/VBox/MenuButtons"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+text = "New Game"
+
+[node name="ContinueButton" type="Button" parent="Content/LeftPanel/VBox/MenuButtons"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+text = "Continue"
+disabled = true
+
+[node name="SettingsButton" type="Button" parent="Content/LeftPanel/VBox/MenuButtons"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+text = "Settings"
+
+[node name="CreditsButton" type="Button" parent="Content/LeftPanel/VBox/MenuButtons"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+text = "Credits"
+
+[node name="QuitButton" type="Button" parent="Content/LeftPanel/VBox/MenuButtons"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+text = "Quit Game"
+
+[node name="Spacer2" type="Control" parent="Content/LeftPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VersionLabel" type="Label" parent="Content/LeftPanel/VBox"]
+layout_mode = 2
+text = "Version 0.1.0 - Early Development"
+horizontal_alignment = 1
+
+[node name="RightPanel" type="CenterContainer" parent="Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GamePreview" type="VBoxContainer" parent="Content/RightPanel"]
+layout_mode = 2
+custom_minimum_size = Vector2(400, 500)
+
+[node name="PreviewTitle" type="Label" parent="Content/RightPanel/GamePreview"]
+layout_mode = 2
+text = "Game Features"
+horizontal_alignment = 1
+
+[node name="Spacer3" type="Control" parent="Content/RightPanel/GamePreview"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+
+[node name="FeaturesList" type="VBoxContainer" parent="Content/RightPanel/GamePreview"]
+layout_mode = 2
+
+[node name="Feature1" type="Label" parent="Content/RightPanel/GamePreview/FeaturesList"]
+layout_mode = 2
+text = "🏪 Manage your fantasy shop"
+autowrap_mode = 3
+
+[node name="Feature2" type="Label" parent="Content/RightPanel/GamePreview/FeaturesList"]
+layout_mode = 2
+text = "⚔️ Send adventurers on expeditions"
+autowrap_mode = 3
+
+[node name="Feature3" type="Label" parent="Content/RightPanel/GamePreview/FeaturesList"]
+layout_mode = 2
+text = "🔨 Craft powerful items and equipment"
+autowrap_mode = 3
+
+[node name="Feature4" type="Label" parent="Content/RightPanel/GamePreview/FeaturesList"]
+layout_mode = 2
+text = "💰 Buy and sell items for profit"
+autowrap_mode = 3
+
+[node name="Feature5" type="Label" parent="Content/RightPanel/GamePreview/FeaturesList"]
+layout_mode = 2
+text = "📊 Watch your business grow over time"
+autowrap_mode = 3
+
+[node name="Feature6" type="Label" parent="Content/RightPanel/GamePreview/FeaturesList"]
+layout_mode = 2
+text = "🎯 Complete quests and achievements"
+autowrap_mode = 3
+
+[node name="Spacer4" type="Control" parent="Content/RightPanel/GamePreview"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StatusPanel" type="VBoxContainer" parent="Content/RightPanel/GamePreview"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="Content/RightPanel/GamePreview/StatusPanel"]
+layout_mode = 2
+text = "Ready to start your adventure!"
+horizontal_alignment = 1
+
+[node name="FadeTransition" parent="." instance=ExtResource("2_m6j3l")]
+layout_mode = 1
+
+[connection signal="pressed" from="Content/LeftPanel/VBox/MenuButtons/NewGameButton" to="." method="OnNewGameButtonPressed"]
+[connection signal="pressed" from="Content/LeftPanel/VBox/MenuButtons/ContinueButton" to="." method="OnContinueButtonPressed"]
+[connection signal="pressed" from="Content/LeftPanel/VBox/MenuButtons/SettingsButton" to="." method="OnSettingsButtonPressed"]
+[connection signal="pressed" from="Content/LeftPanel/VBox/MenuButtons/CreditsButton" to="." method="OnCreditsButtonPressed"]
+[connection signal="pressed" from="Content/LeftPanel/VBox/MenuButtons/QuitButton" to="." method="OnQuitButtonPressed"]
