@@ -58,6 +58,9 @@ layout_mode = 2
 text = "Herbs: 0"
 horizontal_alignment = 1
 
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/GatheringActions/GatherHerbs"]
+layout_mode = 2
+
 [node name="CraftingActions" type="HBoxContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
