@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
-using Game.UI.Commands;
+using Game.UI.Commands.Scenes;
+using Game.UI.Commands.Settings;
 using Game.UI.Models;
-using Game.UI.Queries;
+using Game.UI.Queries.Settings;
 using Godot;
 
 namespace Game.Scripts.UI.Scenes;
@@ -390,7 +391,7 @@ public partial class SettingsMenuController : Control
         if (GameManager.Instance != null)
         {
             GameLogger.Info($"SettingsMenu: Using CQS transition to: {MainMenuScenePath}");
-            var command = Game.UI.Commands.TransitionToSceneCommand.Simple(MainMenuScenePath);
+            var command = TransitionToSceneCommand.Simple(MainMenuScenePath);
             await GameManager.Instance.DispatchAsync(command);
         }
         else

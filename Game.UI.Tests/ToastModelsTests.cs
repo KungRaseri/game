@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using FluentAssertions;
 using Game.UI.Models;

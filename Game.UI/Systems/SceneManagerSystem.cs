@@ -2,8 +2,8 @@
 
 using Game.Core.Utils;
 using Game.UI.Models;
-using Game.UI.Queries;
 using Godot;
+using SceneState = Game.UI.Queries.Scenes.SceneState;
 
 namespace Game.UI.Systems;
 
@@ -77,9 +77,9 @@ public class SceneManagerSystem : IDisposable
     /// <summary>
     /// Gets the current scene state.
     /// </summary>
-    public Game.UI.Queries.SceneState GetSceneState()
+    public SceneState GetSceneState()
     {
-        return new Game.UI.Queries.SceneState
+        return new SceneState
         {
             CurrentScenePath = _currentScenePath,
             IsTransitioning = _isTransitioning,

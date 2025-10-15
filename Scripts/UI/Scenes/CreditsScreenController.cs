@@ -3,6 +3,7 @@
 using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
+using Game.UI.Commands.Scenes;
 using Godot;
 
 namespace Game.Scripts.UI.Scenes;
@@ -181,7 +182,7 @@ public partial class CreditsScreenController : Control
         if (GameManager.Instance != null)
         {
             GameLogger.Info($"CreditsScreen: Using CQS transition to: {MainMenuScenePath}");
-            var command = Game.UI.Commands.TransitionToSceneCommand.Simple(MainMenuScenePath);
+            var command = TransitionToSceneCommand.Simple(MainMenuScenePath);
             await GameManager.Instance.DispatchAsync(command);
         }
         else

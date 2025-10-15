@@ -3,7 +3,7 @@
 using Game.Core.CQS;
 using Game.Core.Utils;
 using Game.DI;
-using Game.UI.Commands;
+using Game.UI.Commands.Toasts;
 using Game.UI.Models;
 using Game.Shop.Systems;
 using Game.Shop.Models;

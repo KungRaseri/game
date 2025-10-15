@@ -1,6 +1,6 @@
 #nullable enable
 
-using Game.UI.Commands;
+using Game.UI.Commands.Scenes;
 
 namespace Game.UI.Systems;
 

@@ -3,6 +3,7 @@
 using Game.Core.Utils;
 using Game.Scripts.UI.Components;
 using Game.Scripts.Managers;
+using Game.UI.Commands.Scenes;
 using Godot;
 
 namespace Game.Scripts.UI.Scenes;
@@ -248,7 +249,7 @@ public partial class SplashScreenController : Control
                     await _fadeTransition.FadeOutAsync(0.5f);
                 }
                 
-                var command = Game.UI.Commands.TransitionToSceneCommand.Simple(NextScenePath);
+                var command = TransitionToSceneCommand.Simple(NextScenePath);
                 await GameManager.Instance.DispatchAsync(command);
             }
             else

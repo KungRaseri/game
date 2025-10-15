@@ -3,6 +3,9 @@
 using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
+using Game.UI.Commands.Scenes;
+using Game.UI.Models;
+using Game.UI.Queries.SaveGames;
 using Godot;
 
 namespace Game.Scripts.UI.Scenes;
@@ -96,14 +99,14 @@ public partial class MainMenuController : Control
             }
             
             // Use CQS query to check for save files
-            var hasSavesQuery = new Game.UI.Queries.HasSaveFilesQuery();
-            _hasSaveGame = await GameManager.Instance.DispatchAsync<Game.UI.Queries.HasSaveFilesQuery, bool>(hasSavesQuery);
+            var hasSavesQuery = new HasSaveFilesQuery();
+            _hasSaveGame = await GameManager.Instance.DispatchAsync<HasSaveFilesQuery, bool>(hasSavesQuery);
             
             // Get most recent save info if available
             if (_hasSaveGame)
             {
-                var getMostRecentQuery = new Game.UI.Queries.GetMostRecentSaveQuery();
-                var mostRecent = await GameManager.Instance.DispatchAsync<Game.UI.Queries.GetMostRecentSaveQuery, Game.UI.Models.SaveGameMetadata?>(getMostRecentQuery);
+                var getMostRecentQuery = new GetMostRecentSaveQuery();
+                var mostRecent = await GameManager.Instance.DispatchAsync<GetMostRecentSaveQuery, SaveGameMetadata?>(getMostRecentQuery);
                 
                 if (mostRecent != null)
                 {
@@ -314,7 +317,7 @@ public partial class MainMenuController : Control
         if (GameManager.Instance != null)
         {
             GameLogger.Info($"MainMenu: Using CQS transition to: {scenePath}");
-            var command = Game.UI.Commands.TransitionToSceneCommand.Simple(scenePath);
+            var command = TransitionToSceneCommand.Simple(scenePath);
             await GameManager.Instance.DispatchAsync(command);
         }
         else

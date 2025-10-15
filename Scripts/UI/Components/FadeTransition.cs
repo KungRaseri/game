@@ -1,7 +1,7 @@
 #nullable enable
 
 using Game.Core.Utils;
-using Game.UI.Commands;
+using Game.UI.Commands.Scenes;
 using Godot;
 
 namespace Game.Scripts.UI.Components;

@@ -1,9 +1,9 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.UI.Handlers;
+using Game.UI.Handlers.Toasts;
 using Game.UI.Models;
-using Game.UI.Queries;
+using Game.UI.Queries.Toasts;
 using Moq;
 using Xunit;
 

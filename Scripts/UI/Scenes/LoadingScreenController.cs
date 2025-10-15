@@ -3,6 +3,8 @@
 using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
+using Game.UI.Commands.Scenes;
+using Game.UI.Commands.Settings;
 using Godot;
 
 namespace Game.Scripts.UI.Scenes;
@@ -300,7 +302,7 @@ public partial class LoadingScreenController : Control
             // Use CQS command to load and apply settings
             if (GameManager.Instance != null)
             {
-                var loadSettingsCommand = new Game.UI.Commands.LoadSettingsCommand
+                var loadSettingsCommand = new LoadSettingsCommand
                 {
                     ApplyImmediately = true
                 };
@@ -352,7 +354,7 @@ public partial class LoadingScreenController : Control
             if (GameManager.Instance != null)
             {
                 GameLogger.Info($"LoadingScreen: Using CQS transition to: {NextScenePath}");
-                var command = Game.UI.Commands.TransitionToSceneCommand.Simple(NextScenePath);
+                var command = TransitionToSceneCommand.Simple(NextScenePath);
                 await GameManager.Instance.DispatchAsync(command);
             }
             else

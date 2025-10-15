@@ -3,9 +3,20 @@
 using Microsoft.Extensions.DependencyInjection;
 using Game.Core.Extensions;
 using Game.UI.Systems;
-using Game.UI.Commands;
-using Game.UI.Queries;
-using Game.UI.Handlers;
+using Game.UI.Commands.Loading;
+using Game.UI.Commands.Scenes;
+using Game.UI.Commands.Settings;
+using Game.UI.Commands.Toasts;
+using Game.UI.Queries.Loading;
+using Game.UI.Queries.SaveGames;
+using Game.UI.Queries.Scenes;
+using Game.UI.Queries.Settings;
+using Game.UI.Queries.Toasts;
+using Game.UI.Handlers.Loading;
+using Game.UI.Handlers.SaveGames;
+using Game.UI.Handlers.Scenes;
+using Game.UI.Handlers.Settings;
+using Game.UI.Handlers.Toasts;
 using Game.UI.Models;
 
 namespace Game.UI.Extensions;

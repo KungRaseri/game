@@ -2,7 +2,7 @@
 
 using FluentAssertions;
 using Game.UI.Models;
-using Game.UI.Queries;
+using Game.UI.Queries.Toasts;
 using Xunit;
 
 namespace Game.UI.Tests.Queries;
