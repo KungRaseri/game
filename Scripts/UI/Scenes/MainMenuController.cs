@@ -33,7 +33,7 @@ public partial class MainMenuController : Control
     private int _selectedButtonIndex = 0;
     private Button?[] _menuButtons = Array.Empty<Button?>();
 
-    public override void _Ready()
+    public override async void _Ready()
     {
         GameLogger.Info("MainMenu: Initializing");
         
@@ -51,6 +51,13 @@ public partial class MainMenuController : Control
         
         // Set up keyboard navigation
         SetupKeyboardNavigation();
+        
+        // Perform fade-in to reveal the menu
+        if (_fadeTransition != null)
+        {
+            GameLogger.Info("MainMenu: Starting fade-in transition");
+            await _fadeTransition.FadeInAsync(0.5f);
+        }
         
         GameLogger.Info("MainMenu: Ready");
     }

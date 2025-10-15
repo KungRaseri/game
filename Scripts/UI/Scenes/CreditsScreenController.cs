@@ -26,7 +26,7 @@ public partial class CreditsScreenController : Control
     private bool _autoScrollEnabled = true;
     private float _scrollPosition = 0.0f;
 
-    public override void _Ready()
+    public override async void _Ready()
     {
         GameLogger.Info("CreditsScreen: Initializing");
         
@@ -35,6 +35,13 @@ public partial class CreditsScreenController : Control
         
         // Start auto-scroll
         StartAutoScroll();
+        
+        // Perform fade-in to reveal the credits screen
+        if (_fadeTransition != null)
+        {
+            GameLogger.Info("CreditsScreen: Starting fade-in transition");
+            await _fadeTransition.FadeInAsync(0.5f);
+        }
         
         GameLogger.Info("CreditsScreen: Ready");
     }

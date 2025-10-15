@@ -37,7 +37,7 @@ public partial class SettingsMenuController : Control
     private bool _fullscreen = false;
     private bool _settingsChanged = false;
 
-    public override void _Ready()
+    public override async void _Ready()
     {
         GameLogger.Info("SettingsMenu: Initializing");
         
@@ -52,6 +52,13 @@ public partial class SettingsMenuController : Control
         
         // Update UI to reflect current settings
         UpdateUI();
+        
+        // Perform fade-in to reveal the settings menu
+        if (_fadeTransition != null)
+        {
+            GameLogger.Info("SettingsMenu: Starting fade-in transition");
+            await _fadeTransition.FadeInAsync(0.5f);
+        }
         
         GameLogger.Info("SettingsMenu: Ready");
     }

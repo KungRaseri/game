@@ -31,6 +31,9 @@ public partial class FadeTransition : ColorRect
         Color = FadeColor;
         Modulate = new Color(FadeColor.R, FadeColor.G, FadeColor.B, StartVisible ? 1.0f : 0.0f);
         
+        // Set initial visibility (should be hidden by default unless StartVisible is true)
+        Visible = StartVisible;
+        
         // Fill the entire screen
         SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
         
@@ -40,7 +43,7 @@ public partial class FadeTransition : ColorRect
         // Only block mouse input when visible
         MouseFilter = Visible ? Control.MouseFilterEnum.Stop : Control.MouseFilterEnum.Ignore;
         
-        GameLogger.Debug("FadeTransition component initialized");
+        GameLogger.Debug($"FadeTransition component initialized (Visible: {Visible})");
     }
 
     /// <summary>
@@ -128,6 +131,7 @@ public partial class FadeTransition : ColorRect
         if (duration < 0) duration = DefaultDuration;
         
         _isFading = true;
+        Visible = true; // Ensure visible before starting fade
         MouseFilter = Control.MouseFilterEnum.Stop; // Block input during fade
         
         try
@@ -159,7 +163,8 @@ public partial class FadeTransition : ColorRect
         CancelCurrentFade();
         
         Modulate = new Color(FadeColor.R, FadeColor.G, FadeColor.B, visible ? 1.0f : 0.0f);
-        Visible = visible || Modulate.A > 0.0f;
+        Visible = visible;
+        MouseFilter = visible ? Control.MouseFilterEnum.Stop : Control.MouseFilterEnum.Ignore;
         
         GameLogger.Debug($"Fade state set instantly: {(visible ? "visible" : "hidden")}");
     }
