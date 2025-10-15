@@ -248,7 +248,7 @@ public partial class SettingsMenuController : Control
             // Apply display settings
             ApplyDisplaySettings();
             
-            // TODO: Save settings to file when save system is implemented
+            // Save settings to persistent storage
             SaveSettings();
             
             _settingsChanged = false;
@@ -271,7 +271,16 @@ public partial class SettingsMenuController : Control
         {
             GameLogger.Info("SettingsMenu: Back button pressed");
             
-            // TODO: Show unsaved changes dialog if _settingsChanged
+            // Warn if there are unsaved changes
+            if (_settingsChanged)
+            {
+                GameLogger.Warning("SettingsMenu: Discarding unsaved changes");
+                // Note: In a full implementation, this would show a confirmation dialog
+                // For now, we log a warning and reload settings to discard changes
+                LoadSettings();
+                UpdateUI();
+                _settingsChanged = false;
+            }
             
             await TransitionToMainMenu();
         }

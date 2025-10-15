@@ -34,7 +34,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="Content"]
-custom_minimum_size = Vector2(600, 500)
+custom_minimum_size = Vector2(640, 500)
 layout_mode = 2
 
 [node name="Header" type="VBoxContainer" parent="Content/VBox"]

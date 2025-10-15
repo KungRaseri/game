@@ -4,6 +4,7 @@ using Game.Core.Utils;
 using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
 using Godot;
+using System;
 
 namespace Game.Scripts.UI.Scenes;
 
@@ -122,6 +123,12 @@ public partial class LoadingScreenController : Control
             {
                 _currentPhaseIndex = i;
                 UpdatePhaseDisplay();
+                
+                // Perform actual initialization during phase 0
+                if (i == 0)
+                {
+                    await InitializeGameSystems();
+                }
                 
                 // Simulate loading work for this phase
                 float phaseStartProgress = i * phaseProgressStep;
@@ -280,6 +287,69 @@ public partial class LoadingScreenController : Control
             var randomIndex = GD.RandRange(0, _loadingTips.Length - 1);
             _tipLabel.Text = _loadingTips[randomIndex];
         }
+    }
+    
+    /// <summary>
+    /// Initializes core game systems including settings.
+    /// </summary>
+    private async Task InitializeGameSystems()
+    {
+        try
+        {
+            GameLogger.Info("LoadingScreen: Initializing game systems...");
+            
+            // Load and apply settings
+            var settingsManager = new SettingsManager();
+            settingsManager.LoadSettings();
+            
+            // Apply display settings
+            bool fullscreen = settingsManager.GetFullscreen();
+            var targetMode = fullscreen ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed;
+            DisplayServer.WindowSetMode(targetMode);
+            GameLogger.Info($"LoadingScreen: Display mode set to {targetMode}");
+            
+            // Apply audio settings
+            float masterVolume = settingsManager.GetMasterVolume();
+            float musicVolume = settingsManager.GetMusicVolume();
+            float sfxVolume = settingsManager.GetSfxVolume();
+            
+            var masterBusIndex = AudioServer.GetBusIndex("Master");
+            if (masterBusIndex >= 0)
+            {
+                AudioServer.SetBusVolumeDb(masterBusIndex, LinearToDb(masterVolume / 100.0f));
+            }
+            
+            var musicBusIndex = AudioServer.GetBusIndex("Music");
+            if (musicBusIndex >= 0)
+            {
+                AudioServer.SetBusVolumeDb(musicBusIndex, LinearToDb(musicVolume / 100.0f));
+            }
+            
+            var sfxBusIndex = AudioServer.GetBusIndex("SFX");
+            if (sfxBusIndex >= 0)
+            {
+                AudioServer.SetBusVolumeDb(sfxBusIndex, LinearToDb(sfxVolume / 100.0f));
+            }
+            
+            GameLogger.Info($"LoadingScreen: Audio settings applied - Master: {masterVolume}%, Music: {musicVolume}%, SFX: {sfxVolume}%");
+            
+            // Small delay to ensure settings are applied
+            await ToSignal(GetTree().CreateTimer(0.1), SceneTreeTimer.SignalName.Timeout);
+            
+            GameLogger.Info("LoadingScreen: Game systems initialized successfully");
+        }
+        catch (System.Exception ex)
+        {
+            GameLogger.Error($"LoadingScreen: Failed to initialize game systems: {ex.Message}");
+        }
+    }
+    
+    /// <summary>
+    /// Converts linear volume (0-1) to decibels.
+    /// </summary>
+    private static float LinearToDb(float linear)
+    {
+        return linear > 0 ? 20.0f * (float)Math.Log10(linear) : -80.0f;
     }
     
     /// <summary>
