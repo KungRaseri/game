@@ -1,5 +1,6 @@
 #nullable enable
 
+using System;
 using Game.Scripts.UI.Components;
 using Godot;
 
@@ -334,7 +335,7 @@ public partial class SettingsMenuController : Control
     /// </summary>
     private static float LinearToDb(float linear)
     {
-        return linear > 0 ? 20.0f * Mathf.Log10(linear) : -80.0f;
+        return linear > 0 ? 20.0f * (float)Math.Log10(linear) : -80.0f;
     }
     
     /// <summary>
