@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
 using Godot;
 
@@ -15,6 +16,8 @@ public partial class MainMenuController : Control
     [Export] public string SettingsScenePath { get; set; } = "res://Scenes/UI/SettingsMenu.tscn";
     [Export] public string CreditsScenePath { get; set; } = "res://Scenes/UI/CreditsScreen.tscn";
     
+    private SaveGameManager? _saveGameManager;
+    
     // Cached node references
     private Button? _newGameButton;
     private Button? _continueButton;
@@ -26,10 +29,15 @@ public partial class MainMenuController : Control
     
     // State
     private bool _hasSaveGame = false;
+    private int _selectedButtonIndex = 0;
+    private Button?[] _menuButtons = Array.Empty<Button?>();
 
     public override void _Ready()
     {
         GD.Print("MainMenu: Initializing");
+        
+        // Initialize save game manager
+        _saveGameManager = new SaveGameManager();
         
         // Cache node references
         CacheNodeReferences();
@@ -40,7 +48,18 @@ public partial class MainMenuController : Control
         // Update UI state
         UpdateUIState();
         
+        // Set up keyboard navigation
+        SetupKeyboardNavigation();
+        
         GD.Print("MainMenu: Ready");
+    }
+    
+    public override void _Input(InputEvent @event)
+    {
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)
+        {
+            HandleKeyboardInput(keyEvent.Keycode);
+        }
     }
     
     /// <summary>
@@ -64,9 +83,25 @@ public partial class MainMenuController : Control
     /// </summary>
     private void CheckForSaveGames()
     {
-        // TODO: Implement actual save game detection
-        // For now, simulate checking for save files
-        _hasSaveGame = Godot.FileAccess.FileExists("user://savegame.save");
+        if (_saveGameManager == null)
+        {
+            GD.PrintErr("MainMenu: SaveGameManager not initialized");
+            _hasSaveGame = false;
+            return;
+        }
+        
+        // Check for any save files
+        _hasSaveGame = _saveGameManager.HasAnySaveFiles();
+        
+        // Get most recent save info if available
+        if (_hasSaveGame)
+        {
+            var mostRecent = _saveGameManager.GetMostRecentSave();
+            if (mostRecent != null)
+            {
+                GD.Print($"MainMenu: Found save file: {mostRecent.FileName}");
+            }
+        }
         
         GD.Print($"MainMenu: Save game exists: {_hasSaveGame}");
     }
@@ -261,9 +296,19 @@ public partial class MainMenuController : Control
             await _fadeTransition.FadeOutAsync(0.5f);
         }
         
-        // Change to the specified scene
-        GD.Print($"MainMenu: Changing to scene: {scenePath}");
-        GetTree().ChangeSceneToFile(scenePath);
+        // Use CQS command for scene transition
+        if (GameManager.Instance != null)
+        {
+            GD.Print($"MainMenu: Using CQS transition to: {scenePath}");
+            var command = Game.UI.Commands.TransitionToSceneCommand.Simple(scenePath);
+            await GameManager.Instance.DispatchAsync(command);
+        }
+        else
+        {
+            // Fallback to direct transition
+            GD.Print($"MainMenu: Changing to scene: {scenePath}");
+            GetTree().ChangeSceneToFile(scenePath);
+        }
     }
     
     /// <summary>
@@ -301,6 +346,132 @@ public partial class MainMenuController : Control
             CheckForSaveGames();
             UpdateUIState();
             EnableAllButtons();
+        }
+    }
+    
+    /// <summary>
+    /// Sets up keyboard navigation for menu buttons.
+    /// </summary>
+    private void SetupKeyboardNavigation()
+    {
+        _menuButtons = new Button?[]
+        {
+            _newGameButton,
+            _continueButton,
+            _settingsButton,
+            _creditsButton,
+            _quitButton
+        };
+        
+        // Set initial focus on the first enabled button
+        UpdateButtonFocus();
+        
+        GD.Print("MainMenu: Keyboard navigation initialized");
+    }
+    
+    /// <summary>
+    /// Handles keyboard input for menu navigation.
+    /// </summary>
+    private void HandleKeyboardInput(Key keycode)
+    {
+        switch (keycode)
+        {
+            case Key.Up:
+            case Key.W:
+                NavigateUp();
+                break;
+                
+            case Key.Down:
+            case Key.S:
+                NavigateDown();
+                break;
+                
+            case Key.Enter:
+            case Key.Space:
+                ActivateSelectedButton();
+                break;
+                
+            case Key.Escape:
+                OnQuitButtonPressed();
+                break;
+        }
+    }
+    
+    /// <summary>
+    /// Navigates to the previous menu button.
+    /// </summary>
+    private void NavigateUp()
+    {
+        int startIndex = _selectedButtonIndex;
+        
+        do
+        {
+            _selectedButtonIndex--;
+            if (_selectedButtonIndex < 0)
+            {
+                _selectedButtonIndex = _menuButtons.Length - 1;
+            }
+            
+            // Check if button is valid and enabled
+            var button = _menuButtons[_selectedButtonIndex];
+            if (button != null && !button.Disabled)
+            {
+                UpdateButtonFocus();
+                return;
+            }
+            
+        } while (_selectedButtonIndex != startIndex);
+    }
+    
+    /// <summary>
+    /// Navigates to the next menu button.
+    /// </summary>
+    private void NavigateDown()
+    {
+        int startIndex = _selectedButtonIndex;
+        
+        do
+        {
+            _selectedButtonIndex++;
+            if (_selectedButtonIndex >= _menuButtons.Length)
+            {
+                _selectedButtonIndex = 0;
+            }
+            
+            // Check if button is valid and enabled
+            var button = _menuButtons[_selectedButtonIndex];
+            if (button != null && !button.Disabled)
+            {
+                UpdateButtonFocus();
+                return;
+            }
+            
+        } while (_selectedButtonIndex != startIndex);
+    }
+    
+    /// <summary>
+    /// Updates the visual focus on the currently selected button.
+    /// </summary>
+    private void UpdateButtonFocus()
+    {
+        var selectedButton = _menuButtons[_selectedButtonIndex];
+        if (selectedButton != null && !selectedButton.Disabled)
+        {
+            selectedButton.GrabFocus();
+            GD.Print($"MainMenu: Focus on button index {_selectedButtonIndex}");
+        }
+    }
+    
+    /// <summary>
+    /// Activates the currently selected button.
+    /// </summary>
+    private void ActivateSelectedButton()
+    {
+        var button = _menuButtons[_selectedButtonIndex];
+        if (button != null && !button.Disabled)
+        {
+            button.EmitSignal("pressed");
+            GD.Print($"MainMenu: Activated button index {_selectedButtonIndex}");
         }
     }
 }

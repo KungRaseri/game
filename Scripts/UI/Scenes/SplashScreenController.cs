@@ -235,19 +235,33 @@ public partial class SplashScreenController : Control
                 _continueButton.Disabled = true;
             }
             
-            // TODO: Use CQS command for scene transition when enhanced
-            // For now, use direct transition
-            
-            // Perform fade out if available
-            if (_fadeTransition != null)
+            // Use CQS command for scene transition
+            if (GameManager.Instance != null)
             {
-                GD.Print("SplashScreen: Starting fade out");
-                await _fadeTransition.FadeOutAsync(0.5f);
+                GD.Print($"SplashScreen: Using CQS transition to: {NextScenePath}");
+                
+                // Perform fade out if available
+                if (_fadeTransition != null)
+                {
+                    GD.Print("SplashScreen: Starting fade out");
+                    await _fadeTransition.FadeOutAsync(0.5f);
+                }
+                
+                var command = Game.UI.Commands.TransitionToSceneCommand.Simple(NextScenePath);
+                await GameManager.Instance.DispatchAsync(command);
             }
-            
-            // Change to the next scene
-            GD.Print($"SplashScreen: Changing to scene: {NextScenePath}");
-            GetTree().ChangeSceneToFile(NextScenePath);
+            else
+            {
+                // Fallback to direct transition if GameManager not available
+                GD.PrintErr("SplashScreen: GameManager not available, using direct transition");
+                
+                if (_fadeTransition != null)
+                {
+                    await _fadeTransition.FadeOutAsync(0.5f);
+                }
+                
+                GetTree().ChangeSceneToFile(NextScenePath);
+            }
         }
         catch (System.Exception ex)
         {

@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
 using Godot;
 
@@ -313,9 +314,19 @@ public partial class LoadingScreenController : Control
                 await _fadeTransition.FadeOutAsync(0.5f);
             }
             
-            // Change to the next scene
-            GD.Print($"LoadingScreen: Changing to scene: {NextScenePath}");
-            GetTree().ChangeSceneToFile(NextScenePath);
+            // Use CQS command for scene transition
+            if (GameManager.Instance != null)
+            {
+                GD.Print($"LoadingScreen: Using CQS transition to: {NextScenePath}");
+                var command = Game.UI.Commands.TransitionToSceneCommand.Simple(NextScenePath);
+                await GameManager.Instance.DispatchAsync(command);
+            }
+            else
+            {
+                // Fallback to direct transition
+                GD.Print($"LoadingScreen: Changing to scene: {NextScenePath}");
+                GetTree().ChangeSceneToFile(NextScenePath);
+            }
         }
         catch (System.Exception ex)
         {

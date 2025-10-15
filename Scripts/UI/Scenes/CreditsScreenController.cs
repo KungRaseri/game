@@ -1,5 +1,6 @@
 #nullable enable
 
+using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
 using Godot;
 
@@ -45,11 +46,23 @@ public partial class CreditsScreenController : Control
             _autoScrollEnabled = false;
         }
         
-        // Re-enable auto-scroll if user presses specific key
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Space)
+        // Handle keyboard navigation
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)
         {
-            _autoScrollEnabled = !_autoScrollEnabled;
-            GD.Print($"CreditsScreen: Auto-scroll toggled to {_autoScrollEnabled}");
+            switch (keyEvent.Keycode)
+            {
+                case Key.Space:
+                    // Toggle auto-scroll
+                    _autoScrollEnabled = !_autoScrollEnabled;
+                    GD.Print($"CreditsScreen: Auto-scroll toggled to {_autoScrollEnabled}");
+                    break;
+                    
+                case Key.Escape:
+                case Key.Enter:
+                    // Return to main menu
+                    OnBackButtonPressed();
+                    break;
+            }
         }
     }
     
@@ -156,8 +169,18 @@ public partial class CreditsScreenController : Control
             await _fadeTransition.FadeOutAsync(0.5f);
         }
         
-        // Change to main menu
-        GD.Print($"CreditsScreen: Returning to main menu: {MainMenuScenePath}");
-        GetTree().ChangeSceneToFile(MainMenuScenePath);
+        // Use CQS command for scene transition
+        if (GameManager.Instance != null)
+        {
+            GD.Print($"CreditsScreen: Using CQS transition to: {MainMenuScenePath}");
+            var command = Game.UI.Commands.TransitionToSceneCommand.Simple(MainMenuScenePath);
+            await GameManager.Instance.DispatchAsync(command);
+        }
+        else
+        {
+            // Fallback to direct transition
+            GD.Print($"CreditsScreen: Returning to main menu: {MainMenuScenePath}");
+            GetTree().ChangeSceneToFile(MainMenuScenePath);
+        }
     }
 }

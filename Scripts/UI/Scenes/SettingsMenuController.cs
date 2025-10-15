@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using Game.Scripts.Managers;
 using Game.Scripts.UI.Components;
 using Godot;
 
@@ -13,6 +14,8 @@ namespace Game.Scripts.UI.Scenes;
 public partial class SettingsMenuController : Control
 {
     [Export] public string MainMenuScenePath { get; set; } = "res://Scenes/UI/MainMenu.tscn";
+    
+    private SettingsManager? _settingsManager;
     
     // Cached node references
     private HSlider? _masterVolumeSlider;
@@ -37,6 +40,9 @@ public partial class SettingsMenuController : Control
     {
         GD.Print("SettingsMenu: Initializing");
         
+        // Initialize settings manager
+        _settingsManager = new SettingsManager();
+        
         // Cache node references
         CacheNodeReferences();
         
@@ -47,6 +53,17 @@ public partial class SettingsMenuController : Control
         UpdateUI();
         
         GD.Print("SettingsMenu: Ready");
+    }
+    
+    public override void _Input(InputEvent @event)
+    {
+        if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)
+        {
+            if (keyEvent.Keycode == Key.Escape)
+            {
+                OnBackButtonPressed();
+            }
+        }
     }
     
     /// <summary>
@@ -69,23 +86,28 @@ public partial class SettingsMenuController : Control
     }
     
     /// <summary>
-    /// Loads settings from configuration or system defaults.
+    /// Loads settings from configuration file or uses defaults.
     /// </summary>
     private void LoadSettings()
     {
-        // TODO: Load from actual settings file when save system is implemented
-        // For now, detect current system state
-        
-        // Get current window mode
-        _fullscreen = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
-        
-        // Get current audio bus volumes (if they exist)
-        var masterBusIndex = AudioServer.GetBusIndex("Master");
-        if (masterBusIndex >= 0)
+        if (_settingsManager == null)
         {
-            var volumeDb = AudioServer.GetBusVolumeDb(masterBusIndex);
-            _masterVolume = DbToLinear(volumeDb) * 100.0f;
+            GD.PrintErr("SettingsMenu: SettingsManager not initialized");
+            return;
         }
+        
+        // Load settings from file
+        _settingsManager.LoadSettings();
+        
+        // Get values from settings manager
+        _masterVolume = _settingsManager.GetMasterVolume();
+        _musicVolume = _settingsManager.GetMusicVolume();
+        _sfxVolume = _settingsManager.GetSfxVolume();
+        _fullscreen = _settingsManager.GetFullscreen();
+        
+        // Apply settings to system
+        ApplyAudioSettings();
+        ApplyDisplaySettings();
         
         GD.Print($"SettingsMenu: Loaded settings - Master: {_masterVolume}%, Music: {_musicVolume}%, SFX: {_sfxVolume}%, Fullscreen: {_fullscreen}");
     }
@@ -266,11 +288,23 @@ public partial class SettingsMenuController : Control
                 AudioServer.SetBusVolumeDb(masterBusIndex, volumeDb);
             }
             
-            // TODO: Apply music and SFX volumes when audio buses are set up
-            // var musicBusIndex = AudioServer.GetBusIndex("Music");
-            // var sfxBusIndex = AudioServer.GetBusIndex("SFX");
+            // Apply music volume
+            var musicBusIndex = AudioServer.GetBusIndex("Music");
+            if (musicBusIndex >= 0)
+            {
+                var volumeDb = LinearToDb(_musicVolume / 100.0f);
+                AudioServer.SetBusVolumeDb(musicBusIndex, volumeDb);
+            }
             
-            GD.Print($"SettingsMenu: Audio settings applied - Master: {_masterVolume}%");
+            // Apply SFX volume
+            var sfxBusIndex = AudioServer.GetBusIndex("SFX");
+            if (sfxBusIndex >= 0)
+            {
+                var volumeDb = LinearToDb(_sfxVolume / 100.0f);
+                AudioServer.SetBusVolumeDb(sfxBusIndex, volumeDb);
+            }
+            
+            GD.Print($"SettingsMenu: Audio settings applied - Master: {_masterVolume}%, Music: {_musicVolume}%, SFX: {_sfxVolume}%");
         }
         catch (System.Exception ex)
         {
@@ -305,8 +339,27 @@ public partial class SettingsMenuController : Control
     /// </summary>
     private void SaveSettings()
     {
-        // TODO: Implement actual settings persistence
-        GD.Print("SettingsMenu: Settings saved (placeholder)");
+        if (_settingsManager == null)
+        {
+            GD.PrintErr("SettingsMenu: SettingsManager not initialized");
+            return;
+        }
+        
+        // Save values to settings manager
+        _settingsManager.SetMasterVolume(_masterVolume);
+        _settingsManager.SetMusicVolume(_musicVolume);
+        _settingsManager.SetSfxVolume(_sfxVolume);
+        _settingsManager.SetFullscreen(_fullscreen);
+        
+        // Write to disk
+        if (_settingsManager.SaveSettings())
+        {
+            GD.Print("SettingsMenu: Settings saved successfully");
+        }
+        else
+        {
+            GD.PrintErr("SettingsMenu: Failed to save settings");
+        }
     }
     
     /// <summary>
@@ -325,9 +378,19 @@ public partial class SettingsMenuController : Control
             await _fadeTransition.FadeOutAsync(0.5f);
         }
         
-        // Change to main menu
-        GD.Print($"SettingsMenu: Returning to main menu: {MainMenuScenePath}");
-        GetTree().ChangeSceneToFile(MainMenuScenePath);
+        // Use CQS command for scene transition
+        if (GameManager.Instance != null)
+        {
+            GD.Print($"SettingsMenu: Using CQS transition to: {MainMenuScenePath}");
+            var command = Game.UI.Commands.TransitionToSceneCommand.Simple(MainMenuScenePath);
+            await GameManager.Instance.DispatchAsync(command);
+        }
+        else
+        {
+            // Fallback to direct transition
+            GD.Print($"SettingsMenu: Returning to main menu: {MainMenuScenePath}");
+            GetTree().ChangeSceneToFile(MainMenuScenePath);
+        }
     }
     
     /// <summary>
