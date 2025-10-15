@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://b15k3o6j71qhl"]
 
-[ext_resource type="Script" path="res://Scripts/UI/Scenes/CreditsScreenController.cs" id="1_0axvw"]
+[ext_resource type="Script" uid="uid://c7pa0s8ox3iu2" path="res://Scripts/UI/Scenes/CreditsScreenController.cs" id="1_0axvw"]
 [ext_resource type="PackedScene" uid="uid://b8p7wn4ol8t7l" path="res://Scenes/UI/Components/FadeTransition.tscn" id="2_3z8vk"]
 
 [sub_resource type="Theme" id="Theme_1_7hjp"]
@@ -10,6 +10,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = SubResource("Theme_1_7hjp")
 script = ExtResource("1_0axvw")
 
@@ -18,6 +20,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.1, 0.1, 0.15, 1)
 
 [node name="Content" type="CenterContainer" parent="."]
@@ -25,10 +29,12 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="Content"]
-layout_mode = 2
 custom_minimum_size = Vector2(800, 600)
+layout_mode = 2
 
 [node name="Header" type="VBoxContainer" parent="Content/VBox"]
 layout_mode = 2
@@ -46,8 +52,8 @@ text = "Fantasy Shop Keeper Game"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="Content/VBox/Header"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Content/VBox"]
 layout_mode = 2
@@ -79,8 +85,8 @@ Godot C# Integration"
 horizontal_alignment = 1
 
 [node name="Spacer1" type="Control" parent="Content/VBox/ScrollContainer/CreditsContent"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
 
 [node name="TechnologySection" type="VBoxContainer" parent="Content/VBox/ScrollContainer/CreditsContent"]
 layout_mode = 2
@@ -101,8 +107,8 @@ Command Query Separation (CQS) Architecture"
 horizontal_alignment = 1
 
 [node name="Spacer2" type="Control" parent="Content/VBox/ScrollContainer/CreditsContent"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
 
 [node name="SpecialThanksSection" type="VBoxContainer" parent="Content/VBox/ScrollContainer/CreditsContent"]
 layout_mode = 2
@@ -123,8 +129,8 @@ Fantasy Game Enthusiasts"
 horizontal_alignment = 1
 
 [node name="Spacer3" type="Control" parent="Content/VBox/ScrollContainer/CreditsContent"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
 
 [node name="LegalSection" type="VBoxContainer" parent="Content/VBox/ScrollContainer/CreditsContent"]
 layout_mode = 2
@@ -149,11 +155,14 @@ layout_mode = 2
 alignment = 1
 
 [node name="BackButton" type="Button" parent="Content/VBox/ButtonContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Back to Menu"
 
 [node name="FadeTransition" parent="." instance=ExtResource("2_3z8vk")]
+layout_mode = 1
+grow_horizontal = 2
+grow_vertical = 2
 
 [connection signal="pressed" from="Content/VBox/ButtonContainer/BackButton" to="." method="OnBackButtonPressed"]

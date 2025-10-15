@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://b8m3x5law1q7r"]
+[gd_scene load_steps=4 format=3 uid="uid://g7lasorwivy"]
 
 [ext_resource type="Script" path="res://Scripts/UI/Scenes/SettingsMenuController.cs" id="1_s3h8k"]
 [ext_resource type="PackedScene" uid="uid://b8p7wn4ol8t7l" path="res://Scenes/UI/Components/FadeTransition.tscn" id="2_f7j2p"]

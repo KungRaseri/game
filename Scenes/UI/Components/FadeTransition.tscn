@@ -17,5 +17,3 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
-
-[node name="Tween" type="Tween" parent="."]
