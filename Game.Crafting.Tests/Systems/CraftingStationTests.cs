@@ -352,7 +352,7 @@ public class CraftingStationTests : IDisposable
     }
 
     [Fact]
-    public void CraftingProgressUpdated_RaisedDuringCrafting()
+    public async Task CraftingProgressUpdated_RaisedDuringCrafting()
     {
         // Arrange
         var progressUpdates = new List<CraftingEventArgs>();
@@ -360,10 +360,20 @@ public class CraftingStationTests : IDisposable
         
         // Act
         _craftingStation.QueueCraftingOrder(_testRecipe.RecipeId, _testMaterials);
-        Thread.Sleep(300); // Wait for some progress updates
+        
+        // Wait for progress updates with a timeout (poll every 50ms for up to 2 seconds)
+        var maxWaitTime = TimeSpan.FromSeconds(2);
+        var pollInterval = TimeSpan.FromMilliseconds(50);
+        var elapsed = TimeSpan.Zero;
+        
+        while (progressUpdates.Count == 0 && elapsed < maxWaitTime)
+        {
+            await Task.Delay(pollInterval);
+            elapsed += pollInterval;
+        }
         
         // Assert
-        progressUpdates.Should().NotBeEmpty();
+        progressUpdates.Should().NotBeEmpty($"expected progress updates after waiting {elapsed.TotalMilliseconds}ms");
         progressUpdates.All(p => p.Order.Recipe == _testRecipe).Should().BeTrue();
     }
 
