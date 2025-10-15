@@ -31,6 +31,10 @@ public static class UIServiceCollectionExtensions
         services.AddSingleton<SceneManagerSystem>();
         services.AddSingleton<LoadingSystem>();
         
+        // Register settings and save game services
+        services.AddSingleton<ISettingsService, SettingsService>();
+        services.AddSingleton<ISaveGameService, SaveGameService>();
+        
         // Register fade transition service interface (implementation will be provided by Godot scripts)
         services.AddSingleton<IFadeTransitionService>(provider => 
         {
@@ -58,6 +62,13 @@ public static class UIServiceCollectionExtensions
         services.AddCommandHandler<UpdateLoadingProgressCommand, UpdateLoadingProgressCommandHandler>();
         services.AddCommandHandler<CompleteLoadingCommand, CompleteLoadingCommandHandler>();
         services.AddCommandHandler<FadeTransitionCommand, FadeTransitionCommandHandler>();
+        
+        // Register settings command handlers
+        services.AddCommandHandler<ApplySettingsCommand, ApplySettingsCommandHandler>();
+        services.AddCommandHandler<LoadSettingsCommand, LoadSettingsCommandHandler>();
+        services.AddCommandHandler<SaveSettingsCommand, SaveSettingsCommandHandler>();
+        services.AddCommandHandler<ApplyAudioSettingsCommand, ApplyAudioSettingsCommandHandler>();
+        services.AddCommandHandler<ApplyDisplaySettingsCommand, ApplyDisplaySettingsCommandHandler>();
 
         // Register toast query handlers
         services.AddQueryHandler<GetActiveToastsQuery, List<ToastInfo>, GetActiveToastsQueryHandler>();
@@ -72,6 +83,16 @@ public static class UIServiceCollectionExtensions
         services.AddQueryHandler<GetQueuedResourcesQuery, List<ResourceLoadInfo>, GetQueuedResourcesQueryHandler>();
         services.AddQueryHandler<GetLoadingPhaseQuery, LoadingPhaseInfo, GetLoadingPhaseQueryHandler>();
         services.AddQueryHandler<GetLoadingConfigurationQuery, LoadingConfiguration, GetLoadingConfigurationQueryHandler>();
+        
+        // Register settings query handlers
+        services.AddQueryHandler<GetAllSettingsQuery, SettingsData, GetAllSettingsQueryHandler>();
+        services.AddQueryHandler<GetAudioSettingsQuery, AudioSettingsData, GetAudioSettingsQueryHandler>();
+        services.AddQueryHandler<GetDisplaySettingsQuery, DisplaySettingsData, GetDisplaySettingsQueryHandler>();
+        
+        // Register save game query handlers
+        services.AddQueryHandler<HasSaveFilesQuery, bool, HasSaveFilesQueryHandler>();
+        services.AddQueryHandler<GetMostRecentSaveQuery, SaveGameMetadata?, GetMostRecentSaveQueryHandler>();
+        services.AddQueryHandler<GetAllSavesQuery, IReadOnlyList<SaveGameMetadata>, GetAllSavesQueryHandler>();
 
         return services;
     }
