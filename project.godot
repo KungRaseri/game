@@ -12,13 +12,14 @@ config_version=5
 
 config/name="ShopKeeper"
 config/version="0.0.1"
-run/main_scene="uid://ce3hfv7a2s1gs"
+run/main_scene="res://Scenes/UI/Screens/SplashScreen.tscn"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 DependencyInjection="*res://Scripts/DI/DependencyInjectionNode.cs"
+GameManager="*res://Scripts/Managers/GameManager.cs"
 
 [display]
 

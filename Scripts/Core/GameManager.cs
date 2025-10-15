@@ -34,10 +34,10 @@ public class GameManager : IDisposable
 
             // Get the AdventureSystem from DI instead of creating a new instance
             // This ensures we use the same instance that the CQS handlers use
-            _adventureSystem = Game.DI.DependencyInjectionNode.GetService<AdventureSystem>();
+            _adventureSystem = Game.Scripts.DI.DependencyInjectionNode.GetService<AdventureSystem>();
 
             // Get the UISystem from DI
-            _uiSystem = Game.DI.DependencyInjectionNode.GetService<UISystem>();
+            _uiSystem = Game.Scripts.DI.DependencyInjectionNode.GetService<UISystem>();
 
             GameLogger.Info("GameManager initialization complete");
         }

@@ -1,0 +1,102 @@
+[gd_scene load_steps=5 format=3 uid="uid://c4j8n7r2v3m1k"]
+
+[ext_resource type="Script" uid="uid://b4b46yrhvj4nk" path="res://Scripts/UI/Scenes/LoadingScreenController.cs" id="1_q7h9m"]
+[ext_resource type="PackedScene" uid="uid://b8p7wn4ol8t7l" path="res://Scenes/UI/Components/FadeTransition.tscn" id="2_f4k8l"]
+[ext_resource type="PackedScene" uid="uid://c7nap5q1x8n2l" path="res://Scenes/UI/Components/LoadingProgressBar.tscn" id="3_g6j2p"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_1xk3m"]
+font_size = 28
+font_color = Color(0.9, 0.9, 0.95, 1)
+
+[node name="LoadingScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_q7h9m")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.05, 0.1, 1)
+
+[node name="Content" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Content"]
+custom_minimum_size = Vector2(600, 400)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Content/VBox"]
+layout_mode = 2
+text = "Loading Game"
+label_settings = SubResource("LabelSettings_1xk3m")
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Content/VBox"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="PhaseLabel" type="Label" parent="Content/VBox"]
+layout_mode = 2
+text = "Initializing..."
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="Content/VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ProgressContainer" type="VBoxContainer" parent="Content/VBox"]
+layout_mode = 2
+
+[node name="LoadingProgressBar" parent="Content/VBox/ProgressContainer" instance=ExtResource("3_g6j2p")]
+layout_mode = 2
+
+[node name="Spacer4" type="Control" parent="Content/VBox"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="Content/VBox"]
+layout_mode = 2
+text = "Loading resources..."
+horizontal_alignment = 1
+
+[node name="BottomContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -80.0
+offset_right = 100.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="TipLabel" type="Label" parent="BottomContainer"]
+custom_minimum_size = Vector2(256, 25)
+layout_mode = 2
+text = "Tip: Manage your shop inventory to maximize profits!"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="FadeTransition" parent="." instance=ExtResource("2_f4k8l")]
+layout_mode = 1
+
+[node name="LoadingTimer" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
+[connection signal="timeout" from="LoadingTimer" to="." method="OnLoadingTimerTimeout"]

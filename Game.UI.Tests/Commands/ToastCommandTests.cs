@@ -1,7 +1,7 @@
 #nullable enable
 
 using FluentAssertions;
-using Game.UI.Commands;
+using Game.UI.Commands.Toasts;
 using Game.UI.Models;
 using Godot;
 using Xunit;

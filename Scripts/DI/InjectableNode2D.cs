@@ -1,4 +1,6 @@
 using System.Reflection;
+using Game.Core.Utils;
+using Game.Scripts.DI;
 using Godot;
 
 namespace Game.DI;
@@ -39,7 +41,7 @@ public abstract partial class InjectableNode2D : Node2D
                 }
                 catch (Exception ex)
                 {
-                    GD.PrintErr($"Error injecting {property.PropertyType.Name}: {ex.Message}");
+                    GameLogger.Error($"Error injecting {property.PropertyType.Name}: {ex.Message}");
                 }
             }
         }
@@ -60,7 +62,7 @@ public abstract partial class InjectableNode2D : Node2D
             }
             catch (Exception ex)
             {
-                GD.PrintErr($"Error injecting {field.FieldType.Name}: {ex.Message}");
+                GameLogger.Error($"Error injecting {field.FieldType.Name}: {ex.Message}");
             }
         }
     }

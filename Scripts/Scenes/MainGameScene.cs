@@ -3,7 +3,7 @@
 using Game.Core.CQS;
 using Game.Core.Utils;
 using Game.DI;
-using Game.UI.Commands;
+using Game.UI.Commands.Toasts;
 using Game.UI.Models;
 using Game.Shop.Systems;
 using Game.Shop.Models;
@@ -89,8 +89,8 @@ public partial class MainGameScene : Control
         try
         {
             // Get services from DI
-            _dispatcher = DependencyInjectionNode.GetService<IDispatcher>();
-            _stateManager = DependencyInjectionNode.GetService<ShopKeeperStateManager>();
+            _dispatcher = Game.Scripts.DI.DependencyInjectionNode.GetService<IDispatcher>();
+            _stateManager = Game.Scripts.DI.DependencyInjectionNode.GetService<ShopKeeperStateManager>();
 
             // Show welcome toast
             await _dispatcher.DispatchCommandAsync(new ShowInfoToastCommand(

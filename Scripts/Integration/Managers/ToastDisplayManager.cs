@@ -39,7 +39,7 @@ public partial class ToastDisplayManager : Node
             }
 
             // Get UISystem from DI
-            _uiSystem = Game.DI.DependencyInjectionNode.GetService<UISystem>();
+            _uiSystem = Game.Scripts.DI.DependencyInjectionNode.GetService<UISystem>();
 
             // Connect to UISystem events
             _uiSystem.ShowToastRequested += OnShowToastRequested;
