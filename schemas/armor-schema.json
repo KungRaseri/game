@@ -20,9 +20,6 @@
         "BaseDefense": {
           "type": "integer"
         },
-        "BaseDurability": {
-          "type": "integer"
-        },
         "ArmorType": {
           "type": "string",
           "enum": ["Light", "Medium", "Heavy"]

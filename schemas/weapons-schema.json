@@ -20,9 +20,6 @@
         "BaseDamage": {
           "type": "integer"
         },
-        "BaseDurability": {
-          "type": "integer"
-        },
         "WeaponType": {
           "type": "string",
           "enum": ["Sword", "Axe", "Dagger"]

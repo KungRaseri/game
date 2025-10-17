@@ -8,7 +8,6 @@
 	  "description": "Basic leather protection for adventurers.",
 	  "baseValue": 40,
 	  "baseDefense": 3,
-	  "baseDurability": 80,
 	  "armorType": "Light",
 	  "properties": {
 		"weight": "Light",
@@ -21,7 +20,6 @@
 	  "description": "Interlocking metal rings provide solid defense.",
 	  "baseValue": 80,
 	  "baseDefense": 5,
-	  "baseDurability": 120,
 	  "armorType": "Medium",
 	  "properties": {
 		"weight": "Medium",
@@ -34,7 +32,6 @@
 	  "description": "Heavy steel plates offering maximum protection.",
 	  "baseValue": 150,
 	  "baseDefense": 8,
-	  "baseDurability": 200,
 	  "armorType": "Heavy",
 	  "properties": {
 		"weight": "Heavy",

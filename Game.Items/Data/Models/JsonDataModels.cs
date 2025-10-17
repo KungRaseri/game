@@ -70,7 +70,6 @@ public class WeaponJsonData
     public string Description { get; set; } = string.Empty;
     public int BaseValue { get; set; }
     public int BaseDamage { get; set; }
-    public int BaseDurability { get; set; } = 100;
     
     [JsonConverter(typeof(WeaponTypeJsonConverter))]
     public WeaponType WeaponType { get; set; } = WeaponType.Sword;
@@ -113,7 +112,6 @@ public class ArmorJsonData
     public string Description { get; set; } = string.Empty;
     public int BaseValue { get; set; }
     public int BaseDefense { get; set; }
-    public int BaseDurability { get; set; } = 100;
     
     [JsonConverter(typeof(ArmorTypeJsonConverter))]
     public ArmorType ArmorType { get; set; } = ArmorType.Light;
