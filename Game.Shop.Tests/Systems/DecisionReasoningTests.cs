@@ -214,7 +214,7 @@ public class DecisionReasoningTests
             SecondaryFactors = new List<string>
             {
                 "Good quality but high price",
-                "Like the style but concerned about durability",
+                "Like the style but concerned about fit",
                 "Need the item but have budget constraints"
             }
         };

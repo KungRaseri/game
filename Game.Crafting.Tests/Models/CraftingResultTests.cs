@@ -38,7 +38,7 @@ public class CraftingResultTests
         var properties = new Dictionary<string, object>
         {
             ["DamageBonus"] = 10,
-            ["Durability"] = 100
+            ["CritChance"] = 100
         };
 
         // Act
@@ -54,7 +54,7 @@ public class CraftingResultTests
         // Assert
         result.ItemProperties.Should().HaveCount(2);
         result.ItemProperties["DamageBonus"].Should().Be(10);
-        result.ItemProperties["Durability"].Should().Be(100);
+        result.ItemProperties["CritChance"].Should().Be(100);
     }
 
     [Theory]
@@ -260,11 +260,11 @@ public class CraftingResultTests
 
         // Act
         result.SetProperty("DamageBonus", 20);
-        result.SetProperty("Durability", 150);
+        result.SetProperty("CritChance", 150);
 
         // Assert
         result.GetProperty<int>("DamageBonus").Should().Be(20);
-        result.GetProperty<int>("Durability").Should().Be(150);
+        result.GetProperty<int>("CritChance").Should().Be(150);
     }
 
     [Fact]
